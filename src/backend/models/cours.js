@@ -1,35 +1,36 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const articleSchema = mongoose.Schema({
-    title: {
+const CoursSchema = Schema({
+    debute_a: {
         type: String,
-        required: true,
-        unique: true,
+        required: true
     },
-    description: {
+    fini_a: {
         type: String,
-        required: true,
+        required: true
     },
-    topic: {
+    professeur: {
         type: String,
-        required: true,
+        required: true
     },
-    preview: {
+    classe: {
         type: String,
-        required: true,
-        default:
-            "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/088c07107656487.5fabfb5406ec2.png",
+        required: true
     },
-    author: {
+    module: {
         type: String,
-        required: true,
-        default: "63c67e64294bdbb48a1ce94f",
+        required: true
     },
-    content: {
-        type: Array,
-        required: true,
+    groupe: {
+        type: String,
+        required: true
     },
+    identifiant: {
+        type: String,
+        required: true
+    }
 });
 
-const Article = mongoose.model("Article", articleSchema);
-module.exports = Article;
+
+const Cours = model('Cours', CoursSchema);
+export default Cours;

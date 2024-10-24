@@ -1,5 +1,5 @@
 import { createServer } from "http";
-import app, { set } from "./app";
+import app from './app.js';
 const server = createServer(app);
 
 const normalizePort = (val) => {
@@ -14,7 +14,7 @@ const normalizePort = (val) => {
     return false;
 };
 const port = normalizePort(process.env.PORT || "3000");
-set("port", port);
+app.set("port", port);
 
 const errorHandler = (error) => {
     if (error.syscall !== "listen") {
@@ -40,8 +40,7 @@ const errorHandler = (error) => {
 server.on("error", errorHandler);
 server.on("listening", () => {
     const address = server.address();
-    const bind =
-        typeof address === "string" ? "pipe " + address : "port " + port;
+    const bind = typeof address === "string" ? "pipe " + address : "port " + port;
     console.log("Listening on " + bind);
 });
 

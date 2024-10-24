@@ -1,0 +1,11 @@
+{
+  "name": "package.json",
+  "version": "0.1.0",
+  "description": "[# salle-univ-nantes](https://prod.liveshare.vsengsaas.visualstudio.com/join?6CEDF260997F50AE3060E071319098CF9575)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,6 @@
+Procedure salle_libre_horaire(id_salle : Entier, horaire : Tuple) Booleen
+    debut
+        pour cour_vu dans cours faire
+            si cour_vu.classe = id_salle 
+                alors si (horaire[1] >= cour_vudebute_a et )
+    fin 

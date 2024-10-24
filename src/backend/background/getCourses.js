@@ -5,8 +5,8 @@ import Salle from '../models/salle.js';
 
 export const getCourses = async () => {
     const groupes = await Groupe.find();
-    const base_url = "https://edt-v2.univ-nantes.fr/events?start=2024-10-21&end=2024-10-27";
-    const chunkSize = 10; // Adjust the chunk size as needed
+    const base_url = "https://edt-v2.univ-nantes.fr/events?start=2024-10-25&end=2024-11-10";
+    const chunkSize = 40; // Adjust the chunk size as needed
 
     // Function to split array into chunks
     function chunkArray(array, size) {
@@ -27,15 +27,24 @@ export const getCourses = async () => {
             url_requete += '&timetables%5B%5D=' + groupe.identifiant;
         });
 
-        console.log(url_requete);
-
-        const response = await fetch(url_requete);
-        const data = await response.json();
+        let reponse = null;
+        try {
+            reponse = await fetch(url_requete);
+        } catch (error) {
+            console.log("Erreur lors de l'obtention de la page ", url_requete, ":", error)
+            continue;
+        }
+        const data = await reponse.json();
 
         for (const cours of data) {
 
-            if (!cours.start_at || !cours.end_at || !cours.rooms_for_blocks) {
-                /* console.log("Cours invalide", cours); */
+            const excludedSalles = ['Med', 'droit', 'Salle extérieure', 'Ireste', 'Isitem', 'IAE', 'Gavy', 'Pas de salle', 'Salle Manquante', 'Bias', '1B-05'];
+
+            const isExcluded = excludedSalles.some(excluded => cours.rooms_for_blocks.includes(excluded));
+
+            console.log(cours.rooms_for_blocks, isExcluded);
+
+            if (!cours.start_at || !cours.end_at || !cours.rooms_for_blocks || isExcluded) {
                 continue;
             }
 
@@ -43,7 +52,7 @@ export const getCourses = async () => {
                 identifiant: cours.id
             });
 
-  
+
 
             let salleExist;
             if (cours.rooms_for_blocks) {

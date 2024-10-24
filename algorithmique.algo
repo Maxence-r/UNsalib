@@ -1,0 +1,15 @@
+importer classe
+
+Procedure salle_libre_horaire(id_salle : Entier, horaire : Tuple) Booleen
+    variable
+    cour_vu : Enregistrement
+    début
+        pour cour_vu dans cours faire
+            si cour_vu.classe = id_salle 
+                alors si (horaire[1] >= cour_vu.debute_a et horaire[2] <= cour.fini_a)
+                    alors renvoyer Vrai
+                    fin si
+                fin si
+	    suivant
+        renvoyer Faux
+    fin 

@@ -7,6 +7,8 @@ import 'dotenv/config'
 import getGroups from "./src/backend/background/getGroups.js";
 
 
+import salles from "./src/backend/routes/salles.js";
+
 // EXECUTION PERMANENTE
 getGroups();
 getCourses();
@@ -19,7 +21,8 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
-
+// ROUTES
+app.use('/salles', salles)
 
 
 // DATABASE CONNECTION

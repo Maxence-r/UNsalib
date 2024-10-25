@@ -21,7 +21,7 @@ async function getGroups() {
         const docRoot = parse(page);
         const groupsInputs = docRoot.querySelectorAll("#desktopGroupForm #educational_groups input");
         const groups = [];
-        groupsInputs.forEach(input => { // obtiens l'id de chaque case à cocher qui contient celui de l'emploi du temps
+        groupsInputs.forEach(input => { // obtient l'id de chaque case à cocher qui contient celui de l'emploi du temps
             groups.push(input.id.replace("desktop-timetable-", ""));
         });
         groups.forEach(async group => {

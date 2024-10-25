@@ -17,7 +17,7 @@ async function getHTML(url) {
 
 async function getGroups() {
     const page = await getHTML("https://edt-v2.univ-nantes.fr/sciences/educational_groups");
-    if (page !== -1) { // il y n'y a pas d'erreur dans la requête
+    if (page !== -1) { // il n'y a pas d'erreur dans la requête
         const docRoot = parse(page);
         const groupsInputs = docRoot.querySelectorAll("#desktopGroupForm #educational_groups input");
         const groups = [];

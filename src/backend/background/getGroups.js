@@ -32,14 +32,6 @@ async function getGroups() {
             // obtiens l'id de chaque case à cocher qui contient celui de l'emploi du temps
             const group = input.id.replace("desktop-timetable-", "");
             const exists = await Groupe.exists({ identifiant: group });
-        const groups = [];
-        groupsInputs.forEach(input => { // obtient l'id de chaque case à cocher qui contient celui de l'emploi du temps
-            groups.push(input.id.replace("desktop-timetable-", ""));
-        });
-        groups.forEach(async group => {
-            const exists = await Groupe.exists({
-                identifiant: group
-            });
             if (!exists) {
                 const groupeObj = new Groupe({
                     identifiant: group,

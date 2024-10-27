@@ -25,13 +25,21 @@ async function getGroups() {
     await Groupe.deleteMany({})
     console.log("Obtention des groupes...");
     const page = await getHTML("https://edt-v2.univ-nantes.fr/sciences/educational_groups");
-    if (page !== -1) { // il y n'y a pas d'erreur dans la requête
+    if (page !== -1) { // il n'y a pas d'erreur dans la requête
         const docRoot = parse(page);
         const groupsInputs = docRoot.querySelectorAll("#desktopGroupForm #educational_groups input");
         for (const input of groupsInputs) {
             // obtiens l'id de chaque case à cocher qui contient celui de l'emploi du temps
             const group = input.id.replace("desktop-timetable-", "");
             const exists = await Groupe.exists({ identifiant: group });
+        const groups = [];
+        groupsInputs.forEach(input => { // obtient l'id de chaque case à cocher qui contient celui de l'emploi du temps
+            groups.push(input.id.replace("desktop-timetable-", ""));
+        });
+        groups.forEach(async group => {
+            const exists = await Groupe.exists({
+                identifiant: group
+            });
             if (!exists) {
                 const groupeObj = new Groupe({
                     identifiant: group,

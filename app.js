@@ -1,5 +1,4 @@
 import express, { json, urlencoded, static as serveStatic } from "express";
-import { getCourses } from "./src/backend/background/getCourses.js";
 const app = express();
 
 import { set, connect } from "mongoose";
@@ -8,10 +7,6 @@ import getGroups from "./src/backend/background/getGroups.js";
 
 
 import salles from "./src/backend/routes/salles.js";
-
-// EXECUTION PERMANENTE
-getGroups();
-getCourses();
 
 // SECURITE SERVER
 app.disable("x-powered-by");
@@ -31,11 +26,16 @@ set("strictQuery", true);
     try {
         await connect(`${process.env.MONGODB_URI}`, {});
         console.log("Connexion à MongoDB réussie !");
+        
     } catch (err) {
         console.log("Connexion à MongoDB échouée !");
         console.log(err);
+        process.exit(0);
     }
 })();
+
+// EXECUTION PERMANENTE
+getGroups();
 
 
 export default app;

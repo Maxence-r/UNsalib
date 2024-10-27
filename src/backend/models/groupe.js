@@ -4,6 +4,10 @@ const GroupeSchema = Schema({
     identifiant: {
         type: String,
         required: true
+    },
+    nom: {
+        type: String,
+        required: true
     }
 });
 

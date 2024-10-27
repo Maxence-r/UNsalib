@@ -2,53 +2,53 @@ import express from 'express';
 const router = express.Router();
 import Salle from '../models/salle.js';
 import Cours from '../models/cours.js';
+import mongoose from 'mongoose';
+
 // GET 
-router.get('/free', async (req, res) => {
+router.get('/available', async (req, res) => {
+    try {
+        // 1. First, find all rooms that have courses during the specified period
+        const occupiedRoomIds = await Cours.distinct('classe', {
+            debute_a: { $gte: req.query.start },
+            fini_a: { $lte: req.query.end }
+        });
 
-    // Récupérer la liste de toutes les salles
-    const salles = await Salle.find();
-    const cours = await Cours.find({
-        debute_a : {
-            $gte : req.query.start
-        },
-        fini_a : {
-            $lte : req.query.end
-        }
-    });
+        // 2. Then find all rooms that are NOT in the occupied rooms list
+        const availableRooms = await Salle.find({
+            _id: { $nin: occupiedRoomIds }
+        });
 
-
-
-    // récupère tout les cours entre les deux periodes début "req.query.start" et fin "req.query.end"
-
-    salles.forEach(salle => {
-        if (cours.find(cours => cours.classe == salle._id)) {
-            salles.splice(salles.indexOf(salle), 1);
-        }
-    });
-    
-
-    res.send(salles);
-
-})
+        res.json(availableRooms);
+    } catch (error) {
+        res.status(500).json({ 
+            message: "Error finding available rooms",
+            error: error.message 
+        });
+    }
+});
 
 
 
 
 router.get('/timetable/:id', async (req, res) => {
     const id = req.params.id;
-    let salle = await Salle.findById(id);
-    if (!salle) {
-        res.status(404).send("Salle non existante");
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).send("Invalid ID format");
     }
 
+    try {
+        let salle = await Salle.findById(id).sort({ id: 1 });
+        if (!salle) {
+            return res.status(404).send("Salle non existante");
+        }
 
-    const cours = await Cours.find({
-        classe: id
-    });
-
-
-    res.send(cours)
-    
-    
+        const cours = await Cours.find({ classe: id });
+        res.send(cours);
+    } catch (error) {
+        console.error("Error fetching timetable:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 export default router;

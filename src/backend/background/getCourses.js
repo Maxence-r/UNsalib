@@ -1,97 +1,141 @@
-/* import Salle from '../models/salle.js'; */
 import Groupe from '../models/groupe.js';
 import Cours from '../models/cours.js';
 import Salle from '../models/salle.js';
+import 'dotenv/config'
+// Constantes pour la configuration
+const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
+const SALLES_EXCLUES = ['Med', 'droit', 'Salle extérieure', 'Ireste', 'Isitem', 'IAE', 'Gavy', 'Pas de salle', 'Salle Manquante', 'Bias', '1B-05'];
+const BATIMENTS_EXCLUS = ['Tertre'];
 
-export const getCourses = async () => {
-    const groupes = await Groupe.find();
-    const base_url = "https://edt-v2.univ-nantes.fr/events?start=2024-10-25&end=2024-11-10";
-    const chunkSize = 40; // Adjust the chunk size as needed
+// Fonction pour obtenir les dates de début et fin (3 semaines)
+const obtenirDatesRequete = () => {
+    const dateDebut = new Date();
+    const dateFin = new Date();
+    dateFin.setDate(dateFin.getDate() + 21);
 
-    // Function to split array into chunks
-    function chunkArray(array, size) {
-        const result = [];
-        for (let i = 0; i < array.length; i += size) {
-            result.push(array.slice(i, i + size));
-        }
-        return result;
+    return {
+        debut: dateDebut.toISOString().split('T')[0],
+        fin: dateFin.toISOString().split('T')[0]
+    };
+};
+
+// Fonction pour traiter une salle
+const traiterSalle = async (nomSalle) => {
+    if (!nomSalle) return null;
+
+    const nomFormate = nomSalle.includes("(") ? nomSalle.split("(")[0].trim() : nomSalle.trim();
+    const batiment = nomSalle.includes("(") ? nomSalle.split("(")[1].split(")")[0] : nomSalle;
+
+    let salle = await Salle.findOne({ nom_salle: nomFormate });
+    
+    if (!salle) {
+        salle = new Salle({
+            nom_salle: nomFormate,
+            batiment: batiment,
+            places_assises: 0
+        });
+        await salle.save();
+        console.log(`Nouvelle salle ajoutée: ${nomFormate} (${batiment})`);
     }
 
-    // Split groupes into chunks
-    const groupeChunks = chunkArray(groupes, chunkSize);
+    return salle;
+};
 
-    for (const chunk of groupeChunks) {
-        let url_requete = base_url;
+// Fonction pour traiter un cours individuel
+const traiterCours = async (donneesCours) => {
+    const estExclu = SALLES_EXCLUES.includes(donneesCours.rooms_for_blocks) || BATIMENTS_EXCLUS.includes(donneesCours.rooms_for_blocks);
 
-        chunk.forEach(groupe => {
-            url_requete += '&timetables%5B%5D=' + groupe.identifiant;
-        });
+    if (estExclu || !donneesCours.start_at || !donneesCours.end_at || !donneesCours.rooms_for_blocks) {
+        return;
+    }
 
-        let reponse = null;
-        try {
-            reponse = await fetch(url_requete);
-        } catch (error) {
-            console.log("Erreur lors de l'obtention de la page ", url_requete, ":", error)
-            continue;
+    const coursExiste = await Cours.exists({ identifiant: donneesCours.id });
+    if (coursExiste) return;
+
+    const salles = donneesCours.rooms_for_blocks.split(';');
+    const sallePrincipale = await traiterSalle(salles[0]);
+
+    const nouveauCours = new Cours({
+        identifiant: donneesCours.id,
+        debute_a: donneesCours.start_at,
+        fini_a: donneesCours.end_at,
+        professeur: donneesCours.teachers_for_blocks || "Non renseigné",
+        classe: sallePrincipale?._id || "Non renseigné",
+        module: donneesCours.modules_for_blocks,
+        groupe: donneesCours.educational_groups_for_blocks || "Non renseigné"
+    });
+
+    await nouveauCours.save();
+};
+
+// Fonction pour récupérer les cours d'un groupe
+const recupererCours = async (groupe) => {
+    const dates = obtenirDatesRequete();
+    process.stdout.write(`Récupération des cours pour le groupe ${groupe.nom} du ${dates.debut} au ${dates.fin}\r`);
+    const urlRequete = `https://edt-v2.univ-nantes.fr/events?start=${dates.debut}&end=${dates.fin}&timetables%5B%5D=${groupe.identifiant}`;
+
+    try {
+        const reponse = await fetch(urlRequete);
+        const donnees = await reponse.json();
+        
+        for (const cours of donnees) {
+            await traiterCours(cours);
         }
-        const data = await reponse.json();
-
-        for (const cours of data) {
-
-            const excludedSalles = ['Med', 'droit', 'Salle extérieure', 'Ireste', 'Isitem', 'IAE', 'Gavy', 'Pas de salle', 'Salle Manquante', 'Bias', '1B-05'];
-
-            const isExcluded = excludedSalles.some(excluded => cours.rooms_for_blocks.includes(excluded));
-
-            console.log(cours.rooms_for_blocks, isExcluded);
-
-            if (!cours.start_at || !cours.end_at || !cours.rooms_for_blocks || isExcluded) {
-                continue;
-            }
-
-            const exists = await Cours.exists({
-                identifiant: cours.id
-            });
-
-
-
-            let salleExist;
-            if (cours.rooms_for_blocks) {
-                const salles = cours.rooms_for_blocks.split(';');
-
-                for (const salle of salles) {
-                    if (salle) {
-                        salleExist = await Salle.exists({
-                            nom_salle: salle.includes("(") ? salle.split("(")[0].trim() : salle.trim()
-                        });
-                        if (!salleExist) {
-                            const salleObj = new Salle({
-                                nom_salle: salle.includes("(") ? salle.split("(")[0].trim() : salle.trim(),
-                                batiment: salle.includes("(") ? salle.split("(")[1].split(")")[0] : salle,
-                                places_assises: 0
-                            });
-                            await salleObj.save();
-                            salleExist = salleObj;
-                        }
-                    }
-                }
-            }
-
-
-            const coursObj = new Cours({
-                identifiant: cours.id,
-                debute_a: cours.start_at ? cours.start_at : "Non renseigné",
-                fini_a: cours.end_at ? cours.end_at : "Non renseigné",
-                professeur: cours.teachers_for_blocks ? cours.teachers_for_blocks : "Non renseigné",
-                classe: salleExist._id ? salleExist._id : "Non renseigné",
-                module: cours.modules_for_blocks ? cours.modules_for_blocks : "Non renseigné",
-                groupe: cours.educational_groups_for_blocks ? cours.educational_groups_for_blocks : "Non renseigné"
-            });
-
-
-            if (!exists) {
-                await coursObj.save();
-            }
-        }
+    } catch (erreur) {
+        console.error(`Erreur pour le groupe ${groupe.identifiant}:`, erreur);
     }
 };
 
+// Fonction pour traiter un lot de groupes
+const traiterLotGroupes = async (groupes) => {
+    for (const groupe of groupes) {
+        await recupererCours(groupe);
+    }
+};
+
+// Fonction principale d'exécution
+export const getCourses = async () => {
+    const groupes = await Groupe.find();
+    
+    // Si FORCE est activé, traiter tous les groupes immédiatement
+    if (process.env.FORCE === 'true') {
+        console.log('Mode FORCE activé - Traitement de tous les groupes');
+        await traiterLotGroupes(groupes);
+    }
+
+    // Calculer l'intervalle entre chaque groupe pour une répartition sur 12h
+    const nombreGroupes = groupes.length;
+    const intervalleEntreGroupes = Math.floor(INTERVALLE_CYCLE / nombreGroupes);
+
+    // Fonction pour démarrer le cycle de mise à jour
+    const demarrerCycleMiseAJour = () => {
+        let indexGroupe = 0;
+
+        const programmerProchainGroupe = () => {
+            if (indexGroupe < nombreGroupes) {
+                setTimeout(async () => {
+                    const groupe = groupes[indexGroupe];
+                    
+                    await recupererCours(groupe);
+                    indexGroupe++;
+                    programmerProchainGroupe();
+                }, intervalleEntreGroupes);
+            } else {
+                // Réinitialiser pour le prochain cycle
+                indexGroupe = 0;
+                setTimeout(() => {
+                    console.log('Démarrage d\'un nouveau cycle de 12h');
+                    programmerProchainGroupe();
+                }, intervalleEntreGroupes);
+            }
+        };
+
+        // Démarrer le premier cycle
+        programmerProchainGroupe();
+    };
+
+    // Démarrer le cycle de mise à jour
+    console.log(`Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${INTERVALLE_CYCLE/1000/60/60}h`);
+    console.log(`Intervalle entre chaque groupe: ${intervalleEntreGroupes/1000} secondes`);
+    demarrerCycleMiseAJour();
+};

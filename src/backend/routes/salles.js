@@ -20,15 +20,12 @@ router.get('/available', async (req, res) => {
 
         res.json(availableRooms);
     } catch (error) {
-        res.status(500).json({ 
+        res.status(500).json({
             message: "Error finding available rooms",
-            error: error.message 
+            error: error.message
         });
     }
 });
-
-
-
 
 router.get('/timetable/:id', async (req, res) => {
     const id = req.params.id;

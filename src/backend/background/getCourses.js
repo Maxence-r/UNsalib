@@ -35,7 +35,7 @@ const traiterSalle = async (nomSalle) => {
             places_assises: 0
         });
         await salle.save();
-        console.log(`\r\x1b[KNouvelle salle ajoutée: ${nomFormate} (${batiment})`);
+        console.log(`\r\x1b[KNouvelle salle ajoutée : ${nomFormate} (${batiment})`);
     }
 
     return salle;
@@ -54,12 +54,8 @@ const elementArrayDansChaine = (array, chaine) => {
 const traiterCours = async (donneesCours) => {
     const estExclu = elementArrayDansChaine(SALLES_EXCLUES, donneesCours.rooms_for_blocks) || elementArrayDansChaine(BATIMENTS_EXCLUS, donneesCours.rooms_for_blocks);
 
-    if (!donneesCours.start_at || !donneesCours.end_at || !donneesCours.rooms_for_blocks || !donneesCours.modules_for_blocks) {
+    if (estExclu || !donneesCours.start_at || !donneesCours.end_at || !donneesCours.rooms_for_blocks) {
         return;
-    }
-
-    if (estExclu) {
-        console.log(`\r\x1b[KSalle ignorée : ${donneesCours.rooms_for_blocks}`);
     }
 
     const coursExiste = await Cours.exists({ identifiant: donneesCours.id });
@@ -74,7 +70,7 @@ const traiterCours = async (donneesCours) => {
         fini_a: donneesCours.end_at,
         professeur: donneesCours.teachers_for_blocks || "Non renseigné",
         classe: sallePrincipale?._id || "Non renseigné",
-        module: donneesCours.modules_for_blocks,
+        module: donneesCours.modules_for_blocks || "Non renseigné",
         groupe: donneesCours.educational_groups_for_blocks || "Non renseigné"
     });
 

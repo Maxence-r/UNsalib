@@ -35,18 +35,31 @@ const traiterSalle = async (nomSalle) => {
             places_assises: 0
         });
         await salle.save();
-        console.log(`Nouvelle salle ajoutée: ${nomFormate} (${batiment})`);
+        console.log(`\r\x1b[KNouvelle salle ajoutée: ${nomFormate} (${batiment})`);
     }
 
     return salle;
 };
 
+const elementArrayDansChaine = (array, chaine) => {
+    for (const element of array) {
+        if (chaine.includes(element)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Fonction pour traiter un cours individuel
 const traiterCours = async (donneesCours) => {
-    const estExclu = SALLES_EXCLUES.includes(donneesCours.rooms_for_blocks) || BATIMENTS_EXCLUS.includes(donneesCours.rooms_for_blocks);
+    const estExclu = elementArrayDansChaine(SALLES_EXCLUES, donneesCours.rooms_for_blocks) || elementArrayDansChaine(BATIMENTS_EXCLUS, donneesCours.rooms_for_blocks);
 
-    if (estExclu || !donneesCours.start_at || !donneesCours.end_at || !donneesCours.rooms_for_blocks) {
+    if (!donneesCours.start_at || !donneesCours.end_at || !donneesCours.rooms_for_blocks || !donneesCours.modules_for_blocks) {
         return;
+    }
+
+    if (estExclu) {
+        console.log(`\r\x1b[KSalle ignorée : ${donneesCours.rooms_for_blocks}`);
     }
 
     const coursExiste = await Cours.exists({ identifiant: donneesCours.id });

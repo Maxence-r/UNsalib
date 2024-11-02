@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <meta name="description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:title" content="Salle Libre - Nantes UNIV" />
+    <meta property="og:description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:type" content="website" />
+
+
+    <link rel="stylesheet" href="../css/main.css" />
+    <title>SALLES - NANTE UNIV</title>
+</head>
+
+<body>
+    <div class="pannel">
+        <div class="campus">
+            <div class="campus_selector">
+                <p>SCIENCES ET TECHNIQUES</p>
+                <div class="beta">BETA</div>
+            </div>
+            <div class="campus_feed">
+                <img src="../assets/campus.png" alt="placeholder" />
+
+                <div class="overlay"></div>
+                <div class="campus_feed_content">
+                    <p>GROUPE 100W MIS A JOUR</p>
+                    <p>GROUPE 100W MIS A JOUR</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions_selector">
+            <div class="action">
+                EDT d’une salle
+            </div>
+            <div class="action active">
+                Trouver une salle
+            </div>
+        </div>
+
+        <div class="actions_container">
+            <div class="edt_finder">
+                <input class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
+                <div class="tags">
+                    <div class="tag">
+                        <p>I123 VIDEO</p>
+                        <img src="../assets/x.svg" alt="close"  class="remove"/>
+                    </div>
+                    <div class="tag">
+                        <p>I123 VIDEO</p>
+                        <img src="../assets/x.svg" alt="close"  class="remove"/>
+                    </div>
+                </div>
+                <div class="results-head">
+                    <p>Résultats de recherches</p>
+                    <div class="indicator">
+                        <div class="red ping"></div>
+                        <p>= occupé</p>
+                    </div>
+                </div>
+                <div class="results">
+                    <div class="result">
+                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
+                        <div class="ping blue"></div>
+                    </div>
+                    <div class="result">
+                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
+                        <div class="ping blue"></div>
+                    </div>
+                    <div class="result">
+                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
+                        <div class="ping blue"></div>
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="calendar"></div>
+</body>
+<script src="../javascript/main.js"></script>
+
+</html>

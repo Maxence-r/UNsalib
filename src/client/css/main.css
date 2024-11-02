@@ -161,6 +161,7 @@ body {
     width: 100%;
     gap: 16px;
     overflow: hidden;
+    position: relative;
 }
 
 .search {
@@ -301,6 +302,52 @@ body {
     font-weight: 400;
 }
 
+.badges {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.badges > img {
+    height: 14px;
+}
+
+
+.advanced-search {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.advanced-search > .date-picker {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.advanced-search > .date-picker > p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.advanced-search> .date-picker >  input {
+    /* width: calc(100% - 2px); */
+    font-family: 'Space Grotesk', sans-serif;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    /* font-weight: 600;
+    min-height: 50px;
+    border-radius: var(--sub-border-radius);
+    background-color: #ECECEC;
+    border: none;
+    outline: none; */
+}
 
 
 @media screen and (max-width: 1600px) {
@@ -345,5 +392,11 @@ body {
     .calendar {
         width: 100%;
         border: none;
+    }
+}
+
+@media screen and (max-height: 900px) {
+    .campus_feed {
+        height: 100px;
     }
 }

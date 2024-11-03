@@ -89,14 +89,29 @@
 
             <div class="room_finder">
                 <div class="advanced-search">
-                    <div class="date-picker">
+                    <div class="setDate">
                         <p>Début</p>
-                        <input type="date" name="start" id="start" />
+                        <div class="date-picker">
+                            <div class="mobile-indicator">
+                                <p>Définir la date</p>
+                                <p>Définir l'heure</p>
+                            </div>
+                            <input placeholder="date" type="date" name="start" id="start" />
+                            <input placeholder="heure" type="time" name="start" id="start" />
+                        </div>
                     </div>
-                    <div class="date-picker">
+                    <div class="setDate">
                         <p>Fin</p>
-                        <input type="time" name="start" id="start" />
+                        <div class="date-picker">
+                            <div class="mobile-indicator">
+                                <p>Définir la date</p>
+                                <p>Définir l'heure</p>
+                            </div>
+                            <input placeholder="date" type="date" name="start" id="start" />
+                            <input placeholder="heure" type="time" name="start" id="start" />
+                        </div>
                     </div>
+                    <button class="search-button">Rechercher</button>
                 </div>
                 <div class="results-head">
                     <p>Résultats de recherches</p>

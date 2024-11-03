@@ -316,23 +316,47 @@ body {
 
 .advanced-search {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 12px;
 }
 
-.advanced-search > .date-picker {
+.setDate {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    gap: 4px;
+    width: 100%;
 }
 
-.advanced-search > .date-picker > p {
+.date-picker {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: relative;
+}
+
+.setDate > p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
 }
 
-.advanced-search> .date-picker >  input {
+.search-button {
+    height: 40px;
+    font-family: "Space Grotesk", sans-serif;
+    border-radius: 6px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.search-button:hover {
+    background-color: #1f2dff;
+}
+
+.date-picker >  input {
     /* width: calc(100% - 2px); */
     font-family: 'Space Grotesk', sans-serif;
     border: none;
@@ -341,14 +365,25 @@ body {
     padding: 0;
     margin: 0;
     width: 100%;
-    /* font-weight: 600;
-    min-height: 50px;
-    border-radius: var(--sub-border-radius);
-    background-color: #ECECEC;
-    border: none;
-    outline: none; */
+    flex: 1;
+    height: 19px;
 }
 
+.mobile-indicator {
+    display: none;
+    position: absolute;
+    pointer-events: none;
+    width: 100%;
+}
+
+.mobile-indicator > p {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #bdbdbd;
+
+}
 
 @media screen and (max-width: 1600px) {
     body {
@@ -392,6 +427,14 @@ body {
     .calendar {
         width: 100%;
         border: none;
+    }
+    .mobile-indicator {
+        display: flex;
+    }
+
+    .date-picker > input {
+        appearance: none;
+        -webkit-appearance: none;
     }
 }
 

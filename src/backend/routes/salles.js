@@ -24,39 +24,17 @@ router.get("/disponibles", async (req, res) => {
     }
     console.log(req.query.debut)
     try {
-        // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
-        const idsSallesOccupees = await Cours.distinct("classe", {
-            $or: [
-                {
-                    debut_a: {
-                        $lte: fin
-                    },
-                    fini_a: {
-                        $gte: debut
-                    }
-                },
-                {
-                    debut_a: {
-                        $lte: debut
-                    },
-                    fini_a: {
-                        $gte: debut
-                    }
-                },
-                {
-                    debut_a: {
-                        $lte: debut
-                    },
-                    fini_a: {
-                        $gte: fin
-                    }
-                }
-            ],
+        // Recherche tous les cours
+        let cours = await Cours.find({
+            $and: [
+                { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
+                { fini_a: { $gt: debut } }  // Le cours finit après le début de la période demandée
+            ]
         });
 
-        // Trouve toutes les pièces qui ne figurent PAS dans la liste des pièces occupées
+        // En déduit les salles libres
         let sallesDispos = await Salle.find({
-            _id: { $nin: idsSallesOccupees },
+            _id: { $nin: cours.map(c => c.classe) },
         }).select("-__v");
 
         sallesDispos = sallesDispos.map((salle) => {
@@ -117,45 +95,5 @@ router.get("/edt", async (req, res) => {
         );
     }
 });
-
-
-
-router.get("/test", async (req, res) => {
-    const debut = req.query.debut;
-    const fin = req.query.fin;
-
-    if (!debut || !fin) {
-        return res.status(400).send("PARAMETRES_MANQUANTS");
-    }
-
-    // Attention à encoder le + avec %2B lors de la requête
-    if (!formatDateValide(debut) || !formatDateValide(fin)) {
-        return res.status(400).send("FORMAT_DATE_INVALIDE");
-    }
-    try {
-        // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
-        let cours = await Cours.find({
-            $and: [
-                { debute_a: { $lt: fin } },    // Le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }     // Le cours finit après le début de la période demandée
-            ]
-        })
-
-        let sallesDispos = await Salle.find({
-            _id: { $nin: cours.map(c => c.classe) },
-        }).select("-__v");
-
-        res.json(sallesDispos);
-        return
-    } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
-    }
-});
-
 
 export default router;

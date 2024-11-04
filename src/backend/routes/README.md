@@ -1,6 +1,40 @@
 # Endpoints
 
+## `/salles`
+
+### Rôle
+
+Renvoie toutes les salles stockées dans la base de données avec leurs informations associées.
+
+### Paramètres
+
+Aucun
+
+### Exemple
+
+```
+/salles
+```
+
+### Réponse (format JSON)
+
+```json
+[
+    {
+        "id": ID DE LA SALLE (CHAINE),
+        "nom_salle": NOM DE LA SALLE (CHAINE),
+        "places_assises": PLACES ASSISES (NOMBRE ENTIER),
+        "batiment": NOM DU BATIMENT (CHAINE)
+    },
+    ...
+]
+```
+
 ## `/salles/disponibles`
+
+### Rôle
+
+Renvoie  les salles disponibles sur une période spécifiée.
 
 ### Paramètres
 
@@ -30,6 +64,10 @@
 ```
 
 ## `/salles/edt`
+
+### Rôle
+
+Renvoie l'emploi du temps d'une salle.
 
 ### Paramètres
 

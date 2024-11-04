@@ -25,8 +25,8 @@ router.get('/disponibles', async (req, res) => {
     try {
         // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
         const idsSallesOccupees = await Cours.distinct('classe', {
-            debute_a: { $gte: debut },
-            fini_a: { $lte: fin }
+            debute_a: { $gte: debut }, // >=
+            fini_a: { $lte: fin } // <=
         });
 
         // Trouve toutes les pièces qui ne figurent PAS dans la liste des pièces occupées

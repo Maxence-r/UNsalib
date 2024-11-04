@@ -10,6 +10,28 @@ function formatDateValide(date) {
     return regex.test(date);
 }
 
+router.get("/", async (req, res) => {
+    try {
+        let salles = await Salle.find({}).select(
+            "-__v -identifiant"
+        );
+
+        salles = salles.map((salle) => {
+            const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
+            return { id: _id, ...rest }; // Remplace _id par id
+        });
+
+        res.json(salles);
+    } catch (erreur) {
+        res.status(500).send("ERREUR_INTERNE");
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
 router.get("/disponibles", async (req, res) => {
     const debut = req.query.debut;
     const fin = req.query.fin;

@@ -134,14 +134,18 @@ router.get("/test", async (req, res) => {
     }
     try {
         // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
-       let cours = await Cours.find({
+        let cours = await Cours.find({
             $and: [
-              { debute_a: { $lt: fin } },    // Le cours commence avant la fin de la période demandée
-              { fini_a: { $gt: debut } }     // Le cours finit après le début de la période demandée
+                { debute_a: { $lt: fin } },    // Le cours commence avant la fin de la période demandée
+                { fini_a: { $gt: debut } }     // Le cours finit après le début de la période demandée
             ]
-          })
+        })
 
-        res.json(cours);
+        let sallesDispos = await Salle.find({
+            _id: { $nin: cours.map(c => c.classe) },
+        }).select("-__v");
+
+        res.json(sallesDispos);
         return
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");

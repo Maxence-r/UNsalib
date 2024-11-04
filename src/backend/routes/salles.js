@@ -35,6 +35,14 @@ router.get("/disponibles", async (req, res) => {
                     debute_a: { $lt: debut }, // <
                     fini_a: { $gt: fin }, // >
                 },
+                {
+                    debute_a: { $lt: debut }, // <
+                    fini_a: { $lte: fin }, // >
+                },
+                {
+                    debute_a: { $gte: debut }, // <
+                    fini_a: { $gt: fin }, // >
+                },
             ],
         });
 

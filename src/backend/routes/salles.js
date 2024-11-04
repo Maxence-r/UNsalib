@@ -22,27 +22,35 @@ router.get("/disponibles", async (req, res) => {
     if (!formatDateValide(debut) || !formatDateValide(fin)) {
         return res.status(400).send("FORMAT_DATE_INVALIDE");
     }
-
+    console.log(req.query.debut)
     try {
         // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
         const idsSallesOccupees = await Cours.distinct("classe", {
             $or: [
                 {
-                    debute_a: { $gte: debut }, // >=
-                    fini_a: { $lte: fin }, // <=
+                    debut_a: {
+                        $lte: fin
+                    },
+                    fini_a: {
+                        $gte: debut
+                    }
                 },
                 {
-                    debute_a: { $lt: debut }, // <
-                    fini_a: { $gt: fin }, // >
+                    debut_a: {
+                        $lte: debut
+                    },
+                    fini_a: {
+                        $gte: debut
+                    }
                 },
                 {
-                    debute_a: { $lt: debut }, // <
-                    fini_a: { $lte: fin }, // >
-                },
-                {
-                    debute_a: { $gte: debut }, // <
-                    fini_a: { $gt: fin }, // >
-                },
+                    debut_a: {
+                        $lte: debut
+                    },
+                    fini_a: {
+                        $gte: fin
+                    }
+                }
             ],
         });
 
@@ -109,5 +117,41 @@ router.get("/edt", async (req, res) => {
         );
     }
 });
+
+
+
+router.get("/test", async (req, res) => {
+    const debut = req.query.debut;
+    const fin = req.query.fin;
+
+    if (!debut || !fin) {
+        return res.status(400).send("PARAMETRES_MANQUANTS");
+    }
+
+    // Attention à encoder le + avec %2B lors de la requête
+    if (!formatDateValide(debut) || !formatDateValide(fin)) {
+        return res.status(400).send("FORMAT_DATE_INVALIDE");
+    }
+    try {
+        // Recherche toutes les salles où se déroulent des cours pendant la période spécifiée
+       let cours = await Cours.find({
+            $and: [
+              { debute_a: { $lt: fin } },    // Le cours commence avant la fin de la période demandée
+              { fini_a: { $gt: debut } }     // Le cours finit après le début de la période demandée
+            ]
+          })
+
+        res.json(cours);
+        return
+    } catch (erreur) {
+        res.status(500).send("ERREUR_INTERNE");
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
 
 export default router;

@@ -3,34 +3,33 @@ import { Schema, model } from "mongoose";
 const CoursSchema = Schema({
     debute_a: {
         type: String,
-        required: true
+        required: true,
     },
     fini_a: {
         type: String,
-        required: true
+        required: true,
     },
     professeur: {
         type: String,
-        required: true
+        required: true,
     },
     classe: {
         type: String,
-        required: true
+        required: true,
     },
     module: {
         type: String,
-        required: true
+        required: true,
     },
     groupe: {
-        type: String,
-        required: true
+        type: Array,
+        required: true,
     },
     identifiant: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
 });
 
-
-const Cours = model('Cours', CoursSchema);
+const Cours = model("Cours", CoursSchema);
 export default Cours;

@@ -22,9 +22,26 @@ router.get("/disponibles", async (req, res) => {
     if (!formatDateValide(debut) || !formatDateValide(fin)) {
         return res.status(400).send("FORMAT_DATE_INVALIDE");
     }
-    console.log(req.query.debut)
+
     try {
-        // Recherche tous les cours
+        // Recherche tous les cours qui débordent sur la période demandée selon 4 cas :
+        //
+        // CAS 1 : Le cours englobe complètement la période
+        // Cours       |--------------------|
+        // Demande         |-----------|
+        //
+        // CAS 2 : Le cours est englobé par la période
+        // Cours           |-----------|
+        // Demande     |--------------------|
+        //
+        // CAS 3 : Le cours chevauche le début de la période
+        // Cours       |-----------|
+        // Demande         |-----------|
+        //
+        // CAS 4 : Le cours chevauche la fin de la période
+        // Cours           |-----------|
+        // Demande     |-----------|
+        //
         let cours = await Cours.find({
             $and: [
                 { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
@@ -32,7 +49,7 @@ router.get("/disponibles", async (req, res) => {
             ]
         });
 
-        // En déduit les salles libres
+        // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map(c => c.classe) },
         }).select("-__v");

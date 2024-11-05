@@ -18,27 +18,27 @@ async function getHTML(url) {
 }
 
 async function getGroups() {
-    if (process.env.SKIP === 'true') {
-        console.log('Mode SKIP activé - Arrêt de la récupération des groupes');
+    if (process.env.FORCER_RECUP_GPES === "false") {
+        console.log("Récupération des groupes DÉSACTIVÉE");
         return getCourses();
     }
+    console.log("Récupération des groupes ACTIVÉE - Démarrage du processus...");
     await Groupe.deleteMany({})
-    console.log("Obtention des groupes...");
     const page = await getHTML("https://edt-v2.univ-nantes.fr/sciences/educational_groups");
     if (page !== -1) { // il n'y a pas d'erreur dans la requête
         const docRoot = parse(page);
         const groupsInputs = docRoot.querySelectorAll("#desktopGroupForm #educational_groups input");
         for (const input of groupsInputs) {
-            // obtiens l'id de chaque case à cocher qui contient celui de l'emploi du temps
+            // obtient l'id de chaque case à cocher qui contient celui de l'emploi du temps
             const group = input.id.replace("desktop-timetable-", "");
             const exists = await Groupe.exists({ identifiant: group });
-            if (!exists) {
+            if (exists) {
                 const groupeObj = new Groupe({
                     identifiant: group,
                     nom: input.nextElementSibling.textContent.trim()
                 });
                 await groupeObj.save();
-                process.stdout.write(groupsInputs.indexOf(input) + 1 + "/" + groupsInputs.length + "\r");
+                process.stdout.write(groupsInputs.indexOf(input) + 1 + "/" + groupsInputs.length + " obtenus" + "\r");
             }
         }
             

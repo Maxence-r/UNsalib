@@ -138,10 +138,11 @@ export const getCourses = async () => {
     const groupes = await Groupe.find();
 
     // Si FORCE est activé, traiter tous les groupes immédiatement
-    if (process.env.FORCE === "true") {
-        console.log("Mode FORCE activé - Traitement de tous les groupes");
+    if (process.env.FORCER_TRAITEMENT_GPES === "true") {
+        console.log("Traitement de tous les groupes ACTIVÉ - Démarrage du processus...");
         await traiterLotGroupes(groupes);
     }
+    console.log("Traitement de tous les groupes DÉSACTIVÉ");
 
     // Calculer l'intervalle entre chaque groupe pour une répartition sur 12h
     const nombreGroupes = groupes.length;

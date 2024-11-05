@@ -5,9 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" href="../assets/favicon.ico" />
-    <meta name="description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta name="description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:title" content="Salle Libre - Nantes UNIV" />
-    <meta property="og:description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:type" content="website" />
 
 
@@ -16,10 +18,15 @@
 </head>
 
 <body>
-    <div class="pannel">
+    <section class="loader">
+        <div class="progress">
+            <img src="../assets/loader.svg" />
+        </div>
+    </section>
+    <div  class="pannel">
         <div class="campus">
             <div class="campus_selector">
-                <p>SCIENCES ET TECHNIQUES</p>
+                <p>UFR SCIENCES ET TECHNIQUES</p>
                 <div class="beta">BETA</div>
             </div>
             <div class="campus_feed">
@@ -43,7 +50,7 @@
         </div>
 
         <div class="actions_container">
-            <div class="edt_finder">
+            <!-- <div class="edt_finder">
                 <input class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
 
                 <div class="results-head">
@@ -72,9 +79,9 @@
 
 
                 </div>
-            </div>
+            </div> -->
 
-            <div class="tags">
+            <!-- <div class="tags">
                 <div class="tag">
                     <p>I123 VIDEO</p>
                     <img src="../assets/x.svg" alt="close" class="remove" />
@@ -83,31 +90,33 @@
                     <p>I123 VIDEO</p>
                     <img src="../assets/x.svg" alt="close" class="remove" />
                 </div>
-            </div>
+            </div> -->
 
-            <!-- <div class="room_finder">
+            <div class="room_finder">
                 <div class="advanced-search">
                     <div class="setDate">
-                        <p>Début</p>
-                        <div class="date-picker">
-                            <div class="mobile-indicator">
-                                <p>Définir la date</p>
-                                <p>Définir l'heure</p>
+                        <div class="picker-container">
+                            <p>Chercher entre:</p>
+                            <div class="time-picker">
+                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
+                                <p>:</p>
+                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
+                                <p style="margin: 0 4px;">et</p>
+                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
+                                <p>:</p>
+                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
                             </div>
-                            <input placeholder="date" type="date" name="start" id="start" />
-                            <input placeholder="heure" type="time" name="start" id="start" />
                         </div>
-                    </div>
-                    <div class="setDate">
-                        <p>Fin</p>
-                        <div class="date-picker">
-                            <div class="mobile-indicator">
-                                <p>Définir la date</p>
-                                <p>Définir l'heure</p>
+                        <div class="picker-container">
+                            <p>Le: </p>
+                            <div class="time-picker">
+                                <input type="number" max="31" maxlength="2" class="time" placeholder="--" />
+                                <p>/</p>
+                                <input type="number" max="12" maxlength="2" class="time" placeholder="--" />
                             </div>
-                            <input placeholder="date" type="date" name="start" id="start" />
-                            <input placeholder="heure" type="time" name="start" id="start" />
                         </div>
+
+
                     </div>
                     <button class="search-button">Rechercher</button>
                 </div>
@@ -134,10 +143,95 @@
                         <div class="ping blue"></div>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
-    <div class="calendar"></div>
+    <div class="calendar">
+        <div class="calendar-header">
+            <div class="week-switcher">
+                <img src="../assets/chevrons-left.svg" alt="previous" />
+                <p>SEMAINE <span class="week-number">1</span></p>
+                <img src="../assets/chevrons-right.svg" alt="next" />
+            </div>
+            <div class="avaibility">
+                <div class="avaibility-box">
+                    <div class="red ping"></div>
+                    <p>SALLE DISPONIBLE DANS <span>10 MINUTES</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="calendar-container">
+            <div class="calendar-hours">
+                <div class="calendar-top"></div>
+                <div class="calendar-hours-display">
+                    <p>9:00</p>
+                    <p>10:00</p>
+                    <p>11:00</p>
+                    <p>12:00</p>
+                    <p>13:00</p>
+                    <p>14:00</p>
+                    <p>15:00</p>
+                    <p>16:00</p>
+                    <p>17:00</p>
+                    <p>18:00</p>
+                </div>
+            </div>
+            <div class="calendar-columns">
+                <div class="column">
+                    <div class="calendar-top">
+                        <p>Lundi<span class="day"> 24</span></p>
+                    </div>
+
+                    <div class="column-content">
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box">
+                            <div class="course">
+                                <h2>MATHEMATIQUES</h2>
+                                <p>N.DEPAUW</p>
+                            </div>
+                        </div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                        <div class="content-box"></div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="calendar-top">
+                        <p>Mardi<span class="day"> 25</span></p>
+                    </div>
+
+                    <div class="column-content"></div>
+                </div>
+                <div class="column">
+                    <div class="calendar-top">
+                        <p>Mercredi<span class="day"> 26</span></p>
+                    </div>
+
+                    <div class="column-content"></div>
+                </div>
+                <div class="column">
+                    <div class="calendar-top">
+                        <p>Jeudi<span class="day"> 27</span></p>
+                    </div>
+
+                    <div class="column-content"></div>
+                </div>
+                <div class="column">
+                    <div class="calendar-top">
+                        <p>Vendredi<span class="day"> 28</span></p>
+                    </div>
+
+                    <div class="column-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="../javascript/main.js"></script>
 

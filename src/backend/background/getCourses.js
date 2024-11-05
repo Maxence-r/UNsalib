@@ -7,6 +7,7 @@ const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 const SALLES_EXCLUES = [
     "Med",
     "droit",
+    "Droit",
     "Salle extérieure",
     "Ireste",
     "Isitem",

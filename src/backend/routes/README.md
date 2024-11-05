@@ -67,16 +67,20 @@ Renvoie  les salles disponibles sur une période spécifiée.
 
 ### Rôle
 
-Renvoie l'emploi du temps d'une salle.
+Renvoie l'emploi du temps d'une salle pendant une période donnée.
 
 ### Paramètres
 
  - `id` : l'id de la salle
+ - `debut` : une date au format ISO
+ - `fin` : une date au format ISO
+
+> **Attention à l'encodage :** le caractère `+` devient `%2B`
 
 ### Exemple
 
 ```
-/salles/edt?id=6723b74ced9239c51b665102
+/salles/edt?id=672901cd13546ff7b6eeb466&debut=2024-11-04T00:00:00%2B01:00&fin=2024-11-04T18:00:00%2B01:00
 ```
 
 ### Réponse (format JSON)
@@ -90,7 +94,7 @@ Renvoie l'emploi du temps d'une salle.
         "fini_a": DATE DE FIN DU COURS (CHAINE),
         "professeur": NOM DU PROFESSEUR (CHAINE),
         "module": NOM DU MODULE (CHAINE),
-        "groupe": NOM DU GROUPE (CHAINE)
+        "groupe": NOM DU GROUPE (LISTE DE CHAINES)
     },
     ...
 ]

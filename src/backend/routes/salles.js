@@ -94,8 +94,10 @@ router.get("/disponibles", async (req, res) => {
 
 router.get("/edt", async (req, res) => {
     const id = req.query.id;
+    const debut = req.query.debut;
+    const fin = req.query.fin;
 
-    if (!id) {
+    if (!id || !debut || !fin) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
 
@@ -104,13 +106,24 @@ router.get("/edt", async (req, res) => {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
 
+    // Attention à encoder le + avec %2B lors de la requête
+    if (!formatDateValide(debut) || !formatDateValide(fin)) {
+        return res.status(400).send("FORMAT_DATE_INVALIDE");
+    }
+
     try {
         let salle = await Salle.findById(id).sort({ id: 1 });
         if (!salle) {
             return res.status(404).send("SALLE_INEXISTANTE");
         }
 
-        let cours = await Cours.find({ classe: id }).select(
+        let cours = await Cours.find({ 
+            classe: id,
+            $and: [
+                { debute_a: { $gte: debut } },
+                { fini_a: { $lte: fin } }
+            ]
+        }).select(
             "-__v -identifiant"
         );
 

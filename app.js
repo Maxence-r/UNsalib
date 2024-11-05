@@ -19,23 +19,20 @@ app.use(serveStatic("./src/client"));
 // ROUTES
 app.use('/salles', salles)
 
-
 // DATABASE CONNECTION
 set("strictQuery", true);
 (async () => {
     try {
         await connect(`${process.env.MONGODB_URI}`, {});
-        console.log("Connexion à MongoDB réussie !");
-        
+        console.log("Connexion à MongoDB réussie !");        
     } catch (err) {
         console.log("Connexion à MongoDB échouée !");
         console.log(err);
         process.exit(0);
+    } finally {
+        // EXECUTION PERMANENTE
+        getGroups();
     }
 })();
-
-// EXECUTION PERMANENTE
-getGroups();
-
 
 export default app;

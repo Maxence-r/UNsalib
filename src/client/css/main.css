@@ -45,6 +45,7 @@ body {
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
 }
 
+
 .calendar {
     display: flex;
     flex-direction: column;
@@ -160,6 +161,7 @@ body {
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
 }
 
+
 .actions_container {
     display: flex;
     flex-direction: column;
@@ -168,12 +170,16 @@ body {
 }
 
 .actions_container>div {
-    display: flex;
+    display: none;
     flex-direction: column;
     width: 100%;
     gap: 16px;
     overflow: hidden;
     position: relative;
+}
+
+.displayed {
+    display: flex !important;
 }
 
 .search {
@@ -498,6 +504,7 @@ input[type=number] {
 
 .calendar-hours-display {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: flex-end;
     margin-right: 10px;
@@ -505,9 +512,20 @@ input[type=number] {
     justify-content: space-evenly;
 }
 
-.calendar-hours-display>div {
-    flex: 1;
+.indicator-hour {
+    position: absolute;
+    background-color: var(--accent-color);
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    z-index: 10;
+}
 
+.indicator-hour>p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff !important;
+    /*FIX IMPORTANT URGENT CAR PAR IMPORTANT */
 
 }
 
@@ -556,6 +574,7 @@ input[type=number] {
     gap: 16px;
     padding: 0 20px;
     border: 2px solid var(--border-color);
+    border-top: 0;
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
@@ -575,6 +594,7 @@ input[type=number] {
     color: #000000;
 }
 
+
 .avaibility-box {
     display: flex;
     flex-direction: row;
@@ -584,6 +604,8 @@ input[type=number] {
     height: 100%;
     padding: 0 20px;
     border: 2px solid var(--border-color);
+    border-top: 0;
+    border-right: 0;
     border-radius: 0 0 0 var(--border-radius);
 }
 
@@ -651,6 +673,10 @@ input[type=number] {
     height: 100vh;
     text-align: center;
 }
+
+
+
+
 
 
 @keyframes progress {
@@ -732,7 +758,7 @@ input[type=number] {
 }
 
 @media screen and (max-height: 700px) {
-    .course > p {
+    .course>p {
         display: none;
     }
 }

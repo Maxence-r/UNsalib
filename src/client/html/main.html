@@ -5,11 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" href="../assets/favicon.ico" />
-    <meta name="description"
-        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta name="description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:title" content="Salle Libre - Nantes UNIV" />
-    <meta property="og:description"
-        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:type" content="website" />
 
 
@@ -26,7 +24,7 @@
             <img src="../assets/loader.svg" />
         </div>
     </section>
-    <div  class="pannel">
+    <div class="pannel">
         <div class="campus">
             <div class="campus_selector">
                 <p>UFR SCIENCES ET TECHNIQUES</p>
@@ -44,16 +42,16 @@
         </div>
 
         <div class="actions_selector">
-            <div class="action">
+            <div data-ref="edt-finder" class="action active">
                 EDT d’une salle
             </div>
-            <div class="action active">
+            <div data-ref="room-finder" class="action">
                 Trouver une salle
             </div>
         </div>
 
         <div class="actions_container">
-            <!-- <div class="edt_finder">
+            <div class="edt-finder displayed">
                 <input class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
 
                 <div class="results-head">
@@ -64,25 +62,12 @@
                     </div>
                 </div>
                 <div class="results">
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="badges"><img src="../assets/lock.svg">
-                            <div class="ping blue"></div>
-                        </div>
-                    </div>
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="ping blue"></div>
-                    </div>
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="ping blue"></div>
-                    </div>
+
 
 
 
                 </div>
-            </div> -->
+            </div>
 
             <!-- <div class="tags">
                 <div class="tag">
@@ -95,7 +80,7 @@
                 </div>
             </div> -->
 
-            <div class="room_finder">
+            <div class="room-finder">
                 <div class="advanced-search">
                     <div class="setDate">
                         <div class="picker-container">
@@ -167,16 +152,9 @@
             <div class="calendar-hours">
                 <div class="calendar-top"></div>
                 <div class="calendar-hours-display">
-                    <p>9:00</p>
-                    <p>10:00</p>
-                    <p>11:00</p>
-                    <p>12:00</p>
-                    <p>13:00</p>
-                    <p>14:00</p>
-                    <p>15:00</p>
-                    <p>16:00</p>
-                    <p>17:00</p>
-                    <p>18:00</p>
+                    <div class="indicator-hour">
+                        <p>12H</p>
+                    </div>
                 </div>
             </div>
             <div class="calendar-columns">
@@ -186,22 +164,13 @@
                     </div>
 
                     <div class="column-content">
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box">
+                        <!-- <div class="content-box">
                             <div class="course">
                                 <h2>MATHEMATIQUES</h2>
                                 <p>N.DEPAUW</p>
                             </div>
-                        </div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
-                        <div class="content-box"></div>
+                        </div> -->
+
                     </div>
                 </div>
                 <div class="column">
@@ -236,6 +205,8 @@
         </div>
     </div>
 </body>
-<script src="../javascript/main.js"></script>
+<script src="../javascript/calendarManager.js"></script>
+<script src="../javascript/menuManager.js"></script>
+
 
 </html>

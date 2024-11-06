@@ -10,6 +10,32 @@ function formatDateValide(date) {
     return regex.test(date);
 }
 
+function obtenirDatesSemaine(numero) {
+    // Crée un objet Date pour le début de l'année
+    const startDate = new Date(new Date().getFullYear(), 0, 1);
+
+    // Calcule le jour (0: dimanche, 1: lundi, etc.) du 1er janvier de l'année
+    const startDay = startDate.getDay() || 7;
+
+    // Calcule le décalage pour arriver au lundi de la première semaine de l'année
+    const daysOffset = (numero - 1) * 7 - (startDay - 1);
+
+    // Calcule la date de début de la semaine
+    const monday = new Date(startDate);
+    monday.setDate(startDate.getDate() + daysOffset);
+
+    // Calcule la date de fin de la semaine (dimanche)
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    // Formate les dates au format ISO (YYYY-MM-DD)
+    const mondayISO = monday.toISOString().split('T')[0];
+    const sundayISO = sunday.toISOString().split('T')[0];
+
+    // Retourne les dates de début et de fin de la semaine
+    return { debut: mondayISO, fin: sundayISO };
+}
+
 router.get("/", async (req, res) => {
     try {
         let salles = await Salle.find({}).select(
@@ -94,10 +120,9 @@ router.get("/disponibles", async (req, res) => {
 
 router.get("/edt", async (req, res) => {
     const id = req.query.id;
-    const debut = req.query.debut;
-    const fin = req.query.fin;
+    const semaine = req.query.semaine;
 
-    if (!id || !debut || !fin) {
+    if (!id || !semaine) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
 
@@ -106,10 +131,12 @@ router.get("/edt", async (req, res) => {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
 
-    // Attention à encoder le + avec %2B lors de la requête
-    if (!formatDateValide(debut) || !formatDateValide(fin)) {
-        return res.status(400).send("FORMAT_DATE_INVALIDE");
+    // Vérifie que 0 < semaine <= 52
+    if (semaine > 52 || semaine <= 0) {
+        return res.status(400).send("NUMERO_SEMAINE_INVALIDE");
     }
+
+    const bornesDates = obtenirDatesSemaine(semaine);
 
     try {
         let salle = await Salle.findById(id).sort({ id: 1 });
@@ -120,8 +147,8 @@ router.get("/edt", async (req, res) => {
         let cours = await Cours.find({ 
             classe: id,
             $and: [
-                { debute_a: { $gte: debut } },
-                { fini_a: { $lte: fin } }
+                { debute_a: { $gte: bornesDates.debut } },
+                { fini_a: { $lte: bornesDates.fin } }
             ]
         }).select(
             "-__v -identifiant"

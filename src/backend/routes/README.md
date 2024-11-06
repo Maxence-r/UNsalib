@@ -67,20 +67,17 @@ Renvoie  les salles disponibles sur une période spécifiée.
 
 ### Rôle
 
-Renvoie l'emploi du temps d'une salle pendant une période donnée.
+Renvoie l'emploi du temps d'une salle pendant une semaine donnée.
 
 ### Paramètres
 
  - `id` : l'id de la salle
- - `debut` : une date au format ISO
- - `fin` : une date au format ISO
-
-> **Attention à l'encodage :** le caractère `+` devient `%2B`
+ - `semaine` : un numéro de semaine entre 1 et 52
 
 ### Exemple
 
 ```
-/salles/edt?id=672901cd13546ff7b6eeb466&debut=2024-11-04T00:00:00%2B01:00&fin=2024-11-04T18:00:00%2B01:00
+/salles/edt?id=672901cd13546ff7b6eeb466&semaine=45
 ```
 
 ### Réponse (format JSON)

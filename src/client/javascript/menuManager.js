@@ -27,7 +27,7 @@ async function fetchSalles() {
             resultDiv.className = "result";
 
             resultDiv.onclick = function () {
-                afficherSalle(salle);
+                afficherSalle(salle, 0);
             };
 
             let p = document.createElement("p");
@@ -86,4 +86,3 @@ document.querySelector(".search").addEventListener("input", (e) => {
         }
     });
 });
-

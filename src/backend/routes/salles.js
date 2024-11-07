@@ -60,19 +60,19 @@ router.get("/", async (req, res) => {
         let cours = await Cours.find({
             $and: [
                 { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }  // Le cours finit après le début de la période demandée
-            ]
+                { fini_a: { $gt: debut } }, // Le cours finit après le début de la période demandée
+            ],
         });
 
         // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
-            _id: { $nin: cours.map(c => c.classe) },
+            _id: { $nin: cours.map((c) => c.classe) },
         }).select("-__v");
 
         sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
 
         for (let i = 0; i < sallesDispos.length; i++) {
-            sallesDispos[i] = sallesDispos[i]._id;     
+            sallesDispos[i] = sallesDispos[i]._id;
         }
 
         salles = salles.map((salle) => {
@@ -179,9 +179,9 @@ router.get("/edt", async (req, res) => {
         return res.status(400).send("NUMERO_SEMAINE_INVALIDE");
     }
 
-    const bornesDates = obtenirDatesSemaine(
-        getWeeksInYear() + parseInt(increment)
-    );
+    let weeksDepuisDebut = getWeeksInYear() + parseInt(increment);
+
+    const bornesDates = obtenirDatesSemaine(weeksDepuisDebut);
 
     try {
         let salle = await Salle.findById(id).sort({ id: 1 });
@@ -207,6 +207,7 @@ router.get("/edt", async (req, res) => {
             return { id_salle: classe, ...rest };
         });
 
+        bornesDates.weeks = weeksDepuisDebut;
         res.send({ cours: cours, dates: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");

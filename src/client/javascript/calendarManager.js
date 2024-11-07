@@ -47,16 +47,37 @@ function getWeeksInYear() {
     return weeks;
 }
 
-async function afficherSalle(salle) {
+async function afficherSalle(salle, increment) {
     let response = await fetch(
-        "/salles/edt/?id=" + salle.id + "&increment=" + 0
+        "/salles/edt/?id=" + salle.id + "&increment=" + increment
     );
     let salleData = await response.json();
 
     let startDate = salleData.dates.debut.split("-")[2];
-    console.log(startDate);
+
     document.querySelectorAll(".day").forEach((el, i = 0) => {
         el.innerText = " " + (parseInt(startDate) + i);
         i++;
+    });
+
+    document.querySelector(".week-number").innerText = salleData.dates.weeks;
+
+    salleData.cours.forEach((coursData) => {
+        let course_content = document.createElement("div");
+        let course_module = document.createElement("h2");
+        let teacher_name = document.createElement("div");
+
+        course_content.classList.add("course");
+
+        let column =
+            parseInt(coursData.debute_a.split("-")[2]) - parseInt(startDate);
+
+        let row = coursData.debute_a.split("T")[1].split("+")[0];
+
+        // HEURE DE DEBUT DU COURS - HEURE DE DEBUT JOURNEE
+        // RENVOYER DUREER COURS DEPUIS SERVEUR
+        // RENVOYER VALEUR ABS HEURE DEBUT 15:30 => 15
+        // RENVOYER OVERLOW 15:30 => 50% car 30 minutes = 50% de 1h 
+        console.log(row);
     });
 }

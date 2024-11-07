@@ -1,5 +1,5 @@
-let heureDebut = 10;
-let heureFin = 14;
+let heureDebut = 8;
+let heureFin = 19;
 let dureeJournee = heureFin - heureDebut;
 const date = new Date();
 const heure = date.getHours();
@@ -23,12 +23,40 @@ for (let k = 0; k < 5; k++) {
 
 if (heure > heureDebut && heure < heureFin) {
     console.log(dureeJournee, heure, heureDebut);
-    document.querySelector(".indicator-hour").style.top = `${
+    let indicator = document.querySelector(".indicator-hour");
+    indicator.style.top = `${
         (100 * (heure - heureDebut)) / dureeJournee +
         (100 / dureeJournee) * (minutes / 60)
     }%`;
+    indicator.innerText =
+        heure +
+        ":" +
+        (minutes.toString().length == 2 ? minutes : "0" + minutes);
 }
 
-function afficherSalle(salle) {
-    console.log(salle);
+function getWeeksInYear() {
+    const currentDate = new Date();
+    const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+
+    const diffTime = currentDate - startOfYear;
+
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    const weeks = Math.ceil(diffDays / 7);
+
+    return weeks;
+}
+
+async function afficherSalle(salle) {
+    let response = await fetch(
+        "/salles/edt/?id=" + salle.id + "&increment=" + 0
+    );
+    let salleData = await response.json();
+
+    let startDate = salleData.dates.debut.split("-")[2];
+    console.log(startDate);
+    document.querySelectorAll(".day").forEach((el, i = 0) => {
+        el.innerText = " " + (parseInt(startDate) + i);
+        i++;
+    });
 }

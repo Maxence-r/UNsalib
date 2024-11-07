@@ -122,7 +122,10 @@ const recupererCours = async (groupe) => {
             await traiterCours(cours);
         }
     } catch (erreur) {
-        console.error(`Erreur pour le groupe ${groupe.identifiant}:`, erreur);
+        console.error(
+            `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,
+            erreur
+        );
     }
 };
 
@@ -139,7 +142,9 @@ export const getCourses = async () => {
 
     // Si FORCE est activé, traiter tous les groupes immédiatement
     if (process.env.FORCER_TRAITEMENT_GPES === "true") {
-        console.log("Traitement de tous les groupes ACTIVÉ - Démarrage du processus...");
+        console.log(
+            "Traitement de tous les groupes ACTIVÉ - Démarrage du processus..."
+        );
         await traiterLotGroupes(groupes);
     }
     console.log("Traitement de tous les groupes DÉSACTIVÉ");

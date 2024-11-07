@@ -1,5 +1,5 @@
-let heureDebut = 10;
-let heureFin = 14;
+let heureDebut = 8;
+let heureFin = 19;
 let dureeJournee = heureFin - heureDebut;
 const date = new Date();
 const heure = date.getHours();

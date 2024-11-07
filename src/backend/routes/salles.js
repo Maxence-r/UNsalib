@@ -50,38 +50,50 @@ function getWeeksInYear() {
     return weeks;
 }
 
+function renommerCles(objs, mapping) {
+    return objs.map(obj => {
+        let nouveauObj = {};
+        
+        // Parcourt chaque clé de l'objet initial
+        for (let [key, value] of Object.entries(obj)) {
+            // Vérifie si la clé doit être renommée
+            const nouvelleCle = mapping[key] || key; // Utilise la clé existante si pas de mapping
+            nouveauObj[nouvelleCle] = value; // Assigne la valeur à la nouvelle clé
+        }
+        
+        return nouveauObj;
+    });
+}
+
 router.get("/", async (req, res) => {
     try {
+        // Obtention de toutes les salles
         let salles = await Salle.find({}).select("-__v -identifiant");
+        salles = JSON.parse(JSON.stringify(salles));
 
+        // Obtention des salles disponibles
         const debut = new Date().toISOString();
         const fin = debut;
 
         let cours = await Cours.find({
             $and: [
-                { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }  // Le cours finit après le début de la période demandée
+                { debute_a: { $lt: fin } },
+                { fini_a: { $gt: debut } }
             ]
         });
 
-        // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map(c => c.classe) },
         }).select("-__v");
-
         sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
 
+        // Création d'un array avec les ids de toutes les salles disponibles
         for (let i = 0; i < sallesDispos.length; i++) {
             sallesDispos[i] = sallesDispos[i]._id;     
-        }
+        }      
 
-        salles = salles.map((salle) => {
-            const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
-            return { id: _id, ...rest }; // Remplace _id par id
-        });
-
-        salles = JSON.parse(JSON.stringify(salles));
-
+        // Ajout d'une clé disponible dans salles en fonction de la présence
+        // de l'id d'une salle dans sallesDispos
         for (let i = 0; i < salles.length; i++) {
             if (sallesDispos.includes(salles[i].id)) {
                 salles[i].disponible = true;
@@ -89,6 +101,9 @@ router.get("/", async (req, res) => {
                 salles[i].disponible = false;
             }
         }
+
+        // Formatage de la réponse
+        salles = renommerCles(salles, {"_id": "id"});
 
         res.json(salles);
     } catch (erreur) {
@@ -145,10 +160,9 @@ router.get("/disponibles", async (req, res) => {
             _id: { $nin: cours.map((c) => c.classe) },
         }).select("-__v");
 
-        sallesDispos = sallesDispos.map((salle) => {
-            const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
-            return { id: _id, ...rest }; // Remplace _id par id
-        });
+        sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
+        // Formatage de la réponse
+        sallesDispos = renommerCles(sallesDispos, {"_id": "id"});
 
         res.json(sallesDispos);
     } catch (erreur) {
@@ -197,15 +211,9 @@ router.get("/edt", async (req, res) => {
             ],
         }).select("-__v -identifiant");
 
-        cours = cours.map((salle) => {
-            const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
-            return { id: _id, ...rest }; // Remplace _id par id
-        });
-
-        cours = cours.map((salle) => {
-            const { classe, ...rest } = salle;
-            return { id_salle: classe, ...rest };
-        });
+        cours = JSON.parse(JSON.stringify(cours));
+        // Formatage de la réponse
+        cours = renommerCles(cours, {"_id": "id", "classe": "id_salle"});
 
         res.send({ cours: cours, dates: bornesDates });
     } catch (erreur) {

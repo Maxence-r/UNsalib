@@ -11,6 +11,7 @@ function formatDateValide(date) {
 }
 
 function obtenirDatesSemaine(numero) {
+    console.log("entering", numero);
     // Crée un objet Date pour le début de l'année
     const startDate = new Date(new Date().getFullYear(), 0, 1);
 
@@ -29,18 +30,29 @@ function obtenirDatesSemaine(numero) {
     sunday.setDate(monday.getDate() + 6);
 
     // Formate les dates au format ISO (YYYY-MM-DD)
-    const mondayISO = monday.toISOString().split('T')[0];
-    const sundayISO = sunday.toISOString().split('T')[0];
+    const mondayISO = monday.toISOString().split("T")[0];
+    const sundayISO = sunday.toISOString().split("T")[0];
 
     // Retourne les dates de début et de fin de la semaine
     return { debut: mondayISO, fin: sundayISO };
 }
 
+function getWeeksInYear() {
+    const currentDate = new Date();
+    const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+
+    const diffTime = currentDate - startOfYear;
+
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    const weeks = Math.ceil(diffDays / 7);
+    console.log(weeks);
+    return weeks;
+}
+
 router.get("/", async (req, res) => {
     try {
-        let salles = await Salle.find({}).select(
-            "-__v -identifiant"
-        );
+        let salles = await Salle.find({}).select("-__v -identifiant");
 
         const debut = new Date().toISOString();
         const fin = debut;
@@ -124,13 +136,13 @@ router.get("/disponibles", async (req, res) => {
         let cours = await Cours.find({
             $and: [
                 { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }  // Le cours finit après le début de la période demandée
-            ]
+                { fini_a: { $gt: debut } }, // Le cours finit après le début de la période demandée
+            ],
         });
 
         // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
-            _id: { $nin: cours.map(c => c.classe) },
+            _id: { $nin: cours.map((c) => c.classe) },
         }).select("-__v");
 
         sallesDispos = sallesDispos.map((salle) => {
@@ -151,9 +163,9 @@ router.get("/disponibles", async (req, res) => {
 
 router.get("/edt", async (req, res) => {
     const id = req.query.id;
-    const semaine = req.query.semaine;
+    const increment = req.query?.increment || 0;
 
-    if (!id || !semaine) {
+    if (!id || !increment) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
 
@@ -163,11 +175,13 @@ router.get("/edt", async (req, res) => {
     }
 
     // Vérifie que 0 < semaine <= 52
-    if (semaine > 52 || semaine <= 0) {
+    if (increment > 53 || increment < 0) {
         return res.status(400).send("NUMERO_SEMAINE_INVALIDE");
     }
 
-    const bornesDates = obtenirDatesSemaine(semaine);
+    const bornesDates = obtenirDatesSemaine(
+        getWeeksInYear() + parseInt(increment)
+    );
 
     try {
         let salle = await Salle.findById(id).sort({ id: 1 });
@@ -175,15 +189,13 @@ router.get("/edt", async (req, res) => {
             return res.status(404).send("SALLE_INEXISTANTE");
         }
 
-        let cours = await Cours.find({ 
+        let cours = await Cours.find({
             classe: id,
             $and: [
                 { debute_a: { $gte: bornesDates.debut } },
-                { fini_a: { $lte: bornesDates.fin } }
-            ]
-        }).select(
-            "-__v -identifiant"
-        );
+                { fini_a: { $lte: bornesDates.fin } },
+            ],
+        }).select("-__v -identifiant");
 
         cours = cours.map((salle) => {
             const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
@@ -195,7 +207,7 @@ router.get("/edt", async (req, res) => {
             return { id_salle: classe, ...rest };
         });
 
-        res.send(cours);
+        res.send({ cours: cours, dates: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(

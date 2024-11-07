@@ -24,7 +24,8 @@ Aucun
         "id": ID DE LA SALLE (CHAINE),
         "nom_salle": NOM DE LA SALLE (CHAINE),
         "places_assises": PLACES ASSISES (NOMBRE ENTIER),
-        "batiment": NOM DU BATIMENT (CHAINE)
+        "batiment": NOM DU BATIMENT (CHAINE),
+        "disponible": LA SALLE EST ACTUELLEMENT LIBRE (BOOLEEN)
     },
     ...
 ]

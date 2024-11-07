@@ -42,10 +42,41 @@ router.get("/", async (req, res) => {
             "-__v -identifiant"
         );
 
+        const debut = new Date().toISOString();
+        const fin = debut;
+
+        let cours = await Cours.find({
+            $and: [
+                { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
+                { fini_a: { $gt: debut } }  // Le cours finit après le début de la période demandée
+            ]
+        });
+
+        // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
+        let sallesDispos = await Salle.find({
+            _id: { $nin: cours.map(c => c.classe) },
+        }).select("-__v");
+
+        sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
+
+        for (let i = 0; i < sallesDispos.length; i++) {
+            sallesDispos[i] = sallesDispos[i]._id;     
+        }
+
         salles = salles.map((salle) => {
             const { _id, ...rest } = salle.toObject(); // Convertit en objet JS
             return { id: _id, ...rest }; // Remplace _id par id
         });
+
+        salles = JSON.parse(JSON.stringify(salles));
+
+        for (let i = 0; i < salles.length; i++) {
+            if (sallesDispos.includes(salles[i].id)) {
+                salles[i].disponible = true;
+            } else {
+                salles[i].disponible = false;
+            }
+        }
 
         res.json(salles);
     } catch (erreur) {

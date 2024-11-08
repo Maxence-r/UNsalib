@@ -50,26 +50,10 @@ function getWeeksInYear() {
     return weeks;
 }
 
-function renommerCles(objs, mapping) {
-    return objs.map(obj => {
-        let nouveauObj = {};
-        
-        // Parcourt chaque clé de l'objet initial
-        for (let [key, value] of Object.entries(obj)) {
-            // Vérifie si la clé doit être renommée
-            const nouvelleCle = mapping[key] || key; // Utilise la clé existante si pas de mapping
-            nouveauObj[nouvelleCle] = value; // Assigne la valeur à la nouvelle clé
-        }
-        
-        return nouveauObj;
-    });
-}
-
 router.get("/", async (req, res) => {
     try {
         // Obtention de toutes les salles
         let salles = await Salle.find({}).select("-__v -identifiant");
-        salles = JSON.parse(JSON.stringify(salles));
 
         // Obtention des salles disponibles
         const debut = new Date().toISOString();
@@ -84,13 +68,12 @@ router.get("/", async (req, res) => {
 
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
-        }).select("-__v");
-        sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
+        }).select("-__v -batiment -places_assises -nom_salle");
 
         // Création d'un array avec les ids de toutes les salles disponibles
         for (let i = 0; i < sallesDispos.length; i++) {
-            sallesDispos[i] = sallesDispos[i]._id;     
-        }      
+            sallesDispos[i] = sallesDispos[i]._id.toString();
+        }
 
         // Ajout d'une clé disponible dans salles en fonction de la présence
         // de l'id d'une salle dans sallesDispos
@@ -103,9 +86,15 @@ router.get("/", async (req, res) => {
         }
 
         // Formatage de la réponse
-        salles = renommerCles(salles, {"_id": "id"});
+        const resultatFormate = salles.map(doc => ({
+            id: doc._id, // Renomme le champ `_id` en `id`
+            nom_salle: doc.nom_salle,
+            places_assises: doc.places_assises,
+            batiment: doc.batiment,
+            disponible: doc.disponible
+        }));
 
-        res.json(salles);
+        res.json(resultatFormate);
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(
@@ -160,11 +149,15 @@ router.get("/disponibles", async (req, res) => {
             _id: { $nin: cours.map((c) => c.classe) },
         }).select("-__v");
 
-        sallesDispos = JSON.parse(JSON.stringify(sallesDispos));
         // Formatage de la réponse
-        sallesDispos = renommerCles(sallesDispos, {"_id": "id"});
+        const resultatFormate = sallesDispos.map(doc => ({
+            id: doc._id, // Renomme le champ `_id` en `id`
+            nom_salle: doc.nom_salle,
+            places_assises: doc.places_assises,
+            batiment: doc.batiment
+        }));
 
-        res.json(sallesDispos);
+        res.json(resultatFormate);
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(
@@ -211,12 +204,19 @@ router.get("/edt", async (req, res) => {
             ],
         }).select("-__v -identifiant");
 
-        cours = JSON.parse(JSON.stringify(cours));
         // Formatage de la réponse
-        cours = renommerCles(cours, {"_id": "id", "classe": "id_salle"});
+        const resultatFormate = cours.map(doc => ({
+            id_cours: doc._id,
+            id_salle: doc.classe,
+            debute_a: doc.debute_a,
+            fini_a: doc.fini_a,
+            professeur: doc.professeur,
+            module: doc.module,
+            groupe: doc.groupe
+        }));
 
         bornesDates.weeks = weeksDepuisDebut;
-        res.send({ cours: cours, dates: bornesDates });
+        res.send({ cours: resultatFormate, dates: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(

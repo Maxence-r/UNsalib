@@ -1,48 +1,41 @@
-// FONCTIONS DE TRAITEMENTS
+// FONCTIONS DE TRAITEMENT
+
 function formatDateValide(date) {
     const regex =
         /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
     return regex.test(date);
 }
 
-function obtenirDatesSemaine(numero) {
-    console.log("entering", numero);
-    // Crée un objet Date pour le début de l'année
-    const startDate = new Date(new Date().getFullYear(), 0, 1);
+function obtenirDatesSemaine(numero, increment) {
+    const dateDebut = new Date(new Date().getFullYear(), 1, 1); // date de début de l'année (1er janvier)
+    const joursDecalage = (numero + increment - 1) * 7 + 1; // décalage entre le 1er janvier et le lundi de la semaine demandée
 
-    // Calcule le jour (0: dimanche, 1: lundi, etc.) du 1er janvier de l'année
-    const startDay = startDate.getDay() || 7;
+    // Calcul de la date du lundi de la semaine demandée
+    const lundi = new Date(dateDebut);
+    console.log(lundi)
+    lundi.setDate(dateDebut.getDate() + joursDecalage);
+    
+    // Calcul de la date du dimanche de la semaine demandée
+    const dimanche = new Date(lundi);
+    dimanche.setDate(lundi.getDate() + 6);
+    // Formatage des dates
+    const lundiISO = lundi.toISOString().split("T")[0];
+    const dimancheISO = dimanche.toISOString().split("T")[0];
 
-    // Calcule le décalage pour arriver au lundi de la première semaine de l'année
-    const daysOffset = (numero - 1) * 7 - (startDay - 1);
-
-    // Calcule la date de début de la semaine
-    const monday = new Date(startDate);
-    monday.setDate(startDate.getDate() + daysOffset);
-
-    // Calcule la date de fin de la semaine (dimanche)
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-
-    // Formate les dates au format ISO (YYYY-MM-DD)
-    const mondayISO = monday.toISOString().split("T")[0];
-    const sundayISO = sunday.toISOString().split("T")[0];
-
-    // Retourne les dates de début et de fin de la semaine
-    return { debut: mondayISO, fin: sundayISO };
+    return { debut: lundiISO, fin: dimancheISO };
 }
 
-function getWeeksInYear() {
-    const currentDate = new Date();
-    const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+function obtenirNbSemaines() {
+    const dateActuelle = new Date();
+    const dateDebut = new Date(dateActuelle.getFullYear(), 0, 1); // date de début de l'année (1er janvier)
 
-    const diffTime = currentDate - startOfYear;
+    // Calcul de la différence entre la date actuelle et le début de l'année
+    const differenceDates = dateActuelle - dateDebut;
+    const diffDays = differenceDates / (1000 * 60 * 60 * 24);
+    // Calcul du nombre de semaines
+    const nbSemaines = Math.ceil(diffDays / 7);
 
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-    const weeks = Math.ceil(diffDays / 7);
-    console.log(weeks);
-    return weeks;
+    return nbSemaines;
 }
 
-export { formatDateValide, obtenirDatesSemaine, getWeeksInYear };
+export { formatDateValide, obtenirDatesSemaine, obtenirNbSemaines };

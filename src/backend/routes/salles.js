@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import {
     formatDateValide,
     obtenirDatesSemaine,
-    getWeeksInYear,
+    obtenirNbSemaines,
 } from "../utils/date.js";
 
 router.get("/", async (req, res) => {
@@ -17,11 +17,12 @@ router.get("/", async (req, res) => {
         // Obtention des salles disponibles
         const debut = new Date().toISOString();
         const fin = debut;
-
         let cours = await Cours.find({
-            $and: [{ debute_a: { $lt: fin } }, { fini_a: { $gt: debut } }],
+            $and: [
+                { debute_a: { $lt: fin } },
+                { fini_a: { $gt: debut } }
+            ]
         });
-
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
         }).select("-__v -batiment -places_assises -nom_salle");
@@ -43,11 +44,11 @@ router.get("/", async (req, res) => {
 
         // Formatage de la réponse
         const resultatFormate = salles.map((doc) => ({
-            id: doc._id, // Renomme le champ `_id` en `id`
-            nom_salle: doc.nom_salle,
+            id: doc._id,
+            nom: doc.nom_salle,
             places_assises: doc.places_assises,
             batiment: doc.batiment,
-            disponible: doc.disponible,
+            disponible: doc.disponible
         }));
 
         res.json(resultatFormate);
@@ -62,20 +63,21 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/disponibles", async (req, res) => {
+    // Récupération des paramètres de la requête
     const debut = req.query.debut;
     const fin = req.query.fin;
-
+    // Vérification de la présence de tous les paramètres nécessaires
     if (!debut || !fin) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
-
+    // Vérication de la validité des paramètres de dates
     // Attention à encoder le + avec %2B lors de la requête
     if (!formatDateValide(debut) || !formatDateValide(fin)) {
         return res.status(400).send("FORMAT_DATE_INVALIDE");
     }
 
     try {
-        // Recherche tous les cours qui débordent sur la période demandée selon 4 cas :
+        // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
         // Cours       |--------------------|
@@ -95,8 +97,8 @@ router.get("/disponibles", async (req, res) => {
         //
         let cours = await Cours.find({
             $and: [
-                { debute_a: { $lt: fin } }, // Le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }, // Le cours finit après le début de la période demandée
+                { debute_a: { $lt: fin } }, // le cours commence avant la fin de la période demandée
+                { fini_a: { $gt: debut } }, // le cours finit après le début de la période demandée
             ],
         });
 
@@ -106,11 +108,11 @@ router.get("/disponibles", async (req, res) => {
         }).select("-__v");
 
         // Formatage de la réponse
-        const resultatFormate = sallesDispos.map((doc) => ({
-            id: doc._id, // Renomme le champ `_id` en `id`
-            nom_salle: doc.nom_salle,
+        const resultatFormate = sallesDispos.map(doc => ({
+            id: doc._id,
+            nom: doc.nom_salle,
             places_assises: doc.places_assises,
-            batiment: doc.batiment,
+            batiment: doc.batiment
         }));
 
         res.json(resultatFormate);
@@ -125,33 +127,26 @@ router.get("/disponibles", async (req, res) => {
 });
 
 router.get("/edt", async (req, res) => {
+    // Récupération des paramètres de la requête
     const id = req.query.id;
-    const increment = req.query?.increment || 0;
-
-    if (!id || !increment) {
+    const increment = req.query?.increment || 0; // incrément de 0 si non précisé
+    // Vérification de la présence de tous les paramètres nécessaires
+    if (!id) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
-
-    // Valide l'ObjectId
+    // Validation de l'ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
 
-    // Vérifie que 0 < semaine <= 52
-    if (increment > 53 || increment < 0) {
-        return res.status(400).send("NUMERO_SEMAINE_INVALIDE");
-    }
-
-    let weeksDepuisDebut = getWeeksInYear() + parseInt(increment);
-
-    const bornesDates = obtenirDatesSemaine(weeksDepuisDebut);
+    // Obtention des informations sur la semaine demandée
+    const numeroSemaine = obtenirNbSemaines() + parseInt(increment);
+    const bornesDates = obtenirDatesSemaine(numeroSemaine);
+    bornesDates.numero = numeroSemaine;
+    console.log(numeroSemaine)
 
     try {
-        let salle = await Salle.findById(id).sort({ id: 1 });
-        if (!salle) {
-            return res.status(404).send("SALLE_INEXISTANTE");
-        }
-
+        // Obtention des cours selon l'id de salle et la période donnée 
         let cours = await Cours.find({
             classe: id,
             $and: [
@@ -160,19 +155,25 @@ router.get("/edt", async (req, res) => {
             ],
         }).select("-__v -identifiant");
 
+        // La DB ne renvoie aucun enregistrement :
+        // - soit l'id de la salles est erroné
+        // - soit il n'y a pas d'edt dans la DB pour la période donnée (pas encore récupéré)
+        if (cours.length == 0) {
+            return res.status(404).send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
+        }
+
         // Formatage de la réponse
-        const resultatFormate = cours.map((doc) => ({
+        const resultatFormate = cours.map(doc => ({
             id_cours: doc._id,
+            debut: doc.debute_a,
+            fin: doc.fini_a,
             id_salle: doc.classe,
-            debute_a: doc.debute_a,
-            fini_a: doc.fini_a,
             professeur: doc.professeur,
             module: doc.module,
-            groupe: doc.groupe,
+            groupe: doc.groupe
         }));
-
-        bornesDates.weeks = weeksDepuisDebut;
-        res.send({ cours: resultatFormate, dates: bornesDates });
+        
+        res.send({ cours: resultatFormate, infos_semaine: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(

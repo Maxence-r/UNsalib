@@ -49,18 +49,18 @@ function getWeeksInYear() {
 
 async function afficherSalle(salle, increment) {
     let response = await fetch(
-        "/salles/edt/?id=" + salle.id + "&increment=" + increment
+        "/api/salles/edt/?id=" + salle.id + "&increment=" + increment
     );
     let salleData = await response.json();
 
-    let startDate = salleData.dates.debut.split("-")[2];
+    let startDate = salleData.infos_semaine.debut.split("-")[2];
 
     document.querySelectorAll(".day").forEach((el, i = 0) => {
         el.innerText = " " + (parseInt(startDate) + i);
         i++;
     });
 
-    document.querySelector(".week-number").innerText = salleData.dates.weeks;
+    document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
 
     salleData.cours.forEach((coursData) => {
         let course_content = document.createElement("div");
@@ -70,9 +70,9 @@ async function afficherSalle(salle, increment) {
         course_content.classList.add("course");
 
         let column =
-            parseInt(coursData.debute_a.split("-")[2]) - parseInt(startDate);
+            parseInt(coursData.debut.split("-")[2]) - parseInt(startDate);
 
-        let row = coursData.debute_a.split("T")[1].split("+")[0];
+        let row = coursData.debut.split("T")[1].split("+")[0];
 
         // HEURE DE DEBUT DU COURS - HEURE DE DEBUT JOURNEE
         // RENVOYER DUREER COURS DEPUIS SERVEUR

@@ -16,7 +16,7 @@ document.querySelectorAll(".action").forEach((el) => {
 
 async function fetchSalles() {
     try {
-        let response = await fetch("/salles");
+        let response = await fetch("/api/salles");
         let salles = await response.json();
 
         salles.forEach((salle) => {

@@ -16,7 +16,7 @@ app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
 // ROUTES
-app.use("/salles", salles);
+app.use("/api/salles", salles);
 app.get("/", (req, res) => {
     res.sendFile("src/client/html/main.html", { root: "." });
 });

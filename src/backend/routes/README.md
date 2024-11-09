@@ -1,6 +1,6 @@
 # Endpoints
 
-## `/salles`
+## `/api/salles`
 
 ### Rôle
 
@@ -13,7 +13,7 @@ Aucun
 ### Exemple
 
 ```
-/salles
+/api/salles
 ```
 
 ### Réponse (format JSON)
@@ -31,7 +31,7 @@ Aucun
 ]
 ```
 
-## `/salles/disponibles`
+## `/api/salles/disponibles`
 
 ### Rôle
 
@@ -47,7 +47,7 @@ Renvoie  les salles disponibles sur une période spécifiée.
 ### Exemple
 
 ```
-/salles/disponibles?debut=2024-11-04T08:00:00%2B01:00&fin=2024-11-04T09:00:00%2B01:00
+/api/salles/disponibles?debut=2024-11-04T08:00:00%2B01:00&fin=2024-11-04T09:00:00%2B01:00
 ```
 
 ### Réponse (format JSON)
@@ -64,7 +64,7 @@ Renvoie  les salles disponibles sur une période spécifiée.
 ]
 ```
 
-## `/salles/edt`
+## `/api/salles/edt`
 
 ### Rôle
 
@@ -78,11 +78,11 @@ Renvoie l'emploi du temps d'une salle pendant une semaine donnée (par défaut, 
 ### Exemple
 
 ```
-/salles/edt?id=672901cd13546ff7b6eeb466&increment=2
+/api/salles/edt?id=672901cd13546ff7b6eeb466&increment=2
 ```
 
 ```
-/salles/edt?id=672901cd13546ff7b6eeb466
+/api/salles/edt?id=672901cd13546ff7b6eeb466
 ```
 > La requête précédente renvoie l'emploi du temps de la salle pour la semaine actuelle
 

@@ -36,4 +36,13 @@ function obtenirNbSemaines() {
     return nbSemaines;
 }
 
-export { formatDateValide, obtenirDatesSemaine, obtenirNbSemaines };
+function obtenirOverflowMinutes(date) {
+    const minutes = date.getMinutes();
+    if (minutes <= 30) {
+        return minutes;
+    } else if (minutes > 30) {
+        return 0 - 60 + minutes;
+    }
+}
+
+export { formatDateValide, obtenirDatesSemaine, obtenirNbSemaines, obtenirOverflowMinutes };

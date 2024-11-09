@@ -7,6 +7,7 @@ import {
     formatDateValide,
     obtenirDatesSemaine,
     obtenirNbSemaines,
+    obtenirOverflowMinutes
 } from "../utils/date.js";
 
 router.get("/", async (req, res) => {
@@ -165,16 +166,24 @@ router.get("/edt", async (req, res) => {
             return res.status(404).send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
         }
 
+        // heure début, durée en pourcentage, overflow (positif ou négatif)
+
         // Formatage de la réponse
-        const resultatFormate = cours.map(doc => ({
-            id_cours: doc._id,
-            debut: doc.debute_a,
-            fin: doc.fini_a,
-            id_salle: doc.classe,
-            professeur: doc.professeur,
-            module: doc.module,
-            groupe: doc.groupe
-        }));
+        const resultatFormate = cours.map((doc) => {
+            const duree = Math.round((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf())/1000/60/60*100);
+            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a))*100/60;
+            return {
+                id_cours: doc._id,
+                debut: doc.debute_a,
+                fin: doc.fini_a,
+                duree: duree,
+                overflow: overflow,
+                id_salle: doc.classe,
+                professeur: doc.professeur,
+                module: doc.module,
+                groupe: doc.groupe
+            }
+        });
         
         res.send({ cours: resultatFormate, infos_semaine: bornesDates });
     } catch (erreur) {

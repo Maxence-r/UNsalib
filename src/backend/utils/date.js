@@ -6,15 +6,13 @@ function formatDateValide(date) {
     return regex.test(date);
 }
 
-function obtenirDatesSemaine(numero, increment) {
-    const dateDebut = new Date(new Date().getFullYear(), 1, 1); // date de début de l'année (1er janvier)
-    const joursDecalage = (numero + increment - 1) * 7 + 1; // décalage entre le 1er janvier et le lundi de la semaine demandée
+function obtenirDatesSemaine(numero) {
+    const dateDebut = new Date(new Date().getFullYear(), 0, 2); // date de début de l'année (1er janvier)
+    const joursDecalage = (numero - 1) * 7 + 1; // décalage entre le 1er janvier et le lundi de la semaine demandée
 
     // Calcul de la date du lundi de la semaine demandée
     const lundi = new Date(dateDebut);
-    console.log(lundi)
     lundi.setDate(dateDebut.getDate() + joursDecalage);
-    
     // Calcul de la date du dimanche de la semaine demandée
     const dimanche = new Date(lundi);
     dimanche.setDate(lundi.getDate() + 6);

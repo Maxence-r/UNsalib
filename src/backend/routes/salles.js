@@ -138,12 +138,15 @@ router.get("/edt", async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
+    // Validation de l'incrément : 0 <= numero semaine actuelle + increment <= 52
+    const numeroSemaine = obtenirNbSemaines() + parseInt(increment);
+    if (numeroSemaine < 0 || numeroSemaine > 52) {
+        return res.status(400).send("INCREMENT_TROP_ELEVE");
+    }
 
     // Obtention des informations sur la semaine demandée
-    const numeroSemaine = obtenirNbSemaines() + parseInt(increment);
     const bornesDates = obtenirDatesSemaine(numeroSemaine);
     bornesDates.numero = numeroSemaine;
-    console.log(numeroSemaine)
 
     try {
         // Obtention des cours selon l'id de salle et la période donnée 

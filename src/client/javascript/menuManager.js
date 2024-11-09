@@ -31,7 +31,7 @@ async function fetchSalles() {
             };
 
             let p = document.createElement("p");
-            p.textContent = `${salle.nom_salle.toUpperCase()} `;
+            p.textContent = `${salle.nom.toUpperCase()} `;
 
             let span = document.createElement("span");
             span.className = "bat";

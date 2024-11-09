@@ -38,9 +38,9 @@ function obtenirNbSemaines() {
 
 function obtenirOverflowMinutes(date) {
     const minutes = date.getMinutes();
-    if (minutes <= 30) {
+    if (minutes <= 30) { // les minutes sont plus proches de l'heure précédente
         return minutes;
-    } else if (minutes > 30) {
+    } else if (minutes > 30) { // les minutes sont plus proches de l'heure suivante
         return 0 - 60 + minutes;
     }
 }

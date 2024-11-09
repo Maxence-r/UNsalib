@@ -166,11 +166,11 @@ router.get("/edt", async (req, res) => {
             return res.status(404).send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
         }
 
-        // heure début, durée en pourcentage, overflow (positif ou négatif)
-
         // Formatage de la réponse
         const resultatFormate = cours.map((doc) => {
+            // Obtention de la durée en ms, conversion en h et ensuite en pourcentage
             const duree = Math.round((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf())/1000/60/60*100);
+            // Obtention de l'overflow et conversion en pourcentage
             const overflow = obtenirOverflowMinutes(new Date(doc.debute_a))*100/60;
             return {
                 id_cours: doc._id,

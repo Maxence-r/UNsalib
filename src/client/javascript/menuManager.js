@@ -44,7 +44,7 @@ async function fetchSalles() {
             img.src = "../assets/lock.svg"; */
 
             let pingDiv = document.createElement("div");
-            pingDiv.className = "ping blue";
+            pingDiv.className = salle.disponible ? "ping blue" : "ping red";
 
             // Assembler les éléments
             p.appendChild(span);

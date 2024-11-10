@@ -4,6 +4,7 @@ let dureeJournee = heureFin - heureDebut;
 const date = new Date();
 const heure = date.getHours();
 const minutes = date.getMinutes();
+const columns = document.querySelectorAll(".column-content");
 
 for (let i = 1; i < dureeJournee; i++) {
     let heureEl = document.createElement("p");
@@ -22,7 +23,6 @@ for (let k = 0; k < 5; k++) {
 }
 
 if (heure > heureDebut && heure < heureFin) {
-    console.log(dureeJournee, heure, heureDebut);
     let indicator = document.querySelector(".indicator-hour");
     indicator.style.top = `${
         (100 * (heure - heureDebut)) / dureeJournee +
@@ -48,6 +48,9 @@ function getWeeksInYear() {
 }
 
 async function afficherSalle(salle, increment) {
+    document.querySelectorAll(".course").forEach((el) => {
+        el.remove();
+    });
     let response = await fetch(
         "/api/salles/edt/?id=" + salle.id + "&increment=" + increment
     );
@@ -60,24 +63,28 @@ async function afficherSalle(salle, increment) {
         i++;
     });
 
-    document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
+    document.querySelector(".week-number").innerText =
+        salleData.infos_semaine.numero;
 
     salleData.cours.forEach((coursData) => {
+        let courseStart = new Date(coursData.debut);
+        let courseEnd = new Date(coursData.end)
         let course_content = document.createElement("div");
         let course_module = document.createElement("h2");
         let teacher_name = document.createElement("div");
 
+        course_content.style.transform =
+            "translateY(" + (courseStart.getMinutes() * 100) / 60 + "%)";
+
+        /* course_content.style.height = */
+
         course_content.classList.add("course");
 
-        let column =
-            parseInt(coursData.debut.split("-")[2]) - parseInt(startDate);
+        let column = courseStart.getDay() - 1;
+        let row = courseStart.getHours() - heureDebut;
 
-        let row = coursData.debut.split("T")[1].split("+")[0];
-
-        // HEURE DE DEBUT DU COURS - HEURE DE DEBUT JOURNEE
-        // RENVOYER DUREER COURS DEPUIS SERVEUR
-        // RENVOYER VALEUR ABS HEURE DEBUT 15:30 => 15
-        // RENVOYER OVERLOW 15:30 => 50% car 30 minutes = 50% de 1h 
-        console.log(row);
+        columns[column]
+            .querySelectorAll(".content-box")
+            [row].appendChild(course_content);
     });
 }

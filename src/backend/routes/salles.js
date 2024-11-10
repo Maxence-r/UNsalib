@@ -7,7 +7,7 @@ import {
     formatDateValide,
     obtenirDatesSemaine,
     obtenirNbSemaines,
-    obtenirOverflowMinutes
+    obtenirOverflowMinutes,
 } from "../utils/date.js";
 
 router.get("/", async (req, res) => {
@@ -19,10 +19,7 @@ router.get("/", async (req, res) => {
         const debut = new Date().toISOString();
         const fin = debut;
         let cours = await Cours.find({
-            $and: [
-                { debute_a: { $lt: fin } },
-                { fini_a: { $gt: debut } }
-            ]
+            $and: [{ debute_a: { $lt: fin } }, { fini_a: { $gt: debut } }],
         });
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
@@ -49,7 +46,7 @@ router.get("/", async (req, res) => {
             nom: doc.nom_salle,
             places_assises: doc.places_assises,
             batiment: doc.batiment,
-            disponible: doc.disponible
+            disponible: doc.disponible,
         }));
 
         res.json(resultatFormate);
@@ -109,11 +106,11 @@ router.get("/disponibles", async (req, res) => {
         }).select("-__v");
 
         // Formatage de la réponse
-        const resultatFormate = sallesDispos.map(doc => ({
+        const resultatFormate = sallesDispos.map((doc) => ({
             id: doc._id,
             nom: doc.nom_salle,
             places_assises: doc.places_assises,
-            batiment: doc.batiment
+            batiment: doc.batiment,
         }));
 
         res.json(resultatFormate);
@@ -147,10 +144,11 @@ router.get("/edt", async (req, res) => {
 
     // Obtention des informations sur la semaine demandée
     const bornesDates = obtenirDatesSemaine(numeroSemaine);
+    console.log(bornesDates);
     bornesDates.numero = numeroSemaine;
 
     try {
-        // Obtention des cours selon l'id de salle et la période donnée 
+        // Obtention des cours selon l'id de salle et la période donnée
         let cours = await Cours.find({
             classe: id,
             $and: [
@@ -163,15 +161,25 @@ router.get("/edt", async (req, res) => {
         // - soit l'id de la salles est erroné
         // - soit il n'y a pas d'edt dans la DB pour la période donnée (pas encore récupéré)
         if (cours.length == 0) {
-            return res.status(404).send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
+            return res
+                .status(404)
+                .send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
         }
 
         // Formatage de la réponse
         const resultatFormate = cours.map((doc) => {
             // Obtention de la durée en ms, conversion en h et ensuite en pourcentage
-            const duree = Math.round((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf())/1000/60/60*100);
+            const duree = Math.round(
+                ((new Date(doc.fini_a).valueOf() -
+                    new Date(doc.debute_a).valueOf()) /
+                    1000 /
+                    60 /
+                    60) *
+                    100
+            );
             // Obtention de l'overflow et conversion en pourcentage
-            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a))*100/60;
+            const overflow =
+                (obtenirOverflowMinutes(new Date(doc.debute_a)) * 100) / 60;
             return {
                 id_cours: doc._id,
                 debut: doc.debute_a,
@@ -181,10 +189,10 @@ router.get("/edt", async (req, res) => {
                 id_salle: doc.classe,
                 professeur: doc.professeur,
                 module: doc.module,
-                groupe: doc.groupe
-            }
+                groupe: doc.groupe,
+            };
         });
-        
+
         res.send({ cours: resultatFormate, infos_semaine: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");

@@ -32,7 +32,7 @@ body {
     display: flex;
     flex-direction: column;
 
-    padding: 14px;
+    padding: 14px 14px 0 14px;
     width: 22%;
     min-width: 350px;
     gap: 24px;

@@ -7,18 +7,23 @@ function formatDateValide(date) {
 }
 
 function obtenirDatesSemaine(numero) {
-    const dateDebut = new Date(new Date().getFullYear(), 0, 2); // date de début de l'année (1er janvier)
-    const joursDecalage = (numero - 1) * 7 + 1; // décalage entre le 1er janvier et le lundi de la semaine demandée
+    const annee = new Date().getFullYear();
+    const dateJanvierQuatre = new Date(annee, 0, 4);
+    const jourSemaine = dateJanvierQuatre.getDay() || 7; // Jour de la semaine (1-7)
+    const premierLundi = new Date(dateJanvierQuatre);
+    premierLundi.setDate(dateJanvierQuatre.getDate() - (jourSemaine - 1));
 
-    // Calcul de la date du lundi de la semaine demandée
-    const lundi = new Date(dateDebut);
-    lundi.setDate(dateDebut.getDate() + joursDecalage);
-    // Calcul de la date du dimanche de la semaine demandée
+    // Calcul du lundi de la semaine demandée
+    const lundi = new Date(premierLundi);
+    lundi.setDate(premierLundi.getDate() + (numero - 1) * 7);
+
+    // Calcul du dimanche de la semaine demandée
     const dimanche = new Date(lundi);
     dimanche.setDate(lundi.getDate() + 6);
-    // Formatage des dates
-    const lundiISO = lundi.toISOString().split("T")[0];
-    const dimancheISO = dimanche.toISOString().split("T")[0];
+
+    // Formatage des dates au format ISO (YYYY-MM-DD)
+    const lundiISO = lundi.toISOString().split('T')[0];
+    const dimancheISO = dimanche.toISOString().split('T')[0];
 
     return { debut: lundiISO, fin: dimancheISO };
 }
@@ -41,4 +46,9 @@ function obtenirOverflowMinutes(date) {
     return minutes <= 30 ? minutes : 0 - 60 + minutes;
 }
 
-export { formatDateValide, obtenirDatesSemaine, obtenirNbSemaines, obtenirOverflowMinutes };
+export {
+    formatDateValide,
+    obtenirDatesSemaine,
+    obtenirNbSemaines,
+    obtenirOverflowMinutes,
+};

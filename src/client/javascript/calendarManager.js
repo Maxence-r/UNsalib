@@ -68,7 +68,7 @@ async function afficherSalle(salle, increment) {
 
     salleData.cours.forEach((coursData) => {
         let courseStart = new Date(coursData.debut);
-        let courseEnd = new Date(coursData.end)
+        let courseEnd = new Date(coursData.end);
         let course_content = document.createElement("div");
         let course_module = document.createElement("h2");
         let teacher_name = document.createElement("div");
@@ -76,7 +76,7 @@ async function afficherSalle(salle, increment) {
         course_content.style.transform =
             "translateY(" + (courseStart.getMinutes() * 100) / 60 + "%)";
 
-        /* course_content.style.height = */
+        course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 
         course_content.classList.add("course");
 

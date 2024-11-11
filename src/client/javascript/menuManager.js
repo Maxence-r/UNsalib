@@ -68,6 +68,7 @@ document.querySelector(".search").addEventListener("input", (e) => {
         .normalize("NFD")
         .replace(/[\u0300-\u036f\s]/g, "");
     let results = document.querySelectorAll(".result");
+    let resultsNumber = 0;
     results.forEach((result) => {
         let salle = result
             .querySelector("p")
@@ -82,7 +83,9 @@ document.querySelector(".search").addEventListener("input", (e) => {
         if (!salle.includes(search) && !batiment.includes(search)) {
             result.style.display = "none";
         } else {
+            resultsNumber++;
             result.style.display = "flex";
         }
     });
+    document.querySelector(".edt-finder p.no-results").style.display = resultsNumber > 0 ? "none" : "block";
 });

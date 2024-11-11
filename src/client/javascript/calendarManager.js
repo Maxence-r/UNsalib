@@ -73,8 +73,7 @@ async function afficherSalle(salle, increment) {
         let course_module = document.createElement("h2");
         let teacher_name = document.createElement("div");
 
-        course_content.style.transform =
-            "translateY(" + (courseStart.getMinutes() * 100) / 60 + "%)";
+        course_content.style.transform = `translateY(${coursData.overflow}%)`;
 
         course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 

@@ -241,7 +241,11 @@ body {
     height: 100%;
     overflow: auto;
     gap: 12px;
+}
 
+p.no-results {
+    display: none;
+    text-align: center;
 }
 
 .tags {

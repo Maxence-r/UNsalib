@@ -44,6 +44,7 @@ router.get("/", async (req, res) => {
         const resultatFormate = salles.map((doc) => ({
             id: doc._id,
             nom: doc.nom_salle,
+            alias: doc.alias,
             places_assises: doc.places_assises,
             batiment: doc.batiment,
             disponible: doc.disponible,
@@ -169,14 +170,14 @@ router.get("/edt", async (req, res) => {
         // Formatage de la réponse
         const resultatFormate = cours.map((doc) => {
             // Obtention de la durée en ms, conversion en h et ensuite en pourcentage
-            const duree = Math.round(
+            const duree = 
                 ((new Date(doc.fini_a).valueOf() -
                     new Date(doc.debute_a).valueOf()) /
                     1000 /
                     60 /
                     60) *
                     100
-            );
+            ;
             // Obtention de l'overflow et conversion en pourcentage
             const overflow =
                 (obtenirOverflowMinutes(new Date(doc.debute_a)) * 100) / 60;

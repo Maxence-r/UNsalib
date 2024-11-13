@@ -14,6 +14,20 @@ document.querySelectorAll(".action").forEach((el) => {
     });
 });
 
+
+
+function toggleNav() {
+    let nav = document.querySelector(".pannel");
+    if (nav.classList.contains("active")) {
+        nav.classList.remove("active");
+
+    } else {
+        nav.classList.add("active");
+    
+    }
+}
+
+
 async function fetchSalles() {
     try {
         let response = await fetch("/api/salles");
@@ -31,7 +45,7 @@ async function fetchSalles() {
             };
 
             let p = document.createElement("p");
-            p.textContent = `${salle.nom.toUpperCase()} `;
+            p.textContent = salle?.alias ?  `${salle.alias.toUpperCase()} `: `${salle.nom.toUpperCase()} `;
 
             let span = document.createElement("span");
             span.className = "bat";

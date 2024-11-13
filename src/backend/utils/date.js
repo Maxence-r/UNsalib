@@ -21,13 +21,19 @@ function obtenirDatesSemaine(numero) {
     const dimanche = new Date(lundi);
     dimanche.setDate(lundi.getDate() + 6);
 
-    // Formatage des dates au format ISO (YYYY-MM-DD)
-    const lundiISO = lundi.toISOString().split('T')[0];
-    const dimancheISO = dimanche.toISOString().split('T')[0];
+    // Formatage des dates au format YYYY-MM-DD sans problèmes de fuseau horaire
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+
+    const lundiISO = formatDate(lundi);
+    const dimancheISO = formatDate(dimanche);
 
     return { debut: lundiISO, fin: dimancheISO };
 }
-
 function obtenirNbSemaines() {
     const dateActuelle = new Date();
     const dateDebut = new Date(dateActuelle.getFullYear(), 0, 1); // date de début de l'année (1er janvier)

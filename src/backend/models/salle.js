@@ -5,6 +5,10 @@ const SalleSchema = Schema({
         type: String,
         required: true
     },
+    alias: {
+        type: String,
+        required: false
+    },
     places_assises: {
         type: Number,
         required: false

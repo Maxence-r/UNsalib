@@ -21,9 +21,8 @@ for (let k = 0; k < 5; k++) {
             [k].appendChild(courseCase);
     }
 }
-
+let indicator = document.querySelector(".indicator-hour");
 if (heure > heureDebut && heure < heureFin) {
-    let indicator = document.querySelector(".indicator-hour");
     indicator.style.top = `${
         (100 * (heure - heureDebut)) / dureeJournee +
         (100 / dureeJournee) * (minutes / 60)
@@ -32,6 +31,8 @@ if (heure > heureDebut && heure < heureFin) {
         heure +
         ":" +
         (minutes.toString().length == 2 ? minutes : "0" + minutes);
+} else {
+    indicator.style.display = "none";
 }
 
 function getWeeksInYear() {
@@ -48,6 +49,8 @@ function getWeeksInYear() {
 }
 
 async function afficherSalle(salle, increment) {
+    toggleNav();
+    document.getElementById('room-name').innerText = salle?.alias ? salle.alias : salle.nom;
     document.querySelectorAll(".course").forEach((el) => {
         el.remove();
     });
@@ -73,7 +76,9 @@ async function afficherSalle(salle, increment) {
         let course_module = document.createElement("h2");
         let teacher_name = document.createElement("div");
 
-        course_content.style.transform = `translateY(${coursData.overflow}%)`;
+        course_module.innerText = coursData.debut + " - " + coursData.fin;
+        course_content.appendChild(course_module);
+        course_content.style.top= `${coursData.overflow}%`;
 
         course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 

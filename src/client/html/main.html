@@ -31,7 +31,7 @@
                 <div class="beta">BETA</div>
             </div>
             <div class="campus_feed">
-                <img src="../assets/campus.png" alt="placeholder" />
+                <img src="../assets/campus.webp" alt="placeholder" />
 
                 <div class="overlay"></div>
                 <div class="campus_feed_content">
@@ -62,6 +62,7 @@
                     </div>
                 </div>
                 <div class="results">
+                   
                     <p class="no-results">Aucune salle n'a été trouvée.</p>
                 </div>
             </div>
@@ -155,6 +156,7 @@
                 </div>
             </div>
             <div class="calendar-columns">
+
                 <div class="column">
                     <div class="calendar-top">
                         <p>Lundi<span class="day"> --</span></p>
@@ -200,7 +202,17 @@
                 </div>
             </div>
         </div>
+        <div class="menu-mobile">
+            <div class="current-room">
+                <p>Salle actuelle:</p>
+                <h2 id="room-name">---</h2>
+            </div>
+            <button onclick="toggleNav()" class="menu-button">
+                MENU
+            </button>
+        </div>
     </div>
+    
 </body>
 <script src="../javascript/calendarManager.js"></script>
 <script src="../javascript/menuManager.js"></script>

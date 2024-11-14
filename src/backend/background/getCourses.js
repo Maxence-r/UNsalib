@@ -17,6 +17,7 @@ const SALLES_EXCLUES = [
     "Salle Manquante",
     "Bias",
     "1B-05",
+    "Erdre Salle"
 ];
 const BATIMENTS_EXCLUS = ["Tertre"];
 

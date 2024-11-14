@@ -71,6 +71,12 @@ async function afficherSalle(salle, increment) {
 
     salleData.cours.forEach((coursData) => {
         let courseStart = new Date(coursData.debut);
+
+        let column = courseStart.getDay() - 1;
+        if (column > 4) {
+            return;
+        }
+        
         let courseEnd = new Date(coursData.end);
         let course_content = document.createElement("div");
         let course_module = document.createElement("h2");
@@ -83,8 +89,7 @@ async function afficherSalle(salle, increment) {
         course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 
         course_content.classList.add("course");
-
-        let column = courseStart.getDay() - 1;
+        
         let row = courseStart.getHours() - heureDebut;
 
         columns[column]

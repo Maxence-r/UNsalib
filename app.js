@@ -7,6 +7,7 @@ import getGroups from "./src/backend/background/getGroups.js";
 import path from "path";
 import salles from "./src/backend/routes/salles.js";
 import admin from "./src/backend/routes/admin.js";
+import appInfos from "./src/backend/routes/app.js";
 
 // SECURITE SERVER
 app.disable("x-powered-by");
@@ -19,6 +20,7 @@ app.use(serveStatic("./src/client"));
 // ROUTES
 app.use("/api/salles", salles);
 app.use("/api/admin", admin);
+app.use("/api/app", appInfos);
 app.get("/", (req, res) => {
     res.sendFile("src/client/html/main.html", { root: "." });
 });

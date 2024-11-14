@@ -16,7 +16,9 @@ router.get("/", async (req, res) => {
         let salles = await Salle.find({}).select("-__v -identifiant");
 
         // Obtention des salles disponibles
-        const debut = new Date().toISOString();
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+        const debut = now.toISOString();
         const fin = debut;
         let cours = await Cours.find({
             $and: [{ debute_a: { $lt: fin } }, { fini_a: { $gt: debut } }],
@@ -170,14 +172,13 @@ router.get("/edt", async (req, res) => {
         // Formatage de la réponse
         const resultatFormate = cours.map((doc) => {
             // Obtention de la durée en ms, conversion en h et ensuite en pourcentage
-            const duree = 
+            const duree =
                 ((new Date(doc.fini_a).valueOf() -
                     new Date(doc.debute_a).valueOf()) /
                     1000 /
                     60 /
                     60) *
-                    100
-            ;
+                100;
             // Obtention de l'overflow et conversion en pourcentage
             const overflow =
                 (obtenirOverflowMinutes(new Date(doc.debute_a)) * 100) / 60;

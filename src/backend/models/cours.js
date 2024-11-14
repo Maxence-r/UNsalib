@@ -25,6 +25,11 @@ const CoursSchema = Schema({
         type: Array,
         required: true,
     },
+    couleur: {
+        type: String,
+        required: true,
+        default: "#FF7675"
+    },
     identifiant: {
         type: String,
         required: true,

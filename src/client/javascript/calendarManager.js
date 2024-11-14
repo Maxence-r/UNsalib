@@ -98,6 +98,7 @@ async function afficherSalle(salle, increment) {
         course_module.innerText = coursData.debut + " - " + coursData.fin;
         course_content.appendChild(course_module);
         course_content.style.top = `${coursData.overflow}%`;
+        course_content.style.backgroundColor = coursData.couleur;
 
         course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 

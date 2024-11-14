@@ -27,7 +27,6 @@ function toggleNav() {
     }
 }
 
-
 async function fetchSalles() {
     try {
         let response = await fetch("/api/salles");
@@ -76,6 +75,17 @@ async function fetchSalles() {
 }
 
 fetchSalles();
+document.querySelectorAll(".week-switcher img").forEach((el) => {
+    if (el.getAttribute('alt') == "next") {
+        el.addEventListener("click", () => {
+            console.log("next")
+        });
+    } else {
+        el.addEventListener("click", () => {
+            console.log("previous")
+        });
+    }
+});
 document.querySelector(".search").addEventListener("input", (e) => {
     let search = e.target.value
         .toLowerCase()

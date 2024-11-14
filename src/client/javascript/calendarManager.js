@@ -59,7 +59,7 @@ async function afficherSalle(salle, delta) {
 
     document.getElementById("room-name").innerText = salle?.alias || salle.nom;
     document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
-    document.querySelectorAll(".course").forEach((el) => el.remove());
+    
 
     const response = await fetch(
         `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`
@@ -69,6 +69,8 @@ async function afficherSalle(salle, delta) {
         console.log("Error fetching data");
         return;
     }
+
+    document.querySelectorAll(".course").forEach((el) => el.remove());
 
     const salleData = await response.json();
 
@@ -101,7 +103,7 @@ async function afficherSalle(salle, delta) {
         course_content.appendChild(course_prof);
 
         course_content.style.top = `${coursData.overflow}%`;
-        console.log(`calc(${coursData.duree}% + ${(coursData.overflow > 100 ? Math.ceil((coursData.overflow) / 100) * 2 : 0) - 16}px)`)
+       
         course_content.style.height = `calc(${coursData.duree}% + ${(coursData.duree > 100 ? Math.floor((coursData.duree) / 100) * 2 : 0) - 16}px)`;
         course_content.classList.add("course");
 

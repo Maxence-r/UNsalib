@@ -21,6 +21,11 @@ const SalleSchema = Schema({
         type: Boolean,
         required: false,
     },
+    caracteristiques: {
+        type: Array,
+        required: true,
+        default: []
+    }
 });
 
 const Salle = model("Salle", SalleSchema);

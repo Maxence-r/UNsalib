@@ -52,6 +52,7 @@ router.get("/", async (req, res) => {
             places_assises: doc.places_assises,
             batiment: doc.batiment,
             disponible: doc.disponible,
+            caracteristiques: doc.caracteristiques
         }));
 
         res.json(resultatFormate);

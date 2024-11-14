@@ -23,28 +23,19 @@ for (let k = 0; k < 5; k++) {
 }
 
 let indicator = document.querySelector(".indicator-hour");
-let indicatorHour = document.createElement("div");
-indicatorHour.classList.add("hourBar");
-indicatorHour.style.display = "none";
-indicator.style.display = "none";
-setInterval(() => {
-    let dateActuelle = new Date();
-    let jourActuel = dateActuelle.getDay();
-    let heureActuelle = dateActuelle.getHours();
-    let minuteActuelle = dateActuelle.getMinutes();
-    if (heureActuelle > heureDebut && heureActuelle < heureFin) {
-        columns[jourActuel-1].appendChild(indicatorHour);
-        indicatorHour.style.display = "block";
-        indicator.style.display = "flex";
-        let top = (100 * (heureActuelle - heureDebut)) / dureeJournee + (100 / dureeJournee) * (minuteActuelle / 60);
-        indicator.style.top = `${top}%`;
-        indicatorHour.style.top = `${top}%`;
-        indicator.innerText = heureActuelle + ":" + (minuteActuelle.toString().length == 2 ? minuteActuelle : "0" + minuteActuelle);
-    } else {
-        indicator.style.display = "none";
-        indicatorHour.style.display = "none";
-    }
-}, 1000);
+if (heure > heureDebut && heure < heureFin) {
+    indicator.style.top = `${
+        (100 * (heure - heureDebut)) / dureeJournee +
+        (100 / dureeJournee) * (minutes / 60)
+    }%`;
+    indicator.innerText =
+        heure +
+        ":" +
+        (minutes.toString().length == 2 ? minutes : "0" + minutes);
+} else {
+    indicator.style.display = "none";
+}
+
 
 function getWeeksInYear() {
     const currentDate = new Date();
@@ -59,55 +50,73 @@ function getWeeksInYear() {
     return weeks;
 }
 
-async function afficherSalle(salle, increment) {
-    toggleNav();
-    document.getElementById("room-name").innerText = salle?.alias
-        ? salle.alias
-        : salle.nom;
-    document.querySelectorAll(".course").forEach((el) => {
-        el.remove();
-    });
-    let response = await fetch(
-        "/api/salles/edt/?id=" + salle.id + "&increment=" + increment
-    );
-    let salleData = await response.json();
 
-    let startDate = salleData.infos_semaine.debut.split("-")[2];
+let increment = 0;
+let currentSalle = null;
+
+async function afficherSalle(salle, delta) {
+    const newIncrement = increment + delta;
+
+    document.getElementById("room-name").innerText = salle?.alias || salle.nom;
+    document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
+    document.querySelectorAll(".course").forEach((el) => el.remove());
+
+    const response = await fetch(
+        `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`
+    );
+
+    if (!response.ok) {
+        console.log("Error fetching data");
+        return;
+    }
+
+    const salleData = await response.json();
+
+    // Update increment and currentSalle only if the request succeeds
+    increment = newIncrement;
+    currentSalle = salle;
+
+    const startDate = salleData.infos_semaine.debut.split("-")[2];
 
     document.querySelectorAll(".day").forEach((el, i = 0) => {
         el.innerText = " " + (parseInt(startDate) + i);
         i++;
     });
 
-    document.querySelector(".week-number").innerText =
-        salleData.infos_semaine.numero;
+    document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
 
     salleData.cours.forEach((coursData) => {
-        let courseStart = new Date(coursData.debut);
+        const courseStart = new Date(coursData.debut);
+        const column = courseStart.getDay() - 1;
+        if (column > 4) return;
 
-        let column = courseStart.getDay() - 1;
-        if (column > 4) {
-            return;
-        }
+        const course_content = document.createElement("div");
+        const course_module = document.createElement("h2");
+        const course_prof = document.createElement("p");
 
-        let courseEnd = new Date(coursData.end);
-        let course_content = document.createElement("div");
-        let course_module = document.createElement("h2");
-        let teacher_name = document.createElement("div");
+        course_module.innerText = coursData?.module.split(" - ")[1] || "Module inconnu";
+        course_prof.innerText = coursData.professeur;
 
-        course_module.innerText = coursData.debut + " - " + coursData.fin;
         course_content.appendChild(course_module);
+        course_content.appendChild(course_prof);
+
         course_content.style.top = `${coursData.overflow}%`;
-        course_content.style.backgroundColor = coursData.couleur;
-
-        course_content.style.height = `calc(${coursData.duree}% - 16px)`;
-
+        console.log(`calc(${coursData.duree}% + ${(coursData.overflow > 100 ? Math.ceil((coursData.overflow) / 100) * 2 : 0) - 16}px)`)
+        course_content.style.height = `calc(${coursData.duree}% + ${(coursData.duree > 100 ? Math.floor((coursData.duree) / 100) * 2 : 0) - 16}px)`;
         course_content.classList.add("course");
 
-        let row = courseStart.getHours() - heureDebut;
+        const row = courseStart.getHours() - heureDebut;
 
         columns[column]
-            .querySelectorAll(".content-box")
-        [row].appendChild(course_content);
+            .querySelectorAll(".content-box")[row]
+            .appendChild(course_content);
     });
 }
+
+document.querySelectorAll(".week-switcher img").forEach((el) => {
+    el.addEventListener("click", () => {
+        if (!currentSalle) return;
+        const delta = el.getAttribute('alt') === "next" ? 1 : -1;
+        afficherSalle(currentSalle, delta);
+    });
+});

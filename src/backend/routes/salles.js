@@ -150,7 +150,6 @@ router.get("/edt", async (req, res) => {
 
     // Obtention des informations sur la semaine demandée
     const bornesDates = obtenirDatesSemaine(numeroSemaine);
-    console.log(bornesDates);
     bornesDates.numero = numeroSemaine;
 
     try {
@@ -182,6 +181,8 @@ router.get("/edt", async (req, res) => {
                     60 /
                     60) *
                 100;
+
+            // Calcul du border avec ajout de 2 pour chaque 61 minutes avant le début et après la fin
             // Obtention de l'overflow et conversion en pourcentage
             const overflow =
                 (obtenirOverflowMinutes(new Date(doc.debute_a)) * 100) / 60;
@@ -195,7 +196,6 @@ router.get("/edt", async (req, res) => {
                 professeur: doc.professeur,
                 module: doc.module,
                 groupe: doc.groupe,
-                couleur: doc.couleur
             };
         });
 

@@ -2,15 +2,23 @@ document.querySelectorAll(".action").forEach((el) => {
     el.addEventListener("click", (e) => {
         let active = document.querySelector(".active");
         let clicked = e.target.dataset.ref;
-        let ref = active.dataset.ref;
 
-        active.classList.remove("active");
+        if (active) {
+            let ref = active.dataset.ref;
+            active.classList.remove("active");
+
+            let container = document.querySelector(`.${ref}`);
+            if (container) {
+                container.classList.remove("displayed");
+            }
+        }
+
         e.target.classList.add("active");
-        let container = document.querySelector(`.${ref}`);
-        container.classList.remove("displayed");
 
         let containerToShow = document.querySelector(`.${clicked}`);
-        containerToShow.classList.add("displayed");
+        if (containerToShow) {
+            containerToShow.classList.add("displayed");
+        }
     });
 });
 
@@ -41,6 +49,7 @@ async function fetchSalles() {
 
             resultDiv.onclick = function () {
                 afficherSalle(salle, 0);
+                toggleNav();
             };
 
             let p = document.createElement("p");
@@ -75,17 +84,7 @@ async function fetchSalles() {
 }
 
 fetchSalles();
-document.querySelectorAll(".week-switcher img").forEach((el) => {
-    if (el.getAttribute('alt') == "next") {
-        el.addEventListener("click", () => {
-            console.log("next")
-        });
-    } else {
-        el.addEventListener("click", () => {
-            console.log("previous")
-        });
-    }
-});
+
 document.querySelector(".search").addEventListener("input", (e) => {
     let search = e.target.value
         .toLowerCase()

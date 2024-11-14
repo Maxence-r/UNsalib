@@ -4,28 +4,6 @@ import Salle from "../models/salle.js";
 import "dotenv/config";
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
-const SALLES_EXCLUES = [
-    "Med",
-    "droit",
-    "Droit",
-    "Salle extérieure",
-    "Ireste",
-    "Isitem",
-    "IAE",
-    "Gavy",
-    "Pas de salle",
-    "Salle Manquante",
-    "Bias",
-    "1B-05",
-    "Erdre Salle",
-    "IHT",
-    "ACN",
-    "Censive",
-    "IMAR",
-    "IGARUN",
-    "RDM",
-];
-const BATIMENTS_EXCLUS = ["Tertre"];
 
 // Fonction pour obtenir les dates de début et fin (3 semaines)
 const obtenirDatesRequete = () => {
@@ -67,56 +45,11 @@ const traiterSalle = async (nomSalle) => {
     return salle;
 };
 
-const elementArrayDansChaine = (array, chaine) => {
-    for (const element of array) {
-        if (chaine.includes(element)) {
-            return true;
-        }
-    }
-    return false;
-};
-
-function pastelliser(color) {
-    const saturationFactor = 0.9; // Réduction de la saturation de 10%
-    const mixWithWhite = 0.5; // Mélange à 50% avec du blanc
-
-    // Application de la saturation et du mélange
-    const r = Math.floor((color.r * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-    const g = Math.floor((color.g * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-    const b = Math.floor((color.b * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-
-    return { r, g, b };
-}
-
-function convertirHexEnRgb(hex) {
-    // Fonction tirée de https://stackoverflow.com/a/5624139
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-      return r + r + g + g + b + b;
-    });
-  
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
-}
-
-function convertirRgbEnHex(couleur) {
-    // Fonction tirée de https://stackoverflow.com/a/5624139
-    return "#" + (1 << 24 | couleur.r << 16 | couleur.g << 8 | couleur.b).toString(16).slice(1);
-}
 
 // Fonction pour traiter un cours individuel
 const traiterCours = async (donneesCours) => {
-    const estExclu =
-        elementArrayDansChaine(SALLES_EXCLUES, donneesCours.rooms_for_blocks) ||
-        elementArrayDansChaine(BATIMENTS_EXCLUS, donneesCours.rooms_for_blocks);
 
     if (
-        estExclu ||
         !donneesCours.start_at ||
         !donneesCours.end_at ||
         !donneesCours.rooms_for_blocks
@@ -129,12 +62,12 @@ const traiterCours = async (donneesCours) => {
         debute_a: donneesCours.start_at,
         fini_a: donneesCours.end_at,
     });
-    // if (coursExiste) return;
+    if (coursExiste) return;
 
     const salles = donneesCours.rooms_for_blocks.split(";");
     const sallePrincipale = await traiterSalle(salles[0]);
 
-    let couleurPastel = convertirRgbEnHex(pastelliser(convertirHexEnRgb(donneesCours.color)));
+
 
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,
@@ -144,7 +77,6 @@ const traiterCours = async (donneesCours) => {
         classe: sallePrincipale?._id || "Non renseigné",
         module: donneesCours.modules_for_blocks || "Non renseigné",
         groupe: donneesCours.educational_groups_for_blocks.split(";").map((item) => item.trim()) || "Non renseigné",
-        couleur: couleurPastel || "#FF7675"
     });
 
     await nouveauCours.save();

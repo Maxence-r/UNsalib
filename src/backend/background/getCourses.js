@@ -84,7 +84,11 @@ const traiterCours = async (donneesCours) => {
         return;
     }
 
-    const coursExiste = await Cours.exists({ identifiant: donneesCours.id });
+    const coursExiste = await Cours.exists({
+        identifiant: donneesCours.id,
+        debute_a: donneesCours.start_at,
+        fini_a: donneesCours.end_at,
+    });
     if (coursExiste) return;
 
     const salles = donneesCours.rooms_for_blocks.split(";");

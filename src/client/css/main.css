@@ -642,6 +642,7 @@ input[type=number] {
     background-color: white;
     animation: fadeOut 1s ease-in-out forwards;
     animation-delay: 800ms;
+    pointer-events: none;
 }
 
 @keyframes fadeOut {

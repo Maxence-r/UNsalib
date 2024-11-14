@@ -18,27 +18,33 @@ for (let k = 0; k < 5; k++) {
         courseCase.className = "content-box";
         document
             .querySelectorAll(".column > .column-content")
-            [k].appendChild(courseCase);
+        [k].appendChild(courseCase);
     }
 }
-let indicator = document.querySelector(".indicator-hour");
-if (heure > heureDebut && heure < heureFin) {
-    let indicatorHour = document.createElement("div");
-    indicatorHour.classList.add("hourBar");
 
-    let top =
-        (100 * (heure - heureDebut)) / dureeJournee +
-        (100 / dureeJournee) * (minutes / 60);
-    indicator.style.top = `${top}%`;
-    indicatorHour.style.top = `${top}%`;
-    document.querySelector(".column-content").appendChild(indicatorHour);
-    indicator.innerText =
-        heure +
-        ":" +
-        (minutes.toString().length == 2 ? minutes : "0" + minutes);
-} else {
-    indicator.style.display = "none";
-}
+let indicator = document.querySelector(".indicator-hour");
+let indicatorHour = document.createElement("div");
+indicatorHour.classList.add("hourBar");
+indicatorHour.style.display = "none";
+indicator.style.display = "none";
+setInterval(() => {
+    let dateActuelle = new Date();
+    let jourActuel = dateActuelle.getDay();
+    let heureActuelle = dateActuelle.getHours()-4;
+    let minuteActuelle = dateActuelle.getMinutes();
+    if (heureActuelle > heureDebut && heureActuelle < heureFin) {
+        columns[jourActuel-1].appendChild(indicatorHour);
+        indicatorHour.style.display = "block";
+        indicator.style.display = "flex";
+        let top = (100 * (heureActuelle - heureDebut)) / dureeJournee + (100 / dureeJournee) * (minuteActuelle / 60);
+        indicator.style.top = `${top}%`;
+        indicatorHour.style.top = `${top}%`;
+        indicator.innerText = heureActuelle + ":" + (minuteActuelle.toString().length == 2 ? minuteActuelle : "0" + minuteActuelle);
+    } else {
+        indicator.style.display = "none";
+        indicatorHour.style.display = "none";
+    }
+}, 1000);
 
 function getWeeksInYear() {
     const currentDate = new Date();
@@ -101,6 +107,6 @@ async function afficherSalle(salle, increment) {
 
         columns[column]
             .querySelectorAll(".content-box")
-            [row].appendChild(course_content);
+        [row].appendChild(course_content);
     });
 }

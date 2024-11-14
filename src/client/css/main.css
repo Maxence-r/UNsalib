@@ -732,6 +732,7 @@ input[type=number] {
     height: 2px;
     background: blue;
     position: absolute;
+    z-index: 999;
 }
 
 @keyframes progress {

@@ -17,7 +17,13 @@ const SALLES_EXCLUES = [
     "Salle Manquante",
     "Bias",
     "1B-05",
-    "Erdre Salle"
+    "Erdre Salle",
+    "IHT",
+    "ACN",
+    "Censive",
+    "IMAR",
+    "IGARUN",
+    "RDM",
 ];
 const BATIMENTS_EXCLUS = ["Tertre"];
 

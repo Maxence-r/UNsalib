@@ -3,23 +3,25 @@ import { Schema, model } from "mongoose";
 const SalleSchema = Schema({
     nom_salle: {
         type: String,
-        required: true
+        required: true,
     },
     alias: {
         type: String,
-        required: false
+        required: false,
     },
     places_assises: {
         type: Number,
-        required: false
+        required: false,
     },
     batiment: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
+    banned: {
+        type: Boolean,
+        required: false,
+    },
 });
 
-
-const Salle = model('Salle', SalleSchema);
+const Salle = model("Salle", SalleSchema);
 export default Salle;
-

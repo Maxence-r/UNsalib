@@ -13,7 +13,9 @@ import {
 router.get("/", async (req, res) => {
     try {
         // Obtention de toutes les salles
-        let salles = await Salle.find({}).select("-__v -identifiant");
+        let salles = await Salle.find({ banned: { $ne: true } }).select(
+            "-__v -identifiant"
+        );
 
         // Obtention des salles disponibles
         const now = new Date();

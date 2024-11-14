@@ -23,10 +23,15 @@ for (let k = 0; k < 5; k++) {
 }
 let indicator = document.querySelector(".indicator-hour");
 if (heure > heureDebut && heure < heureFin) {
-    indicator.style.top = `${
+    let indicatorHour = document.createElement("div");
+    indicatorHour.classList.add("hourBar");
+
+    let top =
         (100 * (heure - heureDebut)) / dureeJournee +
-        (100 / dureeJournee) * (minutes / 60)
-    }%`;
+        (100 / dureeJournee) * (minutes / 60);
+    indicator.style.top = `${top}%`;
+    indicatorHour.style.top = `${top}%`;
+    document.querySelector(".column-content").appendChild(indicatorHour);
     indicator.innerText =
         heure +
         ":" +
@@ -50,7 +55,9 @@ function getWeeksInYear() {
 
 async function afficherSalle(salle, increment) {
     toggleNav();
-    document.getElementById('room-name').innerText = salle?.alias ? salle.alias : salle.nom;
+    document.getElementById("room-name").innerText = salle?.alias
+        ? salle.alias
+        : salle.nom;
     document.querySelectorAll(".course").forEach((el) => {
         el.remove();
     });
@@ -76,7 +83,7 @@ async function afficherSalle(salle, increment) {
         if (column > 4) {
             return;
         }
-        
+
         let courseEnd = new Date(coursData.end);
         let course_content = document.createElement("div");
         let course_module = document.createElement("h2");
@@ -84,12 +91,12 @@ async function afficherSalle(salle, increment) {
 
         course_module.innerText = coursData.debut + " - " + coursData.fin;
         course_content.appendChild(course_module);
-        course_content.style.top= `${coursData.overflow}%`;
+        course_content.style.top = `${coursData.overflow}%`;
 
         course_content.style.height = `calc(${coursData.duree}% - 16px)`;
 
         course_content.classList.add("course");
-        
+
         let row = courseStart.getHours() - heureDebut;
 
         columns[column]

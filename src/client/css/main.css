@@ -493,6 +493,7 @@ input[type=number] {
 
 .column-content {
     display: flex;
+    position: relative;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
@@ -525,7 +526,7 @@ input[type=number] {
     background-color: var(--accent-color);
     padding: 4px 8px;
     border-radius: var(--border-radius);
-    transform: translateY(-10px);
+    transform: translateY(-12.5px);
     z-index: 10;
     color: white !important;
     font-size: 14px;
@@ -718,13 +719,20 @@ input[type=number] {
     color: #5F5F5F;
 }
 
-.current-room > h2 {
+.current-room>h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
     color: #030303;
 }
 
+
+.hourBar {
+    width: 100%;
+    height: 2px;
+    background: blue;
+    position: absolute;
+}
 
 @keyframes progress {
     0% {
@@ -802,6 +810,7 @@ input[type=number] {
         border: none;
         justify-content: space-between;
     }
+
     .menu-mobile {
         display: flex;
     }

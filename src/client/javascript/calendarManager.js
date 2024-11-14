@@ -30,7 +30,7 @@ indicator.style.display = "none";
 setInterval(() => {
     let dateActuelle = new Date();
     let jourActuel = dateActuelle.getDay();
-    let heureActuelle = dateActuelle.getHours()-4;
+    let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
     if (heureActuelle > heureDebut && heureActuelle < heureFin) {
         columns[jourActuel-1].appendChild(indicatorHour);

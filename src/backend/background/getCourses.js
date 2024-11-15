@@ -67,7 +67,7 @@ const traiterCours = async (donneesCours) => {
         debute_a: donneesCours.start_at,
         fini_a: donneesCours.end_at,
     });
-    // if (coursExiste) return;
+    if (coursExiste) return;
 
     const salles = donneesCours.rooms_for_blocks.split(";");
     const sallePrincipale = await traiterSalle(salles[0]);

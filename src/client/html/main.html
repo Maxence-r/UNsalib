@@ -52,7 +52,7 @@
 
         <div class="actions_container">
             <div class="edt-finder displayed">
-                <input class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
+                <input data-search="edt" class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
 
                 <div class="results-head">
                     <p>Résultats de recherche</p>
@@ -61,8 +61,7 @@
                         <p>Occupé</p>
                     </div>
                 </div>
-                <div class="results">
-                   
+                <div class="results edt">
                     <p class="no-results">Aucune salle n'a été trouvée.</p>
                 </div>
             </div>
@@ -104,8 +103,12 @@
 
 
                     </div>
-                    <button class="search-button">Rechercher</button>
+                    <button type="button" class="search-button" onclick="this.classList.toggle('button--loading')">
+                        <span class="button__text">Rechercher</span>
+                    </button>
+                   
                 </div>
+                <input data-search="available" class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
                 <div class="results-head">
                     <p>Résultats de recherches</p>
                     <div class="indicator">
@@ -113,21 +116,8 @@
                         <p>= occupé</p>
                     </div>
                 </div>
-                <div class="results">
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="badges"><img src="../assets/lock.svg">
-                            <div class="ping blue"></div>
-                        </div>
-                    </div>
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="ping blue"></div>
-                    </div>
-                    <div class="result">
-                        <p>I123 VIDEO <span class="bat">BAT 15</span></p>
-                        <div class="ping blue"></div>
-                    </div>
+                <div class="results available">
+                    <p class="no-results">Aucune salle n'a été trouvée.</p>
                 </div>
             </div>
         </div>
@@ -212,10 +202,15 @@
             </button>
         </div>
     </div>
-    
+    <div class="notification">
+        <div class="notif">
+            <p>Attention vous avez dépassé</p>
+        </div>
+    </div>
 </body>
 <script src="../javascript/calendarManager.js"></script>
 <script src="../javascript/menuManager.js"></script>
+<script src="../javascript/main.js"></script>
 
 
 </html>

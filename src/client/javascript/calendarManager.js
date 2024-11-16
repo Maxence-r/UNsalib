@@ -44,7 +44,7 @@ setInterval(() => {
         indicator.style.display = "none";
         indicatorHour.style.display = "none";
     }
-}, 1000);
+}, 30000);
 
 
 function getWeeksInYear() {
@@ -77,6 +77,7 @@ async function afficherSalle(salle, delta) {
 
     if (!response.ok) {
         console.log("Error fetching data");
+        displayNotification("Il n'y pas d'emploi du temps pour cette salle");
         return;
     }
 
@@ -113,7 +114,6 @@ async function afficherSalle(salle, delta) {
         course_content.appendChild(course_prof);
 
         course_content.style.top = `${coursData.overflow}%`;
-        course_content.style.backgroundColor = coursData.couleur;
        
         course_content.style.height = `calc(${coursData.duree}% + ${(coursData.duree > 100 ? Math.floor((coursData.duree) / 100) * 2 : 0) - 16}px)`;
         course_content.classList.add("course");

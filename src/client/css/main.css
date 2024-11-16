@@ -403,14 +403,104 @@ input[type=number] {
 .search-button {
     position: relative;
     height: 40px;
-    font-family: "Space Grotesk", sans-serif;
+
     border-radius: 6px;
     background-color: var(--accent-color);
+
+    cursor: pointer;
+    border: none;
+}
+
+.button__text {
     color: white;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    border: none;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.button--loading .button__text {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+.button--loading::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+.notification {
+    display: flex;
+    pointer-events: none;
+    justify-content: end;
+    position: absolute;
+    z-index: 100;
+    width: calc(100% - 20px);
+    padding: 10px;
+    bottom: 0;
+}
+
+.notif {
+    display: none;
+    border-radius: var(--border-radius);
+    background-color: red;
+    padding: 16px;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+}
+
+.notif.active {
+    display: flex;
+    animation: notification 5s ease-in-out;
+}
+
+@keyframes notification {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    90% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.notif>p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
 }
 
 .search-button:hover {
@@ -518,18 +608,6 @@ input[type=number] {
     justify-content: space-evenly;
 }
 
-.indicator-hour {
-    position: absolute;
-    background-color: var(--accent-color);
-    padding: 4px 8px;
-    border-radius: var(--border-radius);
-    transform: translateY(-12.5px);
-    z-index: 10;
-    color: white !important;
-    font-size: 14px;
-    font-weight: 600;
-    z-index: 1;
-}
 
 .ligne {
     width: 100%;
@@ -734,60 +812,68 @@ input[type=number] {
 .lds-ripple {
     /* change color here */
     color: #1c4c5b
-  }
-  .lds-ripple,
-  .lds-ripple div {
+}
+
+.lds-ripple,
+.lds-ripple div {
     box-sizing: border-box;
-  }
-  .lds-ripple {
+}
+
+.lds-ripple {
     display: inline-block;
     position: relative;
     width: 80px;
     height: 80px;
-  }
-  .lds-ripple div {
+}
+
+.lds-ripple div {
     position: absolute;
     border: 4px solid currentColor;
     opacity: 1;
     border-radius: 50%;
     animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-  }
-  .lds-ripple div:nth-child(2) {
+}
+
+.lds-ripple div:nth-child(2) {
     animation-delay: -0.5s;
-  }
-  @keyframes lds-ripple {
+}
+
+@keyframes lds-ripple {
     0% {
-      top: 36px;
-      left: 36px;
-      width: 8px;
-      height: 8px;
-      opacity: 0;
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
+        opacity: 0;
     }
+
     4.9% {
-      top: 36px;
-      left: 36px;
-      width: 8px;
-      height: 8px;
-      opacity: 0;
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
+        opacity: 0;
     }
+
     5% {
-      top: 36px;
-      left: 36px;
-      width: 8px;
-      height: 8px;
-      opacity: 1;
+        top: 36px;
+        left: 36px;
+        width: 8px;
+        height: 8px;
+        opacity: 1;
     }
+
     100% {
-      top: 0;
-      left: 0;
-      width: 80px;
-      height: 80px;
-      opacity: 0;
+        top: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        opacity: 0;
     }
-  }
+}
 
 
-  .absolute-loader {
+.absolute-loader {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -797,7 +883,7 @@ input[type=number] {
     background-color: white;
     z-index: 1000;
 
-  }
+}
 
 @keyframes progress {
     0% {
@@ -878,6 +964,11 @@ input[type=number] {
 
     .menu-mobile {
         display: flex;
+    }
+
+    .notif {
+        width: 100%;
+        text-align: center;
     }
 }
 

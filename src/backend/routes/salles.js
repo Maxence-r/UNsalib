@@ -117,6 +117,8 @@ router.get("/disponibles", async (req, res) => {
             nom: doc.nom_salle,
             places_assises: doc.places_assises,
             batiment: doc.batiment,
+            caracteristiques: doc.caracteristiques,
+            disponible: true,
         }));
 
         res.json(resultatFormate);
@@ -195,8 +197,7 @@ router.get("/edt", async (req, res) => {
                 id_salle: doc.classe,
                 professeur: doc.professeur,
                 module: doc.module,
-                groupe: doc.groupe,
-                couleur: doc.couleur
+                groupe: doc.groupe
             };
         });
 

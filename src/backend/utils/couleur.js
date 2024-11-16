@@ -22,15 +22,20 @@ const PALETTE = [
   { r: 127, g: 140, b: 141 }
 ]
 
-function pastelliser(color) {
-  const saturationFactor = 0.9; // Réduction de la saturation de 10%
-  const mixWithWhite = 0.5; // Mélange à 50% avec du blanc
-  // Application de la saturation et du mélange
-  const r = Math.floor((color.r * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-  const g = Math.floor((color.g * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-  const b = Math.floor((color.b * saturationFactor + 255 * (1 - saturationFactor)) * mixWithWhite);
-  return { r, g, b };
+function couleurPaletteProche(couleur) {
+  let score = 255 * 3;
+  let couleurPaletteProche;
+  couleur = convertirHexEnRgb(couleur);
+  PALETTE.forEach(couleurPalette => {
+    let scoreTemp = Math.abs(couleurPalette.r - couleur.r) + Math.abs(couleurPalette.g - couleur.g) + Math.abs(couleurPalette.b - couleur.b);
+    if (scoreTemp < score) {
+      score = scoreTemp;
+      couleurPaletteProche = couleurPalette;
+    }
+  });
+  return couleurPaletteProche;
 }
+
 function convertirHexEnRgb(hex) {
   // Fonction tirée de https://stackoverflow.com/a/5624139
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -46,13 +51,14 @@ function convertirHexEnRgb(hex) {
     b: parseInt(result[3], 16)
   } : null;
 }
+
 function convertirRgbEnHex(couleur) {
   // Fonction tirée de https://stackoverflow.com/a/5624139
   return "#" + (1 << 24 | couleur.r << 16 | couleur.g << 8 | couleur.b).toString(16).slice(1);
 }
 
 export {
-  pastelliser,
+  couleurPaletteProche,
   convertirHexEnRgb,
   convertirRgbEnHex
 };

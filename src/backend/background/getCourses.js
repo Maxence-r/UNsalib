@@ -72,7 +72,7 @@ const traiterCours = async (donneesCours) => {
     const salles = donneesCours.rooms_for_blocks.split(";");
     const sallePrincipale = await traiterSalle(salles[0]);
 
-    let couleurPastel = convertirRgbEnHex(pastelliser(convertirHexEnRgb(donneesCours.color)));
+    let couleurPastel = convertirRgbEnHex(couleurPaletteProche(donneesCours.color));
 
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,

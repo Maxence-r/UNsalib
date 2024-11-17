@@ -69,10 +69,7 @@ let currentSalle = null;
 async function afficherSalle(salle, delta) {
     const newIncrement = (delta == 0) ? 0 : increment + delta;
 
-    document.getElementById("room-name").innerText = salle?.alias || salle.nom;
-    document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
-    document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";
-    document.querySelector('.avaibility-box .ping').style.display = "block";
+    toggleLoading()
 
     const response = await fetch(
         `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`
@@ -80,9 +77,15 @@ async function afficherSalle(salle, delta) {
 
     if (!response.ok) {
         console.log("Error fetching data");
-        displayNotification("Il n'y pas d'emploi du temps pour cette salle");
+        toggleLoading("disable");
+        displayNotification("Impossible d'afficher l'edt pour cette semaine !");
         return;
     }
+
+    document.getElementById("room-name").innerText = salle?.alias || salle.nom;
+    document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
+    document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";
+    document.querySelector('.avaibility-box .ping').style.display = "block";
 
     document.querySelectorAll(".course").forEach((el) => el.remove());
 
@@ -119,7 +122,7 @@ async function afficherSalle(salle, delta) {
         course_content.style.top = `${coursData.overflow}%`;
         course_content.style.backgroundColor = coursData.couleur;
        
-        course_content.style.height = `calc(${coursData.duree}% + ${(coursData.duree > 100 ? Math.floor((coursData.duree) / 100) * 2 : 0) - 16}px)`;
+        course_content.style.height = `calc(${coursData.duree}% - 16px + ${(coursData.duree > 100 ? Math.floor(coursData.duree / 100) * 2 : 0)}px)`;
         course_content.classList.add("course");
 
         const row = courseStart.getHours() - heureDebut;
@@ -128,6 +131,7 @@ async function afficherSalle(salle, delta) {
             .querySelectorAll(".content-box")[row]
             .appendChild(course_content);
     });
+    toggleLoading("disable");
 }
 
 document.querySelectorAll(".week-switcher img").forEach((el) => {

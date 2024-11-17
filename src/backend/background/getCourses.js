@@ -3,6 +3,7 @@ import Cours from "../models/cours.js";
 import Salle from "../models/salle.js";
 import "dotenv/config";
 import {couleurPaletteProche} from "../utils/couleur.js";
+import io from "../../../server.js";
 
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
@@ -99,9 +100,7 @@ const recupererCours = async (groupe) => {
             await traiterCours(cours);
         }
 
-        await Groupe.findOneAndUpdate({ identifiant: groupe.identifiant }, { date_maj: new Date().toISOString() }, {
-            new: true
-        });
+        io.emit("groupUpdated", { message: `Groupe ${groupe.nom} mis à jour` });
     } catch (erreur) {
         console.error(
             `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,

@@ -4,7 +4,6 @@ const app = express();
 import { set, connect } from "mongoose";
 import "dotenv/config";
 import getGroups from "./src/backend/background/getGroups.js";
-import path from "path";
 import salles from "./src/backend/routes/salles.js";
 import admin from "./src/backend/routes/admin.js";
 import appInfos from "./src/backend/routes/app.js";

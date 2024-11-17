@@ -96,7 +96,6 @@ document.querySelector('.search-button').addEventListener('click', () => {
     searchAvailable();
 });
 async function searchAvailable() {
-
     // Extract values and parse as integers
     const startHour = parseInt(inputs[0].value, 10);
     const startMinute = parseInt(inputs[1].value, 10);
@@ -141,6 +140,7 @@ async function searchAvailable() {
     const response = await fetch(url);
     const salles = await response.json();
     afficherSalles(salles, "available");
+    document.querySelector('.available > .no-results').style.display = salles.length > 0 ? "none" : "block";
     document.querySelector('.search-button').classList.remove('button--loading')
 }
 document.querySelectorAll(".search").forEach((el) => {
@@ -170,7 +170,6 @@ document.querySelectorAll(".search").forEach((el) => {
                 result.style.display = "flex";
             }
         });
-        console.log(resultsNumber);
         document.querySelector(`.${resultContainer} .no-results`).style.display = resultsNumber > 0 ? "none" : "block";
     })
 });

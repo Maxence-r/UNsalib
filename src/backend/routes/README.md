@@ -141,28 +141,3 @@ Aucun
     "version": VERSION DE L'APPLICATION (CHAINE)
 }
 ```
-
-## `GET /api/app/dernier-groupe-maj`
-
-### Rôle
-
-Renvoie le dernier groupe pour lequel l'emploi du temps a été mis à jour dans la base de données.
-
-### Paramètres
-
-Aucun
-
-### Exemple
-
-```
-/api/app/dernier-groupe-maj
-```
-
-### Réponse (format JSON)
-
-```json
-{
-    "nom_groupe": NOM DU GROUPE (CHAINE),
-    "date_maj": DATE DE MISE A JOUR (CHAINE)
-}
-```

@@ -5,9 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" href="../assets/favicon.ico" />
-    <meta name="description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta name="description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:title" content="Salle Libre - Nantes UNIV" />
-    <meta property="og:description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:description"
+        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:type" content="website" />
 
 
@@ -28,13 +30,14 @@
         <div class="campus">
             <div class="campus_selector">
                 <p>UFR SCIENCES ET TECHNIQUES</p>
-                <div class="version"></div>
+                <div class="version">BETA</div>
             </div>
             <div class="campus_feed">
                 <img src="../assets/campus.webp" alt="placeholder" />
 
                 <div class="overlay"></div>
                 <div class="campus_feed_content">
+                    <p>ICI S'AFFICHERA LA MISE A JOUR DES GROUPES</p>
                 </div>
             </div>
         </div>
@@ -50,7 +53,8 @@
 
         <div class="actions_container">
             <div class="edt-finder displayed">
-                <input data-search="edt" class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
+                <input data-search="edt" class="search" type="text"
+                    placeholder="Rechercher une salle, un bâtiment..." />
 
                 <div class="results-head">
                     <p>Résultats de recherche</p>
@@ -104,9 +108,10 @@
                     <button type="button" class="search-button" onclick="this.classList.toggle('button--loading')">
                         <span class="button__text">Rechercher</span>
                     </button>
-                   
+
                 </div>
-                <input data-search="available" class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
+                <input data-search="available" class="search" type="text"
+                    placeholder="Rechercher une salle, un bâtiment..." />
                 <div class="results-head">
                     <p>Résultats de recherches</p>
                     <div class="indicator">
@@ -121,6 +126,10 @@
         </div>
     </div>
     <div class="calendar">
+        <div class="loading-calendar">
+            <span class="spin"></span>
+            <p>Chargement de l'EDT</p>
+        </div>
         <div class="calendar-header">
             <div class="week-switcher">
                 <img src="../assets/chevrons-left.svg" alt="previous" />
@@ -200,12 +209,20 @@
             </button>
         </div>
     </div>
-    <div class="notification">
-        <div class="notif">
-            <p>Attention vous avez dépassé</p>
-        </div>
+
+    <div class="notif">
+        <p>Attention vous avez dépassé</p>
+    </div>
+    <div class="about">
+        <h2>A PROPOS</h2>
     </div>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+</script>
+
+
 <script src="../javascript/calendarManager.js"></script>
 <script src="../javascript/menuManager.js"></script>
 <script src="../javascript/main.js"></script>

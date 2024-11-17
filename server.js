@@ -1,5 +1,7 @@
 import { createServer } from "http";
 import app from './app.js';
+import { Server } from 'socket.io';
+
 const server = createServer(app);
 
 const normalizePort = (val) => {
@@ -45,3 +47,8 @@ server.on("listening", () => {
 });
 
 server.listen(port);
+
+// Initialize Socket.IO here
+const io = new Server(server);
+
+export default io;

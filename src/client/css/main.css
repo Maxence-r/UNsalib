@@ -32,7 +32,7 @@ body {
     display: flex;
     flex-direction: column;
 
-    padding: 14px 14px 0 14px;
+    padding: 24px 24px 0 24px;
     width: 22%;
     min-width: 350px;
     gap: 24px;
@@ -49,9 +49,45 @@ body {
 .calendar {
     display: flex;
     flex-direction: column;
+    position: relative;
     overflow: hidden;
     width: 78%;
     gap: 34px;
+}
+
+.loading-calendar {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 5;
+}
+
+.spin {
+    width: 28px;
+    height: 28px;
+    border: 5px solid var(--accent-color);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .calendar-header {
@@ -127,10 +163,37 @@ body {
 }
 
 .campus_feed_content>p {
+    opacity: 0;
     margin: 0;
     font-size: 12px;
     font-weight: 600;
     color: #ffffff;
+    text-transform: uppercase;
+    animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.campus_feed_content>p:last-child {
+    opacity: 1;
+}
+
+.campus_feed_content>p:nth-last-child(2) {
+    opacity: 0.8;
+}
+
+.campus_feed_content>p:nth-last-child(3) {
+    opacity: 0.2;
 }
 
 .actions_selector {
@@ -314,6 +377,9 @@ p.no-results {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .bat {
@@ -440,51 +506,28 @@ input[type=number] {
     animation: button-loading-spinner 1s ease infinite;
 }
 
-.notification {
-    display: flex;
-    pointer-events: none;
-    justify-content: end;
-    position: absolute;
-    z-index: 100;
-    width: calc(100% - 20px);
-    padding: 10px;
-    bottom: 0;
-}
+
 
 .notif {
-    display: none;
+    display: flex;
+    position: absolute;
+    margin: 20px;
+    bottom: 0;
+    height: fit-content;
     border-radius: var(--border-radius);
     background-color: red;
     padding: 16px;
     box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.6s;
 }
 
 .notif.active {
-    display: flex;
-    animation: notification 5s ease-in-out;
+    transform: translateY(0);
+    opacity: 1;
 }
 
-@keyframes notification {
-    0% {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-
-    10% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    90% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-}
 
 .notif>p {
     margin: 0;
@@ -535,6 +578,7 @@ input[type=number] {
     overflow-x: scroll;
     height: 100%;
     scrollbar-width: none;
+    user-select: none;
 }
 
 .column {
@@ -542,7 +586,7 @@ input[type=number] {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    min-width: 150px;
+    min-width: 115px;
     border-right: 2px solid var(--border-color);
 }
 
@@ -827,70 +871,6 @@ input[type=number] {
     z-index: 1;
 }
 
-.lds-ripple {
-    /* change color here */
-    color: #1c4c5b
-}
-
-.lds-ripple,
-.lds-ripple div {
-    box-sizing: border-box;
-}
-
-.lds-ripple {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-
-.lds-ripple div {
-    position: absolute;
-    border: 4px solid currentColor;
-    opacity: 1;
-    border-radius: 50%;
-    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-
-.lds-ripple div:nth-child(2) {
-    animation-delay: -0.5s;
-}
-
-@keyframes lds-ripple {
-    0% {
-        top: 36px;
-        left: 36px;
-        width: 8px;
-        height: 8px;
-        opacity: 0;
-    }
-
-    4.9% {
-        top: 36px;
-        left: 36px;
-        width: 8px;
-        height: 8px;
-        opacity: 0;
-    }
-
-    5% {
-        top: 36px;
-        left: 36px;
-        width: 8px;
-        height: 8px;
-        opacity: 1;
-    }
-
-    100% {
-        top: 0;
-        left: 0;
-        width: 80px;
-        height: 80px;
-        opacity: 0;
-    }
-}
-
-
 .absolute-loader {
     width: 100%;
     height: 100%;
@@ -902,6 +882,38 @@ input[type=number] {
     z-index: 1000;
 
 }
+
+.about {
+    position: absolute;
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 4;
+    right: 0;
+    bottom: 20%;
+    padding: 12px;
+    background-color: white;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.about > h2 {
+    margin: 0;
+    font-size: 14px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    display: inline-block;
+    overflow: visible;
+    font-weight: 600;
+}
+
+.about:hover {
+    transform: translateY(-10px);
+}
+
+
 
 @keyframes progress {
     0% {
@@ -939,8 +951,8 @@ input[type=number] {
         position: absolute;
         top: 0;
         left: 0;
-        width: calc(100% - 28px);
-        height: calc(100% - 14px);
+        width: calc(100% - 48px);
+        height: 100%;
         border: none;
         min-width: auto;
         transition: transform 0.7s;
@@ -985,7 +997,7 @@ input[type=number] {
     }
 
     .notif {
-        width: 100%;
+        width: calc(100% - 72px);
         text-align: center;
     }
 }

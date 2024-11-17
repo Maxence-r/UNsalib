@@ -32,6 +32,8 @@ router.get("/badge", async (req, res) => {
 });
 
 
+
+
 let intervalIds = []; // To store interval IDs for stopping later
 // SECURITY FLOW A NOTIFIER A NANTES UNIVERSITE
 // Ce code envoie 20 requêtes demandant 50 emplois du temps chacune, toutes les 2 minutes. Cela semble causé un crash global de l'infrastructures. Alors qu'aucun spam n'est générer 2m

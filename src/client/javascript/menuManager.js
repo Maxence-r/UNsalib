@@ -70,15 +70,18 @@ async function afficherSalles(salles, containerHTML) {
         let badgesDiv = document.createElement("div");
         badgesDiv.className = "badges";
 
-        /*  let img = document.createElement("img");
-        img.src = "../assets/lock.svg"; */
-
+        salle.caracteristiques.forEach((caracteristique) => {
+            let img = document.createElement("img");
+            img.src =  `../assets/${caracteristique}.svg`;
+            img.alt = caracteristique;
+            badgesDiv.appendChild(img);
+        });
         let pingDiv = document.createElement("div");
         pingDiv.className = salle.disponible ? "ping blue" : "ping red";
 
         // Assembler les éléments
         p.appendChild(span);
-        /*  badgesDiv.appendChild(img); */
+        
         badgesDiv.appendChild(pingDiv);
         resultDiv.appendChild(p);
         resultDiv.appendChild(badgesDiv);

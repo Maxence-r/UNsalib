@@ -3,9 +3,6 @@ document.querySelectorAll(".action").forEach((el) => {
         let active = document.querySelector(".tab-active");
         let clicked = e.target.dataset.ref;
 
-        console.log("active", active)
-        console.log("clicked", clicked)
-
         if (active) {
             let ref = active.dataset.ref;
             active.classList.remove("tab-active");

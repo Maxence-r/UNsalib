@@ -32,7 +32,7 @@ setInterval(() => {
     let jourActuel = dateActuelle.getDay();
     let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
-    if (heureActuelle > heureDebut && heureActuelle < heureFin) {
+    if (heureActuelle > heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6) {
         columns[jourActuel-1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
         indicator.style.display = "flex";

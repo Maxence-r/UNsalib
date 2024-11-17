@@ -32,7 +32,7 @@ async function getGroups() {
             // obtient l'id de chaque case à cocher qui contient celui de l'emploi du temps
             const group = input.id.replace("desktop-timetable-", "");
             const exists = await Groupe.exists({ identifiant: group });
-            if (exists) {
+            if (!exists) {
                 const groupeObj = new Groupe({
                     identifiant: group,
                     nom: input.nextElementSibling.textContent.trim()
@@ -43,6 +43,8 @@ async function getGroups() {
         }
             
         getCourses();
+    } else {
+        console.error("Erreur lors de la récupération des groupes.");
     }
 }
 

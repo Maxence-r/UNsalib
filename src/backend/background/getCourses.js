@@ -121,8 +121,9 @@ export const getCourses = async () => {
             "Traitement de tous les groupes ACTIVÉ - Démarrage du processus..."
         );
         await traiterLotGroupes(groupes);
+    } else {
+        console.log("Traitement de tous les groupes DÉSACTIVÉ");
     }
-    console.log("Traitement de tous les groupes DÉSACTIVÉ");
 
     // Calculer l'intervalle entre chaque groupe pour une répartition sur 12h
     const nombreGroupes = groupes.length;

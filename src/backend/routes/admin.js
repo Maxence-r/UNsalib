@@ -1,33 +1,6 @@
 import express from "express";
 const router = express.Router();
-import Salle from "../models/salle.js";
 import Groupe from "../models/groupe.js";
-
-router.get("/ajouter-caracteristique", async (req, res) => {
-    const nomSalle = req.query.salle;
-    const carac = req.query.carac;
-
-    if (!nomSalle || !carac) {
-        return res.status(400).send("PARAMETRES_MANQUANTS");
-    }
-
-    try {
-        const succes = await Salle.findOneAndUpdate({ nom_salle: nomSalle }, { $addToSet: { caracteristiques: carac } }, {
-            new: true
-        });
-        if (!succes) {
-            return res.status(400).send("SALLE_INEXISTANTE");
-        }
-        res.status(200).send("MIS_A_JOUR");
-    } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
-    }
-});
 
 let intervalIds = []; // To store interval IDs for stopping later
 // SECURITY FLOW A NOTIFIER A NANTES UNIVERSITE

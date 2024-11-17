@@ -197,7 +197,8 @@ router.get("/edt", async (req, res) => {
                 id_salle: doc.classe,
                 professeur: doc.professeur,
                 module: doc.module,
-                groupe: doc.groupe
+                groupe: doc.groupe,
+                couleur: doc.couleur
             };
         });
 

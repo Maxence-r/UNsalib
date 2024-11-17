@@ -2,6 +2,12 @@ import Groupe from "../models/groupe.js";
 import Cours from "../models/cours.js";
 import Salle from "../models/salle.js";
 import "dotenv/config";
+import {
+    couleurPaletteProche,
+    convertirHexEnRgb,
+    convertirRgbEnHsl
+} from "../utils/couleur.js";
+
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 
@@ -67,7 +73,6 @@ const traiterCours = async (donneesCours) => {
     const salles = donneesCours.rooms_for_blocks.split(";");
     const sallePrincipale = await traiterSalle(salles[0]);
 
-
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,
         debute_a: donneesCours.start_at,
@@ -76,6 +81,7 @@ const traiterCours = async (donneesCours) => {
         classe: sallePrincipale?._id || "Non renseigné",
         module: donneesCours.modules_for_blocks || "Non renseigné",
         groupe: donneesCours.educational_groups_for_blocks.split(";").map((item) => item.trim()) || "Non renseigné",
+        couleur: couleurPaletteProche(donneesCours.color) || "#FF7675"
     });
 
     await nouveauCours.save();

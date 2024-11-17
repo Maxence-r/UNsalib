@@ -60,7 +60,6 @@ function getWeeksInYear() {
     return weeks;
 }
 
-
 let increment = 0;
 let currentSalle = null;
 

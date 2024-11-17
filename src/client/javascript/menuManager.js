@@ -1,11 +1,14 @@
 document.querySelectorAll(".action").forEach((el) => {
     el.addEventListener("click", (e) => {
-        let active = document.querySelector(".active");
+        let active = document.querySelector(".tab-active");
         let clicked = e.target.dataset.ref;
+
+        console.log("active", active)
+        console.log("clicked", clicked)
 
         if (active) {
             let ref = active.dataset.ref;
-            active.classList.remove("active");
+            active.classList.remove("tab-active");
 
             let container = document.querySelector(`.${ref}`);
             if (container) {
@@ -13,7 +16,7 @@ document.querySelectorAll(".action").forEach((el) => {
             }
         }
 
-        e.target.classList.add("active");
+        e.target.classList.add("tab-active");
 
         let containerToShow = document.querySelector(`.${clicked}`);
         if (containerToShow) {
@@ -21,8 +24,6 @@ document.querySelectorAll(".action").forEach((el) => {
         }
     });
 });
-
-
 
 function toggleNav() {
     let nav = document.querySelector(".pannel");

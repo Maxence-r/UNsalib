@@ -3,24 +3,22 @@ const router = express.Router();
 import Salle from "../models/salle.js";
 import Groupe from "../models/groupe.js";
 
-
-router.get("/badge", async (req, res) => {
+router.get("/ajouter-caracteristique", async (req, res) => {
     const nomSalle = req.query.salle;
-    const estBadge = req.query.badge;
+    const carac = req.query.carac;
 
-    if (!nomSalle || !estBadge) {
+    if (!nomSalle || !carac) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
     }
 
     try {
-        let salle = await Salle.findOne({ nom_salle: nomSalle });
-
-        console.log(salle);
-        let badge = estBadge == "oui" ? true : false;
-        if (badge) {
-            await Salle.updateOne({ caracteristiques: ["badge"] });
-            res.status(200).send("MIS_A_JOUR");
+        const succes = await Salle.findOneAndUpdate({ nom_salle: nomSalle }, { $addToSet: { caracteristiques: carac } }, {
+            new: true
+        });
+        if (!succes) {
+            return res.status(400).send("SALLE_INEXISTANTE");
         }
+        res.status(200).send("MIS_A_JOUR");
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(
@@ -31,12 +29,9 @@ router.get("/badge", async (req, res) => {
     }
 });
 
-
-
-
 let intervalIds = []; // To store interval IDs for stopping later
 // SECURITY FLOW A NOTIFIER A NANTES UNIVERSITE
-// Ce code envoie 20 requêtes demandant 50 emplois du temps chacune, toutes les 2 minutes. Cela semble causé un crash global de l'infrastructures. Alors qu'aucun spam n'est générer 2m
+// Ce code envoie 20 requêtes demandant 50 emplois du temps chacune, toutes les 2 minutes. Cela semble causer un crash global de l'infrastructure. Alors qu'aucun spam n'est généré 2m
 router.get('/request/6dc84f9b-d105-422f-9e33-30d9d9f63b71', async (req, res) => {
     try {
         const groupes = await Groupe.find();

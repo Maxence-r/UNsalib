@@ -64,10 +64,11 @@ let increment = 0;
 let currentSalle = null;
 
 async function afficherSalle(salle, delta) {
-    const newIncrement = increment + delta;
+    const newIncrement = (delta == 0) ? 0 : increment + delta;
 
     document.getElementById("room-name").innerText = salle?.alias || salle.nom;
     document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
+    document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";
     
 
     const response = await fetch(
@@ -85,7 +86,7 @@ async function afficherSalle(salle, delta) {
     const salleData = await response.json();
 
     // Update increment and currentSalle only if the request succeeds
-    increment = newIncrement;
+    increment =  newIncrement;
     currentSalle = salle;
 
     const startDate = salleData.infos_semaine.debut.split("-")[2];

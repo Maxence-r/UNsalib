@@ -29,7 +29,7 @@ function toggleNav() {
 
     } else {
         nav.classList.add("active");
-    
+
     }
 }
 
@@ -38,7 +38,7 @@ async function fetchSalles() {
         let response = await fetch("/api/salles");
         let salles = await response.json();
         afficherSalles(salles, "edt");
-        
+
     } catch (error) {
         console.error("Erreur lors de la récupération des salles:", error);
     }
@@ -61,7 +61,7 @@ async function afficherSalles(salles, containerHTML) {
         };
 
         let p = document.createElement("p");
-        p.textContent = salle?.alias ?  `${salle.alias.toUpperCase()} `: `${salle.nom.toUpperCase()} `;
+        p.textContent = salle?.alias ? `${salle.alias.toUpperCase()} ` : `${salle.nom.toUpperCase()} `;
 
         let span = document.createElement("span");
         span.className = "bat";
@@ -91,13 +91,37 @@ async function afficherSalles(salles, containerHTML) {
     });
 }
 
+async function updateFeed() {
+    try {
+        let response = await fetch("/api/app/dernier-groupe-maj");
+        let lastUpdated = await response.json();
+        console.log(lastUpdated)
+        const feed = document.querySelector(".campus_feed_content");
+        const feedInfo = document.createElement("p");
+        let timeElapsed = new Date() - new Date(lastUpdated.date_maj);
+        if (timeElapsed < 60000) {
+            timeElapsed = Math.round(timeElapsed / 1000) + (Math.round(timeElapsed / 1000) < 2 ? " SECONDE" : " SECONDES");
+        } else if (timeElapsed < 3600000) {
+            timeElapsed = Math.round(timeElapsed / 60 / 1000) + (Math.round(timeElapsed / 60 / 1000) < 2 ? " MINUTE" : " MINUTES");
+        } else {
+            timeElapsed = Math.round(timeElapsed / 60 / 60 / 1000) + (Math.round(timeElapsed / 60 / 60 / 1000) < 2 ? " HEURE" : " HEURES");
+        }
+        feedInfo.innerText = `GROUPE ${lastUpdated.nom_groupe} MIS A JOUR IL Y A ${timeElapsed}`;
+        feed.appendChild(feedInfo);
+    } catch {
+        console.log("feed error")
+        return;
+    }
+}
+
+updateFeed();
 
 const inputs = document.querySelectorAll('.setDate input.time');
 document.querySelector('.search-button').addEventListener('click', () => {
     searchAvailable();
 });
 async function searchAvailable() {
-    
+
     // Extract values and parse as integers
     const startHour = parseInt(inputs[0].value, 10);
     const startMinute = parseInt(inputs[1].value, 10);

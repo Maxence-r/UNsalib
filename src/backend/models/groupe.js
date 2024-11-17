@@ -8,7 +8,12 @@ const GroupeSchema = Schema({
     nom: {
         type: String,
         required: true
-    }
+    },
+    date_maj: {
+        type: String,
+        required: true,
+        default: "jamais"
+    },
 });
 
 

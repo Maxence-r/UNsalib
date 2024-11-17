@@ -1,5 +1,6 @@
 import express from "express";
 import { Octokit } from "@octokit/rest";
+import Groupe from "../models/groupe.js";
 import "dotenv/config";
 const router = express.Router();
 
@@ -20,6 +21,24 @@ router.get("/version", async (req, res) => {
 
         const resultatFormate = { version: process.env.VERSION };
         res.json(resultatFormate);
+    } catch (erreur) {
+        res.status(500).send("ERREUR_INTERNE");
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
+router.get("/dernier-groupe-maj", async (req, res) => {
+    try {
+        // Obtention de toutes les salles
+        let groupe = await Groupe.find().sort({ date_maj: -1 }).limit(1).select(
+            "-__v -identifiant"
+        );
+
+        res.json({ nom_groupe: groupe[0].nom, date_maj: groupe[0].date_maj });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         console.error(

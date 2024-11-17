@@ -98,6 +98,10 @@ const recupererCours = async (groupe) => {
         for (const cours of donnees) {
             await traiterCours(cours);
         }
+
+        await Groupe.findOneAndUpdate({ identifiant: groupe.identifiant }, { date_maj: new Date().toISOString() }, {
+            new: true
+        });
     } catch (erreur) {
         console.error(
             `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,
@@ -160,13 +164,11 @@ export const getCourses = async () => {
 
     // Démarrer le cycle de mise à jour
     console.log(
-        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${
-            INTERVALLE_CYCLE / 1000 / 60 / 60
+        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${INTERVALLE_CYCLE / 1000 / 60 / 60
         }h`
     );
     console.log(
-        `Intervalle entre chaque groupe: ${
-            intervalleEntreGroupes / 1000
+        `Intervalle entre chaque groupe: ${intervalleEntreGroupes / 1000
         } secondes`
     );
     demarrerCycleMiseAJour();

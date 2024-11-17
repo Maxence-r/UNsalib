@@ -1,13 +1,28 @@
-// Palette tirée de https://flatuicolors.com/palette/defo
-// Extraction automatique depuis la console :
-// colors = []
-// document.querySelectorAll(".color").forEach((color) => {
-//     color = color.style.background.split(",");
-//     color = { r: color[0].replace("rgb(", ""), g: color[1].trim(), b: color[2].replace(")", "").trim() };
-//     colors.push("#" + (1 << 24 | color.r << 16 | color.g << 8 | color.b).toString(16).slice(1));
-// });
-// console.log(colors);
-const PALETTE = [
+// JavaScript
+const PALETTE_HSL = [
+    { h: 168.8, s: 76.1, l: 50.0 }, // #1abc9c
+    { h: 145.0, s: 63.7, l: 47.1 }, // #2ecc71
+    { h: 204.0, s: 70.6, l: 53.9 }, // #3498db
+    { h: 282.6, s: 38.2, l: 50.2 }, // #9b59b6
+    { h: 210.0, s: 29.0, l: 39.2 }, // #34495e
+    { h: 168.8, s: 76.1, l: 43.9 }, // #16a085
+    { h: 145.0, s: 63.7, l: 39.0 }, // #27ae60
+    { h: 204.0, s: 70.6, l: 44.1 }, // #2980b9
+    { h: 282.6, s: 38.2, l: 39.8 }, // #8e44ad
+    { h: 210.0, s: 29.0, l: 31.4 }, // #2c3e50
+    { h: 48.0,  s: 89.4, l: 56.7 }, // #f1c40f
+    { h: 28.6,  s: 80.3, l: 51.8 }, // #e67e22
+    { h: 5.7,   s: 79.5, l: 56.5 }, // #e74c3c
+    { h: 0.0,   s: 0.0,  l: 94.1 }, // #ecf0f1
+    { h: 0.0,   s: 0.0,  l: 60.0 }, // #95a5a6
+    { h: 36.7,  s: 85.9, l: 49.4 }, // #f39c12
+    { h: 24.0,  s: 84.6, l: 41.4 }, // #d35400
+    { h: 2.6,   s: 79.7, l: 41.2 }, // #c0392b
+    { h: 0.0,   s: 0.0,  l: 74.1 }, // #bdc3c7
+    { h: 0.0,   s: 0.0,  l: 49.0 }  // #7f8c8d
+];
+
+const PALETTE_HEX = [
     "#1abc9c",
     "#2ecc71",
     "#3498db",
@@ -28,97 +43,62 @@ const PALETTE = [
     "#c0392b",
     "#bdc3c7",
     "#7f8c8d"
-]
-const PALETTE_HSL = []
-PALETTE.forEach(couleur => {
-    PALETTE_HSL.push(convertirRgbEnHsl(convertirHexEnRgb(couleur)));
-});
+];
 
-function couleurPaletteProche(couleur) {
-    couleur = convertirRgbEnHsl(convertirHexEnRgb(couleur));
+function couleurPaletteProche(couleurHex) {
+    const couleurHSL = convertirRgbEnHsl(convertirHexEnRgb(couleurHex));
 
-    // Fonction pour calculer la distance euclidienne entre deux couleurs HSL
-    function distanceCouleurs(couleur1, couleur2) {
-        const dh = couleur1.h - couleur2.h; // Différence de teinte
-        const ds = couleur1.s - couleur2.s; // Différence de saturation
-        const dl = couleur1.l - couleur2.l; // Différence de luminosité
-        return Math.sqrt(dh * dh + ds * ds + dl * dl);
-    }
+    let minDistance = Infinity;
+    let closestIndex = 0;
 
-    // Recherche de la couleur la plus proche
-    let indiceCouleurProche = 0;
-    let distanceMin = distanceCouleurs(couleur, PALETTE_HSL[indiceCouleurProche]);
-
-    for (let i = 1; i < PALETTE_HSL.length; i++) {
-        const distanceActuelle = distanceCouleurs(couleur, PALETTE_HSL[i]);
-        if (distanceActuelle < distanceMin) {
-            distanceMin = distanceActuelle;
-            indiceCouleurProche = i;
+    for (let i = 0; i < PALETTE_HSL.length; i++) {
+        const distance = distanceCouleurs(couleurHSL, PALETTE_HSL[i]);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestIndex = i;
         }
     }
 
-    return PALETTE[indiceCouleurProche];
+    return PALETTE_HEX[closestIndex];
 }
 
-function convertirRgbEnHsl({ r, g, b }) {
-    // Convertir les valeurs RGB de 0-255 à 0-1
-    r /= 255;
-    g /= 255;
-    b /= 255;
-
-    // Trouver les valeurs max et min
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-
-    // Calculer la luminance (L)
-    let l = (max + min) / 2;
-
-    // Calculer la saturation (S)
-    let s = 0;
-    if (delta !== 0) {
-        s = delta / (1 - Math.abs(2 * l - 1));
-    }
-
-    // Calculer la teinte (H)
-    let h = 0;
-    if (delta !== 0) {
-        if (max === r) {
-            h = ((g - b) / delta) % 6;
-        } else if (max === g) {
-            h = (b - r) / delta + 2;
-        } else if (max === b) {
-            h = (r - g) / delta + 4;
-        }
-        h *= 60; // Convertir en degrés
-        if (h < 0) h += 360; // S'assurer que H est positif
-    }
-
-    // Convertir S et L en pourcentage (0-100)
-    s = +(s * 100).toFixed(1);
-    l = +(l * 100).toFixed(1);
-
-    return { h: +h.toFixed(1), s, l };
+function distanceCouleurs(c1, c2) {
+    const dh = Math.min(Math.abs(c1.h - c2.h), 360 - Math.abs(c1.h - c2.h)) / 180;
+    const ds = (c1.s - c2.s) / 100;
+    const dl = (c1.l - c2.l) / 100;
+    return Math.sqrt(dh * dh + ds * ds + dl * dl);
 }
 
 function convertirHexEnRgb(hex) {
-    // Fonction tirée de https://stackoverflow.com/a/5624139
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
-
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+    }
+    const num = parseInt(hex, 16);
+    return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+    };
 }
 
-export {
-    couleurPaletteProche,
-    convertirHexEnRgb,
-    convertirRgbEnHsl
-};
+function convertirRgbEnHsl({ r, g, b }) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    const d = max - min;
+
+    if (d !== 0) {
+        s = d / (1 - Math.abs(2 * l - 1));
+        switch (max) {
+            case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+            case g: h = ((b - r) / d + 2); break;
+            case b: h = ((r - g) / d + 4); break;
+        }
+        h *= 60;
+    }
+
+    return { h, s: s * 100, l: l * 100 };
+}
+
+export { couleurPaletteProche };

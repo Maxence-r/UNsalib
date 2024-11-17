@@ -36,13 +36,22 @@ function obtenirDatesSemaine(numero) {
 }
 function obtenirNbSemaines() {
     const dateActuelle = new Date();
-    const dateDebut = new Date(dateActuelle.getFullYear(), 0, 1); // date de début de l'année (1er janvier)
+    const dateDebut = new Date(dateActuelle.getFullYear(), 0, 1); // Date du début de l'année (1er janvier)
 
     // Calcul de la différence entre la date actuelle et le début de l'année
     const differenceDates = dateActuelle - dateDebut;
     const diffDays = differenceDates / (1000 * 60 * 60 * 24);
+
     // Calcul du nombre de semaines
-    const nbSemaines = Math.ceil(diffDays / 7);
+    let nbSemaines = Math.ceil(diffDays / 7);
+
+    // Obtenir le jour actuel (0 pour dimanche, 1 pour lundi, ..., 6 pour samedi)
+    const jourActuel = dateActuelle.getDay();
+
+    // Si c'est samedi (6) ou dimanche (0), incrémenter le numéro de la semaine
+    if (jourActuel === 6 || jourActuel === 0) {
+        nbSemaines += 1;
+    }
 
     return nbSemaines;
 }

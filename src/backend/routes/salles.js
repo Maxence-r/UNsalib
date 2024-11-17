@@ -115,10 +115,11 @@ router.get("/disponibles", async (req, res) => {
         const resultatFormate = sallesDispos.map((doc) => ({
             id: doc._id,
             nom: doc.nom_salle,
+            alias: doc.alias,
             places_assises: doc.places_assises,
             batiment: doc.batiment,
-            caracteristiques: doc.caracteristiques,
             disponible: true,
+            caracteristiques: doc.caracteristiques
         }));
 
         res.json(resultatFormate);

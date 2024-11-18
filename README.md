@@ -1,4 +1,6 @@
-<div style="display: flex; gap: 5px;">
+# UNsalib
+
+<div style="display: flex; gap: 5px; padding-bottom: 12px;">
   <img href="https://www.oracle.com/fr/cloud/" alt="Oracle Cloud" src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white">
   <img href="https://www.mongodb.com/" alt="MongoDB" src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white">
   <img alt="HTML 5" src="https://img.shields.io/badge/-HTML5-F06529?logo=html5&logoColor=FFFFFF&style=for-the-badge">
@@ -6,9 +8,6 @@
   <img alt="Nodejs" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
   <img alt="Socketio" src="https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white">
 </div>
-
-# UNsalib
-## L'emploie du temps des salles de Nantes Université
 
 <p align="center">
   <img width="100%" src=".github/mac.png" alt="Banner">

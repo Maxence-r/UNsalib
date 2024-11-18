@@ -15,7 +15,7 @@
 
 ## 🗝️Research and development
 
-We're proud to present this project. After dedicating significant time to finding a correct and viable solution, we discuss and showcase our research in this document (french): 
+We're proud to present this project. After dedicating significant time to finding a correct and viable solution, we discuss and showcase our research in this document (french): https://docs.google.com/document/d/1F2fmTzl88viRSR_j6lHnVwBSEmp1OsEqbVQG_SYG2fM/edit?usp=sharing
 
 ## ✨ Privacy
 

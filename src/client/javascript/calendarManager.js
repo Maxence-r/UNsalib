@@ -82,6 +82,8 @@ async function afficherSalle(salle, delta) {
         return;
     }
 
+    toggleNav();
+
     document.getElementById("room-name").innerText = salle?.alias || salle.nom;
     document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
     document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";

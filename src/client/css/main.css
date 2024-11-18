@@ -19,6 +19,7 @@ body {
 * {
     scrollbar-width: thin;
     scrollbar-color: #cfcfcf #ffffff;
+    user-select: none;
 }
 
 :root {
@@ -34,6 +35,7 @@ body {
 
     padding: 24px 24px 0 24px;
     width: 22%;
+    height: calc(100% - 24px);
     min-width: 350px;
     gap: 24px;
     overflow: hidden;
@@ -462,8 +464,8 @@ input[type=number] {
 }
 
 .time-picker>input:focus {
-    border: 1px solid var(--accent-color);
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 .search-button {
@@ -522,6 +524,7 @@ input[type=number] {
     transform: translateY(100%);
     opacity: 0;
     transition: all 0.6s;
+    z-index: 5000;
 }
 
 .notif.active {
@@ -698,6 +701,12 @@ input[type=number] {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+
+
+.course:hover > h2 {
+    white-space: normal;
 }
 
 .week-switcher {
@@ -953,11 +962,14 @@ input[type=number] {
         top: 0;
         left: 0;
         width: calc(100% - 48px);
-        height: 100%;
         border: none;
         min-width: auto;
         transition: transform 0.7s;
         transform: translateY(0);
+    }
+
+    .course:hover > p {
+        display: none;
     }
 
     .pannel.active {

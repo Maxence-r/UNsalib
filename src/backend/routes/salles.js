@@ -102,13 +102,14 @@ router.get("/disponibles", async (req, res) => {
         let cours = await Cours.find({
             $and: [
                 { debute_a: { $lt: fin } }, // le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }, // le cours finit après le début de la période demandée
+                { fini_a: { $gt: debut } } // le cours finit après le début de la période demandée
             ],
         });
 
         // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
+            banned: { $ne: true }
         }).select("-__v");
 
         // Formatage de la réponse

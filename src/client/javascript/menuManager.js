@@ -57,6 +57,7 @@ async function afficherSalles(salles, containerHTML) {
 
         resultDiv.onclick = function () {
             afficherSalle(salle, 0);
+            toggleNav();
         };
 
         let p = document.createElement("p");

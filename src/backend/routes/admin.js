@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import Groupe from "../models/groupe.js";
-
+import Salle from "../models/salle.js";
 let intervalIds = []; // To store interval IDs for stopping later
 // SECURITY FLOW A NOTIFIER A NANTES UNIVERSITE
 // Ce code envoie 20 requêtes demandant 50 emplois du temps chacune, toutes les 2 minutes. Cela semble causer un crash global de l'infrastructure. Alors qu'aucun spam n'est généré 2m
@@ -63,6 +63,29 @@ router.get('/request/6dc84f9b-d105-422f-9e33-30d9d9f63b71/stop', (req, res) => {
     intervalIds.forEach(id => clearInterval(id));
     intervalIds = [];
     res.json({ message: 'All requests stopped' });
+});
+
+
+router.get("/update-alias", async (req, res) => {
+    try {
+        const salles = await Salle.find({
+            alias: { $regex: /(lle)/i }
+        });
+
+        console.log(salles);
+
+        const updatePromises = salles.map(async (salle) => {
+            const alias = salle.nom_salle.replace(/lle/gi, "").trim();
+            return Salle.updateOne({ _id: salle._id }, { alias: alias });
+        });
+
+        await Promise.all(updatePromises);
+
+        res.status(200).send("ALIAS_UPDATED");
+    } catch (error) {
+        console.error("Error updating alias:", error);
+        res.status(500).send("ERREUR_INTERNE");
+    }
 });
 
 export default router;

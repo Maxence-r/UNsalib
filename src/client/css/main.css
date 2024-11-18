@@ -632,6 +632,7 @@ input[type=number] {
     width: calc(100% - 16px);
     background-color: #e17055;
     padding: 8px;
+    border-radius: 2px;
 }
 
 .course>h2 {
@@ -703,6 +704,10 @@ input[type=number] {
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
+}
+
+.avaibility-box>.ping {
+    display: none;
 }
 
 .loader {
@@ -805,9 +810,22 @@ input[type=number] {
     height: 2px;
     background: blue;
     position: absolute;
-    z-index: 999;
+    z-index: 1;
 }
 
+
+.indicator-hour {
+    position: absolute;
+    background-color: var(--accent-color);
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    transform: translateY(-12.5px);
+    z-index: 10;
+    color: white !important;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1;
+}
 
 .lds-ripple {
     /* change color here */

@@ -22,17 +22,13 @@ for (let k = 0; k < 5; k++) {
     }
 }
 
-let indicator = document.querySelector(".indicator-hour");
-let indicatorHour = document.createElement("div");
-indicatorHour.classList.add("hourBar");
-indicatorHour.style.display = "none";
-indicator.style.display = "none";
-setInterval(() => {
+function setHourIndicator() {
     let dateActuelle = new Date();
     let jourActuel = dateActuelle.getDay();
     let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
     if (heureActuelle > heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6) {
+        console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
         columns[jourActuel-1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
         indicator.style.display = "flex";
@@ -44,8 +40,15 @@ setInterval(() => {
         indicator.style.display = "none";
         indicatorHour.style.display = "none";
     }
-}, 30000);
+}
 
+const indicator = document.querySelector(".indicator-hour");
+const indicatorHour = document.createElement("div");
+indicatorHour.classList.add("hourBar");
+indicatorHour.style.display = "none";
+indicator.style.display = "none";
+setHourIndicator();
+setInterval(setHourIndicator, 10000);
 
 function getWeeksInYear() {
     const currentDate = new Date();
@@ -69,7 +72,7 @@ async function afficherSalle(salle, delta) {
     document.getElementById("room-name").innerText = salle?.alias || salle.nom;
     document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
     document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";
-    
+    document.querySelector('.avaibility-box .ping').style.display = "block";
 
     const response = await fetch(
         `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`

@@ -12,7 +12,7 @@ const GroupeSchema = Schema({
     date_maj: {
         type: String,
         required: true,
-        default: "jamais"
+        default: ""
     },
 });
 

@@ -22,12 +22,13 @@ for (let k = 0; k < 5; k++) {
     }
 }
 
+let currentWeekNumber = "--";
 function setHourIndicator() {
     let dateActuelle = new Date();
     let jourActuel = dateActuelle.getDay();
     let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
-    if (heureActuelle > heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6) {
+    if (heureActuelle > heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
         console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
         columns[jourActuel-1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
@@ -105,6 +106,12 @@ async function afficherSalle(salle, delta) {
     });
 
     document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
+
+    if (currentWeekNumber == "--") {
+        currentWeekNumber = salleData.infos_semaine.numero;
+        console.log("ok")
+    }
+    setHourIndicator();
 
     salleData.cours.forEach((coursData) => {
         const courseStart = new Date(coursData.debut);

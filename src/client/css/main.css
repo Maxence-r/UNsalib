@@ -704,9 +704,92 @@ input[type=number] {
 }
 
 
-
 .course:hover > h2 {
     white-space: normal;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: white;
+    right: 0;
+    width: 300px;
+}
+
+.about-content>p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5F5F5F;
+}
+
+.links {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.link {
+    display: flex;
+    justify-content: space-between;
+    width: fit-content;
+    height: 38px;
+    border-radius: 8px;
+    padding: 4px;
+    border: 2px solid var(--border-color);
+}
+
+.link > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    background-color: var(--accent-color);
+    border: none;
+    cursor: pointer;
+}
+
+.whitePaper {
+    width: 100%;
+}
+
+.link > img {
+    height: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.profile {
+    overflow: scroll;
+    scrollbar-width: none;
+
+}
+
+.profile > .link {
+    min-width: 150px;
+}
+
+.link-infos {
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+}
+
+.link-infos>p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5F5F5F;
+}
+
+.link-infos>h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
 }
 
 .week-switcher {
@@ -896,11 +979,11 @@ input[type=number] {
 .about {
     position: absolute;
     display: flex;
-    cursor: pointer;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    gap: 12px;
     z-index: 4;
     right: 0;
+    transform: translateX(312px);
     bottom: 20%;
     padding: 12px;
     background-color: white;
@@ -909,18 +992,19 @@ input[type=number] {
 }
 
 .about > h2 {
+    display: flex;
+    justify-content: space-between;
     margin: 0;
     font-size: 14px;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     white-space: nowrap;
-    display: inline-block;
     overflow: visible;
     font-weight: 600;
 }
 
 .about:hover {
-    transform: translateY(-10px);
+    transform: translateX(0);
 }
 
 

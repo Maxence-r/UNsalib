@@ -6,9 +6,10 @@
   <img alt="Nodejs" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
   <img alt="Socketio" src="https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white">
 </div>
-<p style="margin-top: 20px" align="center">
-  <img width="100%" src=".github/unsallib_banner.svg" alt="Banner">
-</p>
+
+# UNsalib
+## L'emploie du temps des salles de Nantes Université
+
 <p align="center">
   <img width="100%" src=".github/mac.png" alt="Banner">
 </p>

@@ -445,9 +445,23 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+/* Masquer les flèches sur Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Masquer les flèches sur Firefox */
 input[type=number] {
     appearance: textfield;
     -moz-appearance: textfield;
+}
+
+/* Masquer les flèches sur Internet Explorer */
+input[type=number] {
+    appearance: textfield;
+    -ms-appearance: textfield;
 }
 
 .time-picker>input {
@@ -704,7 +718,7 @@ input[type=number] {
 }
 
 
-.course:hover > h2 {
+.course:hover>h2 {
     white-space: normal;
 }
 
@@ -740,7 +754,7 @@ input[type=number] {
     border: 2px solid var(--border-color);
 }
 
-.link > button {
+.link>button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -756,7 +770,7 @@ input[type=number] {
     width: 100%;
 }
 
-.link > img {
+.link>img {
     height: 100%;
     border-radius: 4px;
     cursor: pointer;
@@ -768,7 +782,7 @@ input[type=number] {
 
 }
 
-.profile > .link {
+.profile>.link {
     min-width: 150px;
 }
 
@@ -991,7 +1005,7 @@ input[type=number] {
     transition: transform 0.3s;
 }
 
-.about > h2 {
+.about>h2 {
     display: flex;
     justify-content: space-between;
     margin: 0;
@@ -1052,7 +1066,7 @@ input[type=number] {
         transform: translateY(0);
     }
 
-    .course:hover > p {
+    .course:hover>p {
         display: none;
     }
 

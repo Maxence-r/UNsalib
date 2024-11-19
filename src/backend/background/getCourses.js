@@ -2,15 +2,10 @@ import Groupe from "../models/groupe.js";
 import Cours from "../models/cours.js";
 import Salle from "../models/salle.js";
 import "dotenv/config";
-import { couleurPaletteProche } from "../utils/couleur.js";
-import io from "../../../server.js";
+import {couleurPaletteProche} from "../utils/couleur.js";
 
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
-
-// Variables to track course IDs
-let oldCourseIds = [];
-let newCourseIds = [];
 
 // Fonction pour obtenir les dates de début et fin (3 semaines)
 const obtenirDatesRequete = () => {
@@ -86,9 +81,6 @@ const traiterCours = async (donneesCours) => {
     });
 
     await nouveauCours.save();
-
-    // After saving the new course
-    newCourseIds.push(nouveauCours.identifiant);
 };
 
 // Fonction pour récupérer les cours d'un groupe
@@ -107,7 +99,9 @@ const recupererCours = async (groupe) => {
             await traiterCours(cours);
         }
 
-        io.emit("groupUpdated", { message: `Groupe ${groupe.nom} mis à jour` });
+        await Groupe.findOneAndUpdate({ identifiant: groupe.identifiant }, { date_maj: new Date().toISOString() }, {
+            new: true
+        });
     } catch (erreur) {
         console.error(
             `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,
@@ -145,13 +139,7 @@ export const getCourses = async () => {
     const demarrerCycleMiseAJour = () => {
         let indexGroupe = 0;
 
-        const programmerProchainGroupe = async () => {
-            if (indexGroupe === 0) {
-                // At the start of the cycle, get all existing course IDs
-                oldCourseIds = (await Cours.find({}, 'identifiant')).map(cours => cours.identifiant);
-                newCourseIds = [];
-            }
-
+        const programmerProchainGroupe = () => {
             if (indexGroupe < nombreGroupes) {
                 setTimeout(async () => {
                     const groupe = groupes[indexGroupe];
@@ -161,35 +149,12 @@ export const getCourses = async () => {
                     programmerProchainGroupe();
                 }, intervalleEntreGroupes);
             } else {
-                // At the end of the cycle, remove old courses not present in new data
-                const coursesToRemove = oldCourseIds.filter(id => !newCourseIds.includes(id));
-                if (coursesToRemove.length > 0) {
-                    const removedCourses = await Cours.find({ identifiant: { $in: coursesToRemove } });
-                    await Cours.deleteMany({ identifiant: { $in: coursesToRemove } });
-                    console.log('Cours supprimés car non présents dans le nouveau cycle :', removedCourses);
-                    // send to discord webhook removedCourses
-                    const webhook = process.env.WEBHOOK_URL;
-                    if (webhook) {
-                        const webhookData = {
-                            content: `Cours supprimés car non présents dans le nouveau cycle : ${removedCourses.map(cours => cours.identifiant).join(', ')}`
-                        };
-                        await fetch(webhook, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(webhookData)
-                        });
-                    };
-                }
-                // Prepare for the next cycle
-                oldCourseIds = [...newCourseIds];
-                newCourseIds = [];
+                // Réinitialiser pour le prochain cycle
                 indexGroupe = 0;
                 setTimeout(() => {
                     console.log("Démarrage d'un nouveau cycle de 12h");
                     programmerProchainGroupe();
-                }, INTERVALLE_CYCLE);
+                }, intervalleEntreGroupes);
             }
         };
 

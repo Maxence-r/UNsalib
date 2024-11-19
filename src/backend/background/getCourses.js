@@ -2,7 +2,7 @@ import Groupe from "../models/groupe.js";
 import Cours from "../models/cours.js";
 import Salle from "../models/salle.js";
 import "dotenv/config";
-import {couleurPaletteProche} from "../utils/couleur.js";
+import { couleurPaletteProche } from "../utils/couleur.js";
 
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
@@ -47,10 +47,8 @@ const traiterSalle = async (nomSalle) => {
     return salle;
 };
 
-
 // Fonction pour traiter un cours individuel
 const traiterCours = async (donneesCours) => {
-
     if (
         !donneesCours.start_at ||
         !donneesCours.end_at ||
@@ -76,8 +74,11 @@ const traiterCours = async (donneesCours) => {
         professeur: donneesCours.teachers_for_blocks || "Non renseigné",
         classe: sallePrincipale?._id || "Non renseigné",
         module: donneesCours.modules_for_blocks || "Non renseigné",
-        groupe: donneesCours.educational_groups_for_blocks.split(";").map((item) => item.trim()) || "Non renseigné",
-        couleur: couleurPaletteProche(donneesCours.color) || "#FF7675"
+        groupe:
+            donneesCours.educational_groups_for_blocks
+                .split(";")
+                .map((item) => item.trim()) || "Non renseigné",
+        couleur: couleurPaletteProche(donneesCours.color) || "#FF7675",
     });
 
     await nouveauCours.save();
@@ -99,9 +100,7 @@ const recupererCours = async (groupe) => {
             await traiterCours(cours);
         }
 
-        await Groupe.findOneAndUpdate({ identifiant: groupe.identifiant }, { date_maj: new Date().toISOString() }, {
-            new: true
-        });
+        io.emit("groupUpdated", { message: `Groupe ${groupe.nom} mis à jour` });
     } catch (erreur) {
         console.error(
             `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,
@@ -164,11 +163,13 @@ export const getCourses = async () => {
 
     // Démarrer le cycle de mise à jour
     console.log(
-        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${INTERVALLE_CYCLE / 1000 / 60 / 60
+        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${
+            INTERVALLE_CYCLE / 1000 / 60 / 60
         }h`
     );
     console.log(
-        `Intervalle entre chaque groupe: ${intervalleEntreGroupes / 1000
+        `Intervalle entre chaque groupe: ${
+            intervalleEntreGroupes / 1000
         } secondes`
     );
     demarrerCycleMiseAJour();

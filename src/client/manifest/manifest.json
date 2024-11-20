@@ -30,7 +30,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#3452FF",
-  "background_color": "#000000",
+  "background_color": "#ffffff",
   "screenshots": [
     {
       "src": "../assets/sc1.png",

@@ -29,8 +29,8 @@
   "start_url": "../html/main.html",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#d9473d",
-  "background_color": "#3452FF",
+  "theme_color": "#3452FF",
+  "background_color": "#000000",
   "screenshots": [
     {
       "src": "../assets/sc1.png",

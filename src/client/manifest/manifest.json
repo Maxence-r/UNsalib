@@ -1,6 +1,9 @@
 {
   "short_name": "UNsalib",
   "name": "UNsalib",
+  "categories": ["productivity", "utilities", "social"],
+  "description": "UNsalib permet aux étudiants/professeurs de Nantes Université de consulter l'edt des salles et rechercher des salles libres",
+  "id": "/unsalib/v1",
   "icons": [
     {
       "src": "../assets/logo144.png",
@@ -11,10 +14,29 @@
       "src": "../assets/logo96.png",
       "sizes": "96x96",
       "type": "image/png"
+    },
+    {
+      "src": "../assets/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../assets/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": "../html/main.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#d9473d",
+  "background_color": "#ffffff",
+  "screenshots": [
+    {
+      "src": "../assets/sc1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Visualisation d'un EDT"
+    }
+  ]
 }

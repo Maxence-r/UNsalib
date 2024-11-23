@@ -63,6 +63,37 @@ body {
     gap: 34px;
 }
 
+.modal {
+    position: absolute;
+    display: none;
+    align-items: end;
+    pointer-events: none;
+    opacity: 0;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+.modal.active {
+
+    opacity: 1;
+}
+
+
+
+.modal-content {
+    position: absolute;
+    display: flex;
+    height: calc(100% - 48px);
+    width: 300px;
+    padding: 24px;
+    background-color: white;
+    right: 0;
+}
+
 .loading-calendar {
     position: absolute;
     display: none;
@@ -381,6 +412,10 @@ p.no-results {
     cursor: pointer;
 }
 
+.result:hover {
+    background-color: #f8f8f8;
+}
+
 .result>p {
     margin: 0;
     font-size: 14px;
@@ -458,12 +493,6 @@ input[type=number]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-/* Masquer les flèches sur Firefox */
-input[type=number] {
-    appearance: textfield;
-    -moz-appearance: textfield;
-}
-
 /* Masquer les flèches sur Internet Explorer */
 input[type=number] {
     appearance: textfield;
@@ -481,6 +510,7 @@ input[type=number] {
     font-weight: 400;
     padding: 3px 4px;
     outline: none;
+    -moz-appearance:textfield;
 }
 
 .time-picker>input:focus {
@@ -693,6 +723,7 @@ input[type=number] {
 .course {
     display: flex;
     z-index: 1;
+    cursor: pointer;
     position: absolute;
     flex-direction: column;
     justify-content: space-between;
@@ -1070,6 +1101,11 @@ input[type=number] {
         min-width: auto;
         transition: transform 0.7s;
         transform: translateY(0);
+    }
+
+    .modal-content {
+        width: calc(100% - 48px);
+        height: fit-content;
     }
 
     .course:hover>p {

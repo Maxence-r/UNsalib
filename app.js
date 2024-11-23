@@ -21,6 +21,11 @@ app.use("/api/salles", salles);
 app.use("/api/admin", admin);
 app.use("/api/app", appInfos);
 app.get("/", (req, res) => {
+    console.log(process.env.MAINTENANCE);
+    if (process.env.MAINTENANCE === "true") {
+        res.sendFile("src/client/html/maintenance.html", { root: "." });
+        return;
+    }
     res.sendFile("src/client/html/main.html", { root: "." });
 });
 // DATABASE CONNECTION

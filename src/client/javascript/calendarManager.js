@@ -28,7 +28,7 @@ function setHourIndicator() {
     let jourActuel = dateActuelle.getDay();
     let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
-    if (heureActuelle > heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
+    if (heureActuelle >= heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
         console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
         columns[jourActuel-1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";

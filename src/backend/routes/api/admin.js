@@ -1,22 +1,34 @@
-import { Router } from 'express';
-import Account from '../models/account.js';
+import express from "express";
+import Salle from "../../models/salle.js";
+import Account from '../../models/account.js';
 import { compare } from 'bcrypt';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 import pkg from 'jsonwebtoken';
-import 'dotenv/config'
-const router = Router();
+const router = express.Router();
 const { sign } = pkg;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-router.get('/', async (req, res) => {
-    if (req.connected) return res.redirect('/admin/dashboard');
-    const filePath = join(__dirname, '../../client/html/auth.html');
-    res.sendFile(filePath);
+router.get("/update-alias", async (req, res) => {
+    try {
+        const salles = await Salle.find({
+            alias: { $regex: /(lle)/i }
+        });
+
+        console.log(salles);
+
+        const updatePromises = salles.map(async (salle) => {
+            const alias = salle.nom_salle.replace(/lle/gi, "").trim();
+            return Salle.updateOne({ _id: salle._id }, { alias: alias });
+        });
+
+        await Promise.all(updatePromises);
+
+        res.status(200).send("ALIAS_UPDATED");
+    } catch (error) {
+        console.error("Error updating alias:", error);
+        res.status(500).send("ERREUR_INTERNE");
+    }
 });
 
-router.post('/', async (req, res) => {
+router.post('/auth/login', async (req, res) => {
     try {
         const user = await Account.findOne({ username: req.body.username.toLowerCase() });
         if (!user) {
@@ -58,7 +70,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/logout', async (req, res) => {
+router.get('/auth/logout', async (req, res) => {
     res.clearCookie('token');
     res.redirect('/admin/auth');
 });

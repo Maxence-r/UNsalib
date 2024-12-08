@@ -5,7 +5,7 @@ function showError(error) {
 }
 
 async function login() {
-    fetch('/admin/auth', {
+    fetch('/api/admin/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

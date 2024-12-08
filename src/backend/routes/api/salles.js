@@ -1,14 +1,14 @@
 import express from "express";
 const router = express.Router();
-import Salle from "../models/salle.js";
-import Cours from "../models/cours.js";
+import Salle from "../../models/salle.js";
+import Cours from "../../models/cours.js";
 import mongoose from "mongoose";
 import {
     formatDateValide,
     obtenirDatesSemaine,
     obtenirNbSemaines,
     obtenirOverflowMinutes,
-} from "../utils/date.js";
+} from "../../utils/date.js";
 
 router.get("/", async (req, res) => {
     try {

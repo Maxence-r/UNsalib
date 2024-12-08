@@ -1,27 +1,25 @@
-import express from "express";
-const router = express.Router();
-import Salle from "../models/salle.js";
+import { Router } from 'express';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+const router = Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-router.get("/update-alias", async (req, res) => {
-    try {
-        const salles = await Salle.find({
-            alias: { $regex: /(lle)/i }
-        });
+router.get('/auth', async (req, res) => {
+    if (req.connected) return res.redirect('/admin/dashboard');
+    const filePath = join(__dirname, '../../client/html/auth.html');
+    res.sendFile(filePath);
+});
 
-        console.log(salles);
+router.get('/', async (req, res) => {
+    return res.redirect('/admin/dashboard');
+});
 
-        const updatePromises = salles.map(async (salle) => {
-            const alias = salle.nom_salle.replace(/lle/gi, "").trim();
-            return Salle.updateOne({ _id: salle._id }, { alias: alias });
-        });
-
-        await Promise.all(updatePromises);
-
-        res.status(200).send("ALIAS_UPDATED");
-    } catch (error) {
-        console.error("Error updating alias:", error);
-        res.status(500).send("ERREUR_INTERNE");
-    }
+router.get('/dashboard', async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
+    let filePath;
+    filePath = join(__dirname, '../../client/html/dashboard.html');
+    res.sendFile(filePath);
 });
 
 export default router;

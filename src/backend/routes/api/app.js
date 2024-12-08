@@ -1,6 +1,6 @@
 import express from "express";
 import { Octokit } from "@octokit/rest";
-import Groupe from "../models/groupe.js";
+import Groupe from "../../models/groupe.js";
 import "dotenv/config";
 const router = express.Router();
 

@@ -3,13 +3,18 @@ const app = express();
 
 import { set, connect } from "mongoose";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 import getGroups from "./src/backend/background/getGroups.js";
 import salles from "./src/backend/routes/salles.js";
 import admin from "./src/backend/routes/admin.js";
 import appInfos from "./src/backend/routes/app.js";
+import authentification from "./src/backend/middlewares/auth.js";
+// import auth from "./src/backend/routes/auth.js";
+import adminDashboard from "./src/backend/routes/dashboard.js";
 
 // SECURITE SERVER
 app.disable("x-powered-by");
+app.use(cookieParser());
 
 // DEFAULT MIDDLEWARES
 app.use(json());
@@ -17,9 +22,12 @@ app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
 // ROUTES
+app.use(authentification);
 app.use("/api/salles", salles);
 app.use("/api/admin", admin);
 app.use("/api/app", appInfos);
+app.use("/admin", adminDashboard);
+// app.use("/admin/auth", auth);
 app.get("/", (req, res) => {
     console.log(process.env.MAINTENANCE);
     if (process.env.MAINTENANCE === "true") {

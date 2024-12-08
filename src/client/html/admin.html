@@ -26,35 +26,35 @@
         </div>
     </nav>
     <main style="height: calc(100vh - 156px); margin: 24px; display: flex;">
-        <div id="rooms-list" style="overflow-y: auto; height: 100%; width: 30%; display: flex; flex-direction: column; gap: 8px;">
+        <div id="rooms-list" style="height: 100%; width: 30%; display: flex; flex-direction: column; gap: 24px;">
             <input id="search" type="text" placeholder="Filtrer">
-            <div id="rooms-list__container"></div>
+            <div id="rooms-list__container" style="overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 8px;"></div>
         </div>
-        <div id="room-editor" style="width: 70%; display: none; flex-direction: column; padding-left: 24px;">
-            <h3>Éditer les informations de la salle</h3>
-            <div style="overflow: auto; flex-grow: 1;">
+        <div id="room-editor" style="width: 70%; display: none; flex-direction: column; padding-left: 24px; gap: 24px; align-items: center;">
+            <h2 style="text-transform: uppercase;">Éditer les informations de la salle</h2>
+            <div style="overflow: auto; flex-grow: 1; width: 100%;">
                 <section id="id">
-                    <h2>ID</h2>
-                    <span>Coucou</span>
+                    <h3>ID</h3>
+                    <span></span>
                 </section>
                 <section id="name">
-                    <h2>Nom</h2>
-                    <span>Coucou</span>
+                    <h3>Nom</h3>
+                    <span></span>
                 </section>
                 <section id="alias">
-                    <h2>Alias</h2>
-                    <input type="text" placeholder="Alias">
+                    <h3>Alias</h3>
+                    <input type="text">
                 </section>
                 <section id="seats">
-                    <h2>Places assises</h2>
-                    <input type="number" placeholder="Places assises">
+                    <h3>Places assises</h3>
+                    <input type="number">
                 </section>
                 <section id="banned">
-                    <h2>Bannie</h2>
+                    <h3>Bannie</h3>
                     <input type="checkbox">
                 </section>
                 <section id="boards">
-                    <h2>Tableaux</h2>
+                    <h3>Tableaux</h3>
                     <ul>
                         <li>Noir :<input type="number" name="noir" value="0"></li>
                         <li>Blanc :<input type="number" name="blanc" value="0"></li>
@@ -62,22 +62,23 @@
                     </ul>
                 </section>
                 <section id="details">
-                    <h2>Caractéristiques</h2>
-                    <input type="text">
+                    <h3>Caractéristiques</h3>
+                    <textarea></textarea>
                 </section>
                 <section id="type">
-                    <h2>Type</h2>
+                    <h3>Type</h3>
                     <select>
-                        <option value=""></option>
+                        <option value="">Aucun</option>
                         <option value="TP">TP</option>
                         <option value="TD">TD</option>
                         <option value="INFO">INFO</option>
                     </select>
                 </section>
             </div>
-            <button id="save-button">Enregistrer les modifications</button>
+            <button id="save-button" style="flex-shrink: 0;">Enregistrer les modifications</button>
         </div>
     </main>
+    <div id="toast"></div>
 </body>
 <script src="../javascript/admin.js"></script>
 

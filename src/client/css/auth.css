@@ -106,7 +106,7 @@ button:hover {
 
 #error-display {
     display: none;
-    background: rgb(230 66 66);
+    background: #e64242;
     border-radius: 6px;
     padding: 12px;
     color: #ffffff;

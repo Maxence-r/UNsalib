@@ -1,3 +1,18 @@
+function showToast(msg, error=false) {
+    toast.innerText = msg;
+    if (error) {
+        toast.style.backgroundColor = '#e64242';
+        toast.style.color = '#ffffff';
+    } else {
+        toast.style.backgroundColor = '#44c235';
+        toast.style.color = '#ffffff';
+    }
+    toast.classList.add('displayed');
+    setTimeout(() => {
+        toast.classList.remove('displayed');
+    }, 4000);
+}
+
 async function updateRoom(id, data) {
     let success = "";
     try {
@@ -14,9 +29,10 @@ async function updateRoom(id, data) {
         success = await success.json();
     } catch (error) {
         console.error(error);
+        showToast('Erreur lors de la mise à jour des informations : ' + error, true);
         return;
     }
-    console.log(success)
+    showToast('Les informations ont été mises à jour avec succès.', false);
 }
 
 async function getRoom(id) {
@@ -44,9 +60,6 @@ async function getRoom(id) {
             boardsSection.querySelector('input[name="ecran"]').value = data.board[type];
         }
     });
-
-    value = JSON.stringify(data.board);
-
     detailsSection.value = JSON.stringify(data.details);
     typeSection.value = data.type;
 }
@@ -80,13 +93,15 @@ async function getRooms() {
 
 getRooms();
 
+const toast = document.querySelector('#toast');
+
 const idSection = document.querySelector('#id>span');
 const nameSection = document.querySelector('#name>span');
 const aliasSection = document.querySelector('#alias>input');
 const seatsSection = document.querySelector('#seats>input');
 const bannedSection = document.querySelector('#banned>input');
 const boardsSection = document.querySelector('#boards');
-const detailsSection = document.querySelector('#details>input');
+const detailsSection = document.querySelector('#details>textarea');
 const typeSection = document.querySelector('#type>select');
 
 const saveBtn = document.querySelector('#save-button');
@@ -100,7 +115,7 @@ saveBtn.addEventListener('click', () => {
         alias: aliasSection.value,
         places_assises: seatsSection.value,
         tableau: tableauObj,
-        details: JSON.parse(detailsSection.value),
+        caracteristiques: JSON.parse(detailsSection.value),
         banned: bannedSection.checked,
         type: typeSection.value
     }

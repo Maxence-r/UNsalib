@@ -40,3 +40,64 @@ body {
     border: 1px solid var(--sub-border-color);
     border-radius: 6px;
 }
+
+input, select, textarea {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    min-height: 50px;
+    border-radius: var(--border-radius);
+    background-color: #ECECEC;
+    border: none;
+    outline: none;
+}
+
+input, select {
+    padding: 0px 16px;
+}
+
+textarea {
+    padding: 16px;
+}
+
+button {
+    height: 40px;
+    border-radius: 6px;
+    background-color: var(--accent-color);
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Space Grotesk", sans-serif;
+    width: fit-content;
+    padding: 0px 24px;
+}
+
+button:hover {
+    background-color: #1f2dff;
+}
+
+section>span {
+    user-select: text;
+}
+
+#boards input {
+    margin: 8px;
+}
+
+#toast {
+    position: fixed;
+    bottom: 20px;
+    background: #70de63;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    left: 50%;
+    translate: -50%;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    transition: transform .3s;
+    transform: translateY(100px);
+}
+
+#toast.displayed {
+    transform: translateY(0px);
+}

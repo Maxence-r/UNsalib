@@ -2,6 +2,8 @@ import express, { json, urlencoded, static as serveStatic } from "express";
 const app = express();
 
 import { set, connect } from "mongoose";
+import { hash } from 'bcrypt';
+import Account from './src/backend/models/account.js';
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import getGroups from "./src/backend/background/getGroups.js";
@@ -47,6 +49,19 @@ set("strictQuery", true);
         console.log(err);
         process.exit(0);
     } finally {
+        // SET UP ADMIN ACCOUNTS
+        const adminUsernames = process.env.ADMIN_USERNAMES.split(',');
+        const adminPasswords = process.env.ADMIN_PASSWORDS.split(',');
+        await Account.deleteMany({});
+        for (let i = 0; i < adminUsernames.length; i++) {
+            const account = new Account({
+                name: adminUsernames[i],
+                lastname: adminUsernames[i],
+                username: adminUsernames[i],
+                password: await hash(adminPasswords[i], 10)
+            });
+            await account.save();
+        }
         // EXECUTION PERMANENTE
         getGroups();
     }

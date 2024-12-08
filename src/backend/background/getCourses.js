@@ -13,6 +13,7 @@ const obtenirDatesRequete = () => {
     const dateDebut = new Date();
     const dateFin = new Date();
     dateFin.setDate(dateFin.getDate() + 60);
+    dateDebut.setDate(dateDebut.getDate() - 1);
 
     return {
         debut: dateDebut.toISOString().split("T")[0],

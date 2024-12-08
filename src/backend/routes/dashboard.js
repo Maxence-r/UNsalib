@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 import Account from '../models/account.js';
-import { compare, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import pkg from 'jsonwebtoken';
 const { sign } = pkg;
 import 'dotenv/config'
@@ -31,33 +31,24 @@ router.get('/auth', async (req, res) => {
 });
 
 router.post('/auth', async (req, res) => {
-    // console.log(await hash("coucou", 10));
-    // return;
-    // const groupeObj = new Account({
-    //     name: "test",
-    //     lastname: "test",
-    //     username: "test",
-    //     password: "$2b$10$IcneRbBU0NzmeSuYAruY2OmOasgNxP2m6AGJvH9CsNtTNr/bzGVBW"
-    // });
-    // await groupeObj.save();
     try {
-        const user = await Account.findOne({ username: req.body.mail.toLowerCase() });
+        const user = await Account.findOne({ username: req.body.username.toLowerCase() });
         if (!user) {
             return res.status(401).json({
-                error: 'Utilisateur non trouvé !',
+                error: 'BAD_CREDENTIALS',
             });
         }
         const validPassword = await compare(req.body.password, user.password);
         if (!validPassword) {
-            return res.status(400).json({
-                error: 'Mot de passe incorrect !',
+            return res.status(401).json({
+                error: 'BAD_CREDENTIALS',
             });
         }
 
         const token = sign(
             {
                 userId: user._id,
-                mail: user.username,
+                username: user.username,
             },
             process.env.TOKEN.toString(),
             {
@@ -70,10 +61,14 @@ router.post('/auth', async (req, res) => {
                 message: 'Connexion réussie !',
             });
     } catch (error) {
-        console.log('error: ', error);
         res.status(500).json({
-            error,
+            error: 'INTERNAL_ERROR',
         });
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
     }
 });
 

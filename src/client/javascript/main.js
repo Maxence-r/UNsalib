@@ -1,6 +1,6 @@
 activeNotif = false;
 function displayNotification(message) {
-    if(activeNotif) return
+    if (activeNotif) return
     activeNotif = true
 
     let notification = document.querySelector('.notif')
@@ -41,6 +41,7 @@ socket.on("error", (error) => {
 let defferedPrompt;
 const addbtn = document.querySelector('.version');
 
+
 window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     defferedPrompt = event
@@ -50,10 +51,32 @@ window.addEventListener('beforeinstallprompt', event => {
 addbtn.addEventListener('click', event => {
     defferedPrompt.prompt();
 
+    
+
     defferedPrompt.userChoice.then(choice => {
-        if(choice.outcome === 'accepted'){
+        if (choice.outcome === 'accepted') {
             console.log('user accepted the prompt')
         }
         defferedPrompt = null;
     })
 })
+
+
+
+
+function openModal(modal) {
+    document.querySelector('.modal').classList.add('active')
+    document.querySelectorAll('.modal-content > div').forEach(el => {
+        el.style.display = 'none'
+    })
+    if (modal) {
+        document.querySelector(`.${modal}`).style.display = 'flex'
+    }
+}
+
+document.querySelector('.modal').addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('active')
+    }
+})
+

@@ -68,6 +68,9 @@ let increment = 0;
 let currentSalle = null;
 
 async function afficherSalle(salle, delta) {
+
+    navigator.vibrate(10);
+
     const newIncrement = (delta == 0) ? 0 : increment + delta;
 
     toggleLoading()
@@ -120,6 +123,11 @@ async function afficherSalle(salle, delta) {
         const course_module = document.createElement("h2");
         const course_prof = document.createElement("p");
 
+        course_content.onclick = () => {
+            openModal("course-details");
+            displayDetails(coursData);
+        };
+
         course_module.innerText = coursData?.module.split(" - ")[1] || "Module inconnu";
         course_prof.innerText = coursData.professeur;
 
@@ -148,3 +156,20 @@ document.querySelectorAll(".week-switcher img").forEach((el) => {
         afficherSalle(currentSalle, delta);
     });
 });
+
+
+function displayDetails(coursData) {
+    let startDate = new Date(coursData.debut);
+    let endDate = new Date(coursData.fin);
+    let duree = (endDate - startDate) / 60000;
+
+    document.querySelector('.course-container').style.backgroundColor = coursData.couleur;
+    document.querySelector('.course-container > p').innerText = coursData.module.split(" - ")[1];
+
+    document.getElementById('teacher-name').innerText = coursData.professeur;
+    document.getElementById('module').innerText = coursData.module.split(" - ")[0];
+    document.getElementById('duration').innerText = duree + " minutes";
+
+    document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
+    document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
+}

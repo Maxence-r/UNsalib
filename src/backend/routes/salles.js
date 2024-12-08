@@ -10,6 +10,8 @@ import {
     obtenirOverflowMinutes,
 } from "../utils/date.js";
 
+const vacations = [52, 1];
+
 router.get("/", async (req, res) => {
     try {
         // Obtention de toutes les salles
@@ -147,14 +149,46 @@ router.get("/edt", async (req, res) => {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
     // Validation de l'incrément : 0 <= numero semaine actuelle + increment <= 52
-    const numeroSemaine = obtenirNbSemaines() + parseInt(increment);
-    if (numeroSemaine < 0 || numeroSemaine > 52) {
-        return res.status(400).send("INCREMENT_TROP_ELEVE");
+    let numeroSemaine = obtenirNbSemaines() + parseInt(increment);
+    if (numeroSemaine > 52) {
+        numeroSemaine = numeroSemaine - 52;
     }
-
     // Obtention des informations sur la semaine demandée
     const bornesDates = obtenirDatesSemaine(numeroSemaine);
     bornesDates.numero = numeroSemaine;
+
+    if (numeroSemaine < 0 || numeroSemaine > 52) {
+        return res.status(400).send("INCORRECT_WEEK_NUMBER");
+    }
+    if (vacations.includes(numeroSemaine)) {
+        // VACANCES
+        const vacanceCours = [];
+        const startDate = new Date(bornesDates.debut);
+        for (let i = 0; i < 5; i++) {
+            const debut = new Date(startDate);
+            debut.setDate(debut.getDate() + i);
+            debut.setHours(9, 0, 0, 0);
+
+            const fin = new Date(debut);
+            fin.setHours(9, 0, 0, 0);
+
+            vacanceCours.push({
+                id_cours: `vacance-${i}`,
+                debut: debut.toISOString(),
+                fin: fin.toISOString(),
+                duree: 900,
+                overflow: 0,
+                id_salle: id,
+                professeur: "Monsieur Chill",
+                module: "Détente - Vacances",
+                groupe: "Tout le monde",
+                couleur: "#FF7675"
+            });
+        }
+
+        return res.send({ cours: vacanceCours, infos_semaine: bornesDates });
+    }
+
 
     try {
         // Obtention des cours selon l'id de salle et la période donnée
@@ -165,15 +199,6 @@ router.get("/edt", async (req, res) => {
                 { fini_a: { $lte: bornesDates.fin } },
             ],
         }).select("-__v -identifiant");
-
-        // La DB ne renvoie aucun enregistrement :
-        // - soit l'id de la salles est erroné
-        // - soit il n'y a pas d'edt dans la DB pour la période donnée (pas encore récupéré)
-        if (cours.length == 0) {
-            return res
-                .status(404)
-                .send("SALLE_INEXISTANTE_OU_EDT_INDISPONIBLE");
-        }
 
         // Formatage de la réponse
         const resultatFormate = cours.map((doc) => {

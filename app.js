@@ -10,9 +10,9 @@ import getGroups from "./src/backend/background/getGroups.js";
 import salles from "./src/backend/routes/salles.js";
 import admin from "./src/backend/routes/admin.js";
 import appInfos from "./src/backend/routes/app.js";
-import authentification from "./src/backend/middlewares/auth.js";
-// import auth from "./src/backend/routes/auth.js";
 import adminDashboard from "./src/backend/routes/dashboard.js";
+import adminAuth from "./src/backend/routes/auth.js";
+import authentification from "./src/backend/middlewares/auth.js";
 
 // SECURITE SERVER
 app.disable("x-powered-by");
@@ -29,7 +29,7 @@ app.use("/api/salles", salles);
 app.use("/api/admin", admin);
 app.use("/api/app", appInfos);
 app.use("/admin", adminDashboard);
-// app.use("/admin/auth", auth);
+app.use("/admin/auth", adminAuth);
 app.get("/", (req, res) => {
     console.log(process.env.MAINTENANCE);
     if (process.env.MAINTENANCE === "true") {

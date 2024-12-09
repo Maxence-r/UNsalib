@@ -18,11 +18,25 @@
 <body>
     <nav id="navbar">
         <div id="branding">
-            <h1>UNsalib - Administrateur</h1>
+            <h1>UNsalib</h1>
+            <h2>Administrateur</h2>
             <div></div>
         </div>
         <div>
-            <a href="/api/admin/auth/logout">Se déconnecter</a>
+            <!-- <a href="/api/admin/auth/logout">Se déconnecter</a> -->
+            <!-- <button class="button icon-button"><i class="material-symbols-rounded">account_circle</i></button> -->
+            <!-- <a href="/api/admin/auth/logout" class="button icon-button"><i class="material-symbols-rounded">logout</i></a> -->
+            <button id="account-button" class="button"><span></span><img /></button>
+            <div id="account-menu">
+                <div id="account-infos">
+                    <img />
+                    <div>
+                        <h2>Maël BONNET</h2>
+                        <span>@mael</span>
+                    </div>
+                </div>
+                <button class="button">Se déconnecter</button>
+            </div>
         </div>
     </nav>
     <main>
@@ -32,7 +46,7 @@
         </div>
         <div id="room-editor">
             <div class="page-title">
-                <button id="back-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <button id="back-button" class="button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
                 <h2>Éditer les informations de la salle</h2>
             </div>
             <div class="data-container">
@@ -67,7 +81,7 @@
                 <section id="details">
                     <h3>Caractéristiques</h3>
                     <input type="text" placeholder="Caractéristique">
-                    <button>Ajouter</button>
+                    <button class="button">Ajouter</button>
                     <div class="chips-container"></div>
                 </section>
                 <section id="type">
@@ -80,7 +94,7 @@
                     </select>
                 </section>
             </div>
-            <button id="save-button">Enregistrer les modifications</button>
+            <button id="save-button" class="button">Enregistrer les modifications</button>
         </div>
     </main>
     <div id="toast"></div>

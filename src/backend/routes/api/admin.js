@@ -155,6 +155,7 @@ router.get("/room", async (req, res) => {
 });
 
 router.post("/update-room", async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
     const roomId = req.body.roomId;
     const data = req.body.data;
 
@@ -176,6 +177,27 @@ router.post("/update-room", async (req, res) => {
         res.status(200).json({
             updated: true
         });
+    } catch (erreur) {
+        res.status(500).json({
+            error: 'INTERNAL_ERROR',
+        });
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
+router.get("/account-infos", async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    try {
+        let user = await Account.findOne({ _id: req.userId }).select(
+            "-__v -identifiant -_id -password"
+        );
+
+        res.status(200).json(user);
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

@@ -12,10 +12,7 @@ const authentification = async (req, res, next) => {
 
     try {
         const decodedToken = verify(token, process.env.TOKEN.toString());
-        const userId = decodedToken.userId;
-        const user = await Account.findOne({ _id: userId });
-
-        req.user = user;
+        req.userId = decodedToken.userId;
         req.connected = true;
         return next();
     } catch (error) {

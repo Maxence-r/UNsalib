@@ -51,6 +51,25 @@ async function updateRoom(id, data) {
     showToast('Les informations ont été mises à jour avec succès.', false);
 }
 
+async function getAccount() {
+    let data = [];
+    try {
+        data = await fetch('/api/admin/account-infos', {
+            method: 'GET',
+        });
+        data = await data.json();
+    } catch (error) {
+        console.error(error);
+        showToast('Impossible d\'obtenir le compte utilisateur. Essayze de vous déconnecter : ' + error, true);
+        return;
+    }
+    document.querySelector('#account-button>span').textContent = data.name + ' ' + data.lastname;
+    document.querySelector('#account-button>img').src = 'data:image/png;base64,' + data.icon;
+    document.querySelector('#account-infos h2').textContent = data.name + ' ' + data.lastname;
+    document.querySelector('#account-infos span').textContent = '@' + data.username;
+    document.querySelector('#account-infos img').src = 'data:image/png;base64,' + data.icon;
+}
+
 async function getRoom(id) {
     let data = [];
     try {
@@ -113,6 +132,30 @@ async function getRooms() {
     getRoom(document.querySelector('.room-item').id);
     document.querySelector('#room-editor').style.display = 'flex';
 }
+
+getAccount();
+
+const accountButton = document.querySelector('#account-button');
+const accountMenu = document.querySelector('#account-menu');
+
+accountButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    accountMenu.classList.add('opened');
+});
+
+window.addEventListener('click', () => {
+    if (accountMenu.style.display !== 'none') {7
+        accountMenu.classList.remove('opened');
+    }
+});
+
+accountMenu.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
+
+document.querySelector('#account-menu button').addEventListener('click', (event) => {
+    window.location = '/api/admin/auth/logout';
+});
 
 getRooms();
 

@@ -23,7 +23,11 @@ const AccountSchema = Schema({
         type: String,
         required: true,
         minLength: 6,
-    }
+    },
+    icon: {
+        type: String,
+        default: ""
+    },
 });
 
 const Account = model("Account", AccountSchema);

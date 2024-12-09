@@ -72,7 +72,7 @@ textarea {
     padding: 16px;
 }
 
-button {
+.button {
     height: 40px;
     border-radius: 6px;
     background-color: var(--accent-color);
@@ -84,9 +84,10 @@ button {
     font-family: "Space Grotesk", sans-serif;
     width: fit-content;
     padding: 0px 24px;
+    display: inline-block;
 }
 
-button:hover {
+.button:hover {
     background-color: #1f2dff;
 }
 
@@ -199,10 +200,19 @@ main {
     padding-right: 8px;
 }
 
-#navbar>#branding {
+#branding {
     display: flex;
     gap: 24px;
     align-items: center;
+}
+
+#branding h2 {
+    font-size: 1.3em;
+    color: #676767;
+}
+
+#branding h1, #branding h2 {
+    margin-block: 0px;
 }
 
 .page-title {
@@ -213,21 +223,99 @@ main {
 
 #back-button {
     display: none;
+}
+
+.icon-button {
     padding: 8px;
     background-color: transparent;
     color: #000000;
 }
 
-#back-button:hover {
+.icon-button:hover {
     background-color: #ECECEC
 }
 
+#account-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: transparent;
+    color: #000000;
+    height: auto;
+}
+
+#account-button:hover {
+    background-color: #ECECEC
+}
+
+#account-button>img {
+    border-radius: 100px;
+    height: 30px;
+    width: 30px;
+}
+
+#account-button>span {
+    font-size: 16px;
+}
+
+#account-menu {
+    position: fixed;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 12px;
+    right: -100vw;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform .2s, opacity .2s;
+    z-index: 4;
+}
+
+#account-menu.opened {
+    position: absolute;
+    transform: translateY(0px);
+    opacity: 1;
+    right: 24px;
+}
+
+#account-menu .button {
+    width: 100%;
+}
+
+#account-infos {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+#account-infos h2 {
+    margin-block: 0px;
+}
+
+#account-infos img {
+    border-radius: 100px;
+    height: 50px;
+    width: 50px;
+}
+
 @media screen and (max-width: 1024px) {
-    #room-editor, #rooms-list {
+    #navbar {
+        height: 40px;
+    }
+
+    #branding h2 {
+        display: none;
+    }
+
+    #room-editor,
+    #rooms-list {
         position: fixed;
-        top: calc(60px + 48px);
+        top: calc(40px + 48px);
         width: calc(100vw - 48px);
-        height: calc(100vh - 60px - 48px - 48px);
+        height: calc(100vh - 40px - 48px - 48px);
         background-color: #FBFBFB;
         /* left: 0px; */
         padding: 24px;
@@ -262,5 +350,9 @@ main {
 
     h3 {
         font-size: 1.1em;
+    }
+
+    #account-menu {
+        width: calc(100vw - 48px - 48px);
     }
 }

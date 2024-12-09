@@ -213,8 +213,7 @@ router.get("/edt", async (req, res) => {
 
             // Calcul du border avec ajout de 2 pour chaque 61 minutes avant le début et après la fin
             // Obtention de l'overflow et conversion en pourcentage
-            const overflow =
-                (obtenirOverflowMinutes(new Date(doc.debute_a)) * 100) / 60;
+            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a))
             return {
                 id_cours: doc._id,
                 debut: doc.debute_a,
@@ -239,5 +238,8 @@ router.get("/edt", async (req, res) => {
         );
     }
 });
+
+
+
 
 export default router;

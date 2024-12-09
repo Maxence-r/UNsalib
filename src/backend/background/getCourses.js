@@ -216,27 +216,3 @@ export const getCourses = async () => {
     );
     demarrerCycleMiseAJour();
 };
-
-
-
-traiterCours({
-    "id": 352530947,
-    "celcat_id": "2118055",
-    "categories": "Contr\u00f4le continu",
-    "start_at": "2024-12-12T09:30:00+01:00",
-    "end_at": "2024-12-12T12:20:00+01:00",
-    "notes": "0-0-16-0",
-    "custom1": null,
-    "custom2": null,
-    "custom3": null,
-    "color": "ff0000",
-    "place_id": 12,
-    "rooms_for_blocks": "sa TD 24 (B\u00e2t 18-B U)",
-    "rooms_for_item_details": "sa TD 24 (B\u00e2t 18-B U)",
-    "teachers_for_blocks": "PINOT Jerome",
-    "teachers_for_item_details": "PINOT Jerome",
-    "educational_groups_for_blocks": "581INFO-M ; 585 ; CC",
-    "educational_groups_for_item_details": "581INFO-M ; 585 ; CC",
-    "modules_for_blocks": "X31T060 - Ouverture professionnelle - Informatique",
-    "modules_for_item_details": "X31T060 - Ouverture professionnelle - Informatique"
-})

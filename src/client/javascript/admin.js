@@ -181,8 +181,8 @@ async function getRooms() {
             document.querySelector('#course-name>input').value = '';
             bookRoomPopup.classList.add('opened');
         });
-        roomElement.addEventListener('click', () => {
-            getRoom(roomElement.id);
+        roomElement.addEventListener('click', (event) => {
+            getRoom(event.currentTarget.id);
             document.querySelector('#room-editor').classList.add('swipe-left');
             document.querySelector('#rooms-list').classList.add('swipe-left');
         });

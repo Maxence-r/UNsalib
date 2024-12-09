@@ -317,7 +317,6 @@ main {
         width: calc(100vw - 48px);
         height: calc(100vh - 40px - 48px - 48px);
         background-color: #FBFBFB;
-        /* left: 0px; */
         padding: 24px;
         transition-duration: .3s;
         left: 100vw !important;
@@ -354,5 +353,9 @@ main {
 
     #account-menu {
         width: calc(100vw - 48px - 48px);
+    }
+
+    #toast {
+        width: calc(100vw - 32px - 48px);
     }
 }

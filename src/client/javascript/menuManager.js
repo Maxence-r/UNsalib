@@ -175,3 +175,16 @@ document.querySelectorAll(".search").forEach((el) => {
     })
 });
 
+function setDefaultDateTime() {
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+    inputs[0].value = now.getHours().toString().padStart(2, '0');
+    inputs[1].value = now.getMinutes().toString().padStart(2, '0');
+    inputs[2].value = oneHourLater.getHours().toString().padStart(2, '0');
+    inputs[3].value = oneHourLater.getMinutes().toString().padStart(2, '0');
+    inputs[4].value = now.getDate().toString().padStart(2, '0');
+    inputs[5].value = (now.getMonth() + 1).toString().padStart(2, '0');
+}
+
+setDefaultDateTime();

@@ -61,8 +61,6 @@ const traiterCours = async (donneesCours) => {
         !donneesCours.rooms_for_blocks ||
         !sallePrincipale._id
     ) {
-        console.error("Données de cours incomplètes X1");
-        console.error(donneesCours);
         return;
     }
 

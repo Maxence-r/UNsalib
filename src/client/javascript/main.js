@@ -41,7 +41,6 @@ socket.on("error", (error) => {
 let defferedPrompt;
 const addbtn = document.querySelector('.version');
 
-
 window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     defferedPrompt = event
@@ -51,10 +50,8 @@ window.addEventListener('beforeinstallprompt', event => {
 addbtn.addEventListener('click', event => {
     defferedPrompt.prompt();
 
-    
-
     defferedPrompt.userChoice.then(choice => {
-        if (choice.outcome === 'accepted') {
+        if(choice.outcome === 'accepted'){
             console.log('user accepted the prompt')
         }
         defferedPrompt = null;
@@ -91,3 +88,14 @@ output.innerHTML = slider.value;
 slider.oninput = function() {
   output.innerHTML = this.value;
 }
+
+
+document.querySelector('.profile').addEventListener('dblclick', () => {
+    document.location.href = '/admin/auth'
+})
+
+document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+        tag.classList.toggle('selected')
+    })
+})

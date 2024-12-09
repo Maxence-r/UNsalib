@@ -329,11 +329,16 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
     gap: 8px;
 }
 
 .indicator>p {
     margin: 0;
+}
+
+.indicator > img {
+    height: 16px;
 }
 
 .ping {
@@ -403,13 +408,9 @@ p.no-results {
     cursor: pointer;
 }
 
-.tag:hover>p {
-    opacity: 0;
-}
-
-.tag:hover>.remove {
-    opacity: 1;
-    cursor: pointer;
+.tag.selected {
+    background-color: #f8f8f8;
+    border: 1px solid var(--accent-color);
 }
 
 .tag>p {
@@ -417,18 +418,8 @@ p.no-results {
     opacity: 1;
     font-size: 12px;
     font-weight: 600;
-
-    transition: opacity 0.2s;
 }
 
-.remove {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    opacity: 0;
-
-    transition: opacity 0.2s;
-}
 
 .result {
     display: flex;
@@ -1189,6 +1180,11 @@ button {
     font-size: 14px;
     font-weight: 600;
     color: #000000;
+}
+
+.option > img {
+    height: 18px;
+    align-self: baseline;
 }
 
 .search-button {

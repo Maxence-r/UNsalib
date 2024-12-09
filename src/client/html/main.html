@@ -92,15 +92,15 @@
                     <div class="tags">
                         <div class="tag">
                             <p>TABLEAU BLANC</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                           
                         </div>
                         <div class="tag">
                             <p>TABLEAU CRAIS</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                           
                         </div>
                         <div class="tag">
                             <p>TABLEAU</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                            
                         </div>
                     </div>
                 </div>
@@ -110,27 +110,43 @@
                     <div class="tags">
                         <div class="tag">
                             <p>SALLE VIDEO</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                
                         </div>
                         <div class="tag">
                             <p>SALLE VISIO</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                         
                         </div>
                         <div class="tag">
                             <p>SALLE ILOT</p>
-                            <img src="../assets/x.svg" alt="close" class="remove" />
+                   
                         </div>
                     </div>
                 </div>
-
-
-
-
-
                 <button type="button" class="search-button" onclick="this.classList.toggle('button--loading')">
                     <span class="button__text">Rechercher</span>
                 </button>
+            </div>
+            <div class="pictos">
+                <div class="option">
+                    <p>Salle Info/Vidéo</p>
+                    <img src="../assets/video.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle Visio</p>
+                    <img src="../assets/visio.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle ILOT</p>
+                    <img src="../assets/ilot.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle à badge</p>
+                    <img src="../assets/badge.svg" alt="info" />
+                </div>
 
+                <button type="button" class="search-button" onclick="closeModal()">
+                    <span class="button__text">Compris !</span>
+                </button>
             </div>
         </div>
     </div>
@@ -166,9 +182,9 @@
 
                 <div class="results-head">
                     <p>Résultats de recherche</p>
-                    <div class="indicator">
-                        <div class="red ping"></div>
-                        <p>Occupé</p>
+                    <div onclick="openModal('pictos')" class="indicator">
+                        <img src="../assets/info.svg">
+                        <p>Pictos</p>
                     </div>
                 </div>
                 <div class="results edt">

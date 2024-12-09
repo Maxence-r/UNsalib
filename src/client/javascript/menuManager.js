@@ -61,7 +61,7 @@ async function afficherSalles(salles, containerHTML) {
         };
 
         let p = document.createElement("p");
-        p.textContent = salle?.alias ? `${salle.alias.toUpperCase()} ` : `${salle.nom.toUpperCase()} `;
+        p.textContent = salle.alias != "" ? `${salle.alias.toUpperCase()} ` : `${salle.nom.toUpperCase()} `;
 
         let span = document.createElement("span");
         span.className = "bat";

@@ -23,7 +23,7 @@ async function getGroups() {
         return getCourses();
     }
     console.log("Récupération des groupes ACTIVÉE - Démarrage du processus...");
-    await Groupe.deleteMany({})
+    await Groupe.deleteMany({});
     const page = await getHTML("https://edt-v2.univ-nantes.fr/sciences/educational_groups");
     if (page !== -1) { // il n'y a pas d'erreur dans la requête
         const docRoot = parse(page);

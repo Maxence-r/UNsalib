@@ -2,24 +2,35 @@ import express, { json, urlencoded, static as serveStatic } from "express";
 const app = express();
 
 import { set, connect } from "mongoose";
+import { hash } from 'bcrypt';
+import Account from './src/backend/models/account.js';
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 import getGroups from "./src/backend/background/getGroups.js";
-import salles from "./src/backend/routes/salles.js";
-import admin from "./src/backend/routes/admin.js";
-import appInfos from "./src/backend/routes/app.js";
+import sallesApi from "./src/backend/routes/api/salles.js";
+import adminApi from "./src/backend/routes/api/admin.js";
+import appInfosApi from "./src/backend/routes/api/app.js";
+import adminDashboard from "./src/backend/routes/admin.js";
+import authentification from "./src/backend/middlewares/auth.js";
 
 // SECURITE SERVER
 app.disable("x-powered-by");
+app.use(cookieParser());
 
 // DEFAULT MIDDLEWARES
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
-// ROUTES
-app.use("/api/salles", salles);
-app.use("/api/admin", admin);
-app.use("/api/app", appInfos);
+// API ROUTES
+app.use(authentification);
+app.use("/api/salles", sallesApi);
+app.use("/api/admin", adminApi);
+app.use("/api/app", appInfosApi);
+
+// OTHER ROUTES
+app.use("/admin", adminDashboard);
+
 app.get("/", (req, res) => {
     console.log(process.env.MAINTENANCE);
     if (process.env.MAINTENANCE === "true") {
@@ -28,6 +39,7 @@ app.get("/", (req, res) => {
     }
     res.sendFile("src/client/html/main.html", { root: "." });
 });
+
 // DATABASE CONNECTION
 set("strictQuery", true);
 (async () => {
@@ -39,6 +51,7 @@ set("strictQuery", true);
         console.log(err);
         process.exit(0);
     } finally {
+        // console.log('Jean-Michel', await hash("lesupermotdepasse", 10))
         // EXECUTION PERMANENTE
         getGroups();
     }

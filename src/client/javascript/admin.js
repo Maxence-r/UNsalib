@@ -77,7 +77,7 @@ async function getRoom(id) {
         }
     });
     detailsSection.querySelectorAll('.chip').forEach((chip) => {
-        detailsSection.removeChild(chip);
+        detailsSection.querySelector('.chips-container').removeChild(chip);
     });
     data.details.forEach((detail) => {
         addChip(detail, detailsSection.querySelector('.chips-container'));
@@ -106,6 +106,8 @@ async function getRooms() {
 
         roomElement.addEventListener('click', () => {
             getRoom(roomElement.id);
+            document.querySelector('#room-editor').classList.add('swipe-left');
+            document.querySelector('#rooms-list').classList.add('swipe-left');
         });
     });
     getRoom(document.querySelector('.room-item').id);
@@ -184,4 +186,9 @@ document.querySelector("#search").addEventListener("input", (e) => {
         }
     });
     // document.querySelector(`.${resultContainer} .no-results`).style.display = resultsNumber > 0 ? "none" : "block";
+});
+
+document.querySelector('#back-button').addEventListener('click', () => {
+    document.querySelector('#room-editor').classList.remove('swipe-left');
+    document.querySelector('#rooms-list').classList.remove('swipe-left');
 });

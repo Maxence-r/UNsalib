@@ -16,8 +16,8 @@
 </head>
 
 <body>
-    <nav id="navbar" style="background-color: #ffffff; padding: 24px; height: 60px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05); display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; gap: 24px; align-items: center;">
+    <nav id="navbar">
+        <div id="branding">
             <h1>UNsalib - Administrateur</h1>
             <div></div>
         </div>
@@ -25,14 +25,17 @@
             <a href="/api/admin/auth/logout">Se déconnecter</a>
         </div>
     </nav>
-    <main style="height: calc(100vh - 156px); margin: 24px; display: flex;">
-        <div id="rooms-list" style="height: 100%; width: 30%; display: flex; flex-direction: column; gap: 24px;">
+    <main>
+        <div id="rooms-list">
             <input id="search" type="text" placeholder="Filtrer">
-            <div id="rooms-list__container" style="overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 8px;"></div>
+            <div id="rooms-list__container"></div>
         </div>
-        <div id="room-editor" style="width: 70%; display: none; flex-direction: column; padding-left: 24px; gap: 24px; align-items: center;">
-            <h2 style="text-transform: uppercase;">Éditer les informations de la salle</h2>
-            <div style="overflow: auto; flex-grow: 1; width: 100%;">
+        <div id="room-editor">
+            <div class="page-title">
+                <button id="back-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <h2>Éditer les informations de la salle</h2>
+            </div>
+            <div class="data-container">
                 <section id="id">
                     <h3>ID</h3>
                     <span></span>
@@ -63,9 +66,9 @@
                 </section>
                 <section id="details">
                     <h3>Caractéristiques</h3>
-                    <input type="text" placeholder="Caractéristique" style="margin-right: 8px; margin-bottom: 24px;">
+                    <input type="text" placeholder="Caractéristique">
                     <button>Ajouter</button>
-                    <div class="chips-container" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                    <div class="chips-container"></div>
                 </section>
                 <section id="type">
                     <h3>Type</h3>
@@ -77,7 +80,7 @@
                     </select>
                 </section>
             </div>
-            <button id="save-button" style="flex-shrink: 0;">Enregistrer les modifications</button>
+            <button id="save-button">Enregistrer les modifications</button>
         </div>
     </main>
     <div id="toast"></div>

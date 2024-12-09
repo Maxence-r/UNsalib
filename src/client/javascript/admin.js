@@ -162,6 +162,7 @@ async function getRooms() {
         roomElement = document.createElement('div');
         roomElement.id = room.id;
         roomElement.setAttribute('data-building', room.building);
+        roomElement.setAttribute('data-name', room.name);
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
@@ -281,7 +282,7 @@ document.querySelector("#search").addEventListener("input", (e) => {
     let results = document.querySelectorAll('.room-item');
     let resultsNumber = 0;
     results.forEach((result) => {
-        let roomName = result.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+        let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
         let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
         if (!roomName.includes(search) && !buildingName.includes(search)) {
             result.style.display = "none";

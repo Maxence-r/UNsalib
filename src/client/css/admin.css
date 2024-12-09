@@ -223,6 +223,8 @@ main {
     display: flex;
     gap: 12px;
     align-items: center;
+    width: 100%;
+    justify-content: center;
 }
 
 #back-button {
@@ -424,5 +426,9 @@ main {
     #popup-window {
         width: calc(100vw - 48px - 48px);
         left: calc(50% - (50vw - 24px));
+    }
+
+    .page-title {
+        justify-content: left;
     }
 }

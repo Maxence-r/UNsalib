@@ -145,7 +145,7 @@ section>span {
 }
 
 main {
-    height: calc(100vh - 156px);
+    height: calc(100% - 156px);
     margin: 24px;
     display: flex;
 }
@@ -223,6 +223,8 @@ main {
     display: flex;
     gap: 12px;
     align-items: center;
+    width: 100%;
+    justify-content: center;
 }
 
 #back-button {
@@ -310,7 +312,7 @@ main {
     position: fixed;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.3);
-    height: 100vh;
+    height: 100%;
     top: 0px;
     left: calc(-100vw);
     opacity: 0;
@@ -377,7 +379,7 @@ main {
         position: fixed;
         top: calc(40px + 48px);
         width: calc(100vw - 48px);
-        height: calc(100vh - 40px - 48px - 48px);
+        height: calc(100% - 40px - 48px - 48px);
         background-color: #FBFBFB;
         padding: 24px;
         transition-duration: .3s;
@@ -424,5 +426,9 @@ main {
     #popup-window {
         width: calc(100vw - 48px - 48px);
         left: calc(50% - (50vw - 24px));
+    }
+
+    .page-title {
+        justify-content: left;
     }
 }

@@ -420,4 +420,9 @@ main {
     #toast {
         width: calc(100vw - 32px - 48px);
     }
+
+    #popup-window {
+        width: calc(100vw - 48px - 48px);
+        left: calc(50% - (50vw - 24px));
+    }
 }

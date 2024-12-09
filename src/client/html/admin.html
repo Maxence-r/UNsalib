@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <meta name="description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:title" content="UNsalib - Nantes UNIVERSITE" />
+    <meta property="og:description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://i.imgur.com/Ft3HyvM.png" />
+
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel='preconnect' href='https://fonts.googleapis.com' crossorigin>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link rel='preload' as='style' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
+    <title>UNsalib - Tableau de bord</title>
+</head>
+
+<body>
+    <nav id="navbar">
+        <div id="branding">
+            <h1>UNsalib</h1>
+            <h2>Administrateur</h2>
+            <div></div>
+        </div>
+        <div>
+            <!-- <a href="/api/admin/auth/logout">Se déconnecter</a> -->
+            <!-- <button class="button icon-button"><i class="material-symbols-rounded">account_circle</i></button> -->
+            <!-- <a href="/api/admin/auth/logout" class="button icon-button"><i class="material-symbols-rounded">logout</i></a> -->
+            <button id="account-button" class="button"><span></span><img /></button>
+            <div id="account-menu">
+                <div id="account-infos">
+                    <img />
+                    <div>
+                        <h2>Maël BONNET</h2>
+                        <span>@mael</span>
+                    </div>
+                </div>
+                <button class="button">Se déconnecter</button>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div id="rooms-list">
+            <input id="search" type="text" placeholder="Filtrer">
+            <div id="rooms-list__container">
+                <span id="no-result">Aucun résultat.</span>
+            </div>
+        </div>
+        <div id="room-editor">
+            <div class="page-title">
+                <button id="back-button" class="button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <h2>Éditer les informations de la salle</h2>
+            </div>
+            <div class="data-container">
+                <section id="id">
+                    <h3>ID</h3>
+                    <span></span>
+                </section>
+                <section id="name">
+                    <h3>Nom</h3>
+                    <span></span>
+                </section>
+                <section id="alias">
+                    <h3>Alias</h3>
+                    <input type="text">
+                </section>
+                <section id="seats">
+                    <h3>Places assises</h3>
+                    <input type="number">
+                </section>
+                <section id="banned">
+                    <h3>Bannie</h3>
+                    <input type="checkbox">
+                </section>
+                <section id="boards">
+                    <h3>Tableaux</h3>
+                    <ul>
+                        <li>Noir :<input type="number" name="noir" value="0"></li>
+                        <li>Blanc :<input type="number" name="blanc" value="0"></li>
+                        <li>Écran :<input type="number" name="ecran" value="0"></li>
+                    </ul>
+                </section>
+                <section id="details">
+                    <h3>Caractéristiques</h3>
+                    <input type="text" placeholder="Caractéristique">
+                    <button class="button">Ajouter</button>
+                    <div class="chips-container"></div>
+                </section>
+                <section id="type">
+                    <h3>Type</h3>
+                    <select>
+                        <option value="">Non défini</option>
+                        <option value="TP">TP</option>
+                        <option value="TD">TD</option>
+                        <option value="INFO">INFO</option>
+                    </select>
+                </section>
+            </div>
+            <button id="save-button" class="button">Enregistrer les modifications</button>
+        </div>
+    </main>
+    <div id="toast"></div>
+    <div id="book-room-popup">
+        <div id="popup-window">
+            <div id="popup-header">
+                <h2>Réserver une salle</h2>
+                <button id="close-popup-button" class="button icon-button"><i class="material-symbols-rounded">close</i></button>
+            </div>
+            <div id="popup-content" class="data-container">
+                <section id="booked-id">
+                    <h3>ID</h3>
+                    <span></span>
+                </section>
+                <section id="start-date">
+                    <h3>Date de début</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section id="end-date">
+                    <h3>Date de fin</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section id="course-name">
+                    <h3>Nom du cours</h3>
+                    <input type="text" placeholder="Par défaut (vide)" />
+                </section>
+            </div>
+            <button id="add-course-button" class="button">Réserver cette salle</button>
+        </div>
+    </div>
+</body>
+<script src="../javascript/admin.js"></script>
+
+</html>

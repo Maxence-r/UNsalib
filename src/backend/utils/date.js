@@ -61,9 +61,16 @@ function obtenirOverflowMinutes(date) {
     return minutes <= 30 ? minutes : 0 - 60 + minutes;
 }
 
+function sameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+}
+
 export {
     formatDateValide,
     obtenirDatesSemaine,
     obtenirNbSemaines,
     obtenirOverflowMinutes,
+    sameDay
 };

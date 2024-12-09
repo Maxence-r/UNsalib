@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Space+Grotesk:wght@300..700&display=swap');
+
+body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FBFBFB;
+}
+
+html,
+body {
+    height: 100%;
+    min-height: 100%;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cfcfcf #ffffff;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+:root {
+    --border-color: #F0F0F0;
+    --sub-border-color: #E1E1E1;
+    --border-radius: 12px;
+    --accent-color: #3452FF;
+}
+
+input {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    min-height: 50px;
+    border-radius: var(--border-radius);
+    padding: 0px 16px;
+    background-color: #ECECEC;
+    border: none;
+    outline: none;
+}
+
+button {
+    height: 40px;
+    border-radius: 6px;
+    background-color: var(--accent-color);
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+button:hover {
+    background-color: #1f2dff;
+}
+
+#login-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    width: 400px;
+    gap: 24px;
+    overflow: hidden;
+    background-color: #ffffff;
+    z-index: 10;
+    border-right: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+}
+
+#header h1 {
+    font-size: 24px;
+    text-transform: uppercase;
+}
+
+#header h2 {
+    font-size: 1.3em;
+    color: #676767;
+}
+
+#header h1, #header h2 {
+    text-align: center;
+    margin-block: 0px;
+    white-space: nowrap;
+}
+
+#header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 24px;
+}
+
+#error-display {
+    display: none;
+    background: #e64242;
+    border-radius: 6px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+@media screen and (max-width: 1024px) {
+    #login-panel {
+        width: calc(100vw - 48px - 48px);
+        gap: 16px;
+    }
+
+    #header {
+        gap: 8px;
+    }
+}

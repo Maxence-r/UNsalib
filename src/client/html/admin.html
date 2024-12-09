@@ -58,17 +58,19 @@
                     <ul>
                         <li>Noir :<input type="number" name="noir" value="0"></li>
                         <li>Blanc :<input type="number" name="blanc" value="0"></li>
-                        <li>Ecran :<input type="number" name="ecran" value="0"></li>
+                        <li>Écran :<input type="number" name="ecran" value="0"></li>
                     </ul>
                 </section>
                 <section id="details">
                     <h3>Caractéristiques</h3>
-                    <textarea></textarea>
+                    <input type="text" placeholder="Caractéristique" style="margin-right: 8px; margin-bottom: 24px;">
+                    <button>Ajouter</button>
+                    <div class="chips-container" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
                 </section>
                 <section id="type">
                     <h3>Type</h3>
                     <select>
-                        <option value="">Aucun</option>
+                        <option value="">Non défini</option>
                         <option value="TP">TP</option>
                         <option value="TD">TD</option>
                         <option value="INFO">INFO</option>

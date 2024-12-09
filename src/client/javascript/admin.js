@@ -1,4 +1,4 @@
-function showToast(msg, error=false) {
+function showToast(msg, error = false) {
     toast.innerText = msg;
     if (error) {
         toast.style.backgroundColor = '#e64242';
@@ -11,6 +11,22 @@ function showToast(msg, error=false) {
     setTimeout(() => {
         toast.classList.remove('displayed');
     }, 4000);
+}
+
+function addChip(text, container) {
+    let chip = document.createElement('div');
+    chip.classList = 'chip';
+    let chipDesc = document.createElement('span');
+    chipDesc.textContent = text;
+    let icon = document.createElement('i');
+    icon.textContent = 'close';
+    icon.classList = 'material-symbols-rounded';
+    chip.appendChild(chipDesc);
+    chip.appendChild(icon);
+    container.appendChild(chip);
+    chip.addEventListener('click', () => {
+        container.removeChild(chip);
+    });
 }
 
 async function updateRoom(id, data) {
@@ -60,8 +76,13 @@ async function getRoom(id) {
             boardsSection.querySelector('input[name="ecran"]').value = data.board[type];
         }
     });
-    detailsSection.value = JSON.stringify(data.details);
-    typeSection.value = data.type;
+    detailsSection.querySelectorAll('.chip').forEach((chip) => {
+        detailsSection.removeChild(chip);
+    });
+    data.details.forEach((detail) => {
+        addChip(detail, detailsSection.querySelector('.chips-container'));
+    });
+    typeSection.value = data.type ? data.type : "";
 }
 
 async function getRooms() {
@@ -101,21 +122,42 @@ const aliasSection = document.querySelector('#alias>input');
 const seatsSection = document.querySelector('#seats>input');
 const bannedSection = document.querySelector('#banned>input');
 const boardsSection = document.querySelector('#boards');
-const detailsSection = document.querySelector('#details>textarea');
+const detailsSection = document.querySelector('#details');
 const typeSection = document.querySelector('#type>select');
+detailsSection.querySelector('input').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        detailsSection.querySelector('button').click();
+    }
+});
+detailsSection.querySelector('button').addEventListener('click', () => {
+    let chipsValues = [...detailsSection.querySelectorAll('.chip>span')].map((chip) => {
+        return chip.textContent;
+    });
+    let inputValue = detailsSection.querySelector('input').value;
+    if (inputValue !== "" && !chipsValues.includes(inputValue)) {
+        addChip(inputValue, detailsSection.querySelector('.chips-container'));
+        detailsSection.querySelector('input').value = '';
+    } else {
+        showToast('Le champ est vide ou la valeur existe déjà.', true);
+    }
+});
 
 const saveBtn = document.querySelector('#save-button');
 saveBtn.addEventListener('click', () => {
-    const tableauObj = {
+    const boardObj = {
         NOIR: boardsSection.querySelector('input[name="noir"]').value,
         BLANC: boardsSection.querySelector('input[name="blanc"]').value,
         ECRAN: boardsSection.querySelector('input[name="ecran"]').value
     };
+    const detailsArray = [...detailsSection.querySelectorAll('.chip>span')].map((chip) => {
+        return chip.textContent;
+    });
     const data = {
         alias: aliasSection.value,
         places_assises: seatsSection.value,
-        tableau: tableauObj,
-        caracteristiques: JSON.parse(detailsSection.value),
+        tableau: boardObj,
+        caracteristiques: detailsArray,
         banned: bannedSection.checked,
         type: typeSection.value
     }

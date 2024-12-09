@@ -93,7 +93,8 @@ router.get("/rooms", async (req, res) => {
         // Formatage de la réponse
         const resultatFormate = salles.map((doc) => ({
             id: doc._id,
-            name: doc.nom_salle
+            name: doc.nom_salle,
+            building: doc.batiment,
         }));
 
         res.json(resultatFormate);

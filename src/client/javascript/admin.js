@@ -123,6 +123,7 @@ async function getRoom(id) {
     }
     idSection.textContent = data.id;
     nameSection.textContent = data.name;
+    buildingSection.textContent = data.building;
     aliasSection.value = data.alias;
     seatsSection.value = data.seats;
     bannedSection.checked = data.banned;
@@ -160,6 +161,7 @@ async function getRooms() {
     data.forEach((room) => {
         roomElement = document.createElement('div');
         roomElement.id = room.id;
+        roomElement.setAttribute('data-building', room.building);
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
@@ -218,16 +220,18 @@ window.addEventListener('click', () => {
 const bookRoomPopup = document.querySelector('#book-room-popup');
 const toast = document.querySelector('#toast');
 
-getRooms();
-
 const idSection = document.querySelector('#id>span');
 const nameSection = document.querySelector('#name>span');
+const buildingSection = document.querySelector('#building>span');
 const aliasSection = document.querySelector('#alias>input');
 const seatsSection = document.querySelector('#seats>input');
 const bannedSection = document.querySelector('#banned>input');
 const boardsSection = document.querySelector('#boards');
 const detailsSection = document.querySelector('#details');
 const typeSection = document.querySelector('#type>select');
+
+getRooms();
+
 detailsSection.querySelector('input').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -277,10 +281,9 @@ document.querySelector("#search").addEventListener("input", (e) => {
     let results = document.querySelectorAll('.room-item');
     let resultsNumber = 0;
     results.forEach((result) => {
-        let roomName = result.textContent.toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f\s]/g, "");
-        if (!roomName.includes(search)) {
+        let roomName = result.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+        let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+        if (!roomName.includes(search) && !buildingName.includes(search)) {
             result.style.display = "none";
         } else {
             resultsNumber++;

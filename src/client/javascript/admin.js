@@ -29,8 +29,44 @@ function addChip(text, container) {
     });
 }
 
+function sameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+}
+
+async function createCourse(roomId, startAt, endAt, courseName = "Non renseigné") {
+    let success = '';
+    try {
+        success = await fetch('/api/admin/add-course', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                startAt: startAt.toISOString().split('.')[0] + '+01:00',
+                endAt: endAt.toISOString().split('.')[0] + '+01:00',
+                roomId: roomId,
+                courseName: courseName
+            })
+        });
+        success = await success.json();
+    } catch (error) {
+        console.error(error);
+        showToast('Erreur lors de l\'ajout du cours : ' + error, true);
+        return;
+    }
+    if (!success.error) {
+        showToast('Le cours a été ajouté avec succès.', false);
+        bookRoomPopup.classList.remove('opened');
+    } else {
+        showToast('Erreur lors de l\'ajout du cours : ' + success.error, true);
+    }
+
+}
+
 async function updateRoom(id, data) {
-    let success = "";
+    let success = '';
     try {
         success = await fetch('/api/admin/update-room', {
             method: 'POST',
@@ -48,7 +84,11 @@ async function updateRoom(id, data) {
         showToast('Erreur lors de la mise à jour des informations : ' + error, true);
         return;
     }
-    showToast('Les informations ont été mises à jour avec succès.', false);
+    if (!success.error) {
+        showToast('Les informations ont été mises à jour avec succès.', false);
+    } else {
+        showToast('Erreur lors de la mise à jour des informations : ' + success.error, true);
+    }
 }
 
 async function getAccount() {
@@ -116,13 +156,31 @@ async function getRooms() {
         console.error(error);
         return;
     }
+    let roomElement, roomName, bookRoomButton, icon;
     data.forEach((room) => {
-        let roomElement = document.createElement('div');
-        roomElement.innerText = room.name;
+        roomElement = document.createElement('div');
         roomElement.id = room.id;
         roomElement.classList = 'room-item';
+        roomName = document.createElement('span');
+        roomName.innerText = room.name;
+        bookRoomButton = document.createElement('button');
+        bookRoomButton.classList = 'button icon-button';
+        icon = document.createElement('i');
+        icon.innerText = 'add';
+        icon.classList = 'material-symbols-rounded';
+        bookRoomButton.appendChild(icon);
+        roomElement.appendChild(roomName);
+        roomElement.appendChild(bookRoomButton);
         roomsList.appendChild(roomElement);
 
+        bookRoomButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            document.querySelector('#booked-id>span').textContent = event.currentTarget.parentNode.id;
+            document.querySelector('#start-date>input').value = '';
+            document.querySelector('#end-date>input').value = '';
+            document.querySelector('#course-name>input').value = '';
+            bookRoomPopup.classList.add('opened');
+        });
         roomElement.addEventListener('click', () => {
             getRoom(roomElement.id);
             document.querySelector('#room-editor').classList.add('swipe-left');
@@ -143,12 +201,6 @@ accountButton.addEventListener('click', (event) => {
     accountMenu.classList.add('opened');
 });
 
-window.addEventListener('click', () => {
-    if (accountMenu.style.display !== 'none') {7
-        accountMenu.classList.remove('opened');
-    }
-});
-
 accountMenu.addEventListener('click', (event) => {
     event.stopPropagation();
 });
@@ -157,9 +209,16 @@ document.querySelector('#account-menu button').addEventListener('click', (event)
     window.location = '/api/admin/auth/logout';
 });
 
-getRooms();
+window.addEventListener('click', () => {
+    if (accountMenu.classList.contains('opened')) {
+        accountMenu.classList.remove('opened');
+    }
+});
 
+const bookRoomPopup = document.querySelector('#book-room-popup');
 const toast = document.querySelector('#toast');
+
+getRooms();
 
 const idSection = document.querySelector('#id>span');
 const nameSection = document.querySelector('#name>span');
@@ -215,7 +274,7 @@ document.querySelector("#search").addEventListener("input", (e) => {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f\s]/g, "");
-    let results = document.querySelectorAll(`.room-item`);
+    let results = document.querySelectorAll('.room-item');
     let resultsNumber = 0;
     results.forEach((result) => {
         let roomName = result.textContent.toLowerCase()
@@ -225,13 +284,44 @@ document.querySelector("#search").addEventListener("input", (e) => {
             result.style.display = "none";
         } else {
             resultsNumber++;
-            result.style.display = "block";
+            result.style.display = "flex";
         }
     });
-    // document.querySelector(`.${resultContainer} .no-results`).style.display = resultsNumber > 0 ? "none" : "block";
+    document.querySelector('#no-result').style.display = resultsNumber > 0 ? "none" : "block";
 });
 
 document.querySelector('#back-button').addEventListener('click', () => {
     document.querySelector('#room-editor').classList.remove('swipe-left');
     document.querySelector('#rooms-list').classList.remove('swipe-left');
+});
+
+document.querySelector('#close-popup-button').addEventListener('click', () => {
+    bookRoomPopup.classList.remove('opened');
+});
+
+bookRoomPopup.addEventListener('click', function (event) {
+    if (!bookRoomPopup.querySelector('#popup-window').contains(event.target)) {
+        bookRoomPopup.classList.remove('opened');
+    }
+});
+
+document.querySelector('#add-course-button').addEventListener('click', (event) => {
+    const MIN_COURSE_DURATION = 10; // in minutes
+    const startDate = document.querySelector('#start-date>input').value;
+    const endDate = document.querySelector('#end-date>input').value;
+    const courseName = document.querySelector('#course-name>input').value;
+    const roomId = document.querySelector('#booked-id>span').textContent;
+    if (startDate && endDate) {
+        if ((new Date(endDate) - new Date(startDate)) / 1000 / 60 >= MIN_COURSE_DURATION) {
+            if (sameDay(new Date(startDate), new Date(endDate))) {
+                createCourse(roomId, new Date(startDate), new Date(endDate), courseName);
+            } else {
+                showToast('Les champs de dates doivent utiliser le même jour.', true);
+            }
+        } else {
+            showToast(`Les dates spécifiées ne délimitent pas un cours de plus de ${MIN_COURSE_DURATION} minutes.`, true);
+        }
+    } else {
+        showToast('Les champs de dates sont invalides.', true);
+    }
 });

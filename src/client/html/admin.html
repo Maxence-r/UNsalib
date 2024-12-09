@@ -12,6 +12,10 @@
     <meta property="og:image" content="https://i.imgur.com/Ft3HyvM.png" />
 
     <link rel="stylesheet" href="../css/admin.css" />
+    <link rel='preconnect' href='https://fonts.googleapis.com' crossorigin>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link rel='preload' as='style' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
     <title>UNsalib - Tableau de bord</title>
 </head>
 
@@ -42,7 +46,9 @@
     <main>
         <div id="rooms-list">
             <input id="search" type="text" placeholder="Filtrer">
-            <div id="rooms-list__container"></div>
+            <div id="rooms-list__container">
+                <span id="no-result">Aucun résultat.</span>
+            </div>
         </div>
         <div id="room-editor">
             <div class="page-title">
@@ -98,6 +104,33 @@
         </div>
     </main>
     <div id="toast"></div>
+    <div id="book-room-popup">
+        <div id="popup-window">
+            <div id="popup-header">
+                <h2>Réserver une salle</h2>
+                <button id="close-popup-button" class="button icon-button"><i class="material-symbols-rounded">close</i></button>
+            </div>
+            <div id="popup-content" class="data-container">
+                <section id="booked-id">
+                    <h3>ID</h3>
+                    <span></span>
+                </section>
+                <section id="start-date">
+                    <h3>Date de début</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section id="end-date">
+                    <h3>Date de fin</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section id="course-name">
+                    <h3>Nom du cours</h3>
+                    <input type="text" placeholder="Par défaut (vide)" />
+                </section>
+            </div>
+            <button id="add-course-button" class="button">Réserver cette salle</button>
+        </div>
+    </div>
 </body>
 <script src="../javascript/admin.js"></script>
 

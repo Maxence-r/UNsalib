@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Space+Grotesk:wght@300..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-
 
 body {
     padding: 0;
@@ -49,6 +47,10 @@ body {
     padding: 16px 20px;
     border: 1px solid var(--sub-border-color);
     border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 }
 
 input:not(input[type="checkbox"]),
@@ -165,7 +167,8 @@ main {
     align-items: center;
 }
 
-#save-button {
+#save-button,
+#add-course-button {
     flex-shrink: 0;
 }
 
@@ -181,7 +184,6 @@ main {
 }
 
 .page-title>h2 {
-    text-transform: uppercase;
     margin-block: 0px;
 }
 
@@ -209,9 +211,11 @@ main {
 #branding h2 {
     font-size: 1.3em;
     color: #676767;
+    text-transform: uppercase;
 }
 
-#branding h1, #branding h2 {
+#branding h1,
+#branding h2 {
     margin-block: 0px;
 }
 
@@ -270,7 +274,7 @@ main {
     transform: translateY(-20px);
     opacity: 0;
     transition: transform .2s, opacity .2s;
-    z-index: 4;
+    z-index: 3;
 }
 
 #account-menu.opened {
@@ -299,6 +303,64 @@ main {
     border-radius: 100px;
     height: 50px;
     width: 50px;
+}
+
+#book-room-popup {
+    z-index: 3;
+    position: fixed;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.3);
+    height: 100vh;
+    top: 0px;
+    left: calc(-100vw);
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+#book-room-popup.opened {
+    left: 0px;
+    opacity: 1;
+}
+
+#popup-window {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    width: 500px;
+    height: 70%;
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    left: calc(50% - 250px - 12px);
+    top: calc(50% - 35% - 12px);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    transition: transform .3s;
+    transform: translateY(20px);
+}
+
+#popup-window h2 {
+    margin-block: 0px;
+}
+
+#popup-content {
+    flex-grow: 1;
+}
+
+#popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#book-room-popup.opened #popup-window {
+    transform: translateY(0px);
+}
+
+#no-result {
+    display: none;
 }
 
 @media screen and (max-width: 1024px) {

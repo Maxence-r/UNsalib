@@ -1,9 +1,14 @@
 import express from "express";
 import Salle from "../../models/salle.js";
 import Account from '../../models/account.js';
+import Cours from '../../models/cours.js';
 import mongoose from "mongoose";
 import { compare } from 'bcrypt';
 import pkg from 'jsonwebtoken';
+import {
+    formatDateValide,
+    sameDay
+} from "../../utils/date.js";
 const router = express.Router();
 const { sign } = pkg;
 
@@ -198,6 +203,60 @@ router.get("/account-infos", async (req, res) => {
         );
 
         res.status(200).json(user);
+    } catch (erreur) {
+        res.status(500).json({
+            error: 'INTERNAL_ERROR',
+        });
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
+router.post("/add-course", async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    const MIN_COURSE_DURATION = 10; // in minutes
+
+    if (!req.body.roomId || !req.body.startAt || !req.body.endAt || !req.body.roomId || !req.body.courseName) {
+        return res.status(400).json({
+            error: 'MISSING_QUERIES',
+        });
+    }
+
+    if (!formatDateValide(req.body.startAt) || !formatDateValide(req.body.endAt) || !sameDay(new Date(req.body.startAt), new Date(req.body.endAt)) || (new Date(req.body.endAt) - new Date(req.body.startAt)) / 1000 / 60 <= MIN_COURSE_DURATION) {
+        return res.status(400).json({
+            error: 'INVALID_DATE',
+        });
+    }
+
+    let room = await Salle.findOne({ _id: req.body.roomId });
+
+    if (!room) {
+        return res.status(400).json({
+            error: 'INVALID_ROOM_ID',
+        });
+    }
+
+    try {
+        const newCourse = new Cours({
+            identifiant: "unsalib-" + new Date().toISOString(),
+            debute_a: req.body.startAt,
+            fini_a: req.body.endAt,
+            professeur: "Non renseigné",
+            classe: req.body.roomId,
+            module: "Module - " + req.body.courseName,
+            groupe: "Non renseigné",
+            couleur: '#e74c3c',
+        });
+    
+        await newCourse.save();
+
+        res.status(200).json({
+            saved: true
+        });
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

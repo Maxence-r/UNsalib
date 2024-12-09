@@ -139,6 +139,7 @@ async function searchAvailable() {
     const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}`;
     const response = await fetch(url);
     const salles = await response.json();
+    closeModal();
     afficherSalles(salles, "available");
     document.querySelector('.available > .no-results').style.display = salles.length > 0 ? "none" : "block";
     document.querySelector('.search-button').classList.remove('button--loading')
@@ -173,3 +174,4 @@ document.querySelectorAll(".search").forEach((el) => {
         document.querySelector(`.${resultContainer} .no-results`).style.display = resultsNumber > 0 ? "none" : "block";
     })
 });
+

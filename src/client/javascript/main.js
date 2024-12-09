@@ -74,9 +74,20 @@ function openModal(modal) {
     }
 }
 
+function closeModal() {
+    document.querySelector('.modal').classList.remove('active')
+}
+
 document.querySelector('.modal').addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) {
         e.target.classList.remove('active')
     }
 })
 
+let slider = document.getElementById("myRange");
+let output = document.getElementById("places");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}

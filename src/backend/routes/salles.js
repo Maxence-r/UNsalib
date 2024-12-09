@@ -167,7 +167,7 @@ router.get("/edt", async (req, res) => {
         for (let i = 0; i < 5; i++) {
             const debut = new Date(startDate);
             debut.setDate(debut.getDate() + i);
-            debut.setHours(9, 0, 0, 0);
+            debut.setHours(8, 0, 0, 0);
 
             const fin = new Date(debut);
             fin.setHours(9, 0, 0, 0);

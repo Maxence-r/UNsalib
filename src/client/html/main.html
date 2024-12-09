@@ -54,6 +54,100 @@
                     <p id="groupes">Professor Name</p>
                 </div>
             </div>
+            <div class="filter-rooms">
+                <div class="option">
+                    <div class="setDate">
+                        <div class="picker-container">
+                            <p>Chercher de :</p>
+                            <div class="time-picker">
+                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
+                                <p>:</p>
+                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
+                                <p style="margin: 0 4px;">à</p>
+                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
+                                <p>:</p>
+                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
+                            </div>
+                        </div>
+                        <div class="picker-container">
+                            <p>Le :</p>
+                            <div class="time-picker">
+                                <input type="number" max="31" maxlength="2" class="time" placeholder="--" />
+                                <p>/</p>
+                                <input type="number" max="12" maxlength="2" class="time" placeholder="--" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="option">
+                    <p>Avec au moins <span id="places">6</span> places assises</p>
+                    <div class="slidecontainer">
+                        <input type="range" min="1" max="100" value="6" class="slider" id="myRange">
+                    </div>
+                </div>
+
+                <div class="option">
+                    <p>Avec :</p>
+                    <div class="tags">
+                        <div class="tag">
+                            <p>TABLEAU BLANC</p>
+                           
+                        </div>
+                        <div class="tag">
+                            <p>TABLEAU CRAIS</p>
+                           
+                        </div>
+                        <div class="tag">
+                            <p>TABLEAU</p>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="option">
+                    <p>Caractéristiques :</p>
+                    <div class="tags">
+                        <div class="tag">
+                            <p>SALLE VIDEO</p>
+                
+                        </div>
+                        <div class="tag">
+                            <p>SALLE VISIO</p>
+                         
+                        </div>
+                        <div class="tag">
+                            <p>SALLE ILOT</p>
+                   
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="search-button" onclick="this.classList.toggle('button--loading')">
+                    <span class="button__text">Rechercher</span>
+                </button>
+            </div>
+            <div class="pictos">
+                <div class="option">
+                    <p>Salle Info/Vidéo</p>
+                    <img src="../assets/video.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle Visio</p>
+                    <img src="../assets/visio.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle ILOT</p>
+                    <img src="../assets/ilot.svg" alt="info" />
+                </div>
+                <div class="option">
+                    <p>Salle à badge</p>
+                    <img src="../assets/badge.svg" alt="info" />
+                </div>
+
+                <button type="button" class="search-button" onclick="closeModal()">
+                    <span class="button__text">Compris !</span>
+                </button>
+            </div>
         </div>
     </div>
     <div tabindex="-1" class="pannel">
@@ -88,9 +182,9 @@
 
                 <div class="results-head">
                     <p>Résultats de recherche</p>
-                    <div class="indicator">
-                        <div class="red ping"></div>
-                        <p>Occupé</p>
+                    <div onclick="openModal('pictos')" class="indicator">
+                        <img src="../assets/info.svg">
+                        <p>Pictos</p>
                     </div>
                 </div>
                 <div class="results edt">
@@ -98,47 +192,13 @@
                 </div>
             </div>
 
-            <!-- <div class="tags">
-                <div class="tag">
-                    <p>I123 VIDEO</p>
-                    <img src="../assets/x.svg" alt="close" class="remove" />
-                </div>
-                <div class="tag">
-                    <p>I123 VIDEO</p>
-                    <img src="../assets/x.svg" alt="close" class="remove" />
-                </div>
-            </div> -->
+
 
             <div class="room-finder">
                 <div class="advanced-search">
-                    <div class="setDate">
-                        <div class="picker-container">
-                            <p>Chercher de :</p>
-                            <div class="time-picker">
-                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
-                                <p>:</p>
-                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
-                                <p style="margin: 0 4px;">à</p>
-                                <input type="number" max="24" maxlength="2" class="time" placeholder="--" />
-                                <p>:</p>
-                                <input type="number" max="59" maxlength="2" class="time" placeholder="--" />
-                            </div>
-                        </div>
-                        <div class="picker-container">
-                            <p>Le :</p>
-                            <div class="time-picker">
-                                <input type="number" max="31" maxlength="2" class="time" placeholder="--" />
-                                <p>/</p>
-                                <input type="number" max="12" maxlength="2" class="time" placeholder="--" />
-                            </div>
-                        </div>
-
-
-                    </div>
-                    <button type="button" class="search-button" onclick="this.classList.toggle('button--loading')">
-                        <span class="button__text">Rechercher</span>
+                    <button type="button" class="filter-button" onclick="openModal('filter-rooms')">
+                        <span class="button__text">Chercher une salle libre</span>
                     </button>
-
                 </div>
                 <input data-search="available" class="search" type="text"
                     placeholder="Filtrer par salle, bâtiment..." />
@@ -157,7 +217,7 @@
             <p>Chargement de l'EDT</p>
         </div>
         <div class="calendar-header">
-            <div  class="week-switcher">
+            <div class="week-switcher">
                 <img src="../assets/chevrons-left.svg" alt="previous" />
                 <p>SEMAINE <span class="week-number">--</span></p>
                 <img src="../assets/chevrons-right.svg" alt="next" />
@@ -237,7 +297,8 @@
                                 <h2>WhitePaper</h2>
                                 <p>Document de nos recherches</p>
                             </div>
-                            <button tabindex="-1" onclick="window.open('https://docs.google.com/document/d/1F2fmTzl88viRSR_j6lHnVwBSEmp1OsEqbVQG_SYG2fM/edit?usp=sharing', '_blank')">
+                            <button tabindex="-1"
+                                onclick="window.open('https://docs.google.com/document/d/1F2fmTzl88viRSR_j6lHnVwBSEmp1OsEqbVQG_SYG2fM/edit?usp=sharing', '_blank')">
                                 <img src="../assets/download.svg" alt="Download">
                             </button>
                         </div>

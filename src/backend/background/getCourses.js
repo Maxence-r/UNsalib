@@ -5,6 +5,8 @@ import "dotenv/config";
 import { couleurPaletteProche } from "../utils/couleur.js";
 import io from "../../../server.js";
 
+
+
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 
@@ -45,29 +47,30 @@ const traiterSalle = async (nomSalle) => {
             `\r\x1b[KNouvelle salle ajoutée : ${nomFormate} (${batiment})`
         );
     }
-
     return salle;
 };
 
 // Fonction pour traiter un cours individuel
 const traiterCours = async (donneesCours) => {
+    const salles = donneesCours.rooms_for_blocks.split(";");
+    const sallePrincipale = await traiterSalle(salles[0]);
+
     if (
         !donneesCours.start_at ||
         !donneesCours.end_at ||
-        !donneesCours.rooms_for_blocks
+        !donneesCours.rooms_for_blocks ||
+        !sallePrincipale._id
     ) {
         return;
     }
 
     const coursExiste = await Cours.exists({
-        identifiant: donneesCours.id,
+        classe: sallePrincipale?._id,
         debute_a: donneesCours.start_at,
         fini_a: donneesCours.end_at,
     });
     if (coursExiste) return;
 
-    const salles = donneesCours.rooms_for_blocks.split(";");
-    const sallePrincipale = await traiterSalle(salles[0]);
 
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,
@@ -163,6 +166,43 @@ export const getCourses = async () => {
         programmerProchainGroupe();
     };
 
+    // Suppressions des duplicatas
+    try {
+        const duplicates = await Cours.aggregate([
+            {
+                $group: {
+                    _id: "$identifiant",
+                    count: { $sum: 1 },
+                    ids: { $push: "$_id" }
+                }
+            },
+            {
+                $match: {
+                    count: { $gt: 1 }
+                }
+            }
+        ]);
+
+        if (duplicates.length === 0) {
+            console.log("Aucun identifiant dupliqué trouvé.");
+            return;
+        }
+
+        for (const dup of duplicates) {
+            const ids = dup.ids;
+            // Sort IDs to have the latest one last
+            ids.sort();
+            // Keep the last one and delete the others
+            const idsToDelete = ids.slice(0, -1);
+            await Cours.deleteMany({ _id: { $in: idsToDelete } });
+            console.log(`Supprimé ${idsToDelete.length} doublon(s) pour l'identifiant ${dup._id}`);
+        }
+
+        console.log("Suppression des doublons terminée.");
+    } catch (error) {
+        console.error("Erreur lors de la suppression des cours dupliqués:", error);
+    }
+
     // Démarrer le cycle de mise à jour
     console.log(
         `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${
@@ -176,3 +216,27 @@ export const getCourses = async () => {
     );
     demarrerCycleMiseAJour();
 };
+
+
+
+traiterCours({
+    "id": 352530947,
+    "celcat_id": "2118055",
+    "categories": "Contr\u00f4le continu",
+    "start_at": "2024-12-12T09:30:00+01:00",
+    "end_at": "2024-12-12T12:20:00+01:00",
+    "notes": "0-0-16-0",
+    "custom1": null,
+    "custom2": null,
+    "custom3": null,
+    "color": "ff0000",
+    "place_id": 12,
+    "rooms_for_blocks": "sa TD 24 (B\u00e2t 18-B U)",
+    "rooms_for_item_details": "sa TD 24 (B\u00e2t 18-B U)",
+    "teachers_for_blocks": "PINOT Jerome",
+    "teachers_for_item_details": "PINOT Jerome",
+    "educational_groups_for_blocks": "581INFO-M ; 585 ; CC",
+    "educational_groups_for_item_details": "581INFO-M ; 585 ; CC",
+    "modules_for_blocks": "X31T060 - Ouverture professionnelle - Informatique",
+    "modules_for_item_details": "X31T060 - Ouverture professionnelle - Informatique"
+})

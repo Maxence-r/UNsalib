@@ -58,9 +58,9 @@ function obtenirNbSemaines() {
 
 function obtenirOverflowMinutes(date) {
     const minutes = date.getMinutes();
-    return minutes <= 30 ? minutes : 0 - 60 + minutes;
+    const overflowPercentage = (minutes / 60) * 100;
+    return overflowPercentage;
 }
-
 function sameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&

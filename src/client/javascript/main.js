@@ -41,7 +41,6 @@ socket.on("error", (error) => {
 let defferedPrompt;
 const addbtn = document.querySelector('.version');
 
-
 window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     defferedPrompt = event
@@ -51,10 +50,8 @@ window.addEventListener('beforeinstallprompt', event => {
 addbtn.addEventListener('click', event => {
     defferedPrompt.prompt();
 
-    
-
     defferedPrompt.userChoice.then(choice => {
-        if (choice.outcome === 'accepted') {
+        if(choice.outcome === 'accepted'){
             console.log('user accepted the prompt')
         }
         defferedPrompt = null;
@@ -65,6 +62,7 @@ addbtn.addEventListener('click', event => {
 
 
 function openModal(modal) {
+    navigator.vibrate(10)
     document.querySelector('.modal').classList.add('active')
     document.querySelectorAll('.modal-content > div').forEach(el => {
         el.style.display = 'none'
@@ -74,9 +72,31 @@ function openModal(modal) {
     }
 }
 
+function closeModal() {
+    document.querySelector('.modal').classList.remove('active')
+}
+
 document.querySelector('.modal').addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) {
         e.target.classList.remove('active')
     }
 })
 
+let slider = document.getElementById("myRange");
+let output = document.getElementById("places");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+
+
+document.querySelector('.profile').addEventListener('dblclick', () => {
+    document.location.href = '/admin/auth'
+})
+
+document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+        tag.classList.toggle('selected')
+    })
+})

@@ -65,7 +65,7 @@ router.post('/auth/login', async (req, res) => {
             .json({
                 message: 'Connexion réussie !',
             });
-    } catch (error) {
+    } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',
         });

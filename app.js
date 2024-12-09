@@ -12,7 +12,7 @@ import adminApi from "./src/backend/routes/api/admin.js";
 import appInfosApi from "./src/backend/routes/api/app.js";
 import adminDashboard from "./src/backend/routes/admin.js";
 import authentification from "./src/backend/middlewares/auth.js";
-
+import root from "./src/backend/routes/root.js";
 // SECURITE SERVER
 app.disable("x-powered-by");
 app.use(cookieParser());
@@ -30,15 +30,7 @@ app.use("/api/app", appInfosApi);
 
 // OTHER ROUTES
 app.use("/admin", adminDashboard);
-
-app.get("/", (req, res) => {
-    console.log(process.env.MAINTENANCE);
-    if (process.env.MAINTENANCE === "true") {
-        res.sendFile("src/client/html/maintenance.html", { root: "." });
-        return;
-    }
-    res.sendFile("src/client/html/main.html", { root: "." });
-});
+app.use("/", root);
 
 // DATABASE CONNECTION
 set("strictQuery", true);

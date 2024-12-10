@@ -150,14 +150,10 @@ router.get("/edt", async (req, res) => {
     }
     // Validation de l'incrément : 0 <= numero semaine actuelle + increment <= 52
     let numeroSemaine = obtenirNbSemaines() + parseInt(increment);
-    if (numeroSemaine > 52) {
-        numeroSemaine = numeroSemaine - 52;
-    }
     // Obtention des informations sur la semaine demandée
     const bornesDates = obtenirDatesSemaine(numeroSemaine);
-    bornesDates.numero = numeroSemaine;
 
-    if (numeroSemaine < 0 || numeroSemaine > 52) {
+    if (bornesDates.numero < 0 || bornesDates.numero > 52) {
         return res.status(400).send("INCORRECT_WEEK_NUMBER");
     }
     if (vacations.includes(numeroSemaine)) {

@@ -7,7 +7,11 @@ function formatDateValide(date) {
 }
 
 function obtenirDatesSemaine(numero) {
-    const annee = new Date().getFullYear();
+    let annee = new Date().getFullYear();
+    if (numero > 52) {
+        numero = numero - 52;
+        annee++;
+    }
     const dateJanvierQuatre = new Date(annee, 0, 4);
     const jourSemaine = dateJanvierQuatre.getDay() || 7; // Jour de la semaine (1-7)
     const premierLundi = new Date(dateJanvierQuatre);
@@ -32,7 +36,7 @@ function obtenirDatesSemaine(numero) {
     const lundiISO = formatDate(lundi);
     const dimancheISO = formatDate(dimanche);
 
-    return { debut: lundiISO, fin: dimancheISO };
+    return { debut: lundiISO, fin: dimancheISO, numero: numero };
 }
 function obtenirNbSemaines() {
     const dateActuelle = new Date();

@@ -43,7 +43,6 @@ body {
 
 .room-item {
     cursor: pointer;
-    width: calc(100% - 16 * 2);
     padding: 16px 20px;
     border: 1px solid var(--sub-border-color);
     border-radius: 6px;
@@ -51,6 +50,12 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+}
+
+.item-actions {
+    gap: 4px;
+    display: flex;
+    align-items: center;
 }
 
 input:not(input[type="checkbox"]),

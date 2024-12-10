@@ -95,6 +95,7 @@ router.get("/rooms", async (req, res) => {
             id: doc._id,
             name: doc.nom_salle,
             building: doc.batiment,
+            banned: doc.banned
         }));
 
         res.json(resultatFormate);

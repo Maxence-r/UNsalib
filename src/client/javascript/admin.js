@@ -157,7 +157,7 @@ async function getRooms() {
         console.error(error);
         return;
     }
-    let roomElement, roomName, bookRoomButton, icon;
+    let roomElement, roomName, bookRoomButton, icon, banIcon, actionsDiv;
     data.forEach((room) => {
         roomElement = document.createElement('div');
         roomElement.id = room.id;
@@ -166,6 +166,8 @@ async function getRooms() {
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
+        actionsDiv = document.createElement('div');
+        actionsDiv.classList = 'item-actions';
         bookRoomButton = document.createElement('button');
         bookRoomButton.classList = 'button icon-button';
         icon = document.createElement('i');
@@ -173,7 +175,15 @@ async function getRooms() {
         icon.classList = 'material-symbols-rounded';
         bookRoomButton.appendChild(icon);
         roomElement.appendChild(roomName);
-        roomElement.appendChild(bookRoomButton);
+        if (room.banned) {
+            banIcon = document.createElement('i');
+            banIcon.innerText = 'visibility_off';
+            banIcon.classList = 'material-symbols-rounded';
+            banIcon.style.fontSize = '16px';
+            actionsDiv.appendChild(banIcon);
+        }
+        actionsDiv.appendChild(bookRoomButton);
+        roomElement.appendChild(actionsDiv);
         roomsList.appendChild(roomElement);
 
         bookRoomButton.addEventListener('click', (event) => {

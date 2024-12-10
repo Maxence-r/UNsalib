@@ -38,31 +38,12 @@ socket.on("error", (error) => {
 });
 
 
-let defferedPrompt;
-const addbtn = document.querySelector('.version');
-
-window.addEventListener('beforeinstallprompt', event => {
-    event.preventDefault();
-    defferedPrompt = event
-    addbtn.style.display = 'block';
-});
-
-addbtn.addEventListener('click', event => {
-    defferedPrompt.prompt();
-
-    defferedPrompt.userChoice.then(choice => {
-        if(choice.outcome === 'accepted'){
-            console.log('user accepted the prompt')
-        }
-        defferedPrompt = null;
-    })
-})
 
 
 
 
 function openModal(modal) {
-    
+
     const canVibrate = window.navigator.vibrate
     if (canVibrate) window.navigator.vibrate(10)
 
@@ -89,8 +70,8 @@ let slider = document.getElementById("myRange");
 let output = document.getElementById("places");
 output.innerHTML = slider.value;
 
-slider.oninput = function() {
-  output.innerHTML = this.value;
+slider.oninput = function () {
+    output.innerHTML = this.value;
 }
 
 
@@ -102,4 +83,68 @@ document.querySelectorAll('.tag').forEach(tag => {
     tag.addEventListener('click', () => {
         tag.classList.toggle('selected')
     })
+})
+
+
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    document.querySelector('.version').innerHTML = 'BETA'
+} else {
+    document.querySelector('.version').innerHTML = 'Installer'
+}
+
+let defferedPrompt;
+const addbtn = document.querySelector('.version');
+
+window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    defferedPrompt = event
+    addbtn.style.display = 'block';
+});
+
+addbtn.addEventListener('click', event => {
+    if (defferedPrompt) {
+        defferedPrompt.prompt().then((result) => {
+            if (result.outcome === 'accepted') {
+                openModal('successInstall');
+            } else {
+                console.log('User dismissed the PWA installation prompt');
+            }
+            defferedPrompt = null; // Reset the deferredPrompt variable
+        }).catch((error) => {
+            console.error('Error during PWA installation prompt:', error);
+        });
+    } else {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            if (userAgent.indexOf("CriOS") !== -1 || userAgent.indexOf("FxiOS") !== -1) {
+                // Chrome on iOS
+                document.querySelectorAll('.iosMobile').forEach(el => {
+                    el.style.display = 'flex'
+                })
+                openModal('install');
+            } else if (userAgent.indexOf("Safari") !== -1) {
+                // Safari on iOS
+                openModal('safariInstall');
+            } else {
+                // Other browsers on iOS
+                document.querySelectorAll('.iosMobile').forEach(el => {
+                    el.style.display = 'flex'
+                })
+                openModal('install');
+            }
+        } else if (/android/i.test(userAgent)) {
+            // Android failed
+            document.querySelectorAll('.androidMobile').forEach(el => {
+                el.style.display = 'flex'
+            })
+            openModal('install');
+        } else {
+             // Computer failed
+            document.querySelectorAll('.computer').forEach(el => {
+                el.style.display = 'flex'
+            })
+            openModal('install');
+        }
+    }
 })

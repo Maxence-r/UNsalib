@@ -148,15 +148,13 @@ router.get("/edt", async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
-    // Validation de l'incrément : 0 <= numero semaine actuelle + increment <= 52
-    let numeroSemaine = obtenirNbSemaines() + parseInt(increment);
     // Obtention des informations sur la semaine demandée
-    const bornesDates = obtenirDatesSemaine(numeroSemaine);
+    const bornesDates = obtenirDatesSemaine(obtenirNbSemaines() + parseInt(increment));
 
     if (bornesDates.numero < 0 || bornesDates.numero > 52) {
         return res.status(400).send("INCORRECT_WEEK_NUMBER");
     }
-    if (vacations.includes(numeroSemaine)) {
+    if (vacations.includes(bornesDates.numero)) {
         // VACANCES
         const vacanceCours = [];
         const startDate = new Date(bornesDates.debut);

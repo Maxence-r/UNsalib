@@ -1184,12 +1184,67 @@ button {
 }
 
 .option > img {
-    height: 18px;
+    width: 18px;
     align-self: baseline;
 }
 
 .search-button {
     margin-top: auto;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+    align-items: start;
+    justify-content: center;
+}
+
+.centered > h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #5F5F5F;
+}
+
+.centered > p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.browsers {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.browser {
+    display: none;
+    flex-direction: row;
+    width: calc(100% - 16px);
+    align-items: center;
+    padding: 8px;
+    background-color: aliceblue;
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.browser>img {
+    height: 28px;
+    border-radius: 6px;
+}
+
+.browser>p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
 }
 
 #places {

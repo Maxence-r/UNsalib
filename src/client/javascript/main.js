@@ -113,7 +113,7 @@ addbtn.addEventListener('click', event => {
         }).catch((error) => {
             console.error('Error during PWA installation prompt:', error);
         });
-    } else {
+    } else if (!window.matchMedia('(display-mode: standalone)').matches) {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
         if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {

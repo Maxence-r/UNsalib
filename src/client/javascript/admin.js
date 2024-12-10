@@ -127,6 +127,9 @@ async function getRoom(id) {
     aliasSection.value = data.alias;
     seatsSection.value = data.seats;
     bannedSection.checked = data.banned;
+    boardsSection.querySelectorAll('input').forEach((input) => {
+        input.value = 0;
+    });
     Object.keys(data.board).forEach((type) => {
         if (type == 'BLANC') {
             boardsSection.querySelector('input[name="blanc"]').value = data.board[type];

@@ -76,7 +76,7 @@ textarea {
 
 .button {
     height: 40px;
-    border-radius: 6px;
+    border-radius: 10px;
     background-color: var(--accent-color);
     cursor: pointer;
     border: none;

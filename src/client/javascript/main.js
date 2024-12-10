@@ -62,7 +62,10 @@ addbtn.addEventListener('click', event => {
 
 
 function openModal(modal) {
-   /*  navigator.vibrate(10) */
+    
+    const canVibrate = window.navigator.vibrate
+    if (canVibrate) window.navigator.vibrate(10)
+
     document.querySelector('.modal').classList.add('active')
     document.querySelectorAll('.modal-content > div').forEach(el => {
         el.style.display = 'none'

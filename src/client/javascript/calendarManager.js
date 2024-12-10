@@ -69,7 +69,8 @@ let currentSalle = null;
 
 async function afficherSalle(salle, delta) {
 
-    /* navigator.vibrate(10); */
+    const canVibrate = window.navigator.vibrate
+    if (canVibrate) window.navigator.vibrate(10)
 
     const newIncrement = (delta == 0) ? 0 : increment + delta;
 

@@ -14,7 +14,7 @@ const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 const obtenirDatesRequete = () => {
     const dateDebut = new Date();
     const dateFin = new Date();
-    dateFin.setDate(dateFin.getDate() + 60);
+    dateFin.setDate(dateFin.getDate() + 90);
     dateDebut.setDate(dateDebut.getDate() - 1);
 
     return {

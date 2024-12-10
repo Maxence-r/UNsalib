@@ -83,7 +83,7 @@ async function afficherSalle(salle, delta) {
     if (!response.ok) {
         console.log("Error fetching data");
         toggleLoading("disable");
-        displayNotification("Impossible d'afficher l'edt pour cette semaine !");
+        displayNotification("Les données n'ont pas été enregistrées au-delà !");
         return;
     }
 

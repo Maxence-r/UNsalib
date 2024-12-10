@@ -26,7 +26,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "../html/main.html",
+  "start_url": "../html/main.html?utm_source=PWA",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#3452FF",

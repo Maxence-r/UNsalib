@@ -86,7 +86,7 @@ document.querySelectorAll('.tag').forEach(tag => {
 })
 
 
-if (window.matchMedia('(display-mode: standalone)').matches) {
+if ((window.matchMedia('(display-mode: standalone)').matches) || (localStorage.getItem('installed') == 'true')) {
     document.querySelector('.version').innerHTML = 'BETA'
 } else {
     document.querySelector('.version').innerHTML = 'Installer'
@@ -106,6 +106,7 @@ addbtn.addEventListener('click', event => {
         defferedPrompt.prompt().then((result) => {
             if (result.outcome === 'accepted') {
                 openModal('successInstall');
+                localStorage.setItem('installed', true)
             } else {
                 console.log('User dismissed the PWA installation prompt');
             }

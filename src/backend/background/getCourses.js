@@ -5,8 +5,6 @@ import "dotenv/config";
 import { couleurPaletteProche } from "../utils/couleur.js";
 import io from "../../../server.js";
 
-
-
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 
@@ -71,7 +69,6 @@ const traiterCours = async (donneesCours) => {
     });
     if (coursExiste) return;
 
-
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,
         debute_a: donneesCours.start_at,
@@ -121,6 +118,39 @@ const traiterLotGroupes = async (groupes) => {
     }
 };
 
+// Variable to store courses from the previous cycle
+let coursPrecedents = [];
+
+// Fonction pour récupérer tous les cours dans un intervalle de dates
+const recupererTousLesCours = async () => {
+    const dates = obtenirDatesRequete();
+    const urlRequete = `https://edt-v2.univ-nantes.fr/events?start=${dates.debut}&end=${dates.fin}`;
+    try {
+        const reponse = await fetch(urlRequete);
+        const donnees = await reponse.json();
+        return donnees;
+    } catch (erreur) {
+        console.error('Erreur lors de la récupération de tous les cours:', erreur);
+        return [];
+    }
+};
+
+// Fonction pour comparer et supprimer les cours
+const comparerEtSupprimerCours = async (coursAnciens, coursNouveaux) => {
+    const coursASupprimer = coursAnciens.filter(coursAncien => {
+        return !coursNouveaux.some(coursNouveau =>
+            coursAncien.id === coursNouveau.id &&
+            coursAncien.start_at === coursNouveau.start_at &&
+            coursAncien.end_at === coursNouveau.end_at &&
+            coursAncien.rooms_for_blocks === coursNouveau.rooms_for_blocks
+        );
+    });
+    console.log(`Nombre de cours à supprimer: ${coursASupprimer.length}`);
+    for (const cours of coursASupprimer) {
+        console.log(`Cours supprimé : ${cours}`);
+    }
+};
+
 // Fonction principale d'exécution
 export const getCourses = async () => {
     const groupes = await Groupe.find();
@@ -140,68 +170,33 @@ export const getCourses = async () => {
     const intervalleEntreGroupes = Math.floor(INTERVALLE_CYCLE / nombreGroupes);
 
     // Fonction pour démarrer le cycle de mise à jour
-    const demarrerCycleMiseAJour = () => {
+    const demarrerCycleMiseAJour = async () => {
+        // Au début du cycle, récupérer tous les cours et les stocker
+        coursPrecedents = await recupererTousLesCours();
+
         let indexGroupe = 0;
 
-        const programmerProchainGroupe = () => {
+        const traiterGroupes = async () => {
             if (indexGroupe < nombreGroupes) {
-                setTimeout(async () => {
-                    const groupe = groupes[indexGroupe];
-
-                    await recupererCours(groupe);
-                    indexGroupe++;
-                    programmerProchainGroupe();
-                }, intervalleEntreGroupes);
+                const groupe = groupes[indexGroupe];
+                await recupererCours(groupe);
+                indexGroupe++;
+                setTimeout(traiterGroupes, intervalleEntreGroupes);
             } else {
-                // Réinitialiser pour le prochain cycle
-                indexGroupe = 0;
+                // À la fin du cycle, récupérer à nouveau tous les cours et comparer
+                const coursActuels = await recupererTousLesCours();
+                await comparerEtSupprimerCours(coursPrecedents, coursActuels);
+                // Démarrer un nouveau cycle
                 setTimeout(() => {
                     console.log("Démarrage d'un nouveau cycle de 12h");
-                    programmerProchainGroupe();
+                    demarrerCycleMiseAJour();
                 }, intervalleEntreGroupes);
             }
         };
 
-        // Démarrer le premier cycle
-        programmerProchainGroupe();
+        // Démarrer le traitement des groupes
+        traiterGroupes();
     };
-
-    // Suppressions des duplicatas
-    try {
-        const duplicates = await Cours.aggregate([
-            {
-                $group: {
-                    _id: "$identifiant",
-                    count: { $sum: 1 },
-                    ids: { $push: "$_id" }
-                }
-            },
-            {
-                $match: {
-                    count: { $gt: 1 }
-                }
-            }
-        ]);
-
-        if (duplicates.length === 0) {
-            console.log("Aucun identifiant dupliqué trouvé.");
-            return;
-        }
-
-        for (const dup of duplicates) {
-            const ids = dup.ids;
-            // Sort IDs to have the latest one last
-            ids.sort();
-            // Keep the last one and delete the others
-            const idsToDelete = ids.slice(0, -1);
-            await Cours.deleteMany({ _id: { $in: idsToDelete } });
-            console.log(`Supprimé ${idsToDelete.length} doublon(s) pour l'identifiant ${dup._id}`);
-        }
-
-        console.log("Suppression des doublons terminée.");
-    } catch (error) {
-        console.error("Erreur lors de la suppression des cours dupliqués:", error);
-    }
 
     // Démarrer le cycle de mise à jour
     console.log(

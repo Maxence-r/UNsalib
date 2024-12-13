@@ -5,11 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" href="../assets/favicon.ico" />
-    <meta name="description"
-        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta name="description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:title" content="UNsalib - Nantes UNIVERSITE" />
-    <meta property="og:description"
-        content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
+    <meta property="og:description" content="Permet d'obtenir les emplois du temps des salles de nantes université ou de trouver une salle libre." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://i.imgur.com/Ft3HyvM.png" />
     <link rel="manifest" href="../manifest/manifest.json" />
@@ -79,49 +77,51 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="option">
-                    <p>Avec au moins <span id="places">6</span> places assises</p>
-                    <div class="slidecontainer">
-                        <input type="range" min="1" max="100" value="6" class="slider" id="placesAssises">
+                <div class="no-available">
+                    <p>Cette fonctionnalité n'est pas encore disponible !</p>
+                    <div class="option">
+                        <p>Avec au moins <span class="numb" data-ref="placesAssises" id="places">6</span> places assises</p>
+                        <div class="slidecontainer">
+                            <input type="range" min="1" max="100" value="6" class="slider" id="placesAssises">
+                        </div>
                     </div>
-                </div>
 
-                <div class="option">
-                    <p>Avec au moins :</p>
-                    <div class="sliders">
-                         <div class="slide-selector">
-                            <p>Tableau(x) BLANC</p>
-                            <div class="slidecontainer">
-                                <input type="range" min="1" max="100" value="0" class="slider" id="blanc">
+                    <div class="option">
+                        <p>Avec au moins :</p>
+                        <div class="sliders">
+                            <div class="slide-selector">
+                                <p><span class="numb" data-ref="blanc">6</span> Tableau(x) blanc</p>
+                                <div class="slidecontainer">
+                                    <input type="range" min="0" max="4" value="0" class="slider" id="blanc">
+                                </div>
                             </div>
-                         </div>
-                         <div class="slide-selector">
-                            <p>Tableau(x) NOIR</p>
-                            <div class="slidecontainer">
-                                <input type="range" min="1" max="100" value="0" class="slider" id="noir">
+                            <div class="slide-selector">
+                                <p><span class="numb" id="places" data-ref="noir">6</span> Tableau(x) noir</p>
+                                <div class="slidecontainer">
+                                    <input type="range" min="0" max="4" value="0" class="slider" id="noir">
+                                </div>
                             </div>
-                         </div>
-                         <div class="slide-selector">
-                            <p>Écran(s)</p>
+                            <!-- <div class="slide-selector">
+                            <p><span class="numb" id="places" data-ref="screen">6</span> Écran(s)</p>
                             <div class="slidecontainer">
                                 <input type="range" min="0" max="4" value="0" class="slider" id="screen">
                             </div>
-                         </div>
+                        </div> -->
+                        </div>
                     </div>
-                </div>
 
-                <div class="option">
-                    <p>Caractéristiques :</p>
-                    <div class="tags">
-                        <div class="tag">
-                            <p>INFO/VIDÉO</p>
-                        </div>
-                        <div class="tag">
-                            <p>VISIOCONFÉRENCE</p>
-                        </div>
-                        <div class="tag">
-                            <p>ILOT</p>
+                    <div class="option">
+                        <p>Caractéristiques :</p>
+                        <div class="tags">
+                            <div class="tag">
+                                <p>ORDINATEURS</p>
+                            </div>
+                            <div class="tag">
+                                <p>VISIOCONFÉRENCE</p>
+                            </div>
+                            <div class="tag">
+                                <p>ILOT</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
                     <h2>L'application est prête.</h2>
                     <p>L'application a été installée sur votre appareil, merci ! Vous pouvez désormais l'ouvrir depuis votre centre d'applications.</p>
                 </div>
-                
+
                 <button type="button" class="search-button" onclick="closeModal()">
                     <span class="button__text">Compris !</span>
                 </button>
@@ -226,8 +226,7 @@
 
         <div class="actions_container">
             <div class="edt-finder displayed">
-                <input data-search="edt" class="search" type="text"
-                    placeholder="Rechercher une salle, un bâtiment..." />
+                <input data-search="edt" class="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
 
                 <div class="results-head">
                     <p>Résultats de recherche</p>
@@ -249,8 +248,7 @@
                         <span class="button__text">Chercher une salle libre</span>
                     </button>
                 </div>
-                <input data-search="available" class="search" type="text"
-                    placeholder="Filtrer par salle, bâtiment..." />
+                <input data-search="available" class="search" type="text" placeholder="Filtrer par salle, bâtiment..." />
                 <div class="results-head">
                     <p>Résultats de recherche</p>
                 </div>
@@ -346,8 +344,7 @@
                                 <h2>WhitePaper</h2>
                                 <p>Document de nos recherches</p>
                             </div>
-                            <button tabindex="-1"
-                                onclick="window.open('https://docs.google.com/document/d/1F2fmTzl88viRSR_j6lHnVwBSEmp1OsEqbVQG_SYG2fM/edit?usp=sharing', '_blank')">
+                            <button tabindex="-1" onclick="window.open('https://docs.google.com/document/d/1F2fmTzl88viRSR_j6lHnVwBSEmp1OsEqbVQG_SYG2fM/edit?usp=sharing', '_blank')">
                                 <img src="../assets/download.svg" alt="Download">
                             </button>
                         </div>

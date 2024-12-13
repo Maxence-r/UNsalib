@@ -6,7 +6,7 @@ import { couleurPaletteProche } from "../utils/couleur.js";
 import io from "../../../server.js";
 
 // Constantes pour la configuration
-const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
+const INTERVALLE_CYCLE = 4 * 60 * 60 * 1000; // 4 heures en millisecondes
 
 // Fonction pour obtenir les dates de début et fin (3 semaines)
 const obtenirDatesRequete = () => {

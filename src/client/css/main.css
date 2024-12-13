@@ -1248,9 +1248,52 @@ button {
     color: #000000;
 }
 
-#places {
+.numb {
     color: var(--accent-color);
     font-weight: 800;
+}
+
+.sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.slide-selector {
+    display: flex;
+    justify-content: space-between;
+}
+
+.slide-selector>p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5F5F5F;
+}
+
+.slide-selector>.slidecontainer {
+    width: 150px;
+}
+
+.no-available {
+    position: relative;
+    pointer-events: none;
+}
+
+.no-available>.option {
+    filter: opacity(0.3);
+}
+
+.no-available>p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+    margin: 0;
 }
 
 

@@ -83,25 +83,31 @@
                 <div class="option">
                     <p>Avec au moins <span id="places">6</span> places assises</p>
                     <div class="slidecontainer">
-                        <input type="range" min="1" max="100" value="6" class="slider" id="myRange">
+                        <input type="range" min="1" max="100" value="6" class="slider" id="placesAssises">
                     </div>
                 </div>
 
                 <div class="option">
-                    <p>Avec :</p>
-                    <div class="tags">
-                        <div class="tag">
-                            <p>TABLEAU BLANC</p>
-
-                        </div>
-                        <div class="tag">
-                            <p>TABLEAU À CRAIE</p>
-
-                        </div>
-                        <div class="tag">
-                            <p>TABLEAU</p>
-
-                        </div>
+                    <p>Avec au moins :</p>
+                    <div class="sliders">
+                         <div class="slide-selector">
+                            <p>Tableau(x) BLANC</p>
+                            <div class="slidecontainer">
+                                <input type="range" min="1" max="100" value="0" class="slider" id="blanc">
+                            </div>
+                         </div>
+                         <div class="slide-selector">
+                            <p>Tableau(x) NOIR</p>
+                            <div class="slidecontainer">
+                                <input type="range" min="1" max="100" value="0" class="slider" id="noir">
+                            </div>
+                         </div>
+                         <div class="slide-selector">
+                            <p>Écran(s)</p>
+                            <div class="slidecontainer">
+                                <input type="range" min="0" max="4" value="0" class="slider" id="screen">
+                            </div>
+                         </div>
                     </div>
                 </div>
 

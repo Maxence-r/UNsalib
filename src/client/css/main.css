@@ -338,7 +338,7 @@ body {
     margin: 0;
 }
 
-.indicator > img {
+.indicator>img {
     height: 16px;
 }
 
@@ -927,7 +927,7 @@ button {
     z-index: 1000;
     height: 100vh;
     background-color: white;
-    animation: fadeOut 1s ease-in-out forwards;
+    animation: fadeOut .5s ease-in-out forwards;
     animation-delay: 800ms;
     pointer-events: none;
 }
@@ -958,7 +958,7 @@ button {
 }
 
 .loader>.progress>img {
-    animation: progress 2s cubic-bezier(.42, .49, 0, .99) forwards;
+    animation: progress 1s cubic-bezier(.42, .49, 0, .99) forwards;
 }
 
 .no-compatible {
@@ -1177,14 +1177,14 @@ button {
     gap: 8px;
 }
 
-.option > p {
+.option>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
     color: #000000;
 }
 
-.option > img {
+.option>img {
     width: 18px;
     align-self: baseline;
 }
@@ -1202,14 +1202,14 @@ button {
     justify-content: center;
 }
 
-.centered > h2 {
+.centered>h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
     color: #5F5F5F;
 }
 
-.centered > p {
+.centered>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;

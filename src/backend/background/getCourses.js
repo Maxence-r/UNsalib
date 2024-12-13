@@ -5,8 +5,6 @@ import "dotenv/config";
 import { couleurPaletteProche } from "../utils/couleur.js";
 import io from "../../../server.js";
 
-
-
 // Constantes pour la configuration
 const INTERVALLE_CYCLE = 12 * 60 * 60 * 1000; // 12 heures en millisecondes
 
@@ -70,7 +68,6 @@ const traiterCours = async (donneesCours) => {
         fini_a: donneesCours.end_at,
     });
     if (coursExiste) return;
-
 
     const nouveauCours = new Cours({
         identifiant: donneesCours.id,
@@ -165,43 +162,6 @@ export const getCourses = async () => {
         // Démarrer le premier cycle
         programmerProchainGroupe();
     };
-
-    // Suppressions des duplicatas
-    try {
-        const duplicates = await Cours.aggregate([
-            {
-                $group: {
-                    _id: "$identifiant",
-                    count: { $sum: 1 },
-                    ids: { $push: "$_id" }
-                }
-            },
-            {
-                $match: {
-                    count: { $gt: 1 }
-                }
-            }
-        ]);
-
-        if (duplicates.length === 0) {
-            console.log("Aucun identifiant dupliqué trouvé.");
-            return;
-        }
-
-        for (const dup of duplicates) {
-            const ids = dup.ids;
-            // Sort IDs to have the latest one last
-            ids.sort();
-            // Keep the last one and delete the others
-            const idsToDelete = ids.slice(0, -1);
-            await Cours.deleteMany({ _id: { $in: idsToDelete } });
-            console.log(`Supprimé ${idsToDelete.length} doublon(s) pour l'identifiant ${dup._id}`);
-        }
-
-        console.log("Suppression des doublons terminée.");
-    } catch (error) {
-        console.error("Erreur lors de la suppression des cours dupliqués:", error);
-    }
 
     // Démarrer le cycle de mise à jour
     console.log(

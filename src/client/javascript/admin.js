@@ -100,7 +100,7 @@ async function getAccount() {
         data = await data.json();
     } catch (error) {
         console.error(error);
-        showToast('Impossible d\'obtenir le compte utilisateur. Essayze de vous déconnecter : ' + error, true);
+        showToast('Impossible d\'obtenir le compte utilisateur. Essayez de vous déconnecter : ' + error, true);
         return;
     }
     document.querySelector('#account-button>span').textContent = data.name + ' ' + data.lastname;
@@ -191,7 +191,7 @@ async function getRooms() {
 
         bookRoomButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            document.querySelector('#booked-id>span').textContent = event.currentTarget.parentNode.id;
+            document.querySelector('#booked-id>span').textContent = event.currentTarget.parentNode.parentNode.id;
             document.querySelector('#start-date>input').value = '';
             document.querySelector('#end-date>input').value = '';
             document.querySelector('#course-name>input').value = '';

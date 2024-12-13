@@ -54,7 +54,7 @@ router.get("/", async (req, res) => {
             places_assises: doc.places_assises,
             batiment: doc.batiment,
             disponible: doc.disponible,
-            caracteristiques: doc.caracteristiques
+            caracteristiques: doc.caracteristiques,
         }));
 
         res.json(resultatFormate);
@@ -104,14 +104,14 @@ router.get("/disponibles", async (req, res) => {
         let cours = await Cours.find({
             $and: [
                 { debute_a: { $lt: fin } }, // le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } } // le cours finit après le début de la période demandée
+                { fini_a: { $gt: debut } }, // le cours finit après le début de la période demandée
             ],
         });
 
         // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
-            banned: { $ne: true }
+            banned: { $ne: true },
         }).select("-__v");
 
         // Formatage de la réponse
@@ -122,7 +122,7 @@ router.get("/disponibles", async (req, res) => {
             places_assises: doc.places_assises,
             batiment: doc.batiment,
             disponible: true,
-            caracteristiques: doc.caracteristiques
+            caracteristiques: doc.caracteristiques,
         }));
 
         res.json(resultatFormate);
@@ -149,9 +149,11 @@ router.get("/edt", async (req, res) => {
         return res.status(400).send("FORMAT_ID_INVALIDE");
     }
     // Obtention des informations sur la semaine demandée
-    const bornesDates = obtenirDatesSemaine(obtenirNbSemaines() + parseInt(increment));
+    const bornesDates = obtenirDatesSemaine(
+        obtenirNbSemaines() + parseInt(increment)
+    );
 
-    if (bornesDates.numero < 0 || bornesDates.numero > 52) {
+    if (bornesDates.numero < 0 || bornesDates.numero > 52 || increment > 18) {
         return res.status(400).send("INCORRECT_WEEK_NUMBER");
     }
     if (vacations.includes(bornesDates.numero)) {
@@ -164,7 +166,7 @@ router.get("/edt", async (req, res) => {
             debut.setHours(8, 0, 0, 0);
 
             const fin = new Date(debut);
-            fin.setHours(9, 0, 0, 0);
+            fin.setHours(8, 0, 0, 0);
 
             vacanceCours.push({
                 id_cours: `vacance-${i}`,
@@ -176,13 +178,12 @@ router.get("/edt", async (req, res) => {
                 professeur: "Monsieur Chill",
                 module: "Détente - Vacances",
                 groupe: "Tout le monde",
-                couleur: "#FF7675"
+                couleur: "#FF7675",
             });
         }
 
         return res.send({ cours: vacanceCours, infos_semaine: bornesDates });
     }
-
 
     try {
         // Obtention des cours selon l'id de salle et la période donnée
@@ -207,7 +208,7 @@ router.get("/edt", async (req, res) => {
 
             // Calcul du border avec ajout de 2 pour chaque 61 minutes avant le début et après la fin
             // Obtention de l'overflow et conversion en pourcentage
-            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a))
+            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a));
             return {
                 id_cours: doc._id,
                 debut: doc.debute_a,
@@ -218,7 +219,7 @@ router.get("/edt", async (req, res) => {
                 professeur: doc.professeur,
                 module: doc.module,
                 groupe: doc.groupe,
-                couleur: doc.couleur
+                couleur: doc.couleur,
             };
         });
 
@@ -232,8 +233,5 @@ router.get("/edt", async (req, res) => {
         );
     }
 });
-
-
-
 
 export default router;

@@ -370,6 +370,22 @@ main {
     display: none;
 }
 
+#search-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#search input[type="text"] {
+    flex-grow: 1;
+}
+
+#search {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 @media screen and (max-width: 1024px) {
     #navbar {
         height: 40px;

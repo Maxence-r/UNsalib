@@ -166,6 +166,7 @@ async function getRooms() {
         roomElement.id = room.id;
         roomElement.setAttribute('data-building', room.building);
         roomElement.setAttribute('data-name', room.name);
+        roomElement.setAttribute('data-banned', room.banned);
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
@@ -287,7 +288,7 @@ saveBtn.addEventListener('click', () => {
     updateRoom(id, data);
 });
 
-document.querySelector("#search").addEventListener("input", (e) => {
+document.querySelector('#search input[type="text"]').addEventListener("input", (e) => {
     let search = e.target.value
         .toLowerCase()
         .normalize("NFD")
@@ -295,14 +296,17 @@ document.querySelector("#search").addEventListener("input", (e) => {
     let results = document.querySelectorAll('.room-item');
     let resultsNumber = 0;
     results.forEach((result) => {
-        let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-        let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-        if (!roomName.includes(search) && !buildingName.includes(search)) {
-            result.style.display = "none";
-        } else {
-            resultsNumber++;
-            result.style.display = "flex";
-        }
+            console.log(!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true")
+            let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+            let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+            if (!roomName.includes(search) && !buildingName.includes(search)) {
+                result.style.display = "none";
+            } else {
+                if (!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true") {
+                    resultsNumber++;
+                    result.style.display = "flex";
+                }
+            }
     });
     document.querySelector('#no-result').style.display = resultsNumber > 0 ? "none" : "block";
 });
@@ -341,4 +345,19 @@ document.querySelector('#add-course-button').addEventListener('click', (event) =
     } else {
         showToast('Les champs de dates sont invalides.', true);
     }
+});
+
+const searchBannedCheckbox = document.querySelector('#search-actions input[type="checkbox"]');
+searchBannedCheckbox.click();
+searchBannedCheckbox.addEventListener('click', () => {
+    let results = document.querySelectorAll('.room-item');
+    results.forEach((result) => {
+        if (result.getAttribute('data-banned') == "true") {
+            if (searchBannedCheckbox.checked) {
+                result.style.display = "flex";
+            } else {
+                result.style.display = "none";
+            }
+        }
+    });
 });

@@ -47,48 +47,31 @@ async function getRooms() {
         console.error(error);
         return;
     }
-    let roomElement, roomName, bookRoomButton, icon, banIcon, actionsDiv;
+    bookingPage.querySelectorAll('.rooms-list-container .room-item').forEach((item) => {
+        roomsList.removeChild(item);
+    });
+    let roomElement, roomName, actionsDiv;
     data.forEach((room) => {
-        roomElement = document.createElement('div');
-        roomElement.setAttribute('data-id', room.id);
-        roomElement.setAttribute('data-building', room.building);
-        roomElement.setAttribute('data-name', room.name);
-        roomElement.classList = 'room-item';
-        roomName = document.createElement('span');
-        roomName.innerText = room.name;
-        actionsDiv = document.createElement('div');
-        actionsDiv.classList = 'item-actions';
-        // bookRoomButton = document.createElement('button');
-        // bookRoomButton.classList = 'button icon-button';
-        // icon = document.createElement('i');
-        // icon.innerText = 'add';
-        // icon.classList = 'material-symbols-rounded';
-        // bookRoomButton.appendChild(icon);
-        roomElement.appendChild(roomName);
-        // if (room.banned) {
-        //     banIcon = document.createElement('i');
-        //     banIcon.innerText = 'visibility_off';
-        //     banIcon.classList = 'material-symbols-rounded';
-        //     banIcon.style.fontSize = '16px';
-        //     actionsDiv.appendChild(banIcon);
-        // }
-        // actionsDiv.appendChild(bookRoomButton);
-        roomElement.appendChild(actionsDiv);
-        roomsList.appendChild(roomElement);
+        if (!room.banned) {
+            roomElement = document.createElement('div');
+            roomElement.setAttribute('data-id', room.id);
+            roomElement.setAttribute('data-building', room.building);
+            roomElement.setAttribute('data-name', room.name);
+            roomElement.classList = 'room-item';
+            roomName = document.createElement('span');
+            roomName.innerText = room.name;
+            actionsDiv = document.createElement('div');
+            actionsDiv.classList = 'item-actions';
+            roomElement.appendChild(roomName);
+            roomElement.appendChild(actionsDiv);
+            roomsList.appendChild(roomElement);
 
-        // bookRoomButton.addEventListener('click', (event) => {
-        //     event.stopPropagation();
-        //     document.querySelector('#booked-id>span').textContent = event.currentTarget.parentNode.parentNode.id;
-        //     document.querySelector('#start-date>input').value = '';
-        //     document.querySelector('#end-date>input').value = '';
-        //     document.querySelector('#course-name>input').value = '';
-        //     bookRoomPopup.classList.add('opened');
-        // });
-        // roomElement.addEventListener('click', (event) => {
-        //     getRoom(event.currentTarget.id);
-        //     document.querySelector('#room-editor').classList.add('swipe-left');
-        //     document.querySelector('#rooms-list').classList.add('swipe-left');
-        // });
+            // roomElement.addEventListener('click', (event) => {
+            //     getRoom(event.currentTarget.id);
+            //     document.querySelector('#room-editor').classList.add('swipe-left');
+            //     document.querySelector('#rooms-list').classList.add('swipe-left');
+            // });
+        }
     });
     // getRoom(document.querySelector('.room-item').id);
     // document.querySelector('#room-editor').style.display = 'flex';
@@ -170,14 +153,14 @@ async function initBookingPage() {
         let results = bookingPage.querySelectorAll('.room-item');
         let resultsNumber = 0;
         results.forEach((result) => {
-                let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-                let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-                if (!roomName.includes(search) && !buildingName.includes(search)) {
-                    result.classList.add('hidden');
-                } else {
-                    resultsNumber++;
-                    result.classList.remove('hidden');
-                }
+            let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+            let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+            if (!roomName.includes(search) && !buildingName.includes(search)) {
+                result.classList.add('hidden');
+            } else {
+                resultsNumber++;
+                result.classList.remove('hidden');
+            }
         });
         bookingPage.querySelector('.no-result').style.display = resultsNumber > 0 ? "none" : "block";
     });

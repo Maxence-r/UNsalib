@@ -92,7 +92,10 @@ async function getRooms() {
         console.error(error);
         return;
     }
-    let roomElement, roomName, bookRoomButton, icon, banIcon, actionsDiv;
+    roomsManagerPage.querySelectorAll('.rooms-list-container .room-item').forEach((item) => {
+        roomsList.removeChild(item);
+    });
+    let roomElement, roomName, banIcon, badges;
     data.forEach((room) => {
         roomElement = document.createElement('div');
         roomElement.setAttribute('data-id', room.id);
@@ -102,34 +105,17 @@ async function getRooms() {
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
-        actionsDiv = document.createElement('div');
-        actionsDiv.classList = 'item-actions';
-        // bookRoomButton = document.createElement('button');
-        // bookRoomButton.classList = 'button icon-button';
-        // icon = document.createElement('i');
-        // icon.innerText = 'add';
-        // icon.classList = 'material-symbols-rounded';
-        // bookRoomButton.appendChild(icon);
+        badges = document.createElement('div');
+        badges.classList = 'badges';
         roomElement.appendChild(roomName);
         if (room.banned) {
             banIcon = document.createElement('i');
             banIcon.innerText = 'visibility_off';
             banIcon.classList = 'material-symbols-rounded';
-            banIcon.style.fontSize = '16px';
-            actionsDiv.appendChild(banIcon);
+            badges.appendChild(banIcon);
         }
-        // actionsDiv.appendChild(bookRoomButton);
-        roomElement.appendChild(actionsDiv);
+        roomElement.appendChild(badges);
         roomsList.appendChild(roomElement);
-
-        // bookRoomButton.addEventListener('click', (event) => {
-        //     event.stopPropagation();
-        //     document.querySelector('#booked-id>span').textContent = event.currentTarget.parentNode.parentNode.id;
-        //     document.querySelector('#start-date>input').value = '';
-        //     document.querySelector('#end-date>input').value = '';
-        //     document.querySelector('#course-name>input').value = '';
-        //     bookRoomPopup.classList.add('opened');
-        // });
         roomElement.addEventListener('click', (event) => {
             getRoom(event.currentTarget.getAttribute('data-id'));
             document.querySelector('#room-editor').classList.add('swipe-left');

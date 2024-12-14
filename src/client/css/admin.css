@@ -100,10 +100,14 @@ body {
     display: none;
 }
 
-.item-actions {
+.badges {
     gap: var(--extra-small-space);
     display: flex;
     align-items: center;
+}
+
+.badges i {
+    font-size: 16px;
 }
 
 input:not(input[type="checkbox"]),
@@ -463,6 +467,13 @@ main.ready {
     display: flex;
     flex-direction: column;
     gap: var(--space);
+}
+
+#booking .search span {
+    display: flex;
+    align-items: center;
+    gap: var(--extra-small-space);
+    font-size: 14px;
 }
 
 .spacer {

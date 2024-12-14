@@ -300,12 +300,13 @@ document.querySelector('#search input[type="text"]').addEventListener("input", (
             let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
             let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
             if (!roomName.includes(search) && !buildingName.includes(search)) {
-                result.style.display = "none";
+                result.classList.add('hidden');
             } else {
-                if (!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true") {
-                    resultsNumber++;
-                    result.style.display = "flex";
-                }
+                result.classList.remove('hidden');
+                // if (!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true") {
+                //     resultsNumber++;
+                //     result.style.display = "flex";
+                // }
             }
     });
     document.querySelector('#no-result').style.display = resultsNumber > 0 ? "none" : "block";
@@ -350,14 +351,12 @@ document.querySelector('#add-course-button').addEventListener('click', (event) =
 const searchBannedCheckbox = document.querySelector('#search-actions input[type="checkbox"]');
 searchBannedCheckbox.click();
 searchBannedCheckbox.addEventListener('click', () => {
-    let results = document.querySelectorAll('.room-item');
+    let results = document.querySelectorAll('.room-item[data-banned="true"]');
     results.forEach((result) => {
-        if (result.getAttribute('data-banned') == "true") {
-            if (searchBannedCheckbox.checked) {
-                result.style.display = "flex";
-            } else {
-                result.style.display = "none";
-            }
+        if (searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
+            result.style.display = 'flex';
+        } else if (!searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
+            result.style.display = 'none';
         }
     });
 });

@@ -778,6 +778,13 @@ main.ready {
         background-color: transparent;
         border: 1px solid var(--neutral-color-light);
         font-weight: normal;
+        color: unset;
+    }
+
+    .room-item.selected:hover {
+        background-color: transparent;
+        border: 1px solid var(--neutral-color-light);
+        color: unset;
     }
 
     .stats-wrapper {

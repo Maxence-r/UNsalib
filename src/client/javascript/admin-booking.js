@@ -43,6 +43,7 @@ async function getRoom(id) {
         data = await data.json();
     } catch (error) {
         console.error(error);
+        showToast('Erreur lors de l\'obtention de la salle : ' + data.error, true);
         return;
     }
     idSection.textContent = data.id;
@@ -60,6 +61,7 @@ async function getRooms() {
         data = await data.json();
     } catch (error) {
         console.error(error);
+        showToast('Erreur lors de l\'obtention de la liste des salles : ' + data.error, true);
         return;
     }
     bookingPage.querySelectorAll('.rooms-list-container .room-item').forEach((item) => {

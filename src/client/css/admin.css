@@ -58,7 +58,7 @@ body {
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: #cfcfcf #ffffff;
+    scrollbar-color: var(--neutral-color-dark) var(--neutral-color-light);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -174,7 +174,7 @@ section>span {
     user-select: text;
 }
 
-#boards input {
+#rooms-manager section.boards input {
     margin: var(--small-space);
 }
 
@@ -248,14 +248,14 @@ main.ready {
     gap: var(--extra-large-space);
 }
 
-#room-editor {
+.container:not(.rooms-list) {
     display: none;
     flex-direction: column;
     gap: var(--extra-large-space);
     align-items: center;
 }
 
-#save-button,
+.save-button,
 #add-course-button {
     flex-shrink: 0;
 }
@@ -266,7 +266,7 @@ main.ready {
     gap: var(--small-space);
 }
 
-#details input {
+#rooms-manager section.details input {
     margin-right: var(--small-space);
     margin-bottom: var(--extra-large-space);
 }
@@ -546,7 +546,7 @@ main.ready {
     width: 33%;
 }
 
-#details .button {
+#rooms-manager section.details .button {
     display: inline-block;
 }
 
@@ -558,13 +558,10 @@ main.ready {
     height: 100%;
     top: 0px;
     left: calc(0px - 100%);
-    opacity: 0;
-    transition: opacity calc(var(--animation-duration) - 0.1s);
 }
 
 #mobile-menu.opened {
     left: 0px;
-    opacity: 1;
 }
 
 #mobile-menu-window {
@@ -580,6 +577,7 @@ main.ready {
     display: flex;
     flex-direction: column;
     border-radius: 0px var(--border-radius) var(--border-radius) 0px;
+    color: var(--on-surface-color);
 }
 
 #mobile-menu.opened #mobile-menu-window {

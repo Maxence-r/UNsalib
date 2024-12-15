@@ -89,31 +89,31 @@
                 <h2>Éditer la salle</h2>
             </div>
             <div class="data-container">
-                <section id="id">
+                <section class="id">
                     <h3>ID</h3>
                     <span></span>
                 </section>
-                <section id="name">
+                <section class="name">
                     <h3>Nom</h3>
                     <span></span>
                 </section>
-                <section id="building">
+                <section class="building">
                     <h3>Bâtiment</h3>
                     <span></span>
                 </section>
-                <section id="alias">
+                <section class="alias">
                     <h3>Alias</h3>
                     <input type="text">
                 </section>
-                <section id="seats">
+                <section class="seats">
                     <h3>Places assises</h3>
                     <input type="number">
                 </section>
-                <section id="banned">
+                <section class="banned">
                     <h3>Bannie</h3>
                     <input type="checkbox">
                 </section>
-                <section id="boards">
+                <section class="boards">
                     <h3>Tableaux</h3>
                     <ul>
                         <li>Noir :<input type="number" name="noir" value="0"></li>
@@ -121,13 +121,13 @@
                         <li>Écran :<input type="number" name="ecran" value="0"></li>
                     </ul>
                 </section>
-                <section id="details">
+                <section class="details">
                     <h3>Caractéristiques</h3>
                     <input type="text" placeholder="Caractéristique">
                     <button class="button">Ajouter</button>
                     <div class="chips-container"></div>
                 </section>
-                <section id="type">
+                <section class="type">
                     <h3>Type</h3>
                     <select>
                         <option value="">Non défini</option>
@@ -138,7 +138,7 @@
                     </select>
                 </section>
             </div>
-            <button id="save-button" class="button">Enregistrer les modifications</button>
+            <button class="save-button button">Enregistrer les modifications</button>
         </div>
     </main>
     <main id="booking">
@@ -151,14 +151,38 @@
                 <span class="no-result">Aucun résultat.</span>
             </div>
         </div>
-        <div class="container lg-2-3 sm-page-1">
+        <div id="room-booking-editor" class="container lg-2-3 sm-page-1">
             <div class="page-title">
-                <button class="back-button" class="button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <button class="back-button button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
                 <h2>Réserver la salle</h2>
             </div>
             <div class="data-container">
+                <section class="id">
+                    <h3>ID</h3>
+                    <span></span>
+                </section>
+                <section class="name">
+                    <h3>Nom</h3>
+                    <span></span>
+                </section>
+                <section class="building">
+                    <h3>Bâtiment</h3>
+                    <span></span>
+                </section>
+                <section class="start-date">
+                    <h3>Date de début</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section class="end-date">
+                    <h3>Date de fin</h3>
+                    <input type="datetime-local" />
+                </section>
+                <section class="course-name">
+                    <h3>Nom du cours</h3>
+                    <input type="text" placeholder="Par défaut (vide)" />
+                </section>
             </div>
-            <!-- <button class="button">Enregistrer les modifications</button> -->
+            <button class="save-button button">Valider la réservation</button>
         </div>
     </main>
     <div id="toast"></div>

@@ -175,21 +175,24 @@ const roomsManagerPage = document.querySelector('#rooms-manager');
 
 const bookRoomPopup = document.querySelector('#book-room-popup');
 
-const idSection = document.querySelector('#id>span');
-const nameSection = document.querySelector('#name>span');
-const buildingSection = document.querySelector('#building>span');
-const aliasSection = document.querySelector('#alias>input');
-const seatsSection = document.querySelector('#seats>input');
-const bannedSection = document.querySelector('#banned>input');
-const boardsSection = document.querySelector('#boards');
-const detailsSection = document.querySelector('#details');
-const typeSection = document.querySelector('#type>select');
+const idSection = roomsManagerPage.querySelector('section.id>span');
+const nameSection = roomsManagerPage.querySelector('section.name>span');
+const buildingSection = roomsManagerPage.querySelector('section.building>span');
+const aliasSection = roomsManagerPage.querySelector('section.alias>input');
+const seatsSection = roomsManagerPage.querySelector('section.seats>input');
+const bannedSection = roomsManagerPage.querySelector('section.banned>input');
+const boardsSection = roomsManagerPage.querySelector('section.boards');
+const detailsSection = roomsManagerPage.querySelector('section.details');
+const typeSection = roomsManagerPage.querySelector('section.type>select');
 
 const searchBannedCheckbox = roomsManagerPage.querySelector('.search-actions input[data-id="banned"]');
 const searchTypeCheckbox = roomsManagerPage.querySelector('.search-actions input[data-id="type"]');
 
+searchBannedCheckbox.checked = true;
+
 async function initRoomsManagerPage() {
     await getRooms();
+    refreshRoomsList();
 
     detailsSection.querySelector('input').addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
@@ -210,7 +213,7 @@ async function initRoomsManagerPage() {
         }
     });
 
-    const saveBtn = document.querySelector('#save-button');
+    const saveBtn = roomsManagerPage.querySelector('.save-button');
     saveBtn.addEventListener('click', () => {
         const boardObj = {
             NOIR: boardsSection.querySelector('input[name="noir"]').value,
@@ -272,7 +275,6 @@ async function initRoomsManagerPage() {
         }
     });
 
-    searchBannedCheckbox.click();
     searchBannedCheckbox.addEventListener('click', () => {
         refreshRoomsList();
     });

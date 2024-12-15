@@ -29,10 +29,25 @@ async function createCourse(roomId, startAt, endAt, courseName = "Non renseigné
     }
     if (!success.error) {
         showToast('Le cours a été ajouté avec succès.', false);
-        bookRoomPopup.classList.remove('opened');
     } else {
         showToast('Erreur lors de l\'ajout du cours : ' + success.error, true);
     }
+}
+
+async function getRoom(id) {
+    let data = [];
+    try {
+        data = await fetch('/api/admin/room?id=' + id, {
+            method: 'GET',
+        });
+        data = await data.json();
+    } catch (error) {
+        console.error(error);
+        return;
+    }
+    idSection.textContent = data.id;
+    nameSection.textContent = data.name;
+    buildingSection.textContent = data.building;
 }
 
 async function getRooms() {
@@ -66,84 +81,53 @@ async function getRooms() {
             roomElement.appendChild(actionsDiv);
             roomsList.appendChild(roomElement);
 
-            // roomElement.addEventListener('click', (event) => {
-            //     getRoom(event.currentTarget.id);
-            //     document.querySelector('#room-editor').classList.add('swipe-left');
-            //     document.querySelector('#rooms-list').classList.add('swipe-left');
-            // });
+            roomElement.addEventListener('click', (event) => {
+                getRoom(event.currentTarget.getAttribute('data-id'));
+                document.querySelector('#room-booking-editor').classList.add('swipe-left');
+                bookingPage.querySelector('.rooms-list').classList.add('swipe-left');
+            });
         }
     });
-    // getRoom(document.querySelector('.room-item').id);
-    // document.querySelector('#room-editor').style.display = 'flex';
+    getRoom(bookingPage.querySelector('.room-item').getAttribute('data-id'));
+    document.querySelector('#room-booking-editor').style.display = 'flex';
 }
-
-// const bookRoomPopup = document.querySelector('#book-room-popup');
-// const toast = document.querySelector('#toast');
-
-// const idSection = document.querySelector('#id>span');
-// const nameSection = document.querySelector('#name>span');
-// const buildingSection = document.querySelector('#building>span');
-// const aliasSection = document.querySelector('#alias>input');
-// const seatsSection = document.querySelector('#seats>input');
-// const bannedSection = document.querySelector('#banned>input');
-// const boardsSection = document.querySelector('#boards');
-// const detailsSection = document.querySelector('#details');
-// const typeSection = document.querySelector('#type>select');
-
-
-// document.querySelector('#back-button').addEventListener('click', () => {
-//     document.querySelector('#room-editor').classList.remove('swipe-left');
-//     document.querySelector('#rooms-list').classList.remove('swipe-left');
-// });
-
-// document.querySelector('#close-popup-button').addEventListener('click', () => {
-//     bookRoomPopup.classList.remove('opened');
-// });
-
-// bookRoomPopup.addEventListener('click', function (event) {
-//     if (!bookRoomPopup.querySelector('#popup-window').contains(event.target)) {
-//         bookRoomPopup.classList.remove('opened');
-//     }
-// });
-
-// document.querySelector('#add-course-button').addEventListener('click', (event) => {
-//     const MIN_COURSE_DURATION = 10; // in minutes
-//     const startDate = document.querySelector('#start-date>input').value;
-//     const endDate = document.querySelector('#end-date>input').value;
-//     const courseName = document.querySelector('#course-name>input').value;
-//     const roomId = document.querySelector('#booked-id>span').textContent;
-//     if (startDate && endDate) {
-//         if ((new Date(endDate) - new Date(startDate)) / 1000 / 60 >= MIN_COURSE_DURATION) {
-//             if (sameDay(new Date(startDate), new Date(endDate))) {
-//                 createCourse(roomId, new Date(startDate), new Date(endDate), courseName);
-//             } else {
-//                 showToast('Les champs de dates doivent utiliser le même jour.', true);
-//             }
-//         } else {
-//             showToast(`Les dates spécifiées ne délimitent pas un cours de plus de ${MIN_COURSE_DURATION} minutes.`, true);
-//         }
-//     } else {
-//         showToast('Les champs de dates sont invalides.', true);
-//     }
-// });
-
-// const searchBannedCheckbox = document.querySelector('#search-actions input[type="checkbox"]');
-// searchBannedCheckbox.click();
-// searchBannedCheckbox.addEventListener('click', () => {
-//     let results = document.querySelectorAll('.room-item[data-banned="true"]');
-//     results.forEach((result) => {
-//         if (searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
-//             result.style.display = 'flex';
-//         } else if (!searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
-//             result.style.display = 'none';
-//         }
-//     });
-// });
 
 const bookingPage = document.querySelector('#booking');
 
+const idSection = bookingPage.querySelector('section.id>span');
+const nameSection = bookingPage.querySelector('section.name>span');
+const buildingSection = bookingPage.querySelector('section.building>span');
+const startDateSection = bookingPage.querySelector('section.start-date>input');
+const endDateSection = bookingPage.querySelector('section.end-date>input');
+const courseNameSection = bookingPage.querySelector('section.course-name>input');
+
+const saveBtn = bookingPage.querySelector('.save-button');
+
+const MIN_COURSE_DURATION = 10; // in minutes
+
 async function initBookingPage() {
     await getRooms();
+
+    saveBtn.addEventListener('click', () => {
+        if (startDateSection.value && endDateSection.value) {
+            if ((new Date(endDateSection.value) - new Date(startDateSection.value)) / 1000 / 60 >= MIN_COURSE_DURATION) {
+                if (sameDay(new Date(startDateSection.value), new Date(endDateSection.value))) {
+                    createCourse(idSection.textContent, new Date(startDateSection.value), new Date(endDateSection.value), courseNameSection.value);
+                } else {
+                    showToast('Les champs de dates doivent utiliser le même jour.', true);
+                }
+            } else {
+                showToast(`Les dates spécifiées ne délimitent pas un cours de plus de ${MIN_COURSE_DURATION} minutes.`, true);
+            }
+        } else {
+            showToast('Les champs de dates sont invalides.', true);
+        }
+    });
+
+    bookingPage.querySelector('.back-button').addEventListener('click', () => {
+        document.querySelector('#room-booking-editor').classList.remove('swipe-left');
+        bookingPage.querySelector('.rooms-list').classList.remove('swipe-left');
+    });
 
     bookingPage.querySelector('.search input[type="text"]').addEventListener('input', (e) => {
         let search = e.target.value

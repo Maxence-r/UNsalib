@@ -662,6 +662,7 @@ main.ready {
 .chart-bar-shape {
     width: 100%;
     background-color: var(--accent-color);
+    min-width: 30px;
 }
 
 .stats-wrapper {

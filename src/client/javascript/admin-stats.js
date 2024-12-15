@@ -31,6 +31,7 @@ function drawChart(container, dataset) {
 async function getStats() {
     let data = [];
     let date = { month: new Date().getMonth() + 1, year: new Date().getFullYear() }
+    statsPage.querySelector('.page-title h2').textContent += ` (${new Date().getMonth() + 1}/${new Date().getFullYear()})`;
     try {
         data = await fetch(`/api/admin/stats?month=${date.month}&year=${date.year}`, {
             method: 'GET',
@@ -59,25 +60,25 @@ async function getStats() {
     internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
 
     const roomRequestsDataset = data.map((item) => ({
-        legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
+        legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.room_requests
     }));
     drawChart(roomRequestsSection.querySelector('.chart'), roomRequestsDataset);
 
     const roomsListRequestsDataset = data.map((item) => ({
-        legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
+        legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.rooms_list_requests
     }));
     drawChart(roomsListRequestsSection.querySelector('.chart'), roomsListRequestsDataset);
 
     const availableRoomsRequestsDataset = data.map((item) => ({
-        legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
+        legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.available_rooms_requests
     }));
     drawChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
 
     const internalErrorsDataset = data.map((item) => ({
-        legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
+        legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.available_rooms_requests
     }));
     drawChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);

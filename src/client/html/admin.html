@@ -25,6 +25,7 @@
             <div>
                 <button class="navlink button manage"><i class="material-symbols-rounded">edit</i>Gérer</button>
                 <button class="navlink button book"><i class="material-symbols-rounded">lock</i>Réserver</button>
+                <button class="navlink button stats"><i class="material-symbols-rounded">query_stats</i>Statistiques</button>
             </div>
             <span class="spacer"></span>
             <div class="account-infos">
@@ -47,6 +48,7 @@
         <div id="navlinks-container">
             <button class="navlink button manage"><i class="material-symbols-rounded">edit</i>Gérer</button>
             <button class="navlink button book"><i class="material-symbols-rounded">lock</i>Réserver</button>
+            <button class="navlink button stats"><i class="material-symbols-rounded">query_stats</i>Statistiques</button>
         </div>
         <span class="spacer"></span>
         <div class="navbar-account">
@@ -185,38 +187,42 @@
             <button class="save-button button">Valider la réservation</button>
         </div>
     </main>
-    <div id="toast"></div>
-    <div id="book-room-popup">
-        <div id="popup-window">
-            <div id="popup-header">
-                <h2>Réserver une salle</h2>
-                <button id="close-popup-button" class="button icon-button"><i class="material-symbols-rounded">close</i></button>
+    <main id="stats">
+        <div class="container lg-4-4 sm-page-0">
+            <div class="page-title">
+                <h2>Statistiques de l'application ce mois</h2>
             </div>
-            <div id="popup-content" class="data-container">
-                <section id="booked-id">
-                    <h3>ID</h3>
-                    <span></span>
+            <div class="data-container">
+                <section class="room-requests">
+                    <h3>Requêtes d'emploi du temps de salle</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
                 </section>
-                <section id="start-date">
-                    <h3>Date de début</h3>
-                    <input type="datetime-local" />
+                <section class="rooms-list-requests">
+                    <h3>Requêtes de liste de salles</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
                 </section>
-                <section id="end-date">
-                    <h3>Date de fin</h3>
-                    <input type="datetime-local" />
-                </section>
-                <section id="course-name">
-                    <h3>Nom du cours</h3>
-                    <input type="text" placeholder="Par défaut (vide)" />
+                <section class="available-rooms-requests">
+                    <h3>Requêtes de recherche de salle libre</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
                 </section>
             </div>
-            <button id="add-course-button" class="button">Réserver cette salle</button>
         </div>
-    </div>
+    </main>
+    <div id="toast"></div>
 </body>
 <script type="module" src="../javascript/admin.js"></script>
 <script type="module" src="../javascript/admin-utils.js"></script>
 <script type="module" src="../javascript/admin-manager.js"></script>
 <script type="module" src="../javascript/admin-booking.js"></script>
+<script type="module" src="../javascript/admin-stats.js"></script>
 
 </html>

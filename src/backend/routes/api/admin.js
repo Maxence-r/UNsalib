@@ -2,6 +2,7 @@ import express from "express";
 import Salle from "../../models/salle.js";
 import Account from '../../models/account.js';
 import Cours from '../../models/cours.js';
+import Stats from '../../models/stats.js';
 import mongoose from "mongoose";
 import { compare } from 'bcrypt';
 import pkg from 'jsonwebtoken';
@@ -11,6 +12,16 @@ import {
 } from "../../utils/date.js";
 const router = express.Router();
 const { sign } = pkg;
+
+function compareStatsObjs(a, b) {
+    if (a.date < b.date) {
+        return -1;
+    } else if (a.date > b.date) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 router.get("/update-alias", async (req, res) => {
     if (!req.connected) return res.redirect('/admin/auth');
@@ -254,12 +265,59 @@ router.post("/add-course", async (req, res) => {
             groupe: "Non renseigné",
             couleur: '#e74c3c',
         });
-    
+
         await newCourse.save();
 
         res.status(200).json({
             saved: true
         });
+    } catch (erreur) {
+        res.status(500).json({
+            error: 'INTERNAL_ERROR',
+        });
+        console.error(
+            "Erreur pendant le traitement de la requête à",
+            req.url,
+            `(${erreur.message})`
+        );
+    }
+});
+
+router.get("/stats", async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    if (!req.query.month && !req.query.year) {
+        return res.status(400).json({
+            error: 'MISSING_QUERIES',
+        });
+    }
+
+    try {
+        let stats = await Stats.find({ date: { $regex: `^${req.query.year}-${req.query.month}` } }).select(
+            "-__v -_id"
+        );
+
+        let existingDates = stats.map((item) => {
+            return new Date(item.date).getDate();
+        });
+
+        let daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+        daysInMonth.map((day) => {
+            if (!existingDates.includes(day)) {
+                stats.push({
+                    date: `2024-12-${day < 10 ? '0' + day : day}`,
+                    available_rooms_requests: 0,
+                    room_requests: 0,
+                    rooms_list_requests: 0
+                })
+            }
+        });
+
+        stats.sort(compareStatsObjs);
+
+        res.status(200).json(stats);
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

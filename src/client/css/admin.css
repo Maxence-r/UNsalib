@@ -255,8 +255,13 @@ main.ready {
     gap: var(--extra-large-space);
 }
 
-.container:not(.rooms-list) {
+.container#room-booking-editor,
+.container#room-editor {
     display: none;
+}
+
+.container:not(.rooms-list) {
+    display: flex;
     flex-direction: column;
     gap: var(--extra-large-space);
     align-items: center;
@@ -362,7 +367,7 @@ main.ready {
     position: fixed;
     padding: var(--extra-large-space);
     background-color: var(--surface-color);
-    color:  var(--on-surface-color);
+    color: var(--on-surface-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     margin-top: var(--space);
@@ -623,12 +628,55 @@ main.ready {
     display: none;
 }
 
+.chart {
+    overflow-x: auto;
+    scrollbar-width: none;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--small-space);
+}
+
+.chart-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--extra-small-space);
+}
+
+.chart-bar-shape {
+    width: 100%;
+    background-color: var(--accent-color);
+}
+
+.stats-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--extra-large-space);
+}
+
+.stats-wrapper>span {
+    font-size: 50px;
+    width: 30%;
+    text-align: center;
+}
+
+.stats-wrapper>.chart {
+    width: 70%;
+    height: 200px;
+    margin-right: var(--extra-large-space);
+}
+
+.chart-bar-value {
+    color: var(--neutral-color-dark);
+}
+
 @media screen and (max-width: 1024px) {
     #navbar {
         height: 40px;
     }
 
-    #navbar .branding h2, #navbar .branding h1:not(.page-name) {
+    #navbar .branding h2,
+    #navbar .branding h1:not(.page-name) {
         display: none;
     }
 
@@ -659,30 +707,6 @@ main.ready {
     .container.sm-page-1 {
         z-index: 1;
     }
-
-    /* .room-editor,
-    .rooms-list {
-        position: fixed;
-        top: calc(40px + 48px);
-        width: calc(100vw - 48px);
-        height: calc(100% - 40px - 48px - 48px);
-        background-color: var(--background-color);
-        padding: var(--extra-large-space);
-        left: 100vw !important;
-    } */
-
-    /* .room-editor {
-        z-index: 1;
-    } */
-
-    /* .rooms-list {
-        z-index: 0;
-        left: 0px !important;
-    } */
-
-    /* #rooms-list.swipe-left {
-        transform: translateX(-25vw) !important;
-    } */
 
     .swipe-left {
         transform: translateX(-100vw);
@@ -737,6 +761,19 @@ main.ready {
         background-color: transparent;
         border: 1px solid var(--neutral-color-light);
         font-weight: normal;
+    }
+
+    .stats-wrapper {
+        flex-direction: column;
+    }
+
+    .stats-wrapper>span {
+        width: 100%;
+    }
+    
+    .stats-wrapper>.chart {
+        width: 100%;
+        margin-right: 0px;
     }
 }
 

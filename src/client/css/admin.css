@@ -82,6 +82,7 @@ body {
     word-wrap: normal;
     direction: ltr;
     -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
 }
 
@@ -98,6 +99,12 @@ body {
 
 .room-item.hidden {
     display: none;
+}
+
+.room-item.selected {
+    background-color: var(--neutral-color);
+    border: 1px solid var(--neutral-color);
+    font-weight: bold;
 }
 
 .badges {
@@ -724,6 +731,12 @@ main.ready {
 
     #navbar .branding button {
         display: block;
+    }
+
+    .room-item.selected {
+        background-color: transparent;
+        border: 1px solid var(--neutral-color-light);
+        font-weight: normal;
     }
 }
 

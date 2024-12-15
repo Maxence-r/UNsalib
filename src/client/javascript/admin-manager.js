@@ -118,12 +118,15 @@ async function getRooms() {
         roomElement.appendChild(badges);
         roomsList.appendChild(roomElement);
         roomElement.addEventListener('click', (event) => {
+            roomsManagerPage.querySelector('.room-item.selected').classList.remove('selected')
+            event.currentTarget.classList.add('selected');
             getRoom(event.currentTarget.getAttribute('data-id'));
             document.querySelector('#room-editor').classList.add('swipe-left');
             roomsManagerPage.querySelector('.rooms-list').classList.add('swipe-left');
         });
     });
-    await getRoom(document.querySelector('.room-item').getAttribute('data-id'));
+    await getRoom(roomsManagerPage.querySelector('.room-item').getAttribute('data-id'));
+    roomsManagerPage.querySelector('.room-item').classList.add('selected');
     document.querySelector('#room-editor').style.display = 'flex';
 }
 
@@ -172,8 +175,6 @@ function refreshRoomsList() {
 }
 
 const roomsManagerPage = document.querySelector('#rooms-manager');
-
-const bookRoomPopup = document.querySelector('#book-room-popup');
 
 const idSection = roomsManagerPage.querySelector('section.id>span');
 const nameSection = roomsManagerPage.querySelector('section.name>span');
@@ -242,37 +243,6 @@ async function initRoomsManagerPage() {
     roomsManagerPage.querySelector('.back-button').addEventListener('click', () => {
         document.querySelector('#room-editor').classList.remove('swipe-left');
         roomsManagerPage.querySelector('.rooms-list').classList.remove('swipe-left');
-    });
-
-    document.querySelector('#close-popup-button').addEventListener('click', () => {
-        bookRoomPopup.classList.remove('opened');
-    });
-
-    bookRoomPopup.addEventListener('click', function (event) {
-        if (!bookRoomPopup.querySelector('#popup-window').contains(event.target)) {
-            bookRoomPopup.classList.remove('opened');
-        }
-    });
-
-    document.querySelector('#add-course-button').addEventListener('click', (event) => {
-        const MIN_COURSE_DURATION = 10; // in minutes
-        const startDate = document.querySelector('#start-date>input').value;
-        const endDate = document.querySelector('#end-date>input').value;
-        const courseName = document.querySelector('#course-name>input').value;
-        const roomId = document.querySelector('#booked-id>span').textContent;
-        if (startDate && endDate) {
-            if ((new Date(endDate) - new Date(startDate)) / 1000 / 60 >= MIN_COURSE_DURATION) {
-                if (sameDay(new Date(startDate), new Date(endDate))) {
-                    createCourse(roomId, new Date(startDate), new Date(endDate), courseName);
-                } else {
-                    showToast('Les champs de dates doivent utiliser le même jour.', true);
-                }
-            } else {
-                showToast(`Les dates spécifiées ne délimitent pas un cours de plus de ${MIN_COURSE_DURATION} minutes.`, true);
-            }
-        } else {
-            showToast('Les champs de dates sont invalides.', true);
-        }
     });
 
     searchBannedCheckbox.addEventListener('click', () => {

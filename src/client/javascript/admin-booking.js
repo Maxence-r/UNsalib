@@ -82,6 +82,8 @@ async function getRooms() {
             roomsList.appendChild(roomElement);
 
             roomElement.addEventListener('click', (event) => {
+                bookingPage.querySelector('.room-item.selected').classList.remove('selected')
+                event.currentTarget.classList.add('selected');
                 getRoom(event.currentTarget.getAttribute('data-id'));
                 document.querySelector('#room-booking-editor').classList.add('swipe-left');
                 bookingPage.querySelector('.rooms-list').classList.add('swipe-left');
@@ -89,6 +91,7 @@ async function getRooms() {
         }
     });
     getRoom(bookingPage.querySelector('.room-item').getAttribute('data-id'));
+    bookingPage.querySelector('.room-item').classList.add('selected');
     document.querySelector('#room-booking-editor').style.display = 'flex';
 }
 

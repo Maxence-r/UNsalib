@@ -97,6 +97,11 @@ body {
     gap: var(--large-space);
 }
 
+.room-item:hover {
+    background-color: var(--neutral-color-light);
+    color: var(--on-neutral-color-light);
+}
+
 .room-item.hidden {
     display: none;
 }
@@ -106,6 +111,12 @@ body {
     border: 1px solid var(--accent-color);
     color: var(--on-accent-color);
     font-weight: bold;
+}
+
+.room-item.selected:hover {
+    background-color: var(--accent-color-dark);
+    border: 1px solid var(--accent-color-dark);
+    color: var(--on-accent-color-dark);
 }
 
 .badges {
@@ -240,7 +251,7 @@ main {
     margin: var(--extra-large-space);
     display: none;
     color: var(--on-background-color);
-    gap: var(--extra-large-space);
+    gap: calc(var(--extra-large-space) + var(--extra-large-space));
     opacity: 0;
     transition: opacity var(--animation-duration);
 }
@@ -673,6 +684,7 @@ main.ready {
 
 .chart-bar-value {
     color: var(--neutral-color-dark);
+    font-size: 14px;
 }
 
 @media screen and (max-width: 1024px) {

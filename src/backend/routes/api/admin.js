@@ -310,8 +310,9 @@ router.get("/stats", async (req, res) => {
                     date: `2024-12-${day < 10 ? '0' + day : day}`,
                     available_rooms_requests: 0,
                     room_requests: 0,
-                    rooms_list_requests: 0
-                })
+                    rooms_list_requests: 0,
+                    internal_errors: 0
+                });
             }
         });
 

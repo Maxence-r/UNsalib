@@ -69,11 +69,19 @@ router.get("/", async (req, res) => {
         }
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
+        try {
+            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
+            });
+        } finally {
+            console.error(
+                "Erreur pendant le traitement de la requête à",
+                req.url,
+                `(${erreur.message})`
+            );
+        }
     }
 });
 
@@ -145,11 +153,19 @@ router.get("/disponibles", async (req, res) => {
         }
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
+        try {
+            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
+            });
+        } finally {
+            console.error(
+                "Erreur pendant le traitement de la requête à",
+                req.url,
+                `(${erreur.message})`
+            );
+        }
     }
 });
 
@@ -173,34 +189,6 @@ router.get("/edt", async (req, res) => {
     if (bornesDates.numero < 0 || bornesDates.numero > 52 || increment > 18) {
         return res.status(400).send("INCORRECT_WEEK_NUMBER");
     }
-    if (vacations.includes(bornesDates.numero)) {
-        // VACANCES
-        const vacanceCours = [];
-        const startDate = new Date(bornesDates.debut);
-        for (let i = 0; i < 5; i++) {
-            const debut = new Date(startDate);
-            debut.setDate(debut.getDate() + i);
-            debut.setHours(8, 0, 0, 0);
-
-            const fin = new Date(debut);
-            fin.setHours(8, 0, 0, 0);
-
-            vacanceCours.push({
-                id_cours: `vacance-${i}`,
-                debut: debut.toISOString(),
-                fin: fin.toISOString(),
-                duree: 900,
-                overflow: 0,
-                id_salle: id,
-                professeur: "Monsieur Chill",
-                module: "Détente - Vacances",
-                groupe: "Tout le monde",
-                couleur: "#FF7675",
-            });
-        }
-
-        return res.send({ cours: vacanceCours, infos_semaine: bornesDates });
-    }
 
     try {
         try {
@@ -210,6 +198,35 @@ router.get("/edt", async (req, res) => {
                 setDefaultsOnInsert: true
             });
         } finally {
+            if (vacations.includes(bornesDates.numero)) {
+                // VACANCES
+                const vacanceCours = [];
+                const startDate = new Date(bornesDates.debut);
+                for (let i = 0; i < 5; i++) {
+                    const debut = new Date(startDate);
+                    debut.setDate(debut.getDate() + i);
+                    debut.setHours(8, 0, 0, 0);
+        
+                    const fin = new Date(debut);
+                    fin.setHours(8, 0, 0, 0);
+        
+                    vacanceCours.push({
+                        id_cours: `vacance-${i}`,
+                        debut: debut.toISOString(),
+                        fin: fin.toISOString(),
+                        duree: 900,
+                        overflow: 0,
+                        id_salle: id,
+                        professeur: "Monsieur Chill",
+                        module: "Détente - Vacances",
+                        groupe: "Tout le monde",
+                        couleur: "#FF7675",
+                    });
+                }
+        
+                return res.send({ cours: vacanceCours, infos_semaine: bornesDates });
+            }
+
             // Obtention des cours selon l'id de salle et la période donnée
             let cours = await Cours.find({
                 classe: id,
@@ -251,11 +268,19 @@ router.get("/edt", async (req, res) => {
         }
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
+        try {
+            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
+            });
+        } finally {
+            console.error(
+                "Erreur pendant le traitement de la requête à",
+                req.url,
+                `(${erreur.message})`
+            );
+        }
     }
 });
 

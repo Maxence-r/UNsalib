@@ -45,16 +45,18 @@ async function getStats() {
         showToast('Erreur d\'obtention des statistiques : ' + data.error, true)
     }
 
-    let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0;
+    let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0;
     data.forEach(day => {
         roomRequestsCount += day.room_requests;
         roomsListRequestsCount += day.rooms_list_requests;
         availableRoomsRequestsCount += day.available_rooms_requests;
+        internalErrorsCount += day.internal_errors;
     });
 
     roomRequestsSection.querySelector('span').textContent = roomRequestsCount;
     roomsListRequestsSection.querySelector('span').textContent = roomsListRequestsCount;
     availableRoomsRequestsSection.querySelector('span').textContent = availableRoomsRequestsCount;
+    internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
 
     const roomRequestsDataset = data.map((item) => ({
         legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
@@ -73,6 +75,12 @@ async function getStats() {
         value: item.available_rooms_requests
     }));
     drawChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
+
+    const internalErrorsDataset = data.map((item) => ({
+        legend: `${new Date(item.date).getDate()}/${new Date(item.date).getMonth() + 1}`,
+        value: item.available_rooms_requests
+    }));
+    drawChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);
 }
 
 const statsPage = document.querySelector('#stats');
@@ -80,6 +88,7 @@ const statsPage = document.querySelector('#stats');
 const roomRequestsSection = statsPage.querySelector('section.room-requests');
 const roomsListRequestsSection = statsPage.querySelector('section.rooms-list-requests');
 const availableRoomsRequestsSection = statsPage.querySelector('section.available-rooms-requests');
+const internalErrorsSection = statsPage.querySelector('section.internal-errors');
 
 async function initStatsPage() {
     await getStats();

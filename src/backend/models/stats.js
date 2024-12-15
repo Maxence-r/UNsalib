@@ -19,6 +19,11 @@ const StatsSchema = Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    internal_errors: {
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 

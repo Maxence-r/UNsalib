@@ -46,6 +46,7 @@ async function showRoomsManagerPage() {
     statsPage.classList.remove('showed', 'ready');
     await initRoomsManagerPage();
     roomsManagerPage.classList.add('ready');
+    localStorage.setItem('selectedPage', 'roomsManager');
 }
 
 async function showBookingPage() {
@@ -64,6 +65,7 @@ async function showBookingPage() {
     statsPage.classList.remove('showed', 'ready');
     await initBookingPage();
     bookingPage.classList.add('ready');
+    localStorage.setItem('selectedPage', 'booking');
 }
 
 async function showStatsPage() {
@@ -82,6 +84,7 @@ async function showStatsPage() {
     bookingPage.classList.remove('showed', 'ready');
     await initStatsPage();
     statsPage.classList.add('ready');
+    localStorage.setItem('selectedPage', 'stats');
 }
 
 getAccount();
@@ -159,5 +162,14 @@ const font = new FontFace('Material Symbols Rounded', `url(https://fonts.gstatic
 document.fonts.add(font);
 font.load().then(() => {
     document.body.classList.add('ready');
-    showRoomsManagerPage();
+    let selectedPage = localStorage.getItem("selectedPage");
+    if (selectedPage == 'roomsManager') {
+        showRoomsManagerPage();
+    } else if (selectedPage == 'booking') {
+        showBookingPage();
+    } else if (selectedPage == 'stats') {
+        showStatsPage();
+    } else {
+        showRoomsManagerPage();
+    }
 });

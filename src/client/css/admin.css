@@ -102,8 +102,9 @@ body {
 }
 
 .room-item.selected {
-    background-color: var(--neutral-color);
-    border: 1px solid var(--neutral-color);
+    background-color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    color: var(--on-accent-color);
     font-weight: bold;
 }
 
@@ -128,6 +129,10 @@ textarea {
     background-color: var(--neutral-color);
     border: none;
     outline: none;
+}
+
+input[type="checkbox"] {
+    accent-color: var(--accent-color);
 }
 
 input:not(input[type="checkbox"])::placeholder,

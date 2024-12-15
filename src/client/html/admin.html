@@ -67,10 +67,16 @@
     <main id="rooms-manager">
         <div class="rooms-list container lg-1-3 sm-page-0">
             <div class="search">
-                <input type="text" placeholder="Filtrer par salle, batiment">
+                <input type="text" placeholder="Filtrer par salle, bâtiment">
                 <div class="search-actions">
-                    <input type="checkbox">
-                    Bannies
+                    <div>
+                        <input data-id="banned" type="checkbox">
+                        Afficher les salles bannies
+                    </div>
+                    <div>
+                        <input data-id="type" type="checkbox">
+                        Afficher uniquement les salles sans type
+                    </div>
                 </div>
             </div>
             <div class="rooms-list-container">
@@ -138,7 +144,7 @@
     <main id="booking">
         <div class="container lg-1-3 rooms-list sm-page-0">
             <div class="search">
-                <input type="text" placeholder="Filtrer par salle, batiment">
+                <input type="text" placeholder="Filtrer par salle, bâtiment">
                 <span><i class="material-symbols-rounded">info</i>Les salles bannies ne sont pas affichées.</span>
             </div>
             <div class="rooms-list-container">

@@ -456,7 +456,14 @@ main.ready {
 .search-actions {
     display: flex;
     gap: var(--space);
+    flex-direction: column;
+}
+
+.search-actions>div {
+    display: flex;
+    gap: var(--space);
     align-items: center;
+    font-size: 14px;
 }
 
 .search input[type="text"] {

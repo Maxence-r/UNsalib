@@ -102,6 +102,7 @@ async function getRooms() {
         roomElement.setAttribute('data-building', room.building);
         roomElement.setAttribute('data-name', room.name);
         roomElement.setAttribute('data-banned', room.banned);
+        roomElement.setAttribute('data-type', room.type);
         roomElement.classList = 'room-item';
         roomName = document.createElement('span');
         roomName.innerText = room.name;
@@ -126,6 +127,50 @@ async function getRooms() {
     document.querySelector('#room-editor').style.display = 'flex';
 }
 
+function refreshRoomsList() {
+    let search = roomsManagerPage.querySelector('.search input[type="text"]').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+    let results = roomsManagerPage.querySelectorAll('.room-item');
+    let resultsNumber = 0;
+    results.forEach((result) => {
+        let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+        let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+        if (!roomName.includes(search) && !buildingName.includes(search)) {
+            result.classList.add('hidden');
+        } else {
+            if (result.getAttribute('data-type') == "") {
+                if (result.getAttribute('data-banned') == "false") {
+                    result.classList.remove('hidden');
+                    resultsNumber++;
+                } else {
+                    if (searchBannedCheckbox.checked) {
+                        result.classList.remove('hidden');
+                        resultsNumber++;
+                    } else {
+                        result.classList.add('hidden');
+                    }
+                }
+            } else {
+                if (!searchTypeCheckbox.checked) {
+                    if (result.getAttribute('data-banned') == "false") {
+                        result.classList.remove('hidden');
+                        resultsNumber++;
+                    } else {
+                        if (searchBannedCheckbox.checked) {
+                            result.classList.remove('hidden');
+                            resultsNumber++;
+                        } else {
+                            result.classList.add('hidden');
+                        }
+                    }
+                } else {
+                    result.classList.add('hidden');
+                }
+            }
+        }
+    });
+    roomsManagerPage.querySelector('.no-result').style.display = resultsNumber > 0 ? "none" : "block";
+}
+
 const roomsManagerPage = document.querySelector('#rooms-manager');
 
 const bookRoomPopup = document.querySelector('#book-room-popup');
@@ -139,6 +184,9 @@ const bannedSection = document.querySelector('#banned>input');
 const boardsSection = document.querySelector('#boards');
 const detailsSection = document.querySelector('#details');
 const typeSection = document.querySelector('#type>select');
+
+const searchBannedCheckbox = roomsManagerPage.querySelector('.search-actions input[data-id="banned"]');
+const searchTypeCheckbox = roomsManagerPage.querySelector('.search-actions input[data-id="type"]');
 
 async function initRoomsManagerPage() {
     await getRooms();
@@ -184,28 +232,8 @@ async function initRoomsManagerPage() {
         updateRoom(id, data);
     });
 
-    roomsManagerPage.querySelector('.search input[type="text"]').addEventListener("input", (e) => {
-        let search = e.target.value
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f\s]/g, "");
-        let results = document.querySelectorAll('.room-item');
-        let resultsNumber = 0;
-        results.forEach((result) => {
-            console.log(!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true")
-            let roomName = result.getAttribute('data-name').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-            let buildingName = result.getAttribute('data-building').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-            if (!roomName.includes(search) && !buildingName.includes(search)) {
-                result.classList.add('hidden');
-            } else {
-                result.classList.remove('hidden');
-                // if (!searchBannedCheckbox.checked && result.getAttribute('data-banned') == "true") {
-                //     resultsNumber++;
-                //     result.style.display = "flex";
-                // }
-            }
-        });
-        roomsManagerPage.querySelector('.no-result').style.display = resultsNumber > 0 ? "none" : "block";
+    roomsManagerPage.querySelector('.search input[type="text"]').addEventListener("input", () => {
+        refreshRoomsList();
     });
 
     roomsManagerPage.querySelector('.back-button').addEventListener('click', () => {
@@ -244,17 +272,12 @@ async function initRoomsManagerPage() {
         }
     });
 
-    const searchBannedCheckbox = roomsManagerPage.querySelector('.search-actions input[type="checkbox"]');
     searchBannedCheckbox.click();
     searchBannedCheckbox.addEventListener('click', () => {
-        let results = document.querySelectorAll('.room-item[data-banned="true"]');
-        results.forEach((result) => {
-            if (searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
-                result.style.display = 'flex';
-            } else if (!searchBannedCheckbox.checked && !result.classList.contains('hidden')) {
-                result.style.display = 'none';
-            }
-        });
+        refreshRoomsList();
+    });
+    searchTypeCheckbox.addEventListener('click', () => {
+        refreshRoomsList();
     });
 }
 

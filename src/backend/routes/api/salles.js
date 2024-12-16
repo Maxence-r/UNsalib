@@ -10,17 +10,16 @@ import {
     obtenirNbSemaines,
     obtenirOverflowMinutes,
 } from "../../utils/date.js";
+import {
+    updateStats
+} from "../../utils/stats.js";
 
 const vacations = [52, 1];
 
 router.get("/", async (req, res) => {
     try {
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { rooms_list_requests: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('rooms_list_requests');
         } finally {
             // Obtention de toutes les salles
             let salles = await Salle.find({ banned: { $ne: true } }).select(
@@ -70,11 +69,7 @@ router.get("/", async (req, res) => {
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('internal_errors');
         } finally {
             console.error(
                 "Erreur pendant le traitement de la requête à",
@@ -101,11 +96,7 @@ router.get("/disponibles", async (req, res) => {
 
     try {
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { available_rooms_requests: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('available_rooms_requests');
         } finally {
             // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
             //
@@ -154,11 +145,7 @@ router.get("/disponibles", async (req, res) => {
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('internal_errors');
         } finally {
             console.error(
                 "Erreur pendant le traitement de la requête à",
@@ -192,11 +179,7 @@ router.get("/edt", async (req, res) => {
 
     try {
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { room_requests: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('room_requests');
         } finally {
             if (vacations.includes(bornesDates.numero)) {
                 // VACANCES
@@ -269,11 +252,7 @@ router.get("/edt", async (req, res) => {
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
         try {
-            await Stats.findOneAndUpdate({ date: new Date().toISOString().split('T')[0] }, { $inc: { internal_errors: 1 } }, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            await updateStats('internal_errors');
         } finally {
             console.error(
                 "Erreur pendant le traitement de la requête à",

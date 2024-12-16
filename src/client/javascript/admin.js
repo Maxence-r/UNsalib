@@ -1,7 +1,7 @@
-import { initRoomsManagerPage } from "./admin-manager.js";
-import { initBookingPage } from "./admin-booking.js";
-import { initStatsPage } from "./admin-stats.js";
-import { showToast } from "./admin-utils.js";
+import { initRoomsManagerPage } from './admin-manager.js';
+import { initBookingPage } from './admin-booking.js';
+import { initStatsPage } from './admin-stats.js';
+import { showToast } from './admin-utils.js';
 
 async function getAccount() {
     let data = [];
@@ -162,7 +162,7 @@ const font = new FontFace('Material Symbols Rounded', `url(https://fonts.gstatic
 document.fonts.add(font);
 font.load().then(() => {
     document.body.classList.add('ready');
-    let selectedPage = localStorage.getItem("selectedPage");
+    let selectedPage = localStorage.getItem('selectedPage');
     if (selectedPage == 'roomsManager') {
         showRoomsManagerPage();
     } else if (selectedPage == 'booking') {

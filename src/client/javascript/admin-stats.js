@@ -4,6 +4,7 @@ function drawChart(container, dataset) {
     container.textContent = '';
     let chartBar, shape, legend, value, gap, shapeHeight;
     let containerHeight = container.clientHeight;
+    containerHeight -= parseFloat(getComputedStyle(container).paddingTop) + parseFloat(getComputedStyle(container).paddingBottom);
     let maxValue = Math.max(...dataset.map((item) => {
         return item.value;
     }));

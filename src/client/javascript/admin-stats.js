@@ -80,7 +80,7 @@ async function getStats() {
 
     const internalErrorsDataset = data.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.available_rooms_requests
+        value: item.internal_errors
     }));
     drawChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);
 }

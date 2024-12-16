@@ -31,6 +31,7 @@ async function getAccount() {
 }
 
 async function showRoomsManagerPage() {
+    loadingPage.classList.add('showed');
     manageLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -41,15 +42,16 @@ async function showRoomsManagerPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Gérer';
-    roomsManagerPage.classList.add('showed');
-    bookingPage.classList.remove('showed', 'ready');
-    statsPage.classList.remove('showed', 'ready');
+    bookingPage.classList.remove('showed');
+    statsPage.classList.remove('showed');
     await initRoomsManagerPage();
-    roomsManagerPage.classList.add('ready');
+    loadingPage.classList.remove('showed');
+    roomsManagerPage.classList.add('showed');
     localStorage.setItem('selectedPage', 'roomsManager');
 }
 
 async function showBookingPage() {
+    loadingPage.classList.add('showed');
     bookLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -60,15 +62,16 @@ async function showBookingPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Réserver';
-    bookingPage.classList.add('showed');
-    roomsManagerPage.classList.remove('showed', 'ready');
-    statsPage.classList.remove('showed', 'ready');
+    roomsManagerPage.classList.remove('showed');
+    statsPage.classList.remove('showed');
     await initBookingPage();
-    bookingPage.classList.add('ready');
+    loadingPage.classList.remove('showed');
+    bookingPage.classList.add('showed');
     localStorage.setItem('selectedPage', 'booking');
 }
 
 async function showStatsPage() {
+    loadingPage.classList.add('showed');
     statsLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -79,11 +82,11 @@ async function showStatsPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Statistiques';
-    statsPage.classList.add('showed');
-    roomsManagerPage.classList.remove('showed', 'ready');
-    bookingPage.classList.remove('showed', 'ready');
+    roomsManagerPage.classList.remove('showed');
+    bookingPage.classList.remove('showed');
     await initStatsPage();
-    statsPage.classList.add('ready');
+    loadingPage.classList.remove('showed');
+    statsPage.classList.add('showed');
     localStorage.setItem('selectedPage', 'stats');
 }
 
@@ -130,9 +133,10 @@ const manageLinks = document.querySelectorAll('.navlink.manage');
 const bookLinks = document.querySelectorAll('.navlink.book');
 const statsLinks = document.querySelectorAll('.navlink.stats');
 
-const roomsManagerPage = document.querySelector('#rooms-manager');
-const bookingPage = document.querySelector('#booking');
-const statsPage = document.querySelector('#stats');
+const roomsManagerPage = document.querySelector('main#rooms-manager');
+const bookingPage = document.querySelector('main#booking');
+const statsPage = document.querySelector('main#stats');
+const loadingPage = document.querySelector('main#loading');
 
 manageLinks.forEach((link) => {
     link.addEventListener('click', async () => {

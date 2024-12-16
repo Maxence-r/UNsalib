@@ -252,16 +252,11 @@ main {
     display: none;
     color: var(--on-background-color);
     gap: calc(var(--extra-large-space) + var(--extra-large-space));
-    opacity: 0;
     transition: opacity var(--animation-duration);
 }
 
 main.showed {
     display: flex;
-}
-
-main.ready {
-    opacity: 1;
 }
 
 .rooms-list {
@@ -698,6 +693,34 @@ main.ready {
 .chart-bar-value {
     color: var(--neutral-color-dark);
     font-size: 14px;
+}
+
+svg.loading {
+    height: 60px;
+    width: 60px;
+    animation: .7s cubic-bezier(0.60, 0.2, 0.40, 0.8) infinite running rotate;
+}
+
+svg.loading path {
+    fill: var(--accent-color);
+}
+
+main#loading {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--extra-large-space);
+    opacity: 1;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media screen and (max-width: 1024px) {

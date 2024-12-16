@@ -32,7 +32,7 @@ function drawChart(container, dataset) {
 async function getStats() {
     let data = [];
     let date = { month: new Date().getMonth() + 1, year: new Date().getFullYear() }
-    statsPage.querySelector('.page-title h2').textContent += ` (${new Date().getMonth() + 1}/${new Date().getFullYear()})`;
+    statsPage.querySelector('.page-title h2').textContent = `Statistiques ce mois (${new Date().getMonth() + 1}/${new Date().getFullYear()})`;
     try {
         data = await fetch(`/api/admin/stats?month=${date.month}&year=${date.year}`, {
             method: 'GET',

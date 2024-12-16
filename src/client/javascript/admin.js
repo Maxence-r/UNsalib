@@ -31,7 +31,7 @@ async function getAccount() {
 }
 
 async function showRoomsManagerPage() {
-    loadingPage.classList.add('showed');
+    loadingPage.classList.add('ready');
     manageLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -42,16 +42,17 @@ async function showRoomsManagerPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Gérer';
+    roomsManagerPage.classList.add('showed');
     bookingPage.classList.remove('showed');
     statsPage.classList.remove('showed');
     await initRoomsManagerPage();
-    loadingPage.classList.remove('showed');
-    roomsManagerPage.classList.add('showed');
+    loadingPage.classList.remove('ready');
+    roomsManagerPage.classList.add('ready');
     localStorage.setItem('selectedPage', 'roomsManager');
 }
 
 async function showBookingPage() {
-    loadingPage.classList.add('showed');
+    loadingPage.classList.add('ready');
     bookLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -62,16 +63,17 @@ async function showBookingPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Réserver';
-    roomsManagerPage.classList.remove('showed');
-    statsPage.classList.remove('showed');
-    await initBookingPage();
-    loadingPage.classList.remove('showed');
     bookingPage.classList.add('showed');
+    roomsManagerPage.classList.remove('showed', 'ready');
+    statsPage.classList.remove('showed', 'ready');
+    await initBookingPage();
+    loadingPage.classList.remove('ready');
+    bookingPage.classList.add('ready');
     localStorage.setItem('selectedPage', 'booking');
 }
 
 async function showStatsPage() {
-    loadingPage.classList.add('showed');
+    loadingPage.classList.add('ready');
     statsLinks.forEach((link) => {
         link.classList.add('selected');
     });
@@ -82,11 +84,12 @@ async function showStatsPage() {
         link.classList.remove('selected');
     });
     mobilePageName.innerText = 'Statistiques';
-    roomsManagerPage.classList.remove('showed');
-    bookingPage.classList.remove('showed');
-    await initStatsPage();
-    loadingPage.classList.remove('showed');
     statsPage.classList.add('showed');
+    roomsManagerPage.classList.remove('showed', 'ready');
+    bookingPage.classList.remove('showed', 'ready');
+    await initStatsPage();
+    loadingPage.classList.remove('ready');
+    statsPage.classList.add('ready');
     localStorage.setItem('selectedPage', 'stats');
 }
 

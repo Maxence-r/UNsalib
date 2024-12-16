@@ -257,6 +257,12 @@ main {
 
 main.showed {
     display: flex;
+    visibility: hidden;
+}
+
+main.ready {
+    display: flex;
+    visibility: visible;
 }
 
 .rooms-list {
@@ -664,7 +670,7 @@ main.showed {
     display: flex;
     align-items: center;
     gap: var(--extra-large-space);
-    height: 200px;
+    height: auto;
 }
 
 .stats-wrapper>span {
@@ -673,7 +679,7 @@ main.showed {
     border: 1px solid var(--neutral-color-light);
     border-radius: var(--border-radius-sharp);
     padding: var(--extra-large-space);
-    height: 100%;
+    height: 200px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -682,7 +688,7 @@ main.showed {
 
 .stats-wrapper>.chart {
     width: 70%;
-    height: 100%;
+    height: 200px;
     margin-right: var(--extra-large-space);
     border: 1px solid var(--neutral-color-light);
     border-radius: var(--border-radius-sharp);
@@ -710,7 +716,6 @@ main#loading {
     align-items: center;
     justify-content: center;
     gap: var(--extra-large-space);
-    opacity: 1;
 }
 
 @keyframes rotate {

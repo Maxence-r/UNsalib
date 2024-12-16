@@ -16,7 +16,7 @@ function drawChart(container, dataset) {
         legend.innerText = data.legend;
         value = document.createElement('div');
         value.classList = 'chart-bar-value';
-        value.innerText = data.value;
+        value.innerText = data.value > 0 ? data.value : '';
         shape = document.createElement('div');
         shape.classList = 'chart-bar-shape';
         chartBar.appendChild(value);
@@ -25,7 +25,7 @@ function drawChart(container, dataset) {
         container.appendChild(chartBar);
         gap = chartBar.clientHeight - legend.clientHeight - value.clientHeight - shape.clientHeight;
         shapeHeight = containerHeight * data.value / maxValue - legend.clientHeight - value.clientHeight - gap;
-        shape.style.height = shapeHeight > 0 ? shapeHeight + 'px' : '1px';
+        shape.style.height = shapeHeight <= 0 && data.value > 0 ? '1px' : shapeHeight + 'px';
     });
 }
 

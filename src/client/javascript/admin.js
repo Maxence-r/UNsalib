@@ -90,43 +90,10 @@ async function showStatsPage() {
     localStorage.setItem('selectedPage', 'stats');
 }
 
-getAccount();
-
 const accountButton = document.querySelector('#account-button');
 const accountMenu = document.querySelector('#account-menu');
 
-accountButton.addEventListener('click', (event) => {
-    event.stopPropagation();
-    accountMenu.classList.add('opened');
-});
-
-accountMenu.addEventListener('click', (event) => {
-    event.stopPropagation();
-});
-
-document.querySelectorAll('.logout').forEach((button) => {
-    button.addEventListener('click', () => {
-        window.location = '/api/admin/auth/logout';
-    });
-});
-
-window.addEventListener('click', () => {
-    if (accountMenu.classList.contains('opened')) {
-        accountMenu.classList.remove('opened');
-    }
-});
-
-const mobileMenu = document.querySelector('#mobile-menu')
-document.querySelector('#navbar .branding button').addEventListener('click', () => {
-    mobileMenu.classList.add('opened');
-});
-
-mobileMenu.addEventListener('click', function (event) {
-    if (!mobileMenu.querySelector('#mobile-menu-window').contains(event.target)) {
-        mobileMenu.classList.remove('opened');
-    }
-});
-
+const mobileMenu = document.querySelector('#mobile-menu');
 const mobilePageName = document.querySelector('.branding h1.page-name');
 
 const manageLinks = document.querySelectorAll('.navlink.manage');
@@ -138,33 +105,68 @@ const bookingPage = document.querySelector('main#booking');
 const statsPage = document.querySelector('main#stats');
 const loadingPage = document.querySelector('main#loading');
 
-manageLinks.forEach((link) => {
-    link.addEventListener('click', async () => {
-        mobileMenu.classList.remove('opened');
-        await showRoomsManagerPage();
-    });
-});
+async function initApp() {
+    getAccount();
 
-bookLinks.forEach((link) => {
-    link.addEventListener('click', async () => {
-        mobileMenu.classList.remove('opened');
-        await showBookingPage();
+    accountButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        accountMenu.classList.add('opened');
     });
-});
 
-statsLinks.forEach((link) => {
-    link.addEventListener('click', async () => {
-        mobileMenu.classList.remove('opened');
-        await showStatsPage();
+    accountMenu.addEventListener('click', (event) => {
+        event.stopPropagation();
     });
-});
 
-const font = new FontFace('Material Symbols Rounded', `url(https://fonts.gstatic.com/s/materialsymbolsrounded/v222/sykg-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190Fjzag.woff2) format('woff2')`, {
-    style: 'normal',
-    weight: '100 700'
-});
-document.fonts.add(font);
-font.load().then(() => {
+    document.querySelectorAll('.logout').forEach((button) => {
+        button.addEventListener('click', () => {
+            window.location = '/api/admin/auth/logout';
+        });
+    });
+
+    window.addEventListener('click', () => {
+        if (accountMenu.classList.contains('opened')) {
+            accountMenu.classList.remove('opened');
+        }
+    });
+
+    document.querySelector('#navbar .branding button').addEventListener('click', () => {
+        mobileMenu.classList.add('opened');
+    });
+
+    mobileMenu.addEventListener('click', function (event) {
+        if (!mobileMenu.querySelector('#mobile-menu-window').contains(event.target)) {
+            mobileMenu.classList.remove('opened');
+        }
+    });
+
+    manageLinks.forEach((link) => {
+        link.addEventListener('click', async () => {
+            mobileMenu.classList.remove('opened');
+            await showRoomsManagerPage();
+        });
+    });
+
+    bookLinks.forEach((link) => {
+        link.addEventListener('click', async () => {
+            mobileMenu.classList.remove('opened');
+            await showBookingPage();
+        });
+    });
+
+    statsLinks.forEach((link) => {
+        link.addEventListener('click', async () => {
+            mobileMenu.classList.remove('opened');
+            await showStatsPage();
+        });
+    });
+
+    let font = new FontFace('Material Symbols Rounded', `url(https://fonts.gstatic.com/s/materialsymbolsrounded/v222/sykg-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190Fjzag.woff2) format('woff2')`, {
+        style: 'normal',
+        weight: '100 700'
+    });
+    document.fonts.add(font);
+    await font.load();
+
     document.body.classList.add('ready');
     let selectedPage = localStorage.getItem('selectedPage');
     if (selectedPage == 'roomsManager') {
@@ -176,4 +178,6 @@ font.load().then(() => {
     } else {
         showRoomsManagerPage();
     }
-});
+}
+
+initApp();

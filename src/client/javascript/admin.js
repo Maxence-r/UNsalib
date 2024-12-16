@@ -43,8 +43,8 @@ async function showRoomsManagerPage() {
     });
     mobilePageName.innerText = 'Gérer';
     roomsManagerPage.classList.add('showed');
-    bookingPage.classList.remove('showed');
-    statsPage.classList.remove('showed');
+    bookingPage.classList.remove('showed', 'ready');
+    statsPage.classList.remove('showed', 'ready');
     await initRoomsManagerPage();
     loadingPage.classList.remove('ready');
     roomsManagerPage.classList.add('ready');

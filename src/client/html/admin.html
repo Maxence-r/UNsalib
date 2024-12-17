@@ -12,78 +12,117 @@
     <meta property="og:image" content="https://i.imgur.com/Ft3HyvM.png" />
 
     <link rel="stylesheet" href="../css/admin.css" />
-    <link rel='preconnect' href='https://fonts.googleapis.com' crossorigin>
-    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-    <link rel='preload' as='style' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'>
     <title>UNsalib - Tableau de bord</title>
 </head>
 
 <body>
+    <div id="mobile-menu">
+        <div id="mobile-menu-window">
+            <div class="branding">
+                <h1>UNsalib</h1>
+                <h2>Administrateur</h2>
+            </div>
+            <div>
+                <button class="navlink button manage"><i class="material-symbols-rounded">edit</i>Gérer</button>
+                <button class="navlink button book"><i class="material-symbols-rounded">lock</i>Réserver</button>
+                <button class="navlink button stats"><i class="material-symbols-rounded">query_stats</i>Statistiques</button>
+            </div>
+            <span class="spacer"></span>
+            <div class="account-infos">
+                <img />
+                <div>
+                    <h2></h2>
+                    <span></span>
+                </div>
+            </div>
+            <button class="button logout">Se déconnecter</button>
+        </div>
+    </div>
     <nav id="navbar">
-        <div id="branding">
+        <div class="branding">
+            <button class="button icon-button"><i class="material-symbols-rounded">menu</i></button>
             <h1>UNsalib</h1>
             <h2>Administrateur</h2>
-            <div></div>
+            <h1 class="page-name"></h1>
         </div>
-        <div>
-            <button id="account-button" class="button"><span></span><img /></button>
+        <div id="navlinks-container">
+            <button class="navlink button manage"><i class="material-symbols-rounded">edit</i>Gérer</button>
+            <button class="navlink button book"><i class="material-symbols-rounded">lock</i>Réserver</button>
+            <button class="navlink button stats"><i class="material-symbols-rounded">query_stats</i>Statistiques</button>
+        </div>
+        <span class="spacer"></span>
+        <div class="navbar-account">
+            <img class="account-icon" />
+            <button id="account-button" class="button"><span></span><img class="account-icon" /></button>
             <div id="account-menu">
-                <div id="account-infos">
+                <div class="account-infos">
                     <img />
                     <div>
-                        <h2>Maël BONNET</h2>
-                        <span>@mael</span>
+                        <h2></h2>
+                        <span></span>
                     </div>
                 </div>
-                <button class="button">Se déconnecter</button>
+                <button class="button logout">Se déconnecter</button>
             </div>
         </div>
     </nav>
-    <main>
-        <div id="rooms-list">
-            <div id="search">
-                <input type="text" placeholder="Filtrer par salle, batiment">
-                <div id="search-actions">
-                    <input type="checkbox">
-                    Bannies
+    <main id="loading">
+        <svg class="loading" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M94.5503 72.6995C90.364 80.9156 83.9872 87.814 76.1249 92.632C68.2626 97.45 59.2211 100 50 100C40.7789 100 31.7374 97.45 23.8751 92.632C16.0128 87.814 9.63598 80.9156 5.44968 72.6995L18.8148 65.8897C21.7452 71.6409 26.2089 76.4698 31.7126 79.8424C37.2162 83.215 43.5452 85 50 85C56.4548 85 62.7838 83.215 68.2875 79.8424C73.7911 76.4698 78.2548 71.6409 81.1852 65.8897L94.5503 72.6995Z" fill="black" />
+            <path d="M5.44967 27.3005C9.63597 19.0844 16.0128 12.186 23.8751 7.36799C31.7374 2.54997 40.7789 4.21364e-07 50 0C59.2211 -4.21364e-07 68.2626 2.54997 76.1249 7.36799C83.9872 12.186 90.364 19.0844 94.5503 27.3005L81.1852 34.1103C78.2548 28.3591 73.7911 23.5302 68.2874 20.1576C62.7838 16.785 56.4548 15 50 15C43.5452 15 37.2162 16.785 31.7125 20.1576C26.2089 23.5302 21.7452 28.3591 18.8148 34.1103L5.44967 27.3005Z" fill="black" />
+        </svg>
+        <h2>Chargement...</h2>
+    </main>
+    <main id="rooms-manager">
+        <div class="rooms-list container lg-1-4 sm-page-0">
+            <div class="search">
+                <input type="text" placeholder="Filtrer par salle, bâtiment">
+                <div class="search-actions">
+                    <div>
+                        <input data-id="banned" type="checkbox">
+                        Afficher les salles bannies
+                    </div>
+                    <div>
+                        <input data-id="type" type="checkbox">
+                        Afficher uniquement les salles sans type
+                    </div>
                 </div>
             </div>
-            <div id="rooms-list__container">
-                <span id="no-result">Aucun résultat.</span>
+            <div class="rooms-list-container">
+                <span class="no-result">Aucun résultat.</span>
             </div>
         </div>
-        <div id="room-editor">
+        <div id="room-editor" class="container lg-3-4 sm-page-1">
             <div class="page-title">
-                <button id="back-button" class="button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <button class="button icon-button back-button"><i class="material-symbols-rounded">arrow_back</i></button>
                 <h2>Éditer la salle</h2>
             </div>
             <div class="data-container">
-                <section id="id">
+                <section class="id">
                     <h3>ID</h3>
                     <span></span>
                 </section>
-                <section id="name">
+                <section class="name">
                     <h3>Nom</h3>
                     <span></span>
                 </section>
-                <section id="building">
+                <section class="building">
                     <h3>Bâtiment</h3>
                     <span></span>
                 </section>
-                <section id="alias">
+                <section class="alias">
                     <h3>Alias</h3>
                     <input type="text">
                 </section>
-                <section id="seats">
+                <section class="seats">
                     <h3>Places assises</h3>
                     <input type="number">
                 </section>
-                <section id="banned">
+                <section class="banned">
                     <h3>Bannie</h3>
                     <input type="checkbox">
                 </section>
-                <section id="boards">
+                <section class="boards">
                     <h3>Tableaux</h3>
                     <ul>
                         <li>Noir :<input type="number" name="noir" value="0"></li>
@@ -91,13 +130,13 @@
                         <li>Écran :<input type="number" name="ecran" value="0"></li>
                     </ul>
                 </section>
-                <section id="details">
+                <section class="details">
                     <h3>Caractéristiques</h3>
                     <input type="text" placeholder="Caractéristique">
                     <button class="button">Ajouter</button>
                     <div class="chips-container"></div>
                 </section>
-                <section id="type">
+                <section class="type">
                     <h3>Type</h3>
                     <select>
                         <option value="">Non défini</option>
@@ -108,38 +147,96 @@
                     </select>
                 </section>
             </div>
-            <button id="save-button" class="button">Enregistrer les modifications</button>
+            <button class="save-button button">Enregistrer les modifications</button>
         </div>
     </main>
-    <div id="toast"></div>
-    <div id="book-room-popup">
-        <div id="popup-window">
-            <div id="popup-header">
-                <h2>Réserver une salle</h2>
-                <button id="close-popup-button" class="button icon-button"><i class="material-symbols-rounded">close</i></button>
+    <main id="booking">
+        <div class="container lg-1-4 rooms-list sm-page-0">
+            <div class="search">
+                <input type="text" placeholder="Filtrer par salle, bâtiment">
+                <span><i class="material-symbols-rounded">info</i>Les salles bannies ne sont pas affichées.</span>
             </div>
-            <div id="popup-content" class="data-container">
-                <section id="booked-id">
+            <div class="rooms-list-container">
+                <span class="no-result">Aucun résultat.</span>
+            </div>
+        </div>
+        <div id="room-booking-editor" class="container lg-3-4 sm-page-1">
+            <div class="page-title">
+                <button class="back-button button icon-button"><i class="material-symbols-rounded">arrow_back</i></button>
+                <h2>Réserver la salle</h2>
+            </div>
+            <div class="data-container">
+                <section class="id">
                     <h3>ID</h3>
                     <span></span>
                 </section>
-                <section id="start-date">
+                <section class="name">
+                    <h3>Nom</h3>
+                    <span></span>
+                </section>
+                <section class="building">
+                    <h3>Bâtiment</h3>
+                    <span></span>
+                </section>
+                <section class="start-date">
                     <h3>Date de début</h3>
                     <input type="datetime-local" />
                 </section>
-                <section id="end-date">
+                <section class="end-date">
                     <h3>Date de fin</h3>
                     <input type="datetime-local" />
                 </section>
-                <section id="course-name">
+                <section class="course-name">
                     <h3>Nom du cours</h3>
                     <input type="text" placeholder="Par défaut (vide)" />
                 </section>
             </div>
-            <button id="add-course-button" class="button">Réserver cette salle</button>
+            <button class="save-button button">Valider la réservation</button>
         </div>
-    </div>
+    </main>
+    <main id="stats">
+        <div class="container lg-4-4 sm-page-0">
+            <div class="page-title">
+                <h2>Statistiques ce mois</h2>
+            </div>
+            <div class="data-container">
+                <section class="room-requests">
+                    <h3>Requêtes d'emploi du temps de salle</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
+                </section>
+                <section class="rooms-list-requests">
+                    <h3>Requêtes de liste de salles</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
+                </section>
+                <section class="available-rooms-requests">
+                    <h3>Requêtes de recherche de salle libre</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
+                </section>
+                <section class="internal-errors">
+                    <h3>Erreurs internes du serveur</h3>
+                    <div class="stats-wrapper">
+                        <span></span>
+                        <div class="chart"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    <div id="toast"></div>
 </body>
-<script src="../javascript/admin.js"></script>
+<script type="module" src="../javascript/admin.js"></script>
+<script type="module" src="../javascript/admin-utils.js"></script>
+<script type="module" src="../javascript/admin-manager.js"></script>
+<script type="module" src="../javascript/admin-booking.js"></script>
+<script type="module" src="../javascript/admin-stats.js"></script>
 
 </html>

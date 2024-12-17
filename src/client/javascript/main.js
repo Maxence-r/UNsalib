@@ -1,3 +1,13 @@
+let params = new URLSearchParams(window.location.search);
+let isFromSelect = params.get("fromSelector");
+
+/* let campus = localStorage.getItem("campus");
+
+if (!campus) {
+    window.location.href = "/campus";
+}
+ */
+
 activeNotif = false;
 function displayNotification(message) {
     if (activeNotif) return;
@@ -13,7 +23,7 @@ function displayNotification(message) {
 }
 
 function toggleLoading(action) {
-    let loading = document.querySelector(".loading-calendar");
+    let loading = document.querySelector(".calendar > .loader-indicator");
     loading.style.display = action == "disable" ? "none" : "flex";
 }
 
@@ -88,7 +98,11 @@ if (
     window.matchMedia("(display-mode: standalone)").matches ||
     localStorage.getItem("installed") == "true"
 ) {
+    if (!isFromSelect) {
+        document.querySelector('.loader').style.display = 'none';
+    }
     document.querySelector(".version").innerHTML = "BETA";
+
 } else {
     document.querySelector(".version").innerHTML = "Installer";
 }
@@ -155,5 +169,11 @@ addbtn.addEventListener("click", (event) => {
             });
             openModal("install");
         }
+    }
+});
+
+document.querySelector('.campus_selector').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('version')) {
+        window.location.href = '/campus';
     }
 });

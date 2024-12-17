@@ -11,4 +11,8 @@ router.get("/", (req, res) => {
 });
 
 
+router.get('/campus', (req, res) => {
+    res.sendFile("src/client/html/campus.html", { root: "." });
+});
+
 export default router;

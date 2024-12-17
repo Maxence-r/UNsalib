@@ -89,6 +89,7 @@ async function afficherSalles(salles, containerHTML) {
         // Ajouter le résultat au conteneur
         container.appendChild(resultDiv);
     });
+    document.querySelector('.pannel > .loader-indicator').style.display = "none";
 }
 
 const inputs = document.querySelectorAll('.setDate input.time');

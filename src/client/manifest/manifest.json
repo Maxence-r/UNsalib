@@ -6,13 +6,13 @@
   "id": "/unsalib/v1",
   "icons": [
     {
-      "src": "../assets/logo144.png",
-      "sizes": "144x144",
+      "src": "../assets/logo96.png",
+      "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "../assets/logo96.png",
-      "sizes": "96x96",
+      "src": "../assets/logo144.png",
+      "sizes": "144x144",
       "type": "image/png"
     },
     {
@@ -26,11 +26,11 @@
       "type": "image/png"
     }
   ],
-  "start_url": "../html/main.html?utm_source=PWA",
+  "start_url": "../?utm_source=PWA",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#3452FF",
-  "background_color": "#ffffff",
+  "background_color": "#3452FF",
   "screenshots": [
     {
       "src": "../assets/sc1.png",

@@ -40,6 +40,8 @@ body {
     display: flex;
     flex-direction: column;
 
+    position: relative;
+
     padding: 24px 24px 0 24px;
     width: 22%;
     height: calc(100% - 24px);
@@ -124,7 +126,7 @@ body {
     width: 100%;
 }
 
-.loading-calendar {
+.loader-indicator{
     position: absolute;
     display: none;
     flex-direction: column;
@@ -133,6 +135,8 @@ body {
     justify-content: center;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(4px);
     z-index: 5;
@@ -176,12 +180,22 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
     gap: 12px;
     justify-content: space-between;
     padding: 8px;
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
+    outline: 2px solid transparent;
+    outline-offset: 6px;
+    transition: all 0.3s;
 }
+
+.campus_selector:hover {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
 
 .campus_selector>p {
     margin: 0;
@@ -432,6 +446,8 @@ p.no-results {
     border-radius: 6px;
     cursor: pointer;
 }
+
+
 
 .result:hover {
     background-color: #f8f8f8;
@@ -755,6 +771,8 @@ button {
     padding: 8px;
     border-radius: 2px;
 }
+
+
 
 .course>h2 {
     margin: 0;

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" href="../assets/favicon.ico" />
+
+    <link rel="stylesheet" href="../css/campus.css" />
+    <title>UNsalib - Selection du campus</title>
+</head>
+
+<body tabindex="-1">
+    <section class="loader">
+        <div class="progress">
+        </div>
+    </section>
+    <section class="campus">
+        <div class="header">
+            <h1>Bonjour,</h1>
+            <h3>Veuillez selectionner un campus</h3>
+        </div>
+
+        <div class="campus-list">
+            <div class="campus-item" onclick="selectCampus('st')">
+                <div class="image-container">
+                    <img src="../assets/st.png" alt="Nantes" />
+                </div>
+                <div class="campus-info">
+                    <h3>Sciences et techniques</h3>
+                    <div class="badge">BETA</div>
+                </div>
+            </div>
+
+            <div class="campus-item" onclick="selectCampus('lsh')">
+                <div class="image-container">
+                    <img src="../assets/lsh.png" alt="Nantes" />
+                </div>
+                <div class="campus-info">
+                    <h3>Lettres et sc.. humaines</h3>
+                    <div class="badge not-available">INDISPONIBLE</div>
+                </div>
+            </div>
+
+            <div class="campus-item" onclick="selectCampus('sn')">
+                <div class="image-container">
+                    <img src="../assets/sn.png" alt="Nantes" />
+                </div>
+                <div class="campus-info">
+                    <h3>Saint Nazaire</h3>
+                    <div class="badge not-available">INDISPONIBLE</div>
+                </div>
+            </div>
+
+            <div class="campus-item" onclick="selectCampus('dr')">
+                <div class="image-container">
+                    <img src="../assets/dr.png" alt="Nantes" />
+                </div>
+                <div class="campus-info">
+                    <h3>Droit</h3>
+                    <div class="badge not-available">INDISPONIBLE</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+<script src="../javascript/campus.js"></script>
+
+</html>

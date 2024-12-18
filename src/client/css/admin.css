@@ -704,11 +704,11 @@ main.ready {
 svg.loading {
     height: 60px;
     width: 60px;
-    animation: .7s cubic-bezier(0.60, 0.2, 0.40, 0.8) infinite running rotate;
+    animation: .8s linear infinite running rotate;
 }
 
 svg.loading path {
-    fill: var(--accent-color);
+    stroke: var(--accent-color);
 }
 
 main#loading {

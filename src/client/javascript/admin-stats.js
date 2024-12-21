@@ -23,8 +23,8 @@ function drawChart(container, dataset) {
         chartBar.appendChild(shape);
         chartBar.appendChild(legend);
         container.appendChild(chartBar);
-        gap = chartBar.clientHeight - legend.clientHeight - value.clientHeight - shape.clientHeight;
-        shapeHeight = containerHeight * data.value / maxValue - legend.clientHeight - value.clientHeight - gap;
+        gap = parseInt(getComputedStyle(chartBar).gap.replace('px', ''));
+        shapeHeight = (containerHeight - legend.clientHeight - value.clientHeight - gap) * data.value / maxValue;
         shape.style.height = shapeHeight <= 0 && data.value > 0 ? '1px' : shapeHeight + 'px';
     });
 }

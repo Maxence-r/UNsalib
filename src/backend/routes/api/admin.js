@@ -10,18 +10,13 @@ import {
     formatDateValide,
     sameDay
 } from "../../utils/date.js";
+import {
+    compareStatsObjs
+} from "../../utils/stats.js";
 const router = express.Router();
 const { sign } = pkg;
 
-function compareStatsObjs(a, b) {
-    if (a.date < b.date) {
-        return -1;
-    } else if (a.date > b.date) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
+
 
 router.get("/update-alias", async (req, res) => {
     if (!req.connected) return res.redirect('/admin/auth');
@@ -294,31 +289,55 @@ router.get("/stats", async (req, res) => {
 
     try {
         let stats = await Stats.find({ date: { $regex: `^${req.query.year}-${req.query.month}` } }).select(
-            "-__v -_id"
+            "-__v -_id -user_id"
         );
-
-        let existingDates = stats.map((item) => {
-            return new Date(item.date).getDate();
-        });
 
         let daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
         daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
+        const processedStats = [];
+        let statsForDate, availableRoomsRequests, roomRequests, roomsListRequests, internalErrors, uniqueVisitors;
         daysInMonth.map((day) => {
-            if (!existingDates.includes(day)) {
-                stats.push({
+            statsForDate = 0;
+            availableRoomsRequests = 0;
+            roomRequests = 0;
+            roomsListRequests = 0;
+            internalErrors = 0;
+            uniqueVisitors = 0;
+            stats.forEach(userStats => {
+                if (userStats.date.endsWith(`${req.query.month}-${day}`)) {
+                    statsForDate++;
+                    availableRoomsRequests += userStats.available_rooms_requests;
+                    roomRequests += userStats.room_requests;
+                    roomsListRequests += userStats.rooms_list_requests;
+                    internalErrors += userStats.internal_errors;
+                    uniqueVisitors++;
+                }
+            });
+            if (statsForDate > 0) {
+                processedStats.push({
+                    date: `2024-12-${day < 10 ? '0' + day : day}`,
+                    available_rooms_requests: availableRoomsRequests,
+                    room_requests: roomRequests,
+                    rooms_list_requests: roomsListRequests,
+                    internal_errors: internalErrors,
+                    unique_visitors: uniqueVisitors
+                });
+            } else {
+                processedStats.push({
                     date: `2024-12-${day < 10 ? '0' + day : day}`,
                     available_rooms_requests: 0,
                     room_requests: 0,
                     rooms_list_requests: 0,
-                    internal_errors: 0
+                    internal_errors: 0,
+                    unique_visitors: 0
                 });
             }
         });
 
-        stats.sort(compareStatsObjs);
+        processedStats.sort(compareStatsObjs);
 
-        res.status(200).json(stats);
+        res.status(200).json(processedStats);
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

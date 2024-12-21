@@ -13,6 +13,7 @@ import appInfosApi from "./src/backend/routes/api/app.js";
 import adminDashboard from "./src/backend/routes/admin.js";
 import authentification from "./src/backend/middlewares/auth.js";
 import root from "./src/backend/routes/root.js";
+
 // SECURITE SERVER
 app.disable("x-powered-by");
 app.use(cookieParser());

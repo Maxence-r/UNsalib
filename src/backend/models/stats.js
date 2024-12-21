@@ -24,6 +24,10 @@ const StatsSchema = Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    user_id: {
+        type: String,
+        required: true
     }
 });
 

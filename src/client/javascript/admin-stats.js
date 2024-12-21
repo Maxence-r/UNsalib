@@ -47,18 +47,20 @@ async function getStats() {
         showToast('Erreur d\'obtention des statistiques : ' + data.error, true)
     }
 
-    let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0;
+    let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0, uniqueVisitorsCount = 0;
     data.forEach(day => {
         roomRequestsCount += day.room_requests;
         roomsListRequestsCount += day.rooms_list_requests;
         availableRoomsRequestsCount += day.available_rooms_requests;
         internalErrorsCount += day.internal_errors;
+        uniqueVisitorsCount += day.unique_visitors;
     });
 
     roomRequestsSection.querySelector('span').textContent = roomRequestsCount;
     roomsListRequestsSection.querySelector('span').textContent = roomsListRequestsCount;
     availableRoomsRequestsSection.querySelector('span').textContent = availableRoomsRequestsCount;
     internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
+    uniqueVisitorsSection.querySelector('span').textContent = uniqueVisitorsCount;
 
     const roomRequestsDataset = data.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
@@ -78,6 +80,12 @@ async function getStats() {
     }));
     drawChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
 
+    const uniqueVisitorsDataset = data.map((item) => ({
+        legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
+        value: item.unique_visitors
+    }));
+    drawChart(uniqueVisitorsSection.querySelector('.chart'), uniqueVisitorsDataset);
+
     const internalErrorsDataset = data.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.internal_errors
@@ -91,6 +99,7 @@ const roomRequestsSection = statsPage.querySelector('section.room-requests');
 const roomsListRequestsSection = statsPage.querySelector('section.rooms-list-requests');
 const availableRoomsRequestsSection = statsPage.querySelector('section.available-rooms-requests');
 const internalErrorsSection = statsPage.querySelector('section.internal-errors');
+const uniqueVisitorsSection = statsPage.querySelector('section.unique-visitors');
 
 async function initStatsPage() {
     await getStats();

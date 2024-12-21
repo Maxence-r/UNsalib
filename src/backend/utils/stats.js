@@ -10,7 +10,7 @@ function compareStatsObjs(a, b) {
     }
 }
 
-async function updateStats(statName, userId) {
+async function updateStats(statName, userId, userAgent) {
     try {
         let today = new Date().toISOString().split('T')[0];
         let userStats = await Stats.findOne({ user_id: userId, date: today });
@@ -21,7 +21,8 @@ async function updateStats(statName, userId) {
                 rooms_list_requests: statName === 'rooms_list_requests' ? 1 : 0,
                 available_rooms_requests: statName === 'available_rooms_requests' ? 1 : 0,
                 internal_errors: statName === 'internal_errors' ? 1 : 0,
-                user_id: userId
+                user_id: userId,
+                user_agent: userAgent
             });
             await userStatsToday.save();
         } else {
@@ -35,11 +36,8 @@ async function updateStats(statName, userId) {
             } else if (statName === 'internal_errors') {
                 update = { $inc: { internal_errors: 1 } };
             }
-            await Stats.findOneAndUpdate({ user_id: userId, date: today }, update, {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
-            });
+            update.user_agent = userAgent;
+            await Stats.findOneAndUpdate({ user_id: userId, date: today }, update, {});
         }
     } catch (error) {
         console.error(`Erreur pendant l'enregistrement de statistiques (${error})`);

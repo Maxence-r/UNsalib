@@ -28,7 +28,12 @@ const StatsSchema = Schema({
     user_id: {
         type: String,
         required: true
-    }
+    },
+    user_agent: {
+        type: String,
+        required: true,
+        default: ""
+    },
 });
 
 const Stats = model("Stats", StatsSchema);

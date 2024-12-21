@@ -18,7 +18,7 @@ const vacations = [52, 1];
 
 router.get("/", async (req, res) => {
     try {
-        await updateStats('rooms_list_requests', req.userId);
+        await updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
         // Obtention de toutes les salles
         let salles = await Salle.find({ banned: { $ne: true } }).select(
             "-__v -identifiant"
@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         res.json(resultatFormate);
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        await updateStats('internal_errors', req.userId);
+        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
     }
 });
@@ -85,7 +85,7 @@ router.get("/disponibles", async (req, res) => {
     }
 
     try {
-        await updateStats('available_rooms_requests', req.userId);
+        await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -131,7 +131,7 @@ router.get("/disponibles", async (req, res) => {
         res.json(resultatFormate);
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        await updateStats('internal_errors', req.userId);
+        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
     }
 });
@@ -158,7 +158,7 @@ router.get("/edt", async (req, res) => {
     }
 
     try {
-        await updateStats('room_requests', req.userId);
+        await updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
         if (vacations.includes(bornesDates.numero)) {
             // VACANCES
             const vacanceCours = [];
@@ -228,7 +228,7 @@ router.get("/edt", async (req, res) => {
         res.send({ cours: resultatFormate, infos_semaine: bornesDates });
     } catch (erreur) {
         res.status(500).send("ERREUR_INTERNE");
-        await updateStats('internal_errors', req.userId);
+        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
     }
 });

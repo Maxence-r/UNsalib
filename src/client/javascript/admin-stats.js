@@ -48,7 +48,7 @@ async function getStats() {
     }
 
     let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0, uniqueVisitorsCount = 0;
-    data.forEach(day => {
+    data.daily_stats.forEach(day => {
         roomRequestsCount += day.room_requests;
         roomsListRequestsCount += day.rooms_list_requests;
         availableRoomsRequestsCount += day.available_rooms_requests;
@@ -62,31 +62,31 @@ async function getStats() {
     internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
     uniqueVisitorsSection.querySelector('span').textContent = uniqueVisitorsCount;
 
-    const roomRequestsDataset = data.map((item) => ({
+    const roomRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.room_requests
     }));
     drawChart(roomRequestsSection.querySelector('.chart'), roomRequestsDataset);
 
-    const roomsListRequestsDataset = data.map((item) => ({
+    const roomsListRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.rooms_list_requests
     }));
     drawChart(roomsListRequestsSection.querySelector('.chart'), roomsListRequestsDataset);
 
-    const availableRoomsRequestsDataset = data.map((item) => ({
+    const availableRoomsRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.available_rooms_requests
     }));
     drawChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
 
-    const uniqueVisitorsDataset = data.map((item) => ({
+    const uniqueVisitorsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.unique_visitors
     }));
     drawChart(uniqueVisitorsSection.querySelector('.chart'), uniqueVisitorsDataset);
 
-    const internalErrorsDataset = data.map((item) => ({
+    const internalErrorsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.internal_errors
     }));

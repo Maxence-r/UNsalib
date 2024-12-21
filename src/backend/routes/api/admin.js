@@ -1,11 +1,12 @@
-import express from "express";
-import Salle from "../../models/salle.js";
+import express from 'express';
+import Salle from '../../models/salle.js';
 import Account from '../../models/account.js';
 import Cours from '../../models/cours.js';
 import Stats from '../../models/stats.js';
-import mongoose from "mongoose";
-import { compare } from 'bcrypt';
+import mongoose from 'mongoose';
 import pkg from 'jsonwebtoken';
+import { compare } from 'bcrypt';
+import { UAParser } from 'ua-parser-js';
 import {
     formatDateValide,
     sameDay
@@ -15,31 +16,6 @@ import {
 } from "../../utils/stats.js";
 const router = express.Router();
 const { sign } = pkg;
-
-
-
-router.get("/update-alias", async (req, res) => {
-    if (!req.connected) return res.redirect('/admin/auth');
-    try {
-        const salles = await Salle.find({
-            alias: { $regex: /(lle)/i }
-        });
-
-        console.log(salles);
-
-        const updatePromises = salles.map(async (salle) => {
-            const alias = salle.nom_salle.replace(/lle/gi, "").trim();
-            return Salle.updateOne({ _id: salle._id }, { alias: alias });
-        });
-
-        await Promise.all(updatePromises);
-
-        res.status(200).send("ALIAS_UPDATED");
-    } catch (error) {
-        console.error("Error updating alias:", error);
-        res.status(500).send("ERREUR_INTERNE");
-    }
-});
 
 router.post('/auth/login', async (req, res) => {
     try {
@@ -294,7 +270,6 @@ router.get("/stats", async (req, res) => {
 
         let daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
         daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
         const processedStats = [];
         let statsForDate, availableRoomsRequests, roomRequests, roomsListRequests, internalErrors, uniqueVisitors;
         daysInMonth.map((day) => {
@@ -334,10 +309,19 @@ router.get("/stats", async (req, res) => {
                 });
             }
         });
-
         processedStats.sort(compareStatsObjs);
 
-        res.status(200).json(processedStats);
+        const OS = {}; 
+        stats.forEach(userStats => {
+            const OSName = new UAParser(userStats.user_agent).getOS().name;
+            if (Object.keys(OS).includes(OSName)) {
+                OS[OSName]++;
+            } else {
+                OS[OSName] = 1;
+            }
+        });
+
+        res.status(200).json({ daily_stats: processedStats, monthly_stats: { os: OS } });
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

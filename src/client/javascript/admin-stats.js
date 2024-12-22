@@ -116,6 +116,7 @@ async function getStats() {
     }
 
     let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0, uniqueVisitorsCount = 0;
+    
     data.daily_stats.forEach(day => {
         roomRequestsCount += day.room_requests;
         roomsListRequestsCount += day.rooms_list_requests;
@@ -128,7 +129,7 @@ async function getStats() {
     roomsListRequestsSection.querySelector('span').textContent = roomsListRequestsCount;
     availableRoomsRequestsSection.querySelector('span').textContent = availableRoomsRequestsCount;
     internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
-    uniqueVisitorsSection.querySelector('span').textContent = uniqueVisitorsCount;
+    uniqueVisitorsSection.querySelector('span').textContent = Math.round(uniqueVisitorsCount / data.daily_stats.length * 100) / 100 + '/jour';
 
     const roomRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),

@@ -682,16 +682,17 @@ main.ready {
     border: 1px solid var(--neutral-color-light);
     border-radius: var(--border-radius-sharp);
     padding: var(--extra-large-space);
-    height: 200px;
+    height: 250px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+    word-break: break-all;
 }
 
 .stats-wrapper .bar-chart {
     width: 70%;
-    height: 200px;
+    height: 250px;
     align-items: flex-end;
     gap: var(--small-space);
 }
@@ -708,10 +709,10 @@ main.ready {
 }
 
 .stats-wrapper .pie-chart .shape {
-    width: 300px;
-    height: 300px;
+    width: 250px;
     border-radius: 100%;
     flex-shrink: 0;
+    aspect-ratio: 1 / 1;
 }
 
 .pie-chart .legend {
@@ -876,7 +877,6 @@ main#loading {
     .stats-wrapper .bar-chart {
         width: 100%;
         margin-right: 0px;
-        height: 200px;
     }
 
     .stats-wrapper .pie-chart {
@@ -894,8 +894,6 @@ main#loading {
 
     .stats-wrapper .pie-chart .shape {
         width: auto;
-        height: auto;
-        aspect-ratio: 1 / 1;
     }
 
     .pie-chart .legend .legend-color {

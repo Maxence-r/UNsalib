@@ -311,17 +311,24 @@ router.get("/stats", async (req, res) => {
         });
         processedStats.sort(compareStatsObjs);
 
-        const OS = {}; 
+        const OS = {};
+        const browsers = {};
         stats.forEach(userStats => {
             const OSName = new UAParser(userStats.user_agent).getOS().name;
+            const browserName = new UAParser(userStats.user_agent).getBrowser().name;
             if (Object.keys(OS).includes(OSName)) {
                 OS[OSName]++;
             } else {
                 OS[OSName] = 1;
             }
+            if (Object.keys(browsers).includes(browserName)) {
+                browsers[browserName]++;
+            } else {
+                browsers[browserName] = 1;
+            }
         });
 
-        res.status(200).json({ daily_stats: processedStats, monthly_stats: { os: OS } });
+        res.status(200).json({ daily_stats: processedStats, monthly_stats: { os: OS, browsers: browsers } });
     } catch (erreur) {
         res.status(500).json({
             error: 'INTERNAL_ERROR',

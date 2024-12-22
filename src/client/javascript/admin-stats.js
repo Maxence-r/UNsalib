@@ -156,6 +156,12 @@ async function getStats() {
         value: data.monthly_stats.os[item]
     }));
     drawPieChart(clientOSSection.querySelector('.chart.pie-chart'), clientOSDataset);
+
+    const clientBrowsersDataset = Object.keys(data.monthly_stats.browsers).map((item) => ({
+        legend: item,
+        value: data.monthly_stats.browsers[item]
+    }));
+    drawPieChart(clientBrowsersSection.querySelector('.chart.pie-chart'), clientBrowsersDataset);
 }
 
 const statsPage = document.querySelector('#stats');
@@ -166,6 +172,7 @@ const availableRoomsRequestsSection = statsPage.querySelector('section.available
 const internalErrorsSection = statsPage.querySelector('section.internal-errors');
 const uniqueVisitorsSection = statsPage.querySelector('section.unique-visitors');
 const clientOSSection = statsPage.querySelector('section.client-os');
+const clientBrowsersSection = statsPage.querySelector('section.client-browsers');
 
 async function initStatsPage() {
     await getStats();

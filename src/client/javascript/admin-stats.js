@@ -25,38 +25,47 @@ const PALETTE_HEX = [
 
 function drawPieChart(container, dataset) {
     container.textContent = '';
-    let shape = document.createElement('div');
-    shape.classList = 'shape';
     let legend = document.createElement('div');
     legend.classList = 'legend';
-    let valueSum = dataset.reduce((a, b) => {
-        return a + b.value;
-    }, 0);
-    let conicGradient = 'conic-gradient(';
-    let radius = 0;
-    let pickedColors = [];
-    let valueRadius, color, legendColor, legendName, legendItem;
-    dataset.forEach((data) => {
-        valueRadius = (360 * data.value / valueSum);
-        [color, pickedColors] = chooseColor(PALETTE_HEX, pickedColors);
-        conicGradient += `${color} ${radius}deg ${radius + valueRadius}deg, `;
-        radius += valueRadius;
+    let legendItem;
+    if (dataset.length > 0) {
+        let shape = document.createElement('div');
+        shape.classList = 'shape';
+        let valueSum = dataset.reduce((a, b) => {
+            return a + b.value;
+        }, 0);
+        let conicGradient = 'conic-gradient(';
+        let radius = 0;
+        let pickedColors = [];
+        let valueRadius, color, legendColor, legendName;
+        dataset.forEach((data) => {
+            valueRadius = (360 * data.value / valueSum);
+            [color, pickedColors] = chooseColor(PALETTE_HEX, pickedColors);
+            conicGradient += `${color} ${radius}deg ${radius + valueRadius}deg, `;
+            radius += valueRadius;
+            legendItem = document.createElement('div');
+            legendItem.classList = 'legend-item';
+            legendColor = document.createElement('div');
+            legendColor.classList = 'legend-color';
+            legendColor.style.backgroundColor = color;
+            legendName = document.createElement('div');
+            legendName.classList = 'legend-name';
+            legendName.innerText = `${data.legend} (${Math.round(100 * data.value / valueSum)}%)`;
+            legendItem.appendChild(legendColor);
+            legendItem.appendChild(legendName);
+            legend.appendChild(legendItem);
+        });
+        conicGradient = conicGradient.slice(0, conicGradient.length - 2) + ')';
+        shape.style.background = conicGradient;
+        container.appendChild(shape);
+        container.appendChild(legend);
+    } else {
         legendItem = document.createElement('div');
         legendItem.classList = 'legend-item';
-        legendColor = document.createElement('div');
-        legendColor.classList = 'legend-color';
-        legendColor.style.backgroundColor = color;
-        legendName = document.createElement('div');
-        legendName.classList = 'legend-name';
-        legendName.innerText = `${data.legend} (${Math.round(100 * data.value / valueSum)}%)`;
-        legendItem.appendChild(legendColor);
-        legendItem.appendChild(legendName);
+        legendItem.textContent = 'Aucune donnée n\'est disponible.'
         legend.appendChild(legendItem);
-    });
-    conicGradient = conicGradient.slice(0, conicGradient.length - 2) + ')';
-    shape.style.background = conicGradient;
-    container.appendChild(shape);
-    container.appendChild(legend);
+        container.appendChild(legend);
+    }
 }
 
 function drawBarChart(container, dataset) {

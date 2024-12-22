@@ -314,8 +314,10 @@ router.get("/stats", async (req, res) => {
         const OS = {};
         const browsers = {};
         stats.forEach(userStats => {
-            const OSName = new UAParser(userStats.user_agent).getOS().name;
-            const browserName = new UAParser(userStats.user_agent).getBrowser().name;
+            let OSName = new UAParser(userStats.user_agent).getOS().name;
+            let browserName = new UAParser(userStats.user_agent).getBrowser().name;
+            OSName = OSName === undefined ? "Inconnu" : OSName;
+            browserName = browserName === undefined ? "Inconnu" : browserName;
             if (Object.keys(OS).includes(OSName)) {
                 OS[OSName]++;
             } else {

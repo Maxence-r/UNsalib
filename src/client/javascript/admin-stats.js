@@ -1,6 +1,65 @@
-import { showToast } from './admin-utils.js';
+import { showToast, chooseColor } from './admin-utils.js';
 
-function drawChart(container, dataset) {
+const PALETTE_HEX = [
+    "#1abc9c",
+    "#2ecc71",
+    "#3498db",
+    "#9b59b6",
+    "#34495e",
+    "#16a085",
+    "#27ae60",
+    "#2980b9",
+    "#8e44ad",
+    "#2c3e50",
+    "#f1c40f",
+    "#e67e22",
+    "#e74c3c",
+    "#9c9c9c",
+    "#95a5a6",
+    "#f39c12",
+    "#d35400",
+    "#c0392b",
+    "#bdc3c7",
+    "#7f8c8d"
+];
+
+function drawPieChart(container, dataset) {
+    container.textContent = '';
+    let shape = document.createElement('div');
+    shape.classList = 'shape';
+    let legend = document.createElement('div');
+    legend.classList = 'legend';
+    let valueSum = dataset.reduce((a, b) => {
+        return a + b.value;
+    }, 0);
+    let conicGradient = 'conic-gradient(';
+    let radius = 0;
+    let pickedColors = [];
+    let valueRadius, color, legendColor, legendName, legendItem;
+    dataset.forEach((data) => {
+        valueRadius = (360 * data.value / valueSum);
+        [color, pickedColors] = chooseColor(PALETTE_HEX, pickedColors);
+        conicGradient += `${color} ${radius}deg ${radius + valueRadius}deg, `;
+        radius += valueRadius;
+        legendItem = document.createElement('div');
+        legendItem.classList = 'legend-item';
+        legendColor = document.createElement('div');
+        legendColor.classList = 'legend-color';
+        legendColor.style.backgroundColor = color;
+        legendName = document.createElement('div');
+        legendName.classList = 'legend-name';
+        legendName.innerText = `${data.legend} (${Math.round(100 * data.value / valueSum)}%)`;
+        legendItem.appendChild(legendColor);
+        legendItem.appendChild(legendName);
+        legend.appendChild(legendItem);
+    });
+    conicGradient = conicGradient.slice(0, conicGradient.length - 2) + ')';
+    shape.style.background = conicGradient;
+    container.appendChild(shape);
+    container.appendChild(legend);
+}
+
+function drawBarChart(container, dataset) {
     container.textContent = '';
     let chartBar, shape, legend, value, gap, shapeHeight;
     let containerHeight = container.clientHeight;
@@ -66,31 +125,37 @@ async function getStats() {
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.room_requests
     }));
-    drawChart(roomRequestsSection.querySelector('.chart'), roomRequestsDataset);
+    drawBarChart(roomRequestsSection.querySelector('.chart'), roomRequestsDataset);
 
     const roomsListRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.rooms_list_requests
     }));
-    drawChart(roomsListRequestsSection.querySelector('.chart'), roomsListRequestsDataset);
+    drawBarChart(roomsListRequestsSection.querySelector('.chart'), roomsListRequestsDataset);
 
     const availableRoomsRequestsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.available_rooms_requests
     }));
-    drawChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
+    drawBarChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
 
     const uniqueVisitorsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.unique_visitors
     }));
-    drawChart(uniqueVisitorsSection.querySelector('.chart'), uniqueVisitorsDataset);
+    drawBarChart(uniqueVisitorsSection.querySelector('.chart'), uniqueVisitorsDataset);
 
     const internalErrorsDataset = data.daily_stats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
         value: item.internal_errors
     }));
-    drawChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);
+    drawBarChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);
+
+    const clientOSDataset = Object.keys(data.monthly_stats.os).map((item) => ({
+        legend: item,
+        value: data.monthly_stats.os[item]
+    }));
+    drawPieChart(clientOSSection.querySelector('.chart.pie-chart'), clientOSDataset);
 }
 
 const statsPage = document.querySelector('#stats');
@@ -100,6 +165,7 @@ const roomsListRequestsSection = statsPage.querySelector('section.rooms-list-req
 const availableRoomsRequestsSection = statsPage.querySelector('section.available-rooms-requests');
 const internalErrorsSection = statsPage.querySelector('section.internal-errors');
 const uniqueVisitorsSection = statsPage.querySelector('section.unique-visitors');
+const clientOSSection = statsPage.querySelector('section.client-os');
 
 async function initStatsPage() {
     await getStats();

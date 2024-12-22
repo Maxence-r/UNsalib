@@ -13,4 +13,14 @@ function showToast(msg, error = false) {
     }, 4000);
 }
 
-export { showToast };
+function chooseColor(colorList, pickedColors) {
+    if (pickedColors.length < colorList.length) {
+        pickedColors.push(colorList[pickedColors.length]);
+        return [colorList[pickedColors.length], pickedColors];
+    } else {
+        let randomIndex = Math.floor(Math.random() * colorList.length);
+        return [colorList[randomIndex], pickedColors];
+    }
+}
+
+export { showToast, chooseColor };

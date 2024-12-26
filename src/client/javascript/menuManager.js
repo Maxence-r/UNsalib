@@ -72,7 +72,7 @@ async function afficherSalles(salles, containerHTML) {
 
         salle.caracteristiques.forEach((caracteristique) => {
             let img = document.createElement("img");
-            img.src =  `../assets/${caracteristique}.svg`;
+            img.src = `../assets/${caracteristique}.svg`;
             img.alt = caracteristique;
             badgesDiv.appendChild(img);
         });
@@ -81,7 +81,7 @@ async function afficherSalles(salles, containerHTML) {
 
         // Assembler les éléments
         p.appendChild(span);
-        
+
         badgesDiv.appendChild(pingDiv);
         resultDiv.appendChild(p);
         resultDiv.appendChild(badgesDiv);
@@ -137,10 +137,24 @@ async function searchAvailable() {
     const fin = `${dateString}T${endTime}`;
 
     // Construct URL
-    const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}`;
-    const response = await fetch(url);
-    const salles = await response.json();
+    let salles, response;
+    try {
+        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}`;
+        response = await fetch(url);
+        salles = await response.json();
+    } catch (error) {
+        closeModal();
+        console.error(error);
+        displayNotification('Impossible de rechercher des salles libres. Réessayez plus tard.');
+        return;
+    }
     closeModal();
+    if (salles.error) {
+        console.error(salles.error);
+        displayNotification('Impossible de rechercher des salles libres. Réessayez plus tard.');
+        return;
+    }
+
     afficherSalles(salles, "available");
     document.querySelector('.available > .no-results').style.display = salles.length > 0 ? "none" : "block";
     document.querySelector('.search-button').classList.remove('button--loading')

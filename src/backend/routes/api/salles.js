@@ -83,15 +83,21 @@ router.get("/disponibles", async (req, res) => {
 
     // Vérification de la présence de tous les paramètres nécessaires
     if (!debut || !fin) {
-        return res.status(400).send("PARAMETRES_MANQUANTS");
+        return res.status(400).json({
+            error: 'MISSING_QUERIES',
+        });
     }
     // Vérication de la validité des paramètres de dates
     // Attention à encoder le + avec %2B lors de la requête
     if (!formatDateValide(debut) || !formatDateValide(fin)) {
-        return res.status(400).send("FORMAT_DATE_INVALIDE");
+        return res.status(400).json({
+            error: 'INVALID_DATE_FORMAT',
+        });
     }
     if (isNaN(tableauxBlancs) || isNaN(tableauxNoirs)) {
-        return res.status(400).send("NOMBRE_TABLEAUX_INVALIDE");
+        return res.status(400).json({
+            error: 'INVALID_BOARDS_QUANTITY',
+        });
     }
 
     try {
@@ -152,7 +158,9 @@ router.get("/disponibles", async (req, res) => {
 
         res.json(resultatFormate);
     } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
+        return res.status(500).json({
+            error: 'INTERNAL_ERROR',
+        });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
     }

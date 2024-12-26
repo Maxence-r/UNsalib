@@ -104,10 +104,7 @@ const recupererCours = async (groupe) => {
 
         io.emit("groupUpdated", { message: `Groupe ${groupe.nom} mis à jour` });
     } catch (erreur) {
-        console.error(
-            `Erreur pour le groupe ${groupe.identifiant}, ${groupe.nom}:`,
-            erreur
-        );
+        console.error(`Erreur pour le groupe ${groupe.nom} (id : ${groupe.identifiant}, url : ${urlRequete}) :`, erreur);
     }
 };
 
@@ -165,14 +162,10 @@ export const getCourses = async () => {
 
     // Démarrer le cycle de mise à jour
     console.log(
-        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${
-            INTERVALLE_CYCLE / 1000 / 60 / 60
-        }h`
+        `Démarrage du cycle - ${nombreGroupes} groupes seront traités toutes les ${INTERVALLE_CYCLE / 1000 / 60 / 60}h`
     );
     console.log(
-        `Intervalle entre chaque groupe: ${
-            intervalleEntreGroupes / 1000
-        } secondes`
+        `Intervalle entre chaque groupe: ${intervalleEntreGroupes / 1000} secondes`
     );
     demarrerCycleMiseAJour();
 };

@@ -27,12 +27,20 @@ const SalleSchema = Schema({
         default: false
     },
     tableau: {
-        type: Object,
+        type: new Schema({
+            BLANC: { type: Number, required: false, min: 0, default: 0 },
+            NOIR: { type: Number, required: false, min: 0, default: 0 },
+            ECRAN: { type: Number, required: false, min: 0, default: 0 }
+        }, { _id: false }),
         required: false,
-        default: {}
+        default: {
+            BLANC: 0,
+            NOIR: 0,
+            ECRAN: 0
+        }
     },
     caracteristiques: {
-        type: Array,
+        type: [String],
         required: true,
         default: []
     },

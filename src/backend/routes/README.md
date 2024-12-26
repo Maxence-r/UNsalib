@@ -43,13 +43,30 @@ Renvoie  les salles disponibles sur une période spécifiée.
 
  - `debut` : une date au format ISO
  - `fin` : une date au format ISO
+ - *(OPTIONNEL) `noirs` : le nombre minimum de tableaux noirs*
+ - *(OPTIONNEL) `blancs` : le nombre minimum de tableaux blancs*
+ - *(OPTIONNEL) `visio` : si la salle doit avoir pour caractéristique `visio`*
+ - *(OPTIONNEL) `ilot` : si la salle doit avoir pour caractéristique `ilot`*
+ - *(OPTIONNEL) `ordis` : si la salle doit avoir pour caractéristique `video`*
+ - *(OPTIONNEL) `places` : le nombre minimum de places assises*
 
 > **Attention à l'encodage :** le caractère `+` devient `%2B`
+
+> Les paramètres `visio`, `ilot` et `ordis` peuvent avoir n'importe quelle valeur, leur seule présence signifie qu'ils sont inclus dans le filtre  
+> *Ex : `ilot=true`, `ilot=faux` ou encore `ilot=blalbla` retourneront des salles en ilot*
 
 ### Exemple
 
 ```
 /api/salles/disponibles?debut=2024-11-04T08:00:00%2B01:00&fin=2024-11-04T09:00:00%2B01:00
+```
+
+```
+/api/salles/disponibles?debut=2024-12-26T20%3A16%3A00%2B01%3A00&fin=2024-12-26T22%3A16%3A00%2B01%3A00&blancs=1&noirs=1
+```
+
+```
+/api/salles/disponibles?debut=2024-12-26T20%3A16%3A00%2B01%3A00&fin=2024-12-26T22%3A16%3A00%2B01%3A00&visio=vrai&ordis=vrai
 ```
 
 ### Réponse (format JSON)

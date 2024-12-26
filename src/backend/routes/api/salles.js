@@ -74,6 +74,13 @@ router.get("/disponibles", async (req, res) => {
     // Récupération des paramètres de la requête
     const debut = req.query.debut;
     const fin = req.query.fin;
+    const placesAssises = req.query.places ? req.query.places : 0;
+    const ordis = req.query.ordis ? true : false;
+    const ilot = req.query.ilot ? true : false;
+    const visio = req.query.visio ? true : false;
+    let tableauxBlancs = req.query.blancs ? req.query.blancs : 0;
+    let tableauxNoirs = req.query.noirs ? req.query.noirs : 0;
+
     // Vérification de la présence de tous les paramètres nécessaires
     if (!debut || !fin) {
         return res.status(400).send("PARAMETRES_MANQUANTS");
@@ -83,9 +90,18 @@ router.get("/disponibles", async (req, res) => {
     if (!formatDateValide(debut) || !formatDateValide(fin)) {
         return res.status(400).send("FORMAT_DATE_INVALIDE");
     }
+    if (isNaN(tableauxBlancs) || isNaN(tableauxNoirs)) {
+        return res.status(400).send("NOMBRE_TABLEAUX_INVALIDE");
+    }
 
     try {
         await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
+
+        const caracteristiques = [];
+        if (ordis) caracteristiques.push({ caracteristiques: 'video' });
+        if (ilot) caracteristiques.push({ caracteristiques: 'ilot' });
+        if (visio) caracteristiques.push({ caracteristiques: 'visio' });
+
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -115,6 +131,12 @@ router.get("/disponibles", async (req, res) => {
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
             banned: { $ne: true },
+            $and: [
+                { places_assises: { $gte: placesAssises }},
+                { $and: caracteristiques },
+                { "tableau.BLANC": { $gte: tableauxBlancs }},
+                { "tableau.NOIR": { $gte: tableauxNoirs }}
+            ],
         }).select("-__v");
 
         // Formatage de la réponse

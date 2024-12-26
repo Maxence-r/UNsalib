@@ -99,6 +99,11 @@ router.get("/disponibles", async (req, res) => {
             error: 'INVALID_BOARDS_QUANTITY',
         });
     }
+    if (isNaN(placesAssises)) {
+        return res.status(400).json({
+            error: 'INVALID_SEATS_QUANTITY',
+        });
+    }
 
     try {
         await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));

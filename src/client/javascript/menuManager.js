@@ -92,7 +92,11 @@ async function afficherSalles(salles, containerHTML) {
     document.querySelector('.pannel > .loader-indicator').style.display = "none";
 }
 
-const inputs = document.querySelectorAll('.setDate input.time');
+const inputs = document.querySelectorAll('.filter-rooms .setDate input.time');
+const seatsSlider = document.querySelector('.filter-rooms #placesAssises');
+const whiteBoardSlider = document.querySelector('.filter-rooms #blanc');
+const blackBoardSlider = document.querySelector('.filter-rooms #noir');
+const tags = document.querySelectorAll('.filter-rooms .option .tag');
 document.querySelector('.search-button').addEventListener('click', () => {
     searchAvailable();
 });
@@ -136,10 +140,24 @@ async function searchAvailable() {
     const debut = `${dateString}T${startTime}`;
     const fin = `${dateString}T${endTime}`;
 
+    let tagsURL = '';
+    tags.forEach((tag) => {
+        if (tag.classList.contains('selected')) {
+            if (tag.querySelector('p').textContent.startsWith('ORDI')) {
+                tagsURL += '&ordis=true';
+            } else if (tag.querySelector('p').textContent.startsWith('VISIO')) {
+                tagsURL += '&visio=true';
+            } else if (tag.querySelector('p').textContent.startsWith('IL')) {
+                tagsURL += '&ilot=true';
+            }
+        }
+    });
+
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}`;
+        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${tagsURL}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
+        console.log(url)
         response = await fetch(url);
         salles = await response.json();
     } catch (error) {

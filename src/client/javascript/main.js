@@ -79,8 +79,7 @@ slider.oninput = function () {
 
 document.querySelectorAll(".slider").forEach((slider) => {
     slider.oninput = function () {
-        document.querySelector(`[data-ref="${this.id}"]`).innerHTML =
-            this.value;
+        document.querySelector(`[data-ref="${this.id}"]`).innerHTML = this.value;
     };
 });
 
@@ -88,7 +87,17 @@ document.querySelector(".profile").addEventListener("dblclick", () => {
     document.location.href = "/admin/auth";
 });
 
-document.querySelectorAll(".tag").forEach((tag) => {
+document.querySelectorAll(".tags#type .tag").forEach((tag) => {
+    tag.addEventListener("click", () => {
+        let selectedTag = document.querySelector('.tags#type .tag.selected');
+        if (selectedTag && selectedTag != tag) {
+            selectedTag.classList.remove('selected');
+        }
+        tag.classList.toggle("selected");
+    });
+});
+
+document.querySelectorAll(".tags#caracteristiques .tag").forEach((tag) => {
     tag.addEventListener("click", () => {
         tag.classList.toggle("selected");
     });

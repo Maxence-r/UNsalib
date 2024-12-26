@@ -96,7 +96,6 @@ const inputs = document.querySelectorAll('.filter-rooms .setDate input.time');
 const seatsSlider = document.querySelector('.filter-rooms #placesAssises');
 const whiteBoardSlider = document.querySelector('.filter-rooms #blanc');
 const blackBoardSlider = document.querySelector('.filter-rooms #noir');
-const tags = document.querySelectorAll('.filter-rooms .option .tag');
 document.querySelector('.search-button').addEventListener('click', () => {
     searchAvailable();
 });
@@ -140,23 +139,40 @@ async function searchAvailable() {
     const debut = `${dateString}T${startTime}`;
     const fin = `${dateString}T${endTime}`;
 
-    let tagsURL = '';
-    tags.forEach((tag) => {
-        if (tag.classList.contains('selected')) {
-            if (tag.querySelector('p').textContent.startsWith('ORDI')) {
-                tagsURL += '&ordis=true';
-            } else if (tag.querySelector('p').textContent.startsWith('VISIO')) {
-                tagsURL += '&visio=true';
-            } else if (tag.querySelector('p').textContent.startsWith('IL')) {
-                tagsURL += '&ilot=true';
-            }
+    const typeTag = document.querySelector('.tags#type .tag.selected');
+    const caracteristiquesTags = document.querySelectorAll('.tags#caracteristiques .tag.selected');
+
+    let type = '&type=';
+    if (typeTag) {
+        if (typeTag.querySelector('p').textContent.startsWith('INFO')) {
+            type += 'info';
+        } else if (typeTag.querySelector('p').textContent.startsWith('TD')) {
+            type += 'td';
+        } else if (typeTag.querySelector('p').textContent.startsWith('TP')) {
+            type += 'tp';
+        } else if (typeTag.querySelector('p').textContent.startsWith('AMPHI')) {
+            type += 'amphi';
+        }
+    }
+
+    console.log(caracteristiquesTags)
+
+    let caracteristiques = '&carac=';
+    caracteristiquesTags.forEach((tag) => {
+        if (tag.querySelector('p').textContent.startsWith('VISIO')) {
+            caracteristiques += 'visio-';
+        } else if (tag.querySelector('p').textContent.startsWith('IL')) {
+            caracteristiques += 'ilot-';
         }
     });
+    caracteristiques = caracteristiques[caracteristiques.length - 1] == '-' ? caracteristiques.substring(0, caracteristiques.length - 1) : caracteristiques;
+
+    console.log(caracteristiques, type)
 
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${tagsURL}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
+        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${type}${caracteristiques}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
         console.log(url)
         response = await fetch(url);
         salles = await response.json();

@@ -75,11 +75,11 @@ router.get("/disponibles", async (req, res) => {
     const debut = req.query.debut;
     const fin = req.query.fin;
     const placesAssises = req.query.places ? req.query.places : 0;
-    const ordis = req.query.ordis ? true : false;
-    const ilot = req.query.ilot ? true : false;
-    const visio = req.query.visio ? true : false;
     let tableauxBlancs = req.query.blancs ? req.query.blancs : 0;
     let tableauxNoirs = req.query.noirs ? req.query.noirs : 0;
+    let type = req.query.type;
+    let caracteristiques = req.query.carac;
+    console.log(type, caracteristiques)
 
     // Vérification de la présence de tous les paramètres nécessaires
     if (!debut || !fin) {
@@ -108,10 +108,28 @@ router.get("/disponibles", async (req, res) => {
     try {
         await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
 
-        const caracteristiques = [];
-        if (ordis) caracteristiques.push({ caracteristiques: 'video' });
-        if (ilot) caracteristiques.push({ caracteristiques: 'ilot' });
-        if (visio) caracteristiques.push({ caracteristiques: 'visio' });
+        const attributes = [];
+        attributes.push({ places_assises: { $gte: placesAssises }});
+        attributes.push({ 'tableau.BLANC': { $gte: tableauxBlancs }});
+        attributes.push({ 'tableau.NOIR': { $gte: tableauxNoirs }});
+
+        if (caracteristiques) {
+            caracteristiques = caracteristiques.split('-');
+            caracteristiques.forEach((caracteristique) => {
+                attributes.push({ caracteristiques: caracteristique});
+            });
+        }
+        if (type) {
+            if (type === 'info') {
+                attributes.push({ type: 'INFO' });
+            } else if (type === 'td') {
+                attributes.push({ type: 'TD' });
+            } else if (type === 'tp') {
+                attributes.push({ type: 'TP' });
+            } else if (type === 'amphi') {
+                attributes.push({ type: 'AMPHI' });
+            }
+        }
 
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
@@ -142,12 +160,7 @@ router.get("/disponibles", async (req, res) => {
         let sallesDispos = await Salle.find({
             _id: { $nin: cours.map((c) => c.classe) },
             banned: { $ne: true },
-            $and: [
-                { places_assises: { $gte: placesAssises }},
-                { $and: caracteristiques },
-                { "tableau.BLANC": { $gte: tableauxBlancs }},
-                { "tableau.NOIR": { $gte: tableauxNoirs }}
-            ],
+            $and: attributes
         }).select("-__v");
 
         // Formatage de la réponse

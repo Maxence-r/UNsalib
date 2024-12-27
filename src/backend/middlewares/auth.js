@@ -2,7 +2,7 @@ import pkg from 'jsonwebtoken';
 const { verify } = pkg;
 import 'dotenv/config'
 
-const authentification = async (req, res, next) => {
+const authentication = async (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token || token === 'undefined') {
@@ -20,4 +20,4 @@ const authentification = async (req, res, next) => {
     }
 };
 
-export default authentification;
+export default authentication;

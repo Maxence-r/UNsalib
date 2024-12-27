@@ -10,7 +10,7 @@ import sallesApi from "./src/backend/routes/api/salles.js";
 import adminApi from "./src/backend/routes/api/admin.js";
 import appInfosApi from "./src/backend/routes/api/app.js";
 import adminDashboard from "./src/backend/routes/admin.js";
-import authentification from "./src/backend/middlewares/auth.js";
+import authentication from "./src/backend/middlewares/auth.js";
 import stats from "./src/backend/middlewares/stats.js";
 import root from "./src/backend/routes/root.js";
 
@@ -24,7 +24,7 @@ app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
 // API ROUTES
-app.use(authentification);
+app.use(authentication);
 app.use(stats);
 app.use("/api/salles", sallesApi);
 app.use("/api/admin", adminApi);

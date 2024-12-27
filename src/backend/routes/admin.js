@@ -17,8 +17,7 @@ router.get('/', async (req, res) => {
 
 router.get('/dashboard', async (req, res) => {
     if (!req.connected) return res.redirect('/admin/auth');
-    let filePath;
-    filePath = join(__dirname, '../../client/html/admin.html');
+    const filePath = join(__dirname, '../../client/html/admin.html');
     res.sendFile(filePath);
 });
 

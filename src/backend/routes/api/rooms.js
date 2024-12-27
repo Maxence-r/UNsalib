@@ -13,7 +13,7 @@ import {
     updateStats
 } from '../../utils/stats.js';
 
-const vacations = [52, 1];
+const VACATIONS = [52, 1];
 
 router.get('/', async (req, res) => {
     try {
@@ -179,7 +179,7 @@ router.get('/timetable', async (req, res) => {
     }
     // Validating ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'INVALID_ID_FORMAT' });
+        return res.status(400).json({ error: 'INVALID_ID' });
     }
     // Checking the validity of number parameters
     if (isNaN(increment)) {
@@ -196,7 +196,7 @@ router.get('/timetable', async (req, res) => {
         await updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
 
         // Vacations
-        if (vacations.includes(requestedWeek.number)) {
+        if (VACATIONS.includes(requestedWeek.number)) {
             const vacationCourses = [];
             const startDate = new Date(requestedWeek.start);
             

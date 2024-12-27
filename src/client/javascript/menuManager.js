@@ -35,7 +35,7 @@ function toggleNav() {
 
 async function fetchSalles() {
     try {
-        let response = await fetch("/api/salles");
+        let response = await fetch("/api/rooms");
         let salles = await response.json();
         afficherSalles(salles, "edt");
 
@@ -168,7 +168,7 @@ async function searchAvailable() {
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${type}${caracteristiques}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
+        const url = `/api/rooms/available?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${type}${caracteristiques}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
         response = await fetch(url);
         salles = await response.json();
     } catch (error) {

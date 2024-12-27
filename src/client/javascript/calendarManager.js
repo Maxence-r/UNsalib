@@ -77,7 +77,7 @@ async function afficherSalle(salle, delta) {
     toggleLoading()
 
     const response = await fetch(
-        `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`
+        `/api/rooms/timetable/?id=${salle.id}&increment=${newIncrement}`
     );
 
     if (!response.ok) {

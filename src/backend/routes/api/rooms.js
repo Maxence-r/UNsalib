@@ -2,7 +2,6 @@ import express from "express";
 const router = express.Router();
 import Salle from "../../models/salle.js";
 import Cours from "../../models/cours.js";
-import Stats from "../../models/stats.js";
 import mongoose from "mongoose";
 import {
     formatDateValide,
@@ -70,7 +69,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/disponibles", async (req, res) => {
+router.get("/available", async (req, res) => {
     // Récupération des paramètres de la requête
     const debut = req.query.debut;
     const fin = req.query.fin;
@@ -175,16 +174,16 @@ router.get("/disponibles", async (req, res) => {
         }));
 
         res.json(resultatFormate);
-    } catch (erreur) {
-        return res.status(500).json({
+    } catch (error) {
+        res.status(500).json({
             error: 'INTERNAL_ERROR',
         });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 
-router.get("/edt", async (req, res) => {
+router.get("/timetable", async (req, res) => {
     // Récupération des paramètres de la requête
     const id = req.query.id;
     const increment = req.query?.increment || 0; // incrément de 0 si non précisé

@@ -8,8 +8,8 @@ import pkg from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { UAParser } from 'ua-parser-js';
 import {
-    formatDateValide,
-    sameDay
+    isValidDate,
+    isSameDay
 } from "../../utils/date.js";
 import {
     compareStatsObjs
@@ -211,7 +211,7 @@ router.post("/add-course", async (req, res) => {
         });
     }
 
-    if (!formatDateValide(req.body.startAt) || !formatDateValide(req.body.endAt) || !sameDay(new Date(req.body.startAt), new Date(req.body.endAt)) || (new Date(req.body.endAt) - new Date(req.body.startAt)) / 1000 / 60 <= MIN_COURSE_DURATION) {
+    if (!isValidDate(req.body.startAt) || !isValidDate(req.body.endAt) || !isSameDay(new Date(req.body.startAt), new Date(req.body.endAt)) || (new Date(req.body.endAt) - new Date(req.body.startAt)) / 1000 / 60 <= MIN_COURSE_DURATION) {
         return res.status(400).json({
             error: 'INVALID_DATE',
         });

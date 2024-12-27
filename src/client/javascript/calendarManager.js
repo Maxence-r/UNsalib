@@ -100,17 +100,17 @@ async function afficherSalle(salle, delta) {
     increment =  newIncrement;
     currentSalle = salle;
 
-    const startDate = salleData.infos_semaine.debut.split("-")[2];
+    const startDate = salleData.infos_semaine.start.split("-")[2];
 
     document.querySelectorAll(".day").forEach((el, i = 0) => {
         el.innerText = " " + (parseInt(startDate) + i);
         i++;
     });
 
-    document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
+    document.querySelector(".week-number").innerText = salleData.infos_semaine.number;
 
     if (currentWeekNumber == "--") {
-        currentWeekNumber = salleData.infos_semaine.numero;
+        currentWeekNumber = salleData.infos_semaine.number;
         console.log("ok")
     }
     setHourIndicator();

@@ -1,31 +1,29 @@
-// FONCTIONS DE TRAITEMENT
-
-function formatDateValide(date) {
-    const regex =
-        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
+function isValidDate(date) {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
     return regex.test(date);
 }
 
-function obtenirDatesSemaine(numero) {
-    let annee = new Date().getFullYear();
-    if (numero > 52) {
-        numero = numero - 52;
-        annee++;
+function getWeekInfos(weekNumber) {
+    let year = new Date().getFullYear();
+    if (weekNumber > 52) {
+        weekNumber -= 52;
+        year++;
     }
-    const dateJanvierQuatre = new Date(annee, 0, 4);
-    const jourSemaine = dateJanvierQuatre.getDay() || 7; // Jour de la semaine (1-7)
-    const premierLundi = new Date(dateJanvierQuatre);
-    premierLundi.setDate(dateJanvierQuatre.getDate() - (jourSemaine - 1));
 
-    // Calcul du lundi de la semaine demandée
-    const lundi = new Date(premierLundi);
-    lundi.setDate(premierLundi.getDate() + (numero - 1) * 7);
+    const fourJanuaryDate = new Date(year, 0, 4);
+    const weekDay = fourJanuaryDate.getDay() || 7; // day of the week (1-7)
+    const firstMonday = new Date(fourJanuaryDate);
+    firstMonday.setDate(fourJanuaryDate.getDate() - (weekDay - 1));
 
-    // Calcul du dimanche de la semaine demandée
-    const dimanche = new Date(lundi);
-    dimanche.setDate(lundi.getDate() + 6);
+    // Calculating the Monday of the week requested
+    const monday = new Date(firstMonday);
+    monday.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
 
-    // Formatage des dates au format YYYY-MM-DD sans problèmes de fuseau horaire
+    // Calculating the Saturday of the week requested
+    const dimanche = new Date(monday);
+    dimanche.setDate(monday.getDate() + 6);
+
+    // Formatting dates in YYYY-MM-DD format to avoid time zone problems
     const formatDate = (date) => {
         const year = date.getFullYear();
         const month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -33,48 +31,50 @@ function obtenirDatesSemaine(numero) {
         return `${year}-${month}-${day}`;
     };
 
-    const lundiISO = formatDate(lundi);
-    const dimancheISO = formatDate(dimanche);
+    const mondayISO = formatDate(monday);
+    const saturdayISO = formatDate(dimanche);
 
-    return { debut: lundiISO, fin: dimancheISO, numero: numero };
+    return { start: mondayISO, end: saturdayISO, number: weekNumber };
 }
-function obtenirNbSemaines() {
-    const dateActuelle = new Date();
-    const dateDebut = new Date(dateActuelle.getFullYear(), 0, 1); // Date du début de l'année (1er janvier)
 
-    // Calcul de la différence entre la date actuelle et le début de l'année
-    const differenceDates = dateActuelle - dateDebut;
-    const diffDays = differenceDates / (1000 * 60 * 60 * 24);
+function getWeeksNumber() {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), 0, 1); // start date of the year (1st January)
 
-    // Calcul du nombre de semaines
-    let nbSemaines = Math.ceil(diffDays / 7);
+    // Calculating the difference between the current date and the start of the year
+    const datesDiff = currentDate - startDate;
+    const daysDiff = datesDiff / (1000 * 60 * 60 * 24);
 
-    // Obtenir le jour actuel (0 pour dimanche, 1 pour lundi, ..., 6 pour samedi)
-    const jourActuel = dateActuelle.getDay();
+    // Calculating the number of weeks
+    let weekNumber = Math.ceil(daysDiff / 7);
 
-    // Si c'est samedi (6) ou dimanche (0), incrémenter le numéro de la semaine
-    if (jourActuel === 6 || jourActuel === 0) {
-        nbSemaines += 1;
+    // Getting the current day (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+    const currentDay = currentDate.getDay();
+
+    // If it's Saturday (6) or Sunday (0), incrementing the week number
+    if (currentDay === 6 || currentDay === 0) {
+        weekNumber += 1;
     }
 
-    return nbSemaines;
+    return weekNumber;
 }
 
-function obtenirOverflowMinutes(date) {
+function getMinutesOverflow(date) {
     const minutes = date.getMinutes();
     const overflowPercentage = (minutes / 60) * 100;
     return overflowPercentage;
 }
-function sameDay(d1, d2) {
+
+function isSameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
         d1.getDate() === d2.getDate();
 }
 
 export {
-    formatDateValide,
-    obtenirDatesSemaine,
-    obtenirNbSemaines,
-    obtenirOverflowMinutes,
-    sameDay
+    isValidDate,
+    getWeekInfos,
+    getWeeksNumber,
+    getMinutesOverflow,
+    isSameDay
 };

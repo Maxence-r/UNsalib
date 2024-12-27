@@ -4,10 +4,10 @@ import Salle from '../../models/salle.js';
 import Cours from '../../models/cours.js';
 import mongoose from 'mongoose';
 import {
-    formatDateValide,
-    obtenirDatesSemaine,
-    obtenirNbSemaines,
-    obtenirOverflowMinutes,
+    isValidDate,
+    getWeekInfos,
+    getWeeksNumber,
+    getMinutesOverflow,
 } from '../../utils/date.js';
 import {
     updateStats
@@ -83,7 +83,7 @@ router.get('/available', async (req, res) => {
     }
     // Checking the validity of date parameters
     // Be careful to encode the '+' with '%2B' when querying
-    if (!formatDateValide(start) || !formatDateValide(end)) {
+    if (!isValidDate(start) || !isValidDate(end)) {
         return res.status(400).json({ error: 'INVALID_DATE_FORMAT' });
     }
     // Checking the validity of quantity parameters
@@ -188,8 +188,8 @@ router.get('/timetable', async (req, res) => {
         return res.status(400).json({ error: 'INVALID_INCREMENT' });
     }
     // Getting information about the requested week and checking its validity
-    const requestedWeek = obtenirDatesSemaine(obtenirNbSemaines() + parseInt(increment));
-    if (requestedWeek.numero < 0 || requestedWeek.numero > 52 || increment > 18) {
+    const requestedWeek = getWeekInfos(getWeeksNumber() + parseInt(increment));
+    if (requestedWeek.number < 0 || requestedWeek.number > 52 || increment > 18) {
         return res.status(400).json({ error: 'INVALID_INCREMENT' });
     }
 
@@ -198,9 +198,9 @@ router.get('/timetable', async (req, res) => {
         await updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
 
         // Vacations
-        if (vacations.includes(requestedWeek.numero)) {
+        if (vacations.includes(requestedWeek.number)) {
             const vacationCourse = [];
-            const startDate = new Date(requestedWeek.debut);
+            const startDate = new Date(requestedWeek.start);
             
             for (let i = 0; i < 5; i++) {
                 const start = new Date(startDate);
@@ -230,8 +230,8 @@ router.get('/timetable', async (req, res) => {
         let courses = await Cours.find({
             classe: id,
             $and: [
-                { debute_a: { $gte: requestedWeek.debut }},
-                { fini_a: { $lte: requestedWeek.fin }},
+                { debute_a: { $gte: requestedWeek.start }},
+                { fini_a: { $lte: requestedWeek.end }},
             ],
         }).select('-__v -identifiant');
 
@@ -241,7 +241,7 @@ router.get('/timetable', async (req, res) => {
             const duration = ((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf()) / 1000 / 60 / 60) * 100;
 
             // Getting the overflow as a percentage
-            const overflow = obtenirOverflowMinutes(new Date(doc.debute_a));
+            const overflow = getMinutesOverflow(new Date(doc.debute_a));
             return {
                 id_cours: doc._id,
                 debut: doc.debute_a,

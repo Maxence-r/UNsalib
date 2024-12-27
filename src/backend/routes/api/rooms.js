@@ -1,57 +1,55 @@
-import express from "express";
+import express from 'express';
 const router = express.Router();
-import Salle from "../../models/salle.js";
-import Cours from "../../models/cours.js";
-import mongoose from "mongoose";
+import Salle from '../../models/salle.js';
+import Cours from '../../models/cours.js';
+import mongoose from 'mongoose';
 import {
     formatDateValide,
     obtenirDatesSemaine,
     obtenirNbSemaines,
     obtenirOverflowMinutes,
-} from "../../utils/date.js";
+} from '../../utils/date.js';
 import {
     updateStats
-} from "../../utils/stats.js";
+} from '../../utils/stats.js';
 
 const vacations = [52, 1];
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
     try {
+        // Updating stats
         await updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
-        // Obtention de toutes les salles
-        let salles = await Salle.find({ banned: { $ne: true } }).select(
-            "-__v -identifiant"
+
+        // Getting all the rooms that are not banned
+        let rooms = await Salle.find({ banned: { $ne: true } }).select(
+            '-__v -identifiant'
         );
 
-        // Obtention des salles disponibles
+        // Finding out which rooms are currently available
         const now = new Date();
-        now.setHours(now.getHours() + 1);
-        const debut = now.toISOString();
-        const fin = debut;
-        let cours = await Cours.find({
-            $and: [{ debute_a: { $lt: fin } }, { fini_a: { $gt: debut } }],
+        now.setHours(now.getHours() + 1); // fix server time bug
+        const start = now.toISOString(), end = start;
+        let courses = await Cours.find({
+            $and: [{ debute_a: { $lt: end } }, { fini_a: { $gt: start } }],
         });
-        let sallesDispos = await Salle.find({
-            _id: { $nin: cours.map((c) => c.classe) },
-        }).select("-__v -batiment -places_assises -nom_salle");
+        let availableRooms = await Salle.find({
+            _id: { $nin: courses.map((c) => c.classe) },
+        }).select('-__v -batiment -places_assises -nom_salle');
 
-        // Création d'un array avec les ids de toutes les salles disponibles
-        for (let i = 0; i < sallesDispos.length; i++) {
-            sallesDispos[i] = sallesDispos[i]._id.toString();
-        }
+        // Creating an array with the ids of all available rooms
+        availableRooms = availableRooms.map((room) => room._id.toString());
 
-        // Ajout d'une clé disponible dans salles en fonction de la présence
-        // de l'id d'une salle dans sallesDispos
-        for (let i = 0; i < salles.length; i++) {
-            if (sallesDispos.includes(salles[i].id)) {
-                salles[i].disponible = true;
+        // Adding an 'available' key to 'rooms' elements when a room id is present in 'availableRooms'
+        for (let i = 0; i < rooms.length; i++) {
+            if (availableRooms.includes(rooms[i].id)) {
+                rooms[i].disponible = true;
             } else {
-                salles[i].disponible = false;
+                rooms[i].disponible = false;
             }
         }
 
-        // Formatage de la réponse
-        const resultatFormate = salles.map((doc) => ({
+        // Formatting the response
+        const formattedResponse = rooms.map((doc) => ({
             id: doc._id,
             nom: doc.nom_salle,
             alias: doc.alias,
@@ -61,74 +59,44 @@ router.get("/", async (req, res) => {
             caracteristiques: doc.caracteristiques,
         }));
 
-        res.json(resultatFormate);
-    } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
+        res.json(formattedResponse);
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 
-router.get("/available", async (req, res) => {
-    // Récupération des paramètres de la requête
-    const debut = req.query.debut;
-    const fin = req.query.fin;
-    const placesAssises = req.query.places ? req.query.places : 0;
-    let tableauxBlancs = req.query.blancs ? req.query.blancs : 0;
-    let tableauxNoirs = req.query.noirs ? req.query.noirs : 0;
+router.get('/available', async (req, res) => {
+    // Retrieving query parameters
+    const start = req.query.debut;
+    const end = req.query.fin;
+    const seats = req.query.places ? req.query.places : 0;
+    let whiteBoards = req.query.blancs ? req.query.blancs : 0;
+    let blackBoards = req.query.noirs ? req.query.noirs : 0;
     let type = req.query.type;
-    let caracteristiques = req.query.carac;
-    console.log(type, caracteristiques)
+    let features = req.query.carac;
 
-    // Vérification de la présence de tous les paramètres nécessaires
-    if (!debut || !fin) {
-        return res.status(400).json({
-            error: 'MISSING_QUERIES',
-        });
+    // Checking that all the required parameters are present
+    if (!start || !end) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
     }
-    // Vérication de la validité des paramètres de dates
-    // Attention à encoder le + avec %2B lors de la requête
-    if (!formatDateValide(debut) || !formatDateValide(fin)) {
-        return res.status(400).json({
-            error: 'INVALID_DATE_FORMAT',
-        });
+    // Checking the validity of date parameters
+    // Be careful to encode the '+' with '%2B' when querying
+    if (!formatDateValide(start) || !formatDateValide(end)) {
+        return res.status(400).json({ error: 'INVALID_DATE_FORMAT' });
     }
-    if (isNaN(tableauxBlancs) || isNaN(tableauxNoirs)) {
-        return res.status(400).json({
-            error: 'INVALID_BOARDS_QUANTITY',
-        });
+    // Checking the validity of quantity parameters
+    if (isNaN(whiteBoards) || isNaN(blackBoards)) {
+        return res.status(400).json({ error: 'INVALID_BOARDS_QUANTITY' });
     }
-    if (isNaN(placesAssises)) {
-        return res.status(400).json({
-            error: 'INVALID_SEATS_QUANTITY',
-        });
+    if (isNaN(seats)) {
+        return res.status(400).json({ error: 'INVALID_SEATS_QUANTITY' });
     }
 
     try {
+        // Updating stats
         await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
-
-        const attributes = [];
-        attributes.push({ places_assises: { $gte: placesAssises }});
-        attributes.push({ 'tableau.BLANC': { $gte: tableauxBlancs }});
-        attributes.push({ 'tableau.NOIR': { $gte: tableauxNoirs }});
-
-        if (caracteristiques) {
-            caracteristiques = caracteristiques.split('-');
-            caracteristiques.forEach((caracteristique) => {
-                attributes.push({ caracteristiques: caracteristique});
-            });
-        }
-        if (type) {
-            if (type === 'info') {
-                attributes.push({ type: 'INFO' });
-            } else if (type === 'td') {
-                attributes.push({ type: 'TD' });
-            } else if (type === 'tp') {
-                attributes.push({ type: 'TP' });
-            } else if (type === 'amphi') {
-                attributes.push({ type: 'AMPHI' });
-            }
-        }
 
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
@@ -148,22 +116,43 @@ router.get("/available", async (req, res) => {
         // Cours           |-----------|
         // Demande     |-----------|
         //
-        let cours = await Cours.find({
+        let courses = await Cours.find({
             $and: [
-                { debute_a: { $lt: fin } }, // le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: debut } }, // le cours finit après le début de la période demandée
-            ],
+                { debute_a: { $lt: end } }, // le cours commence avant la fin de la période demandée
+                { fini_a: { $gt: start } } // le cours finit après le début de la période demandée
+            ]
         });
 
-        // Les salles libres sont celles dans lesquelles n'a pas lieu un cours
-        let sallesDispos = await Salle.find({
-            _id: { $nin: cours.map((c) => c.classe) },
+        // Building the list of attributes requested for the db query
+        const attributes = [];
+        attributes.push({ places_assises: { $gte: seats } });
+        attributes.push({ 'tableau.BLANC': { $gte: whiteBoards } });
+        attributes.push({ 'tableau.NOIR': { $gte: blackBoards } });
+        if (features) {
+            features = features.split('-');
+            features.forEach((feature) => attributes.push({ caracteristiques: feature }));
+        }
+        if (type) {
+            if (type === 'info') {
+                attributes.push({ type: 'INFO' });
+            } else if (type === 'td') {
+                attributes.push({ type: 'TD' });
+            } else if (type === 'tp') {
+                attributes.push({ type: 'TP' });
+            } else if (type === 'amphi') {
+                attributes.push({ type: 'AMPHI' });
+            }
+        }
+
+        // Getting available rooms according to the attributes requested by the user
+        let availableRooms = await Salle.find({
+            _id: { $nin: courses.map((c) => c.classe) }, // free rooms are those not being used for classes
             banned: { $ne: true },
             $and: attributes
-        }).select("-__v");
+        }).select('-__v');
 
-        // Formatage de la réponse
-        const resultatFormate = sallesDispos.map((doc) => ({
+        // Formatting the response
+        const formattedResponse = availableRooms.map((doc) => ({
             id: doc._id,
             nom: doc.nom_salle,
             alias: doc.alias,
@@ -173,96 +162,91 @@ router.get("/available", async (req, res) => {
             caracteristiques: doc.caracteristiques,
         }));
 
-        res.json(resultatFormate);
+        res.json(formattedResponse);
     } catch (error) {
-        res.status(500).json({
-            error: 'INTERNAL_ERROR',
-        });
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 
-router.get("/timetable", async (req, res) => {
-    // Récupération des paramètres de la requête
+router.get('/timetable', async (req, res) => {
+    // Retrieving query parameters
     const id = req.query.id;
-    const increment = req.query?.increment || 0; // incrément de 0 si non précisé
-    // Vérification de la présence de tous les paramètres nécessaires
-    if (!id) {
-        return res.status(400).send("PARAMETRES_MANQUANTS");
-    }
-    // Validation de l'ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("FORMAT_ID_INVALIDE");
-    }
-    // Obtention des informations sur la semaine demandée
-    const bornesDates = obtenirDatesSemaine(
-        obtenirNbSemaines() + parseInt(increment)
-    );
+    const increment = req.query?.increment || 0; // increment = 0 if not specified
 
-    if (bornesDates.numero < 0 || bornesDates.numero > 52 || increment > 18) {
-        return res.status(400).send("INCORRECT_WEEK_NUMBER");
+    // Checking that all the required parameters are present
+    if (!id) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
+    }
+    // Validating ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'INVALID_ID_FORMAT' });
+    }
+    // Checking the validity of number parameters
+    if (isNaN(increment)) {
+        return res.status(400).json({ error: 'INVALID_INCREMENT' });
+    }
+    // Getting information about the requested week and checking its validity
+    const requestedWeek = obtenirDatesSemaine(obtenirNbSemaines() + parseInt(increment));
+    if (requestedWeek.numero < 0 || requestedWeek.numero > 52 || increment > 18) {
+        return res.status(400).json({ error: 'INVALID_INCREMENT' });
     }
 
     try {
+        // Updating stats
         await updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
-        if (vacations.includes(bornesDates.numero)) {
-            // VACANCES
-            const vacanceCours = [];
-            const startDate = new Date(bornesDates.debut);
+
+        // Vacations
+        if (vacations.includes(requestedWeek.numero)) {
+            const vacationCourse = [];
+            const startDate = new Date(requestedWeek.debut);
+            
             for (let i = 0; i < 5; i++) {
-                const debut = new Date(startDate);
-                debut.setDate(debut.getDate() + i);
-                debut.setHours(8, 0, 0, 0);
+                const start = new Date(startDate);
+                start.setDate(start.getDate() + i);
+                start.setHours(8, 0, 0, 0);
+                const end = new Date(start);
+                end.setHours(8, 0, 0, 0);
 
-                const fin = new Date(debut);
-                fin.setHours(8, 0, 0, 0);
-
-                vacanceCours.push({
-                    id_cours: `vacance-${i}`,
-                    debut: debut.toISOString(),
-                    fin: fin.toISOString(),
+                vacationCourse.push({
+                    id_cours: `vacances-${i}`,
+                    debut: start.toISOString(),
+                    fin: end.toISOString(),
                     duree: 900,
                     overflow: 0,
                     id_salle: id,
-                    professeur: "Monsieur Chill",
-                    module: "Détente - Vacances",
-                    groupe: "Tout le monde",
-                    couleur: "#FF7675",
+                    professeur: 'Monsieur Chill',
+                    module: 'Détente - Vacances',
+                    groupe: 'Tout le monde',
+                    couleur: '#FF7675',
                 });
             }
 
-            return res.send({ cours: vacanceCours, infos_semaine: bornesDates });
+            return res.send({ cours: vacationCourse, infos_semaine: requestedWeek });
         }
 
-        // Obtention des cours selon l'id de salle et la période donnée
-        let cours = await Cours.find({
+        // Getting courses based on room id and given period
+        let courses = await Cours.find({
             classe: id,
             $and: [
-                { debute_a: { $gte: bornesDates.debut } },
-                { fini_a: { $lte: bornesDates.fin } },
+                { debute_a: { $gte: requestedWeek.debut }},
+                { fini_a: { $lte: requestedWeek.fin }},
             ],
-        }).select("-__v -identifiant");
+        }).select('-__v -identifiant');
 
-        // Formatage de la réponse
-        const resultatFormate = cours.map((doc) => {
-            // Obtention de la durée en ms, conversion en h et ensuite en pourcentage
-            const duree =
-                ((new Date(doc.fini_a).valueOf() -
-                    new Date(doc.debute_a).valueOf()) /
-                    1000 /
-                    60 /
-                    60) *
-                100;
+        // Formatting the response
+        const formattedResponse = courses.map((doc) => {
+            // Getting duration in ms, convert to h and then to percentage
+            const duration = ((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf()) / 1000 / 60 / 60) * 100;
 
-            // Calcul du border avec ajout de 2 pour chaque 61 minutes avant le début et après la fin
-            // Obtention de l'overflow et conversion en pourcentage
+            // Getting the overflow as a percentage
             const overflow = obtenirOverflowMinutes(new Date(doc.debute_a));
             return {
                 id_cours: doc._id,
                 debut: doc.debute_a,
                 fin: doc.fini_a,
-                duree: duree,
+                duree: duration,
                 overflow: overflow,
                 id_salle: doc.classe,
                 professeur: doc.professeur,
@@ -272,11 +256,11 @@ router.get("/timetable", async (req, res) => {
             };
         });
 
-        res.send({ cours: resultatFormate, infos_semaine: bornesDates });
-    } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
+        res.send({ cours: formattedResponse, infos_semaine: requestedWeek });
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${erreur.message})`);
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 

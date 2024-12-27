@@ -61,23 +61,23 @@ async function afficherSalles(salles, containerHTML) {
         };
 
         let p = document.createElement("p");
-        p.textContent = salle.alias != "" ? `${salle.alias.toUpperCase()} ` : `${salle.nom.toUpperCase()} `;
+        p.textContent = salle.alias != "" ? `${salle.alias.toUpperCase()} ` : `${salle.name.toUpperCase()} `;
 
         let span = document.createElement("span");
         span.className = "bat";
-        span.textContent = salle.batiment;
+        span.textContent = salle.building;
 
         let badgesDiv = document.createElement("div");
         badgesDiv.className = "badges";
 
-        salle.caracteristiques.forEach((caracteristique) => {
+        salle.features.forEach((caracteristique) => {
             let img = document.createElement("img");
             img.src = `../assets/${caracteristique}.svg`;
             img.alt = caracteristique;
             badgesDiv.appendChild(img);
         });
         let pingDiv = document.createElement("div");
-        pingDiv.className = salle.disponible ? "ping blue" : "ping red";
+        pingDiv.className = salle.available ? "ping blue" : "ping red";
 
         // Assembler les éléments
         p.appendChild(span);

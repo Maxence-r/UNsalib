@@ -51,12 +51,11 @@ router.get('/', async (req, res) => {
         // Formatting the response
         const formattedResponse = rooms.map((doc) => ({
             id: doc._id,
-            nom: doc.nom_salle,
+            name: doc.nom_salle,
             alias: doc.alias,
-            places_assises: doc.places_assises,
-            batiment: doc.batiment,
-            disponible: doc.disponible,
-            caracteristiques: doc.caracteristiques,
+            building: doc.batiment,
+            available: doc.disponible,
+            features: doc.caracteristiques,
         }));
 
         res.json(formattedResponse);
@@ -154,12 +153,11 @@ router.get('/available', async (req, res) => {
         // Formatting the response
         const formattedResponse = availableRooms.map((doc) => ({
             id: doc._id,
-            nom: doc.nom_salle,
+            name: doc.nom_salle,
             alias: doc.alias,
-            places_assises: doc.places_assises,
-            batiment: doc.batiment,
-            disponible: true,
-            caracteristiques: doc.caracteristiques,
+            building: doc.batiment,
+            available: true,
+            features: doc.caracteristiques,
         }));
 
         res.json(formattedResponse);
@@ -199,7 +197,7 @@ router.get('/timetable', async (req, res) => {
 
         // Vacations
         if (vacations.includes(requestedWeek.number)) {
-            const vacationCourse = [];
+            const vacationCourses = [];
             const startDate = new Date(requestedWeek.start);
             
             for (let i = 0; i < 5; i++) {
@@ -209,21 +207,21 @@ router.get('/timetable', async (req, res) => {
                 const end = new Date(start);
                 end.setHours(8, 0, 0, 0);
 
-                vacationCourse.push({
-                    id_cours: `vacances-${i}`,
-                    debut: start.toISOString(),
-                    fin: end.toISOString(),
-                    duree: 900,
+                vacationCourses.push({
+                    courseId: `vacances-${i}`,
+                    start: start.toISOString(),
+                    end: end.toISOString(),
+                    duration: 900,
                     overflow: 0,
-                    id_salle: id,
-                    professeur: 'Monsieur Chill',
+                    roomId: id,
+                    teacher: 'Monsieur Chill',
                     module: 'Détente - Vacances',
-                    groupe: 'Tout le monde',
-                    couleur: '#FF7675',
+                    group: 'Tout le monde',
+                    color: '#FF7675',
                 });
             }
 
-            return res.send({ cours: vacationCourse, infos_semaine: requestedWeek });
+            return res.send({ courses: vacationCourses, weekInfos: requestedWeek });
         }
 
         // Getting courses based on room id and given period
@@ -243,20 +241,20 @@ router.get('/timetable', async (req, res) => {
             // Getting the overflow as a percentage
             const overflow = getMinutesOverflow(new Date(doc.debute_a));
             return {
-                id_cours: doc._id,
-                debut: doc.debute_a,
-                fin: doc.fini_a,
-                duree: duration,
+                courseId: doc._id,
+                start: doc.debute_a,
+                end: doc.fini_a,
+                duration: duration,
                 overflow: overflow,
-                id_salle: doc.classe,
-                professeur: doc.professeur,
+                roomId: doc.classe,
+                teacher: doc.professeur,
                 module: doc.module,
-                groupe: doc.groupe,
-                couleur: doc.couleur,
+                group: doc.groupe,
+                color: doc.couleur,
             };
         });
 
-        res.send({ cours: formattedResponse, infos_semaine: requestedWeek });
+        res.send({ courses: formattedResponse, weekInfos: requestedWeek });
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));

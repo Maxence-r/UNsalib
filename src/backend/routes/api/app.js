@@ -21,9 +21,7 @@ router.get('/version', async (req, res) => {
         const formattedResult = { version: process.env.VERSION };
         res.json(formattedResult);
     } catch (error) {
-        res.status(500).json({
-            error: 'INTERNAL_ERROR',
-        });
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });

@@ -147,7 +147,7 @@ async function getCourses() {
             if (groupIndex < groupsNumber) {
                 setTimeout(async () => {
                     const group = groups[groupIndex];
-                    await getCourses(group);
+                    await fetchCourses(group);
                     groupIndex++;
                     scheduleNextGroup();
                 }, intervalBetweenGroups);

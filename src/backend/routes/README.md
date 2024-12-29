@@ -1,160 +1,148 @@
 # Endpoints
 
-## `GET /api/salles`
+## `GET /api/rooms`
 
-### Rôle
+### Purpose
 
-Renvoie toutes les salles stockées dans la base de données avec leurs informations associées.
+Returns all the rooms stored in the database with their associated information
 
-### Paramètres
+### Parameters
 
-Aucun
+None
 
-### Exemple
+### Example
 
 ```
-/api/salles
+/api/rooms
 ```
 
-### Réponse (format JSON)
+### Response (JSON format)
 
 ```json
 [
     {
-        "id": ID DE LA SALLE (CHAINE),
-        "nom": NOM REEL DE LA SALLE (CHAINE),
-        "alias": ALIAS DE LA SALLE (CHAINE),
-        "places_assises": PLACES ASSISES (NOMBRE ENTIER),
-        "batiment": NOM DU BATIMENT (CHAINE),
-        "disponible": LA SALLE EST ACTUELLEMENT LIBRE (BOOLEEN),
-        "caracteristiques": CARACTERISTIQUES DE LA SALLE (LISTE DE CHAINES)
+        "id": ROOM ID (STRING),
+        "name": REAL NAME OF THE ROOM (STRING),
+        "alias": ALIAS OF THE ROOM (STRING),
+        "building": BUILDING NAME (STRING),
+        "available": WHETHER THE ROOM IS CURRENTLY FREE (BOOLEAN),
+        "features": FEATURES OF THE ROOM (STRINGS ARRAY)
     },
     ...
 ]
 ```
 
-## `GET /api/salles/disponibles`
+## `GET /api/rooms/available`
 
-### Rôle
+### Purpose
 
-Renvoie  les salles disponibles sur une période spécifiée.
+Returns the rooms available over a specified period
 
-### Paramètres
+### Parameters
 
- - `debut` : une date au format ISO
- - `fin` : une date au format ISO
- - *(OPTIONNEL) `noirs` : le nombre minimum de tableaux noirs*
- - *(OPTIONNEL) `blancs` : le nombre minimum de tableaux blancs*
- - *(OPTIONNEL) `visio` : si la salle doit avoir pour caractéristique `visio`*
- - *(OPTIONNEL) `ilot` : si la salle doit avoir pour caractéristique `ilot`*
- - *(OPTIONNEL) `ordis` : si la salle doit avoir pour caractéristique `video`*
- - *(OPTIONNEL) `places` : le nombre minimum de places assises*
+ - `start` : the start date in ISO format
+ - `end` : the end date in ISO format
+ - *(OPTIONAL) `blackboards` : the minimum number of black boards*
+ - *(OPTIONAL) `whiteboards` : the minimum number of white boards*
+ - *(OPTIONAL) `type` : the type of room*
+ - *(OPTIONAL) `features` : room features in `feature1-feature2` format*
 
-> **Attention à l'encodage :** le caractère `+` devient `%2B`
+> **Pay attention to date encoding :** the `+` character becomes `%2B`
 
-> Les paramètres `visio`, `ilot` et `ordis` peuvent avoir n'importe quelle valeur, leur seule présence signifie qu'ils sont inclus dans le filtre  
-> *Ex : `ilot=true`, `ilot=faux` ou encore `ilot=blalbla` retourneront des salles en ilot*
-
-### Exemple
+### Example
 
 ```
-/api/salles/disponibles?debut=2024-11-04T08:00:00%2B01:00&fin=2024-11-04T09:00:00%2B01:00
+/api/rooms/available?start=2024-12-29T18%3A32%3A00%2B01%3A00&end=2024-12-29T19%3A32%3A00%2B01%3A00&type=td&seats=6&whiteboards=1
 ```
 
 ```
-/api/salles/disponibles?debut=2024-12-26T20%3A16%3A00%2B01%3A00&fin=2024-12-26T22%3A16%3A00%2B01%3A00&blancs=1&noirs=1
+/api/rooms/available?start=2024-12-29T18%3A32%3A00%2B01%3A00&end=2024-12-29T19%3A32%3A00%2B01%3A00&type=amphi&features=visio-ilot&seats=2&whiteboards=1&blackboards=1
 ```
 
-```
-/api/salles/disponibles?debut=2024-12-26T20%3A16%3A00%2B01%3A00&fin=2024-12-26T22%3A16%3A00%2B01%3A00&visio=vrai&ordis=vrai
-```
-
-### Réponse (format JSON)
+### Response (JSON format)
 
 ```json
 [
     {
-        "id": ID DE LA SALLE (CHAINE),
-        "nom": NOM REEL DE LA SALLE (CHAINE),
-        "alias": ALIAS DE LA SALLE (CHAINE),
-        "places_assises": PLACES ASSISES (NOMBRE ENTIER),
-        "batiment": NOM DU BATIMENT (CHAINE),
-        "disponible": LA SALLE EST ACTUELLEMENT LIBRE (BOOLEEN),
-        "caracteristiques": CARACTERISTIQUES DE LA SALLE (LISTE DE CHAINES)
+        "id": ROOM ID (STRING),
+        "name": REAL NAME OF THE ROOM (STRING),
+        "alias": ALIAS OF THE ROOM (STRING),
+        "building": BUILDING NAME (STRING),
+        "available": WHETHER THE ROOM IS CURRENTLY FREE (BOOLEAN),
+        "features": FEATURES OF THE ROOM (STRINGS ARRAY)
     },
     ...
 ]
 ```
 
-## `GET /api/salles/edt`
+## `GET /api/rooms/timetable`
 
-### Rôle
+### Purpose
 
-Renvoie l'emploi du temps d'une salle pendant une semaine donnée (par défaut, la semaine actuelle).
+Returns a room's timetable for a given week (by default, the current week)
 
-### Paramètres
+### Parameters
 
- - `id` : l'id de la salle
- - *(OPTIONNEL) `increment` : un nombre à ajouter au numéro de semaine actuel*
+ - `id` : the room id
+ - *(OPTIONAL) `increment` : a number to add to the current week number*
 
-### Exemple
-
-```
-/api/salles/edt?id=672901cd13546ff7b6eeb466&increment=2
-```
+### Example
 
 ```
-/api/salles/edt?id=672901cd13546ff7b6eeb466
+/api/rooms/timetable?id=672901cd13546ff7b6eeb466&increment=2
 ```
-> La requête précédente renvoie l'emploi du temps de la salle pour la semaine actuelle
 
-### Réponse (format JSON)
+```
+/api/rooms/timetable?id=672901cd13546ff7b6eeb466
+```
+
+### Response (JSON format)
 
 ```json
 {
-    "cours": [
+    "courses": [
         {
-            "id_cours": ID DU COURS (CHAINE),
-            "debut": DATE DE DEBUT DU COURS (CHAINE),
-            "fin": DATE DE FIN DU COURS (CHAINE),
-            "duree": DUREE DU COURS EN POURCENTAGE (1h = 100%) (NOMBRE ENTIER),
-            "overflow": DEPASSEMENT DES MINUTES EN POURCENT (NEGATIF OU POSITIF SELON QUE L'HEURE PRECEDENTE OU SUIVANTE EST LA PLUS PROCHE) (NOMBRE ENTIER),
-            "id_salle": ID DE LA SALLE (CHAINE),
-            "professeur": NOM DU PROFESSEUR (CHAINE),
-            "module": NOM DU MODULE (CHAINE),
-            "groupe": NOM DU(DES) GROUPE(S) ASSOCIE(S) (LISTE DE CHAINES),
-            "couleur": COULEUR DU COURS (CHAINE)
+            "courseId": COURSE ID (STRING),
+            "start": COURSE START DATE (STRING),
+            "end": COURSE END DATE (STRING),
+            "duration": COURSE DURATION IN PERCENTAGE (1h = 100%) (INTEGER),
+            "overflow": PERCENTAGE OF MINUTES OVERFLOW (NEGATIVE OR POSITIVE DEPENDING ON WHETHER THE PREVIOUS OR NEXT HOUR IS THE CLOSEST) (INTEGER),
+            "roomId": ROOM ID (STRING),
+            "teacher": TEACHER'S NAME (STRING),
+            "module": MODULE'S NAME (STRING),
+            "group": NAME(S) OF ASSOCIATED GROUP(S) (STRINGS ARRAY),
+            "color": COURSE COLOR (STRING)
         },
         ...
     ],
-    "infos_semaine": {
-        "debut": DATE DE DEBUT DE LA SEMAINE (CHAINE),
-        "fin": DATE DE FIN DE LA SEMAINE (CHAINE),
-        "numero": NUMERO DE LA SEMAINE (NOMBRE ENTIER)
+    "weekInfos": {
+        "start": START DATE OF THE WEEK (STRING),
+        "end": END DATE OF THE WEEK (STRING),
+        "number": NUMBER OF THE WEEK (INTEGER)
     }
 }
 ```
 
 ## `GET /api/app/version`
 
-### Rôle
+### Purpose
 
-Renvoie la version actuelle de l'application.
+Returns the current version of the application
 
-### Paramètres
+### Parameters
 
-Aucun
+None
 
-### Exemple
+### Example
 
 ```
 /api/app/version
 ```
 
-### Réponse (format JSON)
+### Response (JSON format)
 
 ```json
 {
-    "version": VERSION DE L'APPLICATION (CHAINE)
+    "version": VERSION OF THE APPLICATION (STRING)
 }
 ```

@@ -75,7 +75,7 @@ async function getRoom(id) {
     detailsSection.querySelectorAll('.chip').forEach((chip) => {
         detailsSection.querySelector('.chips-container').removeChild(chip);
     });
-    data.details.forEach((detail) => {
+    data.features.forEach((detail) => {
         addChip(detail, detailsSection.querySelector('.chips-container'));
     });
     typeSection.value = data.type ? data.type : "";

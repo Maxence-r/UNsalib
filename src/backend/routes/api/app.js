@@ -1,12 +1,11 @@
-import express from "express";
-import { Octokit } from "@octokit/rest";
-import Groupe from "../../models/groupe.js";
-import "dotenv/config";
+import express from 'express';
+import { Octokit } from '@octokit/rest';
+import 'dotenv/config';
 const router = express.Router();
 
-router.get("/version", async (req, res) => {
+router.get('/version', async (req, res) => {
     try {
-        // COMMENTE EN ATTENDANT DE POUVOIR UTILISER LES IDENTIFIANTS GITHUB
+        // COMMENTED UNTIL WE CAN USE THE GITHUB CREDENTIALS
         // const octokit = new Octokit({
         //     auth: process.env.GITHUB_AUTH
         // })
@@ -19,15 +18,12 @@ router.get("/version", async (req, res) => {
         //     }
         // });
 
-        const resultatFormate = { version: process.env.VERSION };
-        res.json(resultatFormate);
-    } catch (erreur) {
-        res.status(500).send("ERREUR_INTERNE");
-        console.error(
-            "Erreur pendant le traitement de la requête à",
-            req.url,
-            `(${erreur.message})`
-        );
+        const formattedResult = { version: process.env.VERSION };
+        res.json(formattedResult);
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
+
 export default router;

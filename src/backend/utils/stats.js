@@ -1,5 +1,6 @@
 import Stats from "../models/stats.js";
 
+// Compares two statistics to sort them
 function compareStatsObjs(a, b) {
     if (a.date < b.date) {
         return -1;
@@ -10,6 +11,7 @@ function compareStatsObjs(a, b) {
     }
 }
 
+// Adds records to the database for statistical purposes
 async function updateStats(statName, userId, userAgent) {
     try {
         let today = new Date().toISOString().split('T')[0];

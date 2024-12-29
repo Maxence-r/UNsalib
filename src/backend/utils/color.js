@@ -1,5 +1,5 @@
-// JavaScript
-const PALETTE_HSL = [
+// CONSTANTS
+const HSL_PALETTE = [
     { h: 168.8, s: 76.1, l: 50.0 }, // #1abc9c
     { h: 145.0, s: 63.7, l: 47.1 }, // #2ecc71
     { h: 204.0, s: 70.6, l: 53.9 }, // #3498db
@@ -22,7 +22,7 @@ const PALETTE_HSL = [
     { h: 0.0,   s: 0.0,  l: 49.0 }  // #7f8c8d
 ];
 
-const PALETTE_HEX = [
+const HEX_PALETTE = [
     "#1abc9c",
     "#2ecc71",
     "#3498db",
@@ -45,31 +45,34 @@ const PALETTE_HEX = [
     "#7f8c8d"
 ];
 
-function couleurPaletteProche(couleurHex) {
-    const couleurHSL = convertirRgbEnHsl(convertirHexEnRgb(couleurHex));
+// Finds the nearest color in the palette provided
+function closestPaletteColor(hexColor) {
+    const hslColor = rgbToHsl(hexToRgb(hexColor));
 
     let minDistance = Infinity;
     let closestIndex = 0;
 
-    for (let i = 0; i < PALETTE_HSL.length; i++) {
-        const distance = distanceCouleurs(couleurHSL, PALETTE_HSL[i]);
+    for (let i = 0; i < HSL_PALETTE.length; i++) {
+        const distance = colorsDistance(hslColor, HSL_PALETTE[i]);
         if (distance < minDistance) {
             minDistance = distance;
             closestIndex = i;
         }
     }
 
-    return PALETTE_HEX[closestIndex];
+    return HEX_PALETTE[closestIndex];
 }
 
-function distanceCouleurs(c1, c2) {
+// Calculates the distance between 2 colors
+function colorsDistance(c1, c2) {
     const dh = Math.min(Math.abs(c1.h - c2.h), 360 - Math.abs(c1.h - c2.h)) / 180;
     const ds = (c1.s - c2.s) / 100;
     const dl = (c1.l - c2.l) / 100;
     return Math.sqrt(dh * dh + ds * ds + dl * dl);
 }
 
-function convertirHexEnRgb(hex) {
+// Converts a color in hexadecimal format to RGB
+function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) {
         hex = hex.split('').map(c => c + c).join('');
@@ -82,7 +85,8 @@ function convertirHexEnRgb(hex) {
     };
 }
 
-function convertirRgbEnHsl({ r, g, b }) {
+// Converts a color in RGB format to HSL
+function rgbToHsl({ r, g, b }) {
     r /= 255; g /= 255; b /= 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
     let h = 0, s = 0, l = (max + min) / 2;
@@ -101,4 +105,4 @@ function convertirRgbEnHsl({ r, g, b }) {
     return { h, s: s * 100, l: l * 100 };
 }
 
-export { couleurPaletteProche };
+export { closestPaletteColor };

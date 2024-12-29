@@ -35,7 +35,7 @@ function toggleNav() {
 
 async function fetchSalles() {
     try {
-        let response = await fetch("/api/salles");
+        let response = await fetch("/api/rooms");
         let salles = await response.json();
         afficherSalles(salles, "edt");
 
@@ -61,23 +61,23 @@ async function afficherSalles(salles, containerHTML) {
         };
 
         let p = document.createElement("p");
-        p.textContent = salle.alias != "" ? `${salle.alias.toUpperCase()} ` : `${salle.nom.toUpperCase()} `;
+        p.textContent = salle.alias != "" ? `${salle.alias.toUpperCase()} ` : `${salle.name.toUpperCase()} `;
 
         let span = document.createElement("span");
         span.className = "bat";
-        span.textContent = salle.batiment;
+        span.textContent = salle.building;
 
         let badgesDiv = document.createElement("div");
         badgesDiv.className = "badges";
 
-        salle.caracteristiques.forEach((caracteristique) => {
+        salle.features.forEach((caracteristique) => {
             let img = document.createElement("img");
             img.src = `../assets/${caracteristique}.svg`;
             img.alt = caracteristique;
             badgesDiv.appendChild(img);
         });
         let pingDiv = document.createElement("div");
-        pingDiv.className = salle.disponible ? "ping blue" : "ping red";
+        pingDiv.className = salle.available ? "ping blue" : "ping red";
 
         // Assembler les éléments
         p.appendChild(span);
@@ -155,7 +155,7 @@ async function searchAvailable() {
         }
     }
 
-    let caracteristiques = '&carac=';
+    let caracteristiques = '&features=';
     caracteristiquesTags.forEach((tag) => {
         if (tag.querySelector('p').textContent.startsWith('VISIO')) {
             caracteristiques += 'visio-';
@@ -168,7 +168,7 @@ async function searchAvailable() {
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/salles/disponibles?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${type}${caracteristiques}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
+        const url = `/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}${type}${caracteristiques}&seats=${seatsSlider.value}&whiteboards=${whiteBoardSlider.value}&blackboards=${blackBoardSlider.value}`;
         response = await fetch(url);
         salles = await response.json();
     } catch (error) {

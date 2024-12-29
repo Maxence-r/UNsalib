@@ -6,11 +6,11 @@ import { hash } from 'bcrypt';
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import getGroups from "./src/backend/background/getGroups.js";
-import sallesApi from "./src/backend/routes/api/salles.js";
+import sallesApi from "./src/backend/routes/api/rooms.js";
 import adminApi from "./src/backend/routes/api/admin.js";
 import appInfosApi from "./src/backend/routes/api/app.js";
 import adminDashboard from "./src/backend/routes/admin.js";
-import authentification from "./src/backend/middlewares/auth.js";
+import authentication from "./src/backend/middlewares/auth.js";
 import stats from "./src/backend/middlewares/stats.js";
 import root from "./src/backend/routes/root.js";
 
@@ -24,9 +24,9 @@ app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
 
 // API ROUTES
-app.use(authentification);
+app.use(authentication);
 app.use(stats);
-app.use("/api/salles", sallesApi);
+app.use("/api/rooms", sallesApi);
 app.use("/api/admin", adminApi);
 app.use("/api/app", appInfosApi);
 

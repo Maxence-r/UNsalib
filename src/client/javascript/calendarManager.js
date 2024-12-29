@@ -77,7 +77,7 @@ async function afficherSalle(salle, delta) {
     toggleLoading()
 
     const response = await fetch(
-        `/api/salles/edt/?id=${salle.id}&increment=${newIncrement}`
+        `/api/rooms/timetable/?id=${salle.id}&increment=${newIncrement}`
     );
 
     if (!response.ok) {
@@ -87,9 +87,9 @@ async function afficherSalle(salle, delta) {
         return;
     }
 
-    document.getElementById("room-name").innerText = salle?.alias || salle.nom;
-    document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.nom;
-    document.querySelector('.avaibility-box .ping').className = salle.disponible ? "ping blue" : "ping red";
+    document.getElementById("room-name").innerText = salle?.alias || salle.name;
+    document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.name;
+    document.querySelector('.avaibility-box .ping').className = salle.available ? "ping blue" : "ping red";
     document.querySelector('.avaibility-box .ping').style.display = "block";
 
     document.querySelectorAll(".course").forEach((el) => el.remove());
@@ -100,23 +100,23 @@ async function afficherSalle(salle, delta) {
     increment =  newIncrement;
     currentSalle = salle;
 
-    const startDate = salleData.infos_semaine.debut.split("-")[2];
+    const startDate = salleData.weekInfos.start.split("-")[2];
 
     document.querySelectorAll(".day").forEach((el, i = 0) => {
         el.innerText = " " + (parseInt(startDate) + i);
         i++;
     });
 
-    document.querySelector(".week-number").innerText = salleData.infos_semaine.numero;
+    document.querySelector(".week-number").innerText = salleData.weekInfos.number;
 
     if (currentWeekNumber == "--") {
-        currentWeekNumber = salleData.infos_semaine.numero;
+        currentWeekNumber = salleData.weekInfos.number;
         console.log("ok")
     }
     setHourIndicator();
 
-    salleData.cours.forEach((coursData) => {
-        const courseStart = new Date(coursData.debut);
+    salleData.courses.forEach((coursData) => {
+        const courseStart = new Date(coursData.start);
         const column = courseStart.getDay() - 1;
         if (column > 4) return;
 
@@ -130,15 +130,15 @@ async function afficherSalle(salle, delta) {
         };
 
         course_module.innerText = coursData?.module.split(" - ")[1] || "Module inconnu";
-        course_prof.innerText = coursData.professeur;
+        course_prof.innerText = coursData.teacher;
 
         course_content.appendChild(course_module);
         course_content.appendChild(course_prof);
 
         course_content.style.top = `${coursData.overflow}%`;
-        course_content.style.backgroundColor = coursData.couleur;
+        course_content.style.backgroundColor = coursData.color;
        
-        course_content.style.height = `calc(${coursData.duree}% - 16px + ${(coursData.duree > 100 ? Math.floor(coursData.duree / 100) * 2 : 0)}px)`;
+        course_content.style.height = `calc(${coursData.duration}% - 16px + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
         course_content.classList.add("course");
 
         const row = courseStart.getHours() - heureDebut;
@@ -160,19 +160,19 @@ document.querySelectorAll(".week-switcher img").forEach((el) => {
 
 
 function displayDetails(coursData) {
-    let startDate = new Date(coursData.debut);
-    let endDate = new Date(coursData.fin);
+    let startDate = new Date(coursData.start);
+    let endDate = new Date(coursData.end);
     let duree = (endDate - startDate) / 60000;
 
-    document.querySelector('.course-container').style.backgroundColor = coursData.couleur;
+    document.querySelector('.course-container').style.backgroundColor = coursData.color;
     document.querySelector('.course-container > p').innerText = coursData.module.split(" - ")[1];
 
-    document.getElementById('teacher-name').innerText = coursData.professeur;
+    document.getElementById('teacher-name').innerText = coursData.teacher;
     document.getElementById('module').innerText = coursData.module.split(" - ")[0];
     document.getElementById('duration').innerText = duree + " minutes";
 
     document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
     document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
 
-    document.getElementById('groupes').innerText = coursData.groupe;
+    document.getElementById('groupes').innerText = coursData.group;
 }

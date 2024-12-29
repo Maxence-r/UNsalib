@@ -155,7 +155,7 @@ async function searchAvailable() {
         }
     }
 
-    let caracteristiques = '&carac=';
+    let caracteristiques = '&features=';
     caracteristiquesTags.forEach((tag) => {
         if (tag.querySelector('p').textContent.startsWith('VISIO')) {
             caracteristiques += 'visio-';
@@ -168,7 +168,7 @@ async function searchAvailable() {
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/rooms/available?debut=${encodeURIComponent(debut)}&fin=${encodeURIComponent(fin)}${type}${caracteristiques}&places=${seatsSlider.value}&blancs=${whiteBoardSlider.value}&noirs=${blackBoardSlider.value}`;
+        const url = `/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}${type}${caracteristiques}&seats=${seatsSlider.value}&whiteboards=${whiteBoardSlider.value}&blackboards=${blackBoardSlider.value}`;
         response = await fetch(url);
         salles = await response.json();
     } catch (error) {

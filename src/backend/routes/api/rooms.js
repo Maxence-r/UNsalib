@@ -68,13 +68,13 @@ router.get('/', async (req, res) => {
 
 router.get('/available', async (req, res) => {
     // Retrieving query parameters
-    const start = req.query.debut;
-    const end = req.query.fin;
-    const seats = req.query.places ? req.query.places : 0;
-    let whiteBoards = req.query.blancs ? req.query.blancs : 0;
-    let blackBoards = req.query.noirs ? req.query.noirs : 0;
+    const start = req.query.start;
+    const end = req.query.end;
+    const seats = req.query.seats ? req.query.seats : 0;
+    let whiteBoards = req.query.whiteboards ? req.query.whiteboards : 0;
+    let blackBoards = req.query.blackboards ? req.query.blackboards : 0;
     let type = req.query.type;
-    let features = req.query.carac;
+    let features = req.query.features;
 
     // Checking that all the required parameters are present
     if (!start || !end) {

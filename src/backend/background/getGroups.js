@@ -1,10 +1,13 @@
 import  Groupe from '../models/groupe.js';
 import { parse } from 'node-html-parser';
-import { getCourses } from './getCourses.js';
+import getCourses from './getCourses.js';
 import 'dotenv/config'
 
-const TIMETABLES_URL = 'https://edt-v2.univ-nantes.fr/sciences/educational_groups';
+// CONSTANTS
+// The URL to get the timetable page
+const TIMETABLE_URL = 'https://edt-v2.univ-nantes.fr/sciences/educational_groups';
 
+// Gets the HTML from an URL
 async function getHTML(url) {
     try {
         const response = await fetch(url);
@@ -16,21 +19,32 @@ async function getHTML(url) {
     }
 }
 
+// Main
 async function getGroups() {
+    // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately
     if (process.env.FORCER_RECUP_GPES === 'false') {
         console.log('Récupération des groupes DÉSACTIVÉE');
         return getCourses();
     }
     console.log('Récupération des groupes ACTIVÉE - Démarrage du processus...');
+
+    // Deleting all the stored groups
     await Groupe.deleteMany({});
-    const page = await getHTML(TIMETABLES_URL);
+
+    // Getting the timetable HTML page
+    const page = await getHTML(TIMETABLE_URL);
+
     if (page !== -1) {
+        // Parsing the HTML to extract the groups checkboxes with their ids
         const docRoot = parse(page);
         const groupsInputs = docRoot.querySelectorAll('#desktopGroupForm #educational_groups input');
+
         for (const input of groupsInputs) {
-            // Gets the id of each checkbox that contains the timetable id
+            // Getting the id of each checkbox
             const group = input.id.replace('desktop-timetable-', '');
             const exists = await Groupe.exists({ identifiant: group });
+
+            // If the group is not in the database, store it
             if (!exists) {
                 const groupObj = new Groupe({
                     identifiant: group,

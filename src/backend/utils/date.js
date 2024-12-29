@@ -1,8 +1,10 @@
+// Checks whether a date is in the format 'yyyy-MM-ddTHH:mm:ss+HH:mm'
 function isValidDate(date) {
     const regex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
     return regex.test(date);
 }
 
+// Returns the start date, end date and number of a week
 function getWeekInfos(weekNumber) {
     let year = new Date().getFullYear();
     if (weekNumber > 52) {
@@ -37,6 +39,7 @@ function getWeekInfos(weekNumber) {
     return { start: mondayISO, end: saturdayISO, number: weekNumber };
 }
 
+// Returns the number of the current week
 function getWeeksNumber() {
     const currentDate = new Date();
     const startDate = new Date(currentDate.getFullYear(), 0, 1); // start date of the year (1st January)
@@ -59,12 +62,14 @@ function getWeeksNumber() {
     return weekNumber;
 }
 
+// Calculates the overflow in percentage of the course for display on the client
 function getMinutesOverflow(date) {
     const minutes = date.getMinutes();
     const overflowPercentage = (minutes / 60) * 100;
     return overflowPercentage;
 }
 
+// Checks if two dates are equal
 function isSameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&

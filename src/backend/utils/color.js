@@ -1,3 +1,4 @@
+// CONSTANTS
 const HSL_PALETTE = [
     { h: 168.8, s: 76.1, l: 50.0 }, // #1abc9c
     { h: 145.0, s: 63.7, l: 47.1 }, // #2ecc71
@@ -44,6 +45,7 @@ const HEX_PALETTE = [
     "#7f8c8d"
 ];
 
+// Finds the nearest color in the palette provided
 function closestPaletteColor(hexColor) {
     const hslColor = rgbToHsl(hexToRgb(hexColor));
 
@@ -61,6 +63,7 @@ function closestPaletteColor(hexColor) {
     return HEX_PALETTE[closestIndex];
 }
 
+// Calculates the distance between 2 colors
 function colorsDistance(c1, c2) {
     const dh = Math.min(Math.abs(c1.h - c2.h), 360 - Math.abs(c1.h - c2.h)) / 180;
     const ds = (c1.s - c2.s) / 100;
@@ -68,6 +71,7 @@ function colorsDistance(c1, c2) {
     return Math.sqrt(dh * dh + ds * ds + dl * dl);
 }
 
+// Converts a color in hexadecimal format to RGB
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) {
@@ -81,6 +85,7 @@ function hexToRgb(hex) {
     };
 }
 
+// Converts a color in RGB format to HSL
 function rgbToHsl({ r, g, b }) {
     r /= 255; g /= 255; b /= 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);

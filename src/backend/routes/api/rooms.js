@@ -205,18 +205,18 @@ router.get('/timetable', async (req, res) => {
                 start.setDate(start.getDate() + i);
                 start.setHours(8, 0, 0, 0);
                 const end = new Date(start);
-                end.setHours(8, 0, 0, 0);
+                end.setHours(18, 0, 0, 0);
 
                 vacationCourses.push({
                     courseId: `vacances-${i}`,
                     start: start.toISOString(),
                     end: end.toISOString(),
-                    duration: 900,
+                    duration: 1000,
                     overflow: 0,
                     roomId: id,
                     teacher: 'Monsieur Chill',
                     module: 'Détente - Vacances',
-                    group: 'Tout le monde',
+                    group: ['Tout le monde'],
                     color: '#FF7675',
                 });
             }

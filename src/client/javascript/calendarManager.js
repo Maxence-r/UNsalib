@@ -129,7 +129,7 @@ async function afficherSalle(salle, delta) {
             displayDetails(coursData);
         };
 
-        course_module.innerText = coursData?.module.split(" - ")[1] || "Module inconnu";
+        course_module.innerText = coursData?.module.split(" - ")[1] || "Cours inconnu";
         course_prof.innerText = coursData.teacher;
 
         course_content.appendChild(course_module);
@@ -165,14 +165,19 @@ function displayDetails(coursData) {
     let duree = (endDate - startDate) / 60000;
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
-    document.querySelector('.course-container > p').innerText = coursData.module.split(" - ")[1];
+    document.querySelector('.course-container > p').innerText = coursData?.module.split(" - ")[1] || 'Cours inconnu';
 
     document.getElementById('teacher-name').innerText = coursData.teacher;
-    document.getElementById('module').innerText = coursData.module.split(" - ")[0];
-    document.getElementById('duration').innerText = duree + " minutes";
+    document.getElementById('module').innerText = coursData.module.split(" - ")[0] == 'Non renseigné' ? 'Inconnu' : coursData.module.split(" - ")[0];
 
+    let hours = Math.floor(duree / 60);
+    let minutes = duree - hours * 60;
+    hours = hours > 0 ? hours + 'h' : '';
+    minutes = minutes > 0 ? minutes + 'min' : '';
+    minutes = hours == '' && minutes == '' ? '0min' : minutes;
+
+    document.getElementById('duration').innerText = hours + minutes;
     document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
     document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
-
-    document.getElementById('groupes').innerText = coursData.group;
+    document.getElementById('groupes').innerText = coursData.group.join(', ');
 }

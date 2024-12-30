@@ -137,7 +137,7 @@ async function initApp() {
     });
 
     mobileMenu.addEventListener('click', function (event) {
-        if (!mobileMenu.querySelector('#mobile-menu-window').contains(event.target)) {
+        if (!document.querySelector('#mobile-window').contains(event.target)) {
             mobileMenu.classList.remove('opened');
         }
     });

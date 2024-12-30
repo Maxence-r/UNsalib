@@ -136,7 +136,7 @@ textarea {
     color: var(--on-neutral-color);
     font-weight: 600;
     min-height: 50px;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-sharp);
     background-color: var(--neutral-color);
     border: none;
     outline: none;
@@ -163,7 +163,7 @@ textarea {
 
 .button {
     height: 40px;
-    border-radius: calc(var(--border-radius) - 2px);
+    border-radius: calc(var(--border-radius-sharp));
     background-color: var(--accent-color);
     cursor: pointer;
     border: none;
@@ -270,6 +270,10 @@ main.ready {
     display: flex;
     flex-direction: column;
     gap: var(--extra-large-space);
+    padding: var(--extra-large-space);
+    background-color: var(--surface-color);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
 }
 
 .container#room-booking-editor,
@@ -423,23 +427,6 @@ main.ready {
     width: 50px;
 }
 
-#book-room-popup {
-    z-index: 3;
-    position: fixed;
-    width: 100vw;
-    background-color: var(--scrim-color);
-    height: 100%;
-    top: 0px;
-    left: calc(-100vw);
-    opacity: 0;
-    transition: opacity var(--animation-duration);
-}
-
-#book-room-popup.opened {
-    left: 0px;
-    opacity: 1;
-}
-
 #popup-window {
     box-shadow: var(--box-shadow);
     position: absolute;
@@ -472,10 +459,6 @@ main.ready {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-}
-
-#book-room-popup.opened #popup-window {
-    transform: translateY(0px);
 }
 
 .no-result {
@@ -579,7 +562,7 @@ main.ready {
     display: inline-block;
 }
 
-#mobile-menu {
+#mobile-scrim {
     z-index: 998;
     position: fixed;
     width: 100vw;
@@ -587,13 +570,17 @@ main.ready {
     height: 100%;
     top: 0px;
     left: calc(0px - 100%);
+    opacity: 0;
+    transition: opacity var(--animation-duration);
 }
 
-#mobile-menu.opened {
+#mobile-menu.opened #mobile-scrim {
     left: 0px;
+    opacity: 1;
+    transition: opacity var(--animation-duration);
 }
 
-#mobile-menu-window {
+#mobile-window {
     box-sizing: border-box;
     position: fixed;
     height: 100%;
@@ -609,35 +596,35 @@ main.ready {
     color: var(--on-surface-color);
 }
 
-#mobile-menu.opened #mobile-menu-window {
+#mobile-menu.opened #mobile-window {
     left: 0px;
 }
 
-#mobile-menu-window>div {
+#mobile-window>div {
     display: flex;
     flex-direction: column;
     gap: var(--large-space);
 }
 
-#mobile-menu-window .navlink {
+#mobile-window .navlink {
     width: auto;
     justify-content: left;
 }
 
-#mobile-menu-window .branding {
+#mobile-window .branding {
     margin-bottom: calc(var(--extra-large-space) + var(--extra-large-space));
 }
 
-#mobile-menu-window .branding>h2 {
+#mobile-window .branding>h2 {
     color: var(--neutral-color-dark);
     text-transform: uppercase;
 }
 
-#mobile-menu-window .button {
+#mobile-window .button {
     width: auto;
 }
 
-#mobile-menu-window .account-infos {
+#mobile-window .account-infos {
     flex-direction: row;
 }
 
@@ -849,6 +836,12 @@ main#loading {
 
     #navbar .branding button {
         display: block;
+    }
+
+    .rooms-list {
+        background-color: var(--background-color);
+        box-shadow: none;
+        border-radius: 0px;
     }
 
     .room-item.selected {

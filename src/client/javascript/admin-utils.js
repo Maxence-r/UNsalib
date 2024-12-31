@@ -10,7 +10,7 @@ function showToast(msg, error = false) {
     toast.classList.add('displayed');
     setTimeout(() => {
         toast.classList.remove('displayed');
-    }, 4000);
+    }, 3000);
 }
 
 function chooseColor(colorList, pickedColors) {

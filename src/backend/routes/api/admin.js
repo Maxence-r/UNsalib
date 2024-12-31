@@ -1,5 +1,5 @@
 import express from 'express';
-import Salle from '../../models/salle.js';
+import Salle from '../../models/room.js';
 import Account from '../../models/account.js';
 import Course from '../../models/course.js';
 import Stats from '../../models/stats.js';

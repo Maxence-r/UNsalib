@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import Salle from '../../models/salle.js';
-import Cours from '../../models/cours.js';
+import Salle from '../../models/room.js';
+import Cours from '../../models/course.js';
 import mongoose from 'mongoose';
 import {
     isValidDate,

@@ -1,6 +1,6 @@
-import Groupe from '../models/groupe.js';
-import Cours from '../models/cours.js';
-import Salle from '../models/salle.js';
+import Group from '../models/group.js';
+import Course from '../models/course.js';
+import Room from '../models/room.js';
 import 'dotenv/config';
 import { closestPaletteColor } from '../utils/color.js';
 import io from '../../../server.js';
@@ -27,7 +27,7 @@ function getRequestDates(increment) {
 // Processes a room to add it to the database if it not already exists
 async function processRoom(roomName) {
     // Checking if the room name is valid
-    if (!roomName) return null;
+    if (!roomName) return;
 
     // Formatting the room and building names
     const formattedRoom = roomName.includes('(')
@@ -38,14 +38,14 @@ async function processRoom(roomName) {
         : roomName;
 
     // Trying to find the room in the database
-    let room = await Salle.findOne({ nom_salle: formattedRoom });
+    let room = await Room.findOne({ name: formattedRoom });
 
-    // if the room does not exist, create a new record
+    // If the room does not exist, create a new record
     if (!room) {
-        room = new Salle({
-            nom_salle: formattedRoom,
-            batiment: formattedBuilding,
-            places_assises: 0,
+        room = new Room({
+            name: formattedRoom,
+            seats: 0,
+            building: formattedBuilding
         });
         await room.save();
         console.log(`\r\x1b[KNouvelle salle ajoutée : ${formattedRoom} (${formattedBuilding})`);
@@ -55,37 +55,95 @@ async function processRoom(roomName) {
 }
 
 // Processes a course to add it to the database if it not already exists
-async function processCourse(courseData) {
-    // Getting rooms and then the main room
-    const rooms = courseData.rooms_for_blocks.split(';');
-    const mainRoom = await processRoom(rooms[0]);
-
+async function processCourse(courseData, currentGroupName) {
     // Checking if data is valid
-    if (!courseData.start_at || !courseData.end_at || !courseData.rooms_for_blocks || !mainRoom._id) {
+    if (!courseData.start_at || !courseData.end_at || !courseData.id || !courseData.celcat_id || !courseData.rooms_for_blocks) {
+        // console.warn(
+        //     'Le cours suivant a été ignoré :\n-', 
+        //     courseData.modules_for_blocks, '\n-',
+        //     courseData.educational_groups_for_blocks, '\n-',
+        //     courseData.start_at, '\n-',
+        //     courseData.end_at
+        // );
         return;
     }
 
+    // Getting rooms and then the main room
+    let rooms = [''], teachers = [''], modules = [''];
+    try {
+        rooms = courseData.rooms_for_blocks.split(';');
+        rooms = await Promise.all(rooms.map(async (roomName) => {
+            roomName = roomName.trim();
+            const roomId = await processRoom(roomName);
+            return roomId._id;
+        }));
+    } catch {}
+    try {
+        teachers = courseData.teachers_for_blocks.split(';').map((teacher) => teacher.trim());
+    } catch {}
+    try {
+        modules = courseData.modules_for_blocks.split(';').map((module) => module.trim());
+    } catch {}
+
     // Checking if the course already exists in the database
-    const courseExists = await Cours.exists({
-        classe: mainRoom?._id,
-        debute_a: courseData.start_at,
-        fini_a: courseData.end_at,
-    });
-    if (courseExists) return;
-
-    // If the course doesn't exists, create it the database
-    const newCourse = new Cours({
-        identifiant: courseData.id,
-        debute_a: courseData.start_at,
-        fini_a: courseData.end_at,
-        professeur: courseData.teachers_for_blocks || 'Non renseigné',
-        classe: mainRoom?._id,
-        module: courseData.modules_for_blocks || 'Non renseigné',
-        groupe: courseData.educational_groups_for_blocks.split(';').map((item) => item.trim()) || 'Non renseigné',
-        couleur: closestPaletteColor(courseData.color) || '#FF7675',
+    const existingCourse = await Course.findOne({
+        start: courseData.start_at,
+        end: courseData.end_at,
+        teachers: { $all: teachers },
+        rooms: { $all: rooms },
+        modules: { $all: modules}
     });
 
-    await newCourse.save();
+    const currentGroup = await Group.findOne({ name: currentGroupName });
+
+    if (!existingCourse) {
+        // If the course doesn't exists, create it the database
+        const newCourse = new Course({
+            univId: courseData.id,
+            celcatId: courseData.celcat_id,
+            category: courseData.categories || '',
+            start: courseData.start_at,
+            end: courseData.end_at,
+            notes: courseData.notes || '',
+            color: closestPaletteColor(courseData.color) || '#FF7675',
+            rooms: rooms,
+            teachers: teachers,
+            groups: [currentGroup._id],
+            modules: modules
+        });
+        await newCourse.save();
+    } else {
+        await Course.findOneAndUpdate({ _id: existingCourse._id }, { $push: { groups: currentGroup._id }});
+    }
+}
+
+async function deleteCoursesForGroup(start, end, groupName) {
+    const group = await Group.findOne({ name: groupName });
+
+    let courses = await Course.find({
+        start: { $gte: start + 'T00:00:00+01:00' },
+        end: { $lte: end + 'T23:59:59+01:00' },
+        groups: group._id
+    });
+
+    if (!courses) return;
+
+    courses = courses.map((course) => {
+        let groups = course.groups;
+        groups.pop(groups.indexOf(groupName))
+        return {
+            id: course._id,
+            groups: groups
+        }
+    });
+
+    await courses.forEach(async (course) => {
+        if (!course.groups) {
+            await Course.findOneAndUpdate({ _id: course.id }, { $set: { groups: course.groups }});
+        } else {
+            await Course.deleteOne({ _id: course.id });
+        }
+    });
 }
 
 // Retrieves courses for a group
@@ -93,25 +151,28 @@ async function fetchCourses(group) {
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
-    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.nom} du ${dates.start} au ${dates.end}`);
+    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
 
     // Building request URL
-    const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.identifiant}`;
+    const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
 
     try {
         // Getting data from the Nantes Université timetable API
         const response = await fetch(requestUrl);
         const jsonData = await response.json();
 
+        // Deleting old records
+        await deleteCoursesForGroup(dates.start, dates.end, group.name);
+
         // Processing each course
         for (const course of jsonData) {
-            await processCourse(course);
+            await processCourse(course, group.name);
         }
 
         // Sending an update message to all clients
-        io.emit('groupUpdated', { message: `Groupe ${group.nom} mis à jour` });
+        io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
     } catch (error) {
-        console.error(`Erreur pour le groupe ${group.nom} (id : ${group.identifiant}, url : ${requestUrl}) :`, error);
+        console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
     }
 }
 
@@ -124,7 +185,7 @@ async function processBatchGroups(groups) {
 
 // Main
 async function getCourses() {
-    const groups = await Groupe.find();
+    const groups = await Group.find();
 
     // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
     if (process.env.FORCER_TRAITEMENT_GPES === 'true') {
@@ -166,7 +227,7 @@ async function getCourses() {
     };
 
     // Starting the update process
-    console.log('Démarrage du cycle de mise à jour...');
+    console.log('\nDémarrage du cycle de mise à jour...');
     console.log(`${groupsNumber} groupes seront traités toutes les ${CYCLE_INTERVAL / 1000 / 60 / 60}h`);
     console.log(`Intervalle entre chaque groupe : ${intervalBetweenGroups / 1000} secondes`);
     startUpdateCycle();

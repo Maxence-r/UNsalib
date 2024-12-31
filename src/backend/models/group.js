@@ -1,7 +1,7 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const GroupSchema = Schema({
-    id: {
+    univId: {
         type: String,
         required: true
     },

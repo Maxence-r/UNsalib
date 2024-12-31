@@ -42,12 +42,12 @@ async function getGroups() {
         for (const input of groupsInputs) {
             // Getting the id of each checkbox
             const group = input.id.replace('desktop-timetable-', '');
-            const exists = await Group.exists({ id: group });
+            const exists = await Group.exists({ univId: group });
 
             // If the group is not in the database, store it
             if (!exists) {
                 const groupObj = new Group({
-                    id: group,
+                    univId: group,
                     name: input.nextElementSibling.textContent.trim()
                 });
                 await groupObj.save();

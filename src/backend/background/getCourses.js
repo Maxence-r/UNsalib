@@ -79,7 +79,7 @@ async function processCourse(courseData) {
         debute_a: courseData.start_at,
         fini_a: courseData.end_at,
         professeur: courseData.teachers_for_blocks || 'Non renseigné',
-        classe: mainRoom?._id || 'Non renseigné',
+        classe: mainRoom?._id,
         module: courseData.modules_for_blocks || 'Non renseigné',
         groupe: courseData.educational_groups_for_blocks.split(';').map((item) => item.trim()) || 'Non renseigné',
         couleur: closestPaletteColor(courseData.color) || '#FF7675',

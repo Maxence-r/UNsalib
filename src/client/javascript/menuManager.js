@@ -156,11 +156,14 @@ async function searchAvailable() {
     }
 
     let caracteristiques = '&features=';
+    let noBadge = '&nobadge='
     caracteristiquesTags.forEach((tag) => {
         if (tag.querySelector('p').textContent.startsWith('VISIO')) {
             caracteristiques += 'visio-';
         } else if (tag.querySelector('p').textContent.startsWith('IL')) {
             caracteristiques += 'ilot-';
+        } else if (tag.querySelector('p').textContent.startsWith('ACC')) {
+            noBadge += 'true';
         }
     });
     caracteristiques = caracteristiques[caracteristiques.length - 1] == '-' ? caracteristiques.substring(0, caracteristiques.length - 1) : caracteristiques;
@@ -168,7 +171,7 @@ async function searchAvailable() {
     // Construct URL
     let salles, response;
     try {
-        const url = `/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}${type}${caracteristiques}&seats=${seatsSlider.value}&whiteboards=${whiteBoardSlider.value}&blackboards=${blackBoardSlider.value}`;
+        const url = `/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}${type}${caracteristiques}${noBadge}&seats=${seatsSlider.value}&whiteboards=${whiteBoardSlider.value}&blackboards=${blackBoardSlider.value}`;
         response = await fetch(url);
         salles = await response.json();
     } catch (error) {

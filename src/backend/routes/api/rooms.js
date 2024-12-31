@@ -75,6 +75,7 @@ router.get('/available', async (req, res) => {
     let blackBoards = req.query.blackboards ? req.query.blackboards : 0;
     let type = req.query.type;
     let features = req.query.features;
+    const noBadge = req.query.nobadge == 'true' ? true : false;
 
     // Checking that all the required parameters are present
     if (!start || !end) {
@@ -131,6 +132,7 @@ router.get('/available', async (req, res) => {
             features = features.split('-');
             features.forEach((feature) => attributes.push({ caracteristiques: feature }));
         }
+        if (noBadge) attributes.push({ caracteristiques: { $ne: 'badge' } });
         if (type) {
             if (type === 'info') {
                 attributes.push({ type: 'INFO' });

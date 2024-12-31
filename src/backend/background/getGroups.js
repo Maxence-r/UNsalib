@@ -1,4 +1,4 @@
-import Groups from '../models/groups.js';
+import Group from '../models/group.js';
 import { parse } from 'node-html-parser';
 import getCourses from './getCourses.js';
 import 'dotenv/config'
@@ -29,7 +29,7 @@ async function getGroups() {
     console.log('Récupération des groupes ACTIVÉE - Démarrage du processus...');
 
     // Deleting all the stored groups
-    await Groups.deleteMany({});
+    await Group.deleteMany({});
 
     // Getting the timetable HTML page
     const page = await getHTML(TIMETABLE_URL);
@@ -42,7 +42,7 @@ async function getGroups() {
         for (const input of groupsInputs) {
             // Getting the id of each checkbox
             const group = input.id.replace('desktop-timetable-', '');
-            const exists = await Groups.exists({ univId: group });
+            const exists = await Group.exists({ univId: group });
 
             // If the group is not in the database, store it
             if (!exists) {

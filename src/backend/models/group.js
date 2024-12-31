@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const GroupsSchema = Schema({
+const GroupSchema = Schema({
     univId: {
         type: String,
         required: true
@@ -12,5 +12,5 @@ const GroupsSchema = Schema({
 });
 
 
-const Groups = model('Groups', GroupsSchema);
-export default Groups;
+const Group = model('Group', GroupSchema);
+export default Group;

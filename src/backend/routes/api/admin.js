@@ -1,7 +1,7 @@
 import express from 'express';
 import Salle from '../../models/salle.js';
 import Account from '../../models/account.js';
-import Cours from '../../models/cours.js';
+import Course from '../../models/course.js';
 import Stats from '../../models/stats.js';
 import mongoose from 'mongoose';
 import pkg from 'jsonwebtoken';
@@ -199,7 +199,7 @@ router.post('/add-course', async (req, res) => {
         }
 
         // Creating the new course
-        const newCourse = new Cours({
+        const newCourse = new Course({
             identifiant: 'unsalib-' + new Date().toISOString(),
             debute_a: startAt,
             fini_a: endAt,

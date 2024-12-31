@@ -1,4 +1,4 @@
-import Group from '../models/group.js';
+import Group from '../models/groups.js';
 import { parse } from 'node-html-parser';
 import getCourses from './getCourses.js';
 import 'dotenv/config'

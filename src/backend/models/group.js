@@ -1,16 +1,16 @@
 import { Schema, model } from "mongoose";
 
-const GroupeSchema = Schema({
-    identifiant: {
+const GroupSchema = Schema({
+    id: {
         type: String,
         required: true
     },
-    nom: {
+    name: {
         type: String,
         required: true
     }
 });
 
 
-const Groupe = model('Groupe', GroupeSchema);
-export default Groupe;
+const Group = model('Group', GroupSchema);
+export default Group;

@@ -30,7 +30,7 @@ function setHourIndicator() {
     let minuteActuelle = dateActuelle.getMinutes();
     if (heureActuelle >= heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
         console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
-        columns[jourActuel-1].appendChild(indicatorHour);
+        columns[jourActuel - 1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
         indicator.style.display = "flex";
         let top = (100 * (heureActuelle - heureDebut)) / dureeJournee + (100 / dureeJournee) * (minuteActuelle / 60);
@@ -62,6 +62,19 @@ function getWeeksInYear() {
     const weeks = Math.ceil(diffDays / 7);
 
     return weeks;
+}
+
+function joinArrayElements(array, separator, splitter, chooseBeforeSplit=false) {
+    let string = '';
+    array.forEach((element) => {
+        if (splitter) {
+            string += element.split(splitter)[chooseBeforeSplit ? 0 : 1] + ' ' + separator + ' ';
+        } else {
+            string += element + separator + ' ';
+        }
+    });
+    string = string.substring(0, string.length - separator.length - 1);
+    return string;
 }
 
 let increment = 0;
@@ -97,7 +110,7 @@ async function afficherSalle(salle, delta) {
     const salleData = await response.json();
 
     // Update increment and currentSalle only if the request succeeds
-    increment =  newIncrement;
+    increment = newIncrement;
     currentSalle = salle;
 
     const startDate = salleData.weekInfos.start.split("-")[2];
@@ -129,15 +142,15 @@ async function afficherSalle(salle, delta) {
             displayDetails(coursData);
         };
 
-        course_module.innerText = coursData?.module.split(" - ")[1] || "Cours inconnu";
-        course_prof.innerText = coursData.teacher;
+        course_module.innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';
+        course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
 
         course_content.appendChild(course_module);
         course_content.appendChild(course_prof);
 
         course_content.style.top = `${coursData.overflow}%`;
         course_content.style.backgroundColor = coursData.color;
-       
+
         course_content.style.height = `calc(${coursData.duration}% - 16px + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
         course_content.classList.add("course");
 
@@ -165,10 +178,10 @@ function displayDetails(coursData) {
     let duree = (endDate - startDate) / 60000;
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
-    document.querySelector('.course-container > p').innerText = coursData?.module.split(" - ")[1] || 'Cours inconnu';
+    document.querySelector('.course-container > p').innerText = coursData.modules ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';;
 
-    document.getElementById('teacher-name').innerText = coursData.teacher;
-    document.getElementById('module').innerText = coursData.module.split(" - ")[0] == 'Non renseigné' ? 'Inconnu' : coursData.module.split(" - ")[0];
+    document.getElementById('teacher-name').innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : 'Non renseigné';
+    document.getElementById('module').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ', true) : 'Inconnu';
 
     let hours = Math.floor(duree / 60);
     let minutes = duree - hours * 60;
@@ -179,5 +192,5 @@ function displayDetails(coursData) {
     document.getElementById('duration').innerText = hours + minutes;
     document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
     document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
-    document.getElementById('groupes').innerText = coursData.group.join(', ');
+    document.getElementById('groupes').innerText = coursData.groups.join(' ; ');
 }

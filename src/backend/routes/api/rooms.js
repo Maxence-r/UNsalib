@@ -1,7 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import Salle from '../../models/room.js';
-import Cours from '../../models/course.js';
+import Room from '../../models/room.js';
+import Course from '../../models/course.js';
+import Group from '../../models/group.js';
 import mongoose from 'mongoose';
 import {
     isValidDate,
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
         await updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
 
         // Getting all the rooms that are not banned
-        let rooms = await Salle.find({ banned: { $ne: true } }).select(
+        let rooms = await Room.find({ banned: { $ne: true } }).select(
             '-__v -identifiant'
         );
 
@@ -29,11 +30,11 @@ router.get('/', async (req, res) => {
         const now = new Date();
         now.setHours(now.getHours() + 1); // fix server time bug
         const start = now.toISOString(), end = start;
-        let courses = await Cours.find({
-            $and: [{ debute_a: { $lt: end } }, { fini_a: { $gt: start } }],
+        let courses = await Course.find({
+            $and: [{ start: { $lt: end } }, { end: { $gt: start } }],
         });
-        let availableRooms = await Salle.find({
-            _id: { $nin: courses.map((c) => c.classe) },
+        let availableRooms = await Room.find({
+            _id: { $nin: courses.map((c) => c.rooms) },
         }).select('-__v -batiment -places_assises -nom_salle');
 
         // Creating an array with the ids of all available rooms
@@ -42,20 +43,20 @@ router.get('/', async (req, res) => {
         // Adding an 'available' key to 'rooms' elements when a room id is present in 'availableRooms'
         for (let i = 0; i < rooms.length; i++) {
             if (availableRooms.includes(rooms[i].id)) {
-                rooms[i].disponible = true;
+                rooms[i].available = true;
             } else {
-                rooms[i].disponible = false;
+                rooms[i].available = false;
             }
         }
 
         // Formatting the response
         const formattedResponse = rooms.map((doc) => ({
             id: doc._id,
-            name: doc.nom_salle,
+            name: doc.name,
             alias: doc.alias,
-            building: doc.batiment,
-            available: doc.disponible,
-            features: doc.caracteristiques,
+            building: doc.building,
+            available: doc.available,
+            features: doc.features,
         }));
 
         res.json(formattedResponse);
@@ -116,23 +117,23 @@ router.get('/available', async (req, res) => {
         // Cours           |-----------|
         // Demande     |-----------|
         //
-        let courses = await Cours.find({
+        let courses = await Course.find({
             $and: [
-                { debute_a: { $lt: end } }, // le cours commence avant la fin de la période demandée
-                { fini_a: { $gt: start } } // le cours finit après le début de la période demandée
+                { start: { $lt: end } }, // le cours commence avant la fin de la période demandée
+                { end: { $gt: start } } // le cours finit après le début de la période demandée
             ]
         });
 
         // Building the list of attributes requested for the db query
         const attributes = [];
-        attributes.push({ places_assises: { $gte: seats } });
-        attributes.push({ 'tableau.BLANC': { $gte: whiteBoards } });
-        attributes.push({ 'tableau.NOIR': { $gte: blackBoards } });
+        attributes.push({ seats: { $gte: seats } });
+        attributes.push({ 'boards.white': { $gte: whiteBoards } });
+        attributes.push({ 'boards.black': { $gte: blackBoards } });
         if (features) {
             features = features.split('-');
-            features.forEach((feature) => attributes.push({ caracteristiques: feature }));
+            features.forEach((feature) => attributes.push({ features: feature }));
         }
-        if (noBadge) attributes.push({ caracteristiques: { $ne: 'badge' } });
+        if (noBadge) attributes.push({ features: { $ne: 'badge' } });
         if (type) {
             if (type === 'info') {
                 attributes.push({ type: 'INFO' });
@@ -146,8 +147,8 @@ router.get('/available', async (req, res) => {
         }
 
         // Getting available rooms according to the attributes requested by the user
-        let availableRooms = await Salle.find({
-            _id: { $nin: courses.map((c) => c.classe) }, // free rooms are those not being used for classes
+        let availableRooms = await Room.find({
+            _id: { $nin: courses.map((c) => c.rooms) }, // free rooms are those not being used for classes
             banned: { $ne: true },
             $and: attributes
         }).select('-__v');
@@ -155,11 +156,11 @@ router.get('/available', async (req, res) => {
         // Formatting the response
         const formattedResponse = availableRooms.map((doc) => ({
             id: doc._id,
-            name: doc.nom_salle,
+            name: doc.name,
             alias: doc.alias,
-            building: doc.batiment,
+            building: doc.building,
             available: true,
-            features: doc.caracteristiques,
+            features: doc.features,
         }));
 
         res.json(formattedResponse);
@@ -216,9 +217,9 @@ router.get('/timetable', async (req, res) => {
                     duration: 900,
                     overflow: 0,
                     roomId: id,
-                    teacher: 'Monsieur Chill',
-                    module: 'Détente - Vacances',
-                    group: ['Tout le monde'],
+                    teachers: ['Monsieur Chill'],
+                    modules: ['Détente - Vacances'],
+                    groups: ['Tout le monde'],
                     color: '#FF7675',
                 });
             }
@@ -227,32 +228,37 @@ router.get('/timetable', async (req, res) => {
         }
 
         // Getting courses based on room id and given period
-        let courses = await Cours.find({
-            classe: id,
+        let courses = await Course.find({
+            rooms: id,
             $and: [
-                { debute_a: { $gte: requestedWeek.start }},
-                { fini_a: { $lte: requestedWeek.end }},
+                { start: { $gte: requestedWeek.start }},
+                { end: { $lte: requestedWeek.end }},
             ],
         }).select('-__v -identifiant');
+
+        const groups = await Group.find();
+        const parsedGroups = {};
+        groups.forEach((group) => {
+            parsedGroups[group._id] = group.name;
+        });
 
         // Formatting the response
         const formattedResponse = courses.map((doc) => {
             // Getting duration in ms, convert to h and then to percentage
-            const duration = ((new Date(doc.fini_a).valueOf() - new Date(doc.debute_a).valueOf()) / 1000 / 60 / 60) * 100;
-
+            const duration = ((new Date(doc.end).valueOf() - new Date(doc.start).valueOf()) / 1000 / 60 / 60) * 100;
             // Getting the overflow as a percentage
-            const overflow = getMinutesOverflow(new Date(doc.debute_a));
+            const overflow = getMinutesOverflow(new Date(doc.start));
             return {
                 courseId: doc._id,
-                start: doc.debute_a,
-                end: doc.fini_a,
+                start: doc.start,
+                end: doc.end,
                 duration: duration,
                 overflow: overflow,
-                roomId: doc.classe,
-                teacher: doc.professeur,
-                module: doc.module,
-                group: doc.groupe,
-                color: doc.couleur,
+                roomId: doc.rooms,
+                teachers: doc.teachers,
+                modules: doc.modules,
+                groups: doc.groups.map((group) => parsedGroups[group]),
+                color: doc.color
             };
         });
 

@@ -69,7 +69,7 @@ async function processCourse(courseData, currentGroupName) {
     }
 
     // Getting rooms and then the main room
-    let rooms = [''], teachers = [''], modules = [''];
+    let rooms = [], teachers = [], modules = [];
     try {
         rooms = courseData.rooms_for_blocks.split(';');
         rooms = await Promise.all(rooms.map(async (roomName) => {

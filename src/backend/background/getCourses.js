@@ -189,11 +189,10 @@ async function processGroupCourses(univData, dbData, groupInfos) {
 
 // Retrieves courses for a group
 async function fetchCourses(group) {
-    const startTime = new Date(); 
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
-    process.stdout.write(`Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
+    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
 
     // Building request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
@@ -216,8 +215,6 @@ async function fetchCourses(group) {
 
         // Sending an update message to all clients
         io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
-
-        process.stdout.write(`\rRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end} (${(new Date() - startTime) / 1000}s)\n`);
     } catch (error) {
         console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
     }

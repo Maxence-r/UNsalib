@@ -142,7 +142,13 @@ async function afficherSalle(salle, delta) {
             displayDetails(coursData);
         };
 
-        course_module.innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';
+        if (coursData.modules.length > 0) {
+            course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ');
+        } else if (coursData.category) {
+            course_module.innerText = coursData.category;
+        } else {
+            course_module.innerText = 'Cours inconnu';
+        }
         course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
 
         course_content.appendChild(course_module);
@@ -178,7 +184,7 @@ function displayDetails(coursData) {
     let duree = (endDate - startDate) / 60000;
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
-    document.querySelector('.course-container > p').innerText = coursData.modules ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';;
+    document.querySelector('.course-container > p').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';
 
     document.getElementById('teacher-name').innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : 'Non renseigné';
     document.getElementById('module').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ', true) : 'Inconnu';

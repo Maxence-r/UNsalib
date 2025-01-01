@@ -68,35 +68,35 @@ async function processCourse(courseData, currentGroupName) {
         return;
     }
 
-    // Getting rooms and then the main room
-    let rooms = [], teachers = [], modules = [];
-    try {
-        rooms = courseData.rooms_for_blocks.split(';');
-        rooms = await Promise.all(rooms.map(async (roomName) => {
-            roomName = roomName.trim();
-            const roomId = await processRoom(roomName);
-            return roomId._id;
-        }));
-    } catch {}
-    try {
+    // Getting rooms and then the main room    
+    let rooms = courseData.rooms_for_blocks.split(';');
+    rooms = await Promise.all(rooms.map(async (roomName) => {
+        roomName = roomName.trim();
+        const roomId = await processRoom(roomName);
+        return roomId._id;
+    }));
+
+    let teachers = [], modules = [];
+    if (!courseData.teachers_for_blocks) {
         teachers = courseData.teachers_for_blocks.split(';').map((teacher) => teacher.trim());
-    } catch {}
-    try {
+    }
+    if (!courseData.modules_for_blocks) {
         modules = courseData.modules_for_blocks.split(';').map((module) => module.trim());
-    } catch {}
+    }
 
     // Checking if the course already exists in the database
     const existingCourse = await Course.findOne({
+        univId: courseData.id,
         start: courseData.start_at,
         end: courseData.end_at,
-        teachers: { $all: teachers },
-        rooms: { $all: rooms },
-        modules: { $all: modules}
+        // teachers: { $all: teachers },
+        // rooms: { $all: rooms },
+        // modules: { $all: modules}
     });
 
     const currentGroup = await Group.findOne({ name: currentGroupName });
 
-    if (!existingCourse) {
+    if (existingCourse === null || existingCourse === undefined) {
         // If the course doesn't exists, create it the database
         const newCourse = new Course({
             univId: courseData.id,
@@ -181,10 +181,23 @@ async function processBatchGroups(groups) {
     for (const group of groups) {
         await fetchCourses(group);
     }
+    // for (let i = 300; i < groups.length; i++) {
+    //     await fetchCourses(groups[i]);        
+    // }
 }
 
 // Main
 async function getCourses() {
+
+    // const test = await Course.aggregate([
+    //     {"$group" : { "_id": "$univId", "count": { "$sum": 1 } } },
+    //     {"$match": {"_id" :{ "$ne" : null } , "count" : {"$gt": 1} } }, 
+    //     {"$project": {"univId" : "$_id", "_id" : 0} }
+    // ]);
+
+    // console.log(test.length)
+    // return;
+
     const groups = await Group.find();
 
     // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately

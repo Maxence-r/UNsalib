@@ -184,7 +184,13 @@ function displayDetails(coursData) {
     let duree = (endDate - startDate) / 60000;
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
-    document.querySelector('.course-container > p').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ') : 'Cours inconnu';
+    if (coursData.modules.length > 0) {
+        document.querySelector('.course-container > p').innerText = joinArrayElements(coursData.modules, ';', ' - ');
+    } else if (coursData.category) {
+        document.querySelector('.course-container > p').innerText = coursData.category;
+    } else {
+        document.querySelector('.course-container > p').innerText = 'Cours inconnu';
+    }
 
     document.getElementById('teacher-name').innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : 'Non renseigné';
     document.getElementById('module').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ', true) : 'Inconnu';

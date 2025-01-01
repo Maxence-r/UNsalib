@@ -64,7 +64,7 @@ function getWeeksInYear() {
     return weeks;
 }
 
-function joinArrayElements(array, separator, splitter, chooseBeforeSplit=false) {
+function joinArrayElements(array, separator, splitter, chooseBeforeSplit = false) {
     let string = '';
     array.forEach((element) => {
         if (splitter) {
@@ -75,6 +75,40 @@ function joinArrayElements(array, separator, splitter, chooseBeforeSplit=false) 
     });
     string = string.substring(0, string.length - separator.length - 1);
     return string;
+}
+
+function areCoursesOverlapping(course1, course2) {
+    const start1 = new Date(course1.start);
+    const end1 = new Date(course1.end);
+    const start2 = new Date(course2.start);
+    const end2 = new Date(course2.end);
+
+    return (start1 <= end2 && start2 <= end1);
+}
+
+function groupOverlappingCourses(coursesArray) {
+    const groupedCourses = [];
+    const visited = new Set();
+
+    for (let i = 0; i < coursesArray.length; i++) {
+        if (visited.has(coursesArray[i].courseId)) continue;
+
+        const overlappingGroup = [coursesArray[i]];
+        visited.add(coursesArray[i].courseId);
+
+        for (let j = i + 1; j < coursesArray.length; j++) {
+            if (visited.has(coursesArray[j].courseId)) continue;
+
+            if (areCoursesOverlapping(coursesArray[i], coursesArray[j])) {
+                overlappingGroup.push(coursesArray[j]);
+                visited.add(coursesArray[j].courseId);
+            }
+        }
+
+        groupedCourses.push(overlappingGroup);
+    }
+
+    return groupedCourses;
 }
 
 let increment = 0;
@@ -124,47 +158,51 @@ async function afficherSalle(salle, delta) {
 
     if (currentWeekNumber == "--") {
         currentWeekNumber = salleData.weekInfos.number;
-        console.log("ok")
     }
     setHourIndicator();
 
-    salleData.courses.forEach((coursData) => {
-        const courseStart = new Date(coursData.start);
-        const column = courseStart.getDay() - 1;
-        if (column > 4) return;
+    const parsedCourses = groupOverlappingCourses(salleData.courses);
+    parsedCourses.forEach((coursesArray) => {
+        coursesArray.forEach((coursData, index) => {
+            const courseStart = new Date(coursData.start);
+            const column = courseStart.getDay() - 1;
+            if (column > 4) return;
 
-        const course_content = document.createElement("div");
-        const course_module = document.createElement("h2");
-        const course_prof = document.createElement("p");
+            const course_content = document.createElement("div");
+            const course_module = document.createElement("h2");
+            const course_prof = document.createElement("p");
 
-        course_content.onclick = () => {
-            openModal("course-details");
-            displayDetails(coursData);
-        };
+            course_content.onclick = () => {
+                openModal("course-details");
+                displayDetails(coursData);
+            };
 
-        if (coursData.modules.length > 0) {
-            course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ');
-        } else if (coursData.category) {
-            course_module.innerText = coursData.category;
-        } else {
-            course_module.innerText = 'Cours inconnu';
-        }
-        course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
+            if (coursData.modules.length > 0) {
+                course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ');
+            } else if (coursData.category) {
+                course_module.innerText = coursData.category;
+            } else {
+                course_module.innerText = 'Cours inconnu';
+            }
+            course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
 
-        course_content.appendChild(course_module);
-        course_content.appendChild(course_prof);
+            course_content.appendChild(course_module);
+            course_content.appendChild(course_prof);
 
-        course_content.style.top = `${coursData.overflow}%`;
-        course_content.style.backgroundColor = coursData.color;
+            course_content.style.top = `${coursData.overflow}%`;
+            course_content.style.backgroundColor = coursData.color;
 
-        course_content.style.height = `calc(${coursData.duration}% - 16px + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
-        course_content.classList.add("course");
+            course_content.style.height = `calc(${coursData.duration}% + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
+            course_content.style.width = `${100 / coursesArray.length}%`;
+            course_content.style.left = `${100 - (100 / coursesArray.length) * (coursesArray.length - index)}%`;
+            course_content.classList.add("course");
 
-        const row = courseStart.getHours() - heureDebut;
+            const row = courseStart.getHours() - heureDebut;
 
-        columns[column]
-            .querySelectorAll(".content-box")[row]
-            .appendChild(course_content);
+            columns[column]
+                .querySelectorAll(".content-box")[row]
+                .appendChild(course_content);
+        });
     });
     toggleLoading("disable");
 }

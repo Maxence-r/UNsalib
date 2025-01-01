@@ -113,7 +113,14 @@ async function processCourse(courseData, currentGroupName) {
         });
         await newCourse.save();
     } else {
-        await Course.findOneAndUpdate({ _id: existingCourse._id }, { $push: { groups: currentGroup._id }});
+        await Course.findOneAndUpdate({ _id: existingCourse._id }, {
+            category: courseData.categories || '',
+            notes: courseData.notes || '',
+            color: closestPaletteColor(courseData.color) || '#FF7675',
+            teachers: teachers,
+            modules: modules,
+            $push: { groups: currentGroup._id }
+        });
     }
 }
 

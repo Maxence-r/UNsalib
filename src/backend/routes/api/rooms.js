@@ -171,6 +171,25 @@ router.get('/available', async (req, res) => {
     }
 });
 
+function mergeCourses(coursesArray) {
+    const uniqueCourses = [];
+    const seen = new Map();
+
+    coursesArray.forEach((course) => {
+        course = course.toObject();
+        const identifier = `${course.start}-${course.end}`;
+        if (seen.has(identifier)) {
+            const existingCourse = seen.get(identifier);
+            existingCourse.groups = [...new Set([...existingCourse.groups, ...course.groups])];
+        } else {
+            seen.set(identifier, { ...course });
+            uniqueCourses.push(seen.get(identifier));
+        }
+    });
+
+    return uniqueCourses;
+}
+
 router.get('/timetable', async (req, res) => {
     // Retrieving query parameters
     const id = req.query.id;
@@ -202,7 +221,7 @@ router.get('/timetable', async (req, res) => {
         if (VACATIONS.includes(requestedWeek.number)) {
             const vacationCourses = [];
             const startDate = new Date(requestedWeek.start);
-            
+
             for (let i = 0; i < 5; i++) {
                 const start = new Date(startDate);
                 start.setDate(start.getDate() + i);
@@ -231,10 +250,12 @@ router.get('/timetable', async (req, res) => {
         let courses = await Course.find({
             rooms: id,
             $and: [
-                { start: { $gte: requestedWeek.start }},
-                { end: { $lte: requestedWeek.end }},
+                { start: { $gte: requestedWeek.start } },
+                { end: { $lte: requestedWeek.end } },
             ],
         }).select('-__v -identifiant');
+
+        courses = mergeCourses(courses);
 
         const groups = await Group.find();
         const parsedGroups = {};

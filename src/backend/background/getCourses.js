@@ -77,10 +77,10 @@ async function processCourse(courseData, currentGroupName) {
     }));
 
     let teachers = [], modules = [];
-    if (!courseData.teachers_for_blocks) {
+    if (courseData.teachers_for_blocks && courseData.teachers_for_blocks != '') {
         teachers = courseData.teachers_for_blocks.split(';').map((teacher) => teacher.trim());
     }
-    if (!courseData.modules_for_blocks) {
+    if (courseData.modules_for_blocks && courseData.modules_for_blocks != '') {
         modules = courseData.modules_for_blocks.split(';').map((module) => module.trim());
     }
 
@@ -178,12 +178,12 @@ async function fetchCourses(group) {
 
 // Processes a batch of groups
 async function processBatchGroups(groups) {
-    for (const group of groups) {
-        await fetchCourses(group);
-    }
-    // for (let i = 300; i < groups.length; i++) {
-    //     await fetchCourses(groups[i]);        
+    // for (const group of groups) {
+    //     await fetchCourses(group);
     // }
+    for (let i = 255; i < groups.length; i++) {
+        await fetchCourses(groups[i]);
+    }
 }
 
 // Main

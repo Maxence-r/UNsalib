@@ -33,8 +33,14 @@ router.get('/', async (req, res) => {
         let courses = await Course.find({
             $and: [{ start: { $lt: end } }, { end: { $gt: start } }],
         });
+        const busyRoomsIds = {};
+        courses.forEach((course) => {
+            course.rooms.forEach((room) => {
+                busyRoomsIds[room] = undefined;
+            });
+        });
         let availableRooms = await Room.find({
-            _id: { $nin: courses.map((c) => c.rooms) },
+            _id: { $nin: Object.keys(busyRoomsIds) },
         }).select('-__v -batiment -places_assises -nom_salle');
 
         // Creating an array with the ids of all available rooms

@@ -1146,7 +1146,9 @@ button {
     font-size: 14px;
     font-weight: 600;
     color: #000000;
-    word-break: break-all;
+    max-height: 20vh;
+    overflow-y: auto;
+    word-break: break-word;
 }
 
 

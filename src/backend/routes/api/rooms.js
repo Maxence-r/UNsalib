@@ -152,9 +152,17 @@ router.get('/available', async (req, res) => {
             }
         }
 
+        // Getting all busy rooms ids from the courses array
+        const busyRoomsIds = {};
+        courses.forEach((course) => {
+            course.rooms.forEach((room) => {
+                busyRoomsIds[room] = undefined;
+            });
+        });
+
         // Getting available rooms according to the attributes requested by the user
         let availableRooms = await Room.find({
-            _id: { $nin: courses.map((c) => c.rooms) }, // free rooms are those not being used for classes
+            _id: { $nin: Object.keys(busyRoomsIds) }, // free rooms are those not being used for classes
             banned: { $ne: true },
             $and: attributes
         }).select('-__v');
@@ -244,6 +252,7 @@ router.get('/timetable', async (req, res) => {
             ],
         }).select('-__v -identifiant');
 
+        // Getting all busy rooms ids from the courses array
         const groups = await Group.find();
         const parsedGroups = {};
         groups.forEach((group) => {

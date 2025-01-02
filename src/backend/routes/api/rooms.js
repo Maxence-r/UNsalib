@@ -177,25 +177,6 @@ router.get('/available', async (req, res) => {
     }
 });
 
-function mergeCourses(coursesArray) {
-    const uniqueCourses = [];
-    const seen = new Map();
-
-    coursesArray.forEach((course) => {
-        course = course.toObject();
-        const identifier = `${course.start}-${course.end}`;
-        if (seen.has(identifier)) {
-            const existingCourse = seen.get(identifier);
-            existingCourse.groups = [...new Set([...existingCourse.groups, ...course.groups])];
-        } else {
-            seen.set(identifier, { ...course });
-            uniqueCourses.push(seen.get(identifier));
-        }
-    });
-
-    return uniqueCourses;
-}
-
 router.get('/timetable', async (req, res) => {
     // Retrieving query parameters
     const id = req.query.id;
@@ -262,8 +243,6 @@ router.get('/timetable', async (req, res) => {
                 { end: { $lte: requestedWeek.end } },
             ],
         }).select('-__v -identifiant');
-
-        courses = mergeCourses(courses);
 
         const groups = await Group.find();
         const parsedGroups = {};

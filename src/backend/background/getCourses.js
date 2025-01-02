@@ -234,24 +234,10 @@ async function processBatchGroups(groups) {
     for (const group of groups) {
         await fetchCourses(group);
     }
-    // for (let i = 300; i < groups.length; i++) {
-    //     await fetchCourses(groups[i]);
-    // }
 }
 
 // Main
 async function getCourses() {
-
-    // const test = await Course.aggregate([
-    //     {"$group" : { "_id": "$univId", "count": { "$sum": 1 } } },
-    //     {"$match": {"_id" :{ "$ne" : null } , "count" : {"$gt": 1} } }, 
-    //     {"$project": {"univId" : "$_id", "_id" : 0} }
-    // ]);
-
-    // console.log(test.length)
-    // test();
-    // return;
-
     const groups = await Group.find();
 
     // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately

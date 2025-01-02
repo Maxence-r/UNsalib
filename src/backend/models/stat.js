@@ -1,40 +1,40 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
-const StatsSchema = Schema({
+const StatSchema = Schema({
     date: {
         type: String,
         required: true
     },
-    room_requests: {
+    roomRequests: {
         type: Number,
         required: true,
         default: 0
     },
-    rooms_list_requests: {
+    roomsListRequests: {
         type: Number,
         required: true,
         default: 0
     },
-    available_rooms_requests: {
+    availableRoomsRequests: {
         type: Number,
         required: true,
         default: 0
     },
-    internal_errors: {
+    internalErrors: {
         type: Number,
         required: true,
         default: 0
     },
-    user_id: {
+    userId: {
         type: String,
         required: true
     },
-    user_agent: {
+    userAgent: {
         type: String,
         required: true,
-        default: ""
+        default: ''
     },
 });
 
-const Stats = model("Stats", StatsSchema);
-export default Stats;
+const Stat = model('Stat', StatSchema);
+export default Stat;

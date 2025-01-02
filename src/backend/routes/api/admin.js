@@ -186,7 +186,7 @@ router.post('/add-course', async (req, res) => {
 
     try {
         // Getting the room
-        let room = await Salle.findOne({ _id: roomId });
+        let room = await Room.findOne({ _id: roomId });
 
         // The room doesn't exist
         if (!room) {
@@ -195,14 +195,14 @@ router.post('/add-course', async (req, res) => {
 
         // Creating the new course
         const newCourse = new Course({
-            identifiant: 'unsalib-' + new Date().toISOString(),
-            debute_a: startAt,
-            fini_a: endAt,
-            professeur: 'Non renseigné',
-            classe: roomId,
-            module: 'Module - ' + courseName,
-            groupe: 'Non renseigné',
-            couleur: '#e74c3c',
+            univId: 'unsalib-' + new Date().toISOString(),
+            celcatId: 'unsalib-' + new Date().toISOString(),
+            start: startAt,
+            end: endAt,
+            teachers: [],
+            rooms: [roomId],
+            modules: ['UNsalib - ' + courseName],
+            groups: []
         });
         await newCourse.save();
 

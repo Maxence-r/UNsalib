@@ -178,7 +178,7 @@ async function afficherSalle(salle, delta) {
             };
 
             if (coursData.modules.length > 0) {
-                course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ');
+                course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(coursData.modules, ';', ' - '); ;
             } else if (coursData.category) {
                 course_module.innerText = coursData.category;
             } else {
@@ -223,7 +223,7 @@ function displayDetails(coursData) {
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
     if (coursData.modules.length > 0) {
-        document.querySelector('.course-container > p').innerText = joinArrayElements(coursData.modules, ';', ' - ');
+        document.querySelector('.course-container > p').innerText = joinArrayElements(coursData.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(coursData.modules, ';', ' - ');
     } else if (coursData.category) {
         document.querySelector('.course-container > p').innerText = coursData.category;
     } else {
@@ -242,5 +242,5 @@ function displayDetails(coursData) {
     document.getElementById('duration').innerText = hours + minutes;
     document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
     document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
-    document.getElementById('groupes').innerText = coursData.groups.join(' ; ');
+    document.getElementById('groupes').innerText = coursData.groups.join(' ; ') == '' ? 'Non renseigné' : coursData.groups.join(' ; ');
 }

@@ -770,6 +770,7 @@ button {
     background-color: #e17055;
     padding: 8px;
     border-radius: 2px;
+    box-sizing: border-box;
 }
 
 
@@ -1145,7 +1146,9 @@ button {
     font-size: 14px;
     font-weight: 600;
     color: #000000;
-    word-break: break-all;
+    max-height: 20vh;
+    overflow-y: auto;
+    word-break: break-word;
 }
 
 

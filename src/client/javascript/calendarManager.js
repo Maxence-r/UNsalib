@@ -30,7 +30,7 @@ function setHourIndicator() {
     let minuteActuelle = dateActuelle.getMinutes();
     if (heureActuelle >= heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
         console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
-        columns[jourActuel-1].appendChild(indicatorHour);
+        columns[jourActuel - 1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
         indicator.style.display = "flex";
         let top = (100 * (heureActuelle - heureDebut)) / dureeJournee + (100 / dureeJournee) * (minuteActuelle / 60);
@@ -62,6 +62,53 @@ function getWeeksInYear() {
     const weeks = Math.ceil(diffDays / 7);
 
     return weeks;
+}
+
+function joinArrayElements(array, separator, splitter, chooseBeforeSplit = false) {
+    let string = '';
+    array.forEach((element) => {
+        if (splitter) {
+            string += element.split(splitter)[chooseBeforeSplit ? 0 : 1] + ' ' + separator + ' ';
+        } else {
+            string += element + separator + ' ';
+        }
+    });
+    string = string.substring(0, string.length - separator.length - 1);
+    return string;
+}
+
+function areCoursesOverlapping(course1, course2) {
+    const start1 = new Date(course1.start);
+    const end1 = new Date(course1.end);
+    const start2 = new Date(course2.start);
+    const end2 = new Date(course2.end);
+
+    return (start1 <= end2 && start2 <= end1);
+}
+
+function groupOverlappingCourses(coursesArray) {
+    const groupedCourses = [];
+    const visited = new Set();
+
+    for (let i = 0; i < coursesArray.length; i++) {
+        if (visited.has(coursesArray[i].courseId)) continue;
+
+        const overlappingGroup = [coursesArray[i]];
+        visited.add(coursesArray[i].courseId);
+
+        for (let j = i + 1; j < coursesArray.length; j++) {
+            if (visited.has(coursesArray[j].courseId)) continue;
+
+            if (areCoursesOverlapping(coursesArray[i], coursesArray[j])) {
+                overlappingGroup.push(coursesArray[j]);
+                visited.add(coursesArray[j].courseId);
+            }
+        }
+
+        groupedCourses.push(overlappingGroup);
+    }
+
+    return groupedCourses;
 }
 
 let increment = 0;
@@ -97,7 +144,7 @@ async function afficherSalle(salle, delta) {
     const salleData = await response.json();
 
     // Update increment and currentSalle only if the request succeeds
-    increment =  newIncrement;
+    increment = newIncrement;
     currentSalle = salle;
 
     const startDate = salleData.weekInfos.start.split("-")[2];
@@ -111,41 +158,51 @@ async function afficherSalle(salle, delta) {
 
     if (currentWeekNumber == "--") {
         currentWeekNumber = salleData.weekInfos.number;
-        console.log("ok")
     }
     setHourIndicator();
 
-    salleData.courses.forEach((coursData) => {
-        const courseStart = new Date(coursData.start);
-        const column = courseStart.getDay() - 1;
-        if (column > 4) return;
+    const parsedCourses = groupOverlappingCourses(salleData.courses);
+    parsedCourses.forEach((coursesArray) => {
+        coursesArray.forEach((coursData, index) => {
+            const courseStart = new Date(coursData.start);
+            const column = courseStart.getDay() - 1;
+            if (column > 4) return;
 
-        const course_content = document.createElement("div");
-        const course_module = document.createElement("h2");
-        const course_prof = document.createElement("p");
+            const course_content = document.createElement("div");
+            const course_module = document.createElement("h2");
+            const course_prof = document.createElement("p");
 
-        course_content.onclick = () => {
-            openModal("course-details");
-            displayDetails(coursData);
-        };
+            course_content.onclick = () => {
+                openModal("course-details");
+                displayDetails(coursData);
+            };
 
-        course_module.innerText = coursData?.module.split(" - ")[1] || "Cours inconnu";
-        course_prof.innerText = coursData.teacher;
+            if (coursData.modules.length > 0) {
+                course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(coursData.modules, ';', ' - '); ;
+            } else if (coursData.category) {
+                course_module.innerText = coursData.category;
+            } else {
+                course_module.innerText = 'Cours inconnu';
+            }
+            course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
 
-        course_content.appendChild(course_module);
-        course_content.appendChild(course_prof);
+            course_content.appendChild(course_module);
+            course_content.appendChild(course_prof);
 
-        course_content.style.top = `${coursData.overflow}%`;
-        course_content.style.backgroundColor = coursData.color;
-       
-        course_content.style.height = `calc(${coursData.duration}% - 16px + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
-        course_content.classList.add("course");
+            course_content.style.top = `${coursData.overflow}%`;
+            course_content.style.backgroundColor = coursData.color;
 
-        const row = courseStart.getHours() - heureDebut;
+            course_content.style.height = `calc(${coursData.duration}% + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
+            course_content.style.width = `${100 / coursesArray.length}%`;
+            course_content.style.left = `${100 - (100 / coursesArray.length) * (coursesArray.length - index)}%`;
+            course_content.classList.add("course");
 
-        columns[column]
-            .querySelectorAll(".content-box")[row]
-            .appendChild(course_content);
+            const row = courseStart.getHours() - heureDebut;
+
+            columns[column]
+                .querySelectorAll(".content-box")[row]
+                .appendChild(course_content);
+        });
     });
     toggleLoading("disable");
 }
@@ -165,10 +222,16 @@ function displayDetails(coursData) {
     let duree = (endDate - startDate) / 60000;
 
     document.querySelector('.course-container').style.backgroundColor = coursData.color;
-    document.querySelector('.course-container > p').innerText = coursData?.module.split(" - ")[1] || 'Cours inconnu';
+    if (coursData.modules.length > 0) {
+        document.querySelector('.course-container > p').innerText = joinArrayElements(coursData.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(coursData.modules, ';', ' - ');
+    } else if (coursData.category) {
+        document.querySelector('.course-container > p').innerText = coursData.category;
+    } else {
+        document.querySelector('.course-container > p').innerText = 'Cours inconnu';
+    }
 
-    document.getElementById('teacher-name').innerText = coursData.teacher;
-    document.getElementById('module').innerText = coursData.module.split(" - ")[0] == 'Non renseigné' ? 'Inconnu' : coursData.module.split(" - ")[0];
+    document.getElementById('teacher-name').innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : 'Non renseigné';
+    document.getElementById('module').innerText = coursData.modules.length > 0 ? joinArrayElements(coursData.modules, ';', ' - ', true) : 'Inconnu';
 
     let hours = Math.floor(duree / 60);
     let minutes = duree - hours * 60;
@@ -179,5 +242,5 @@ function displayDetails(coursData) {
     document.getElementById('duration').innerText = hours + minutes;
     document.querySelector('.course-start').innerText = startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes());
     document.querySelector('.course-end').innerText = endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes());
-    document.getElementById('groupes').innerText = coursData.group.join(', ');
+    document.getElementById('groupes').innerText = coursData.groups.join(' ; ') == '' ? 'Non renseigné' : coursData.groups.join(' ; ');
 }

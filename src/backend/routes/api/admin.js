@@ -1,8 +1,8 @@
 import express from 'express';
-import Salle from '../../models/salle.js';
+import Room from '../../models/room.js';
 import Account from '../../models/account.js';
-import Cours from '../../models/cours.js';
-import Stats from '../../models/stats.js';
+import Course from '../../models/course.js';
+import Stat from '../../models/stat.js';
 import mongoose from 'mongoose';
 import pkg from 'jsonwebtoken';
 import { compare } from 'bcrypt';
@@ -61,15 +61,13 @@ router.get('/rooms', async (req, res) => {
 
     try {
         // Getting all the rooms
-        let rooms = await Salle.find({}).select(
-            '-__v -identifiant'
-        );
+        let rooms = await Room.find({});
 
         // Formatting the response
         const formattedResponse = rooms.map((doc) => ({
             id: doc._id,
-            name: doc.nom_salle,
-            building: doc.batiment,
+            name: doc.name,
+            building: doc.building,
             banned: doc.banned,
             type: doc.type
         }));
@@ -99,22 +97,19 @@ router.get('/room', async (req, res) => {
 
     try {
         // Getting the room
-        let room = await Salle.findOne({ _id: id }).select(
-            '-__v -identifiant'
-        );
+        let room = await Room.findOne({ _id: id });
 
         // Formatting the response
         room = {
             id: room._id,
-            name: room.nom_salle,
+            name: room.name,
             alias: room.alias,
-            seats: room.places_assises,
-            building: room.batiment,
-            board: room.tableau,
+            seats: room.seats,
+            building: room.building,
+            boards: room.boards,
             type: room.type,
-            features: room.caracteristiques,
-            banned: room.banned,
-            type: room.type
+            features: room.features,
+            banned: room.banned
         };
 
         res.status(200).json(room);
@@ -139,7 +134,7 @@ router.post('/update-room', async (req, res) => {
 
     try {
         // Updating the room
-        const success = await Salle.findOneAndUpdate({ _id: roomId }, { $set: data }, { new: true });
+        const success = await Room.findOneAndUpdate({ _id: roomId }, { $set: data }, { new: true });
         if (!success) {
             return res.status(400).json({ error: 'UNKNOWN_ROOM' });
         }
@@ -191,7 +186,7 @@ router.post('/add-course', async (req, res) => {
 
     try {
         // Getting the room
-        let room = await Salle.findOne({ _id: roomId });
+        let room = await Room.findOne({ _id: roomId });
 
         // The room doesn't exist
         if (!room) {
@@ -199,15 +194,15 @@ router.post('/add-course', async (req, res) => {
         }
 
         // Creating the new course
-        const newCourse = new Cours({
-            identifiant: 'unsalib-' + new Date().toISOString(),
-            debute_a: startAt,
-            fini_a: endAt,
-            professeur: 'Non renseigné',
-            classe: roomId,
-            module: 'Module - ' + courseName,
-            groupe: 'Non renseigné',
-            couleur: '#e74c3c',
+        const newCourse = new Course({
+            univId: 'unsalib-' + new Date().toISOString(),
+            celcatId: 'unsalib-' + new Date().toISOString(),
+            start: startAt,
+            end: endAt,
+            teachers: [],
+            rooms: [roomId],
+            modules: ['UNsalib - ' + courseName],
+            groups: []
         });
         await newCourse.save();
 
@@ -233,9 +228,7 @@ router.get('/stats', async (req, res) => {
 
     try {
         // Getting statistics for the requested month
-        const stats = await Stats.find({ date: { $regex: `^${year}-${month}` } }).select(
-            '-__v -_id -user_id'
-        );
+        const stats = await Stat.find({ date: { $regex: `^${year}-${month.length == 1 ? '0' + month : month}` } });
 
         // Processing query stats to produce an array with stats for each day in the month
         let daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
@@ -250,22 +243,22 @@ router.get('/stats', async (req, res) => {
             internalErrors = 0;
             uniqueVisitors = 0;
             stats.forEach((userStats) => {
-                if (userStats.date.endsWith(`${month}-${day}`)) {
+                if (userStats.date.endsWith(`${month.length == 1 ? '0' + month : month}-${day.toString().length == 1 ? '0' + day : day}`)) {
                     statsForDate++;
-                    availableRoomsRequests += userStats.available_rooms_requests;
-                    roomRequests += userStats.room_requests;
-                    roomsListRequests += userStats.rooms_list_requests;
-                    internalErrors += userStats.internal_errors;
+                    availableRoomsRequests += userStats.availableRoomsRequests;
+                    roomRequests += userStats.roomRequests;
+                    roomsListRequests += userStats.roomsListRequests;
+                    internalErrors += userStats.internalErrors;
                     uniqueVisitors++;
                 }
             });
             processedStats.push({
-                date: `2024-12-${day < 10 ? '0' + day : day}`,
-                available_rooms_requests: statsForDate > 0 ? availableRoomsRequests : 0,
-                room_requests: statsForDate > 0 ? roomRequests : 0,
-                rooms_list_requests: statsForDate > 0 ? roomsListRequests : 0,
-                internal_errors: statsForDate > 0 ? internalErrors : 0,
-                unique_visitors: statsForDate > 0 ? uniqueVisitors : 0
+                date: `${year}-${month.length == 1 ? '0' + month : month}-${day < 10 ? '0' + day : day}`,
+                availableRoomsRequests: statsForDate > 0 ? availableRoomsRequests : 0,
+                roomRequests: statsForDate > 0 ? roomRequests : 0,
+                roomsListRequests: statsForDate > 0 ? roomsListRequests : 0,
+                internalErrors: statsForDate > 0 ? internalErrors : 0,
+                uniqueVisitors: statsForDate > 0 ? uniqueVisitors : 0
             });
         });
         // Sorting query stats
@@ -274,16 +267,15 @@ router.get('/stats', async (req, res) => {
         // Processing user-agent stats to produce objects with the number of each device
         const OS = {};
         const browsers = {};
-        stats.forEach(userStats => {
-            let OSName = new UAParser(userStats.user_agent).getOS().name;
-            let browserName = new UAParser(userStats.user_agent).getBrowser().name;
-            OSName = !OSName ? 'Inconnu' : OSName;
-            browserName = !browserName ? 'Inconnu' : browserName;
+        stats.forEach((userStats) => {
+            const parsedUserAgent = new UAParser(userStats.userAgent);
+            const OSName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
+            const browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
             OS[OSName] = Object.keys(OS).includes(OSName) ? OS[OSName] + 1 : 1;
             browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
         });
 
-        res.status(200).json({ daily_stats: processedStats, monthly_stats: { os: OS, browsers: browsers } });
+        res.status(200).json({ dailyStats: processedStats, monthlyStats: { os: OS, browsers: browsers } });
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);

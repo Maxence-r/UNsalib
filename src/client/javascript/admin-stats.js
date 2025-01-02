@@ -124,59 +124,59 @@ async function getStats() {
 
     let roomRequestsCount = 0, roomsListRequestsCount = 0, availableRoomsRequestsCount = 0, internalErrorsCount = 0, uniqueVisitorsCount = 0;
     
-    data.daily_stats.forEach(day => {
-        roomRequestsCount += day.room_requests;
-        roomsListRequestsCount += day.rooms_list_requests;
-        availableRoomsRequestsCount += day.available_rooms_requests;
-        internalErrorsCount += day.internal_errors;
-        uniqueVisitorsCount += day.unique_visitors;
+    data.dailyStats.forEach(day => {
+        roomRequestsCount += day.roomRequests;
+        roomsListRequestsCount += day.roomsListRequests;
+        availableRoomsRequestsCount += day.availableRoomsRequests;
+        internalErrorsCount += day.internalErrors;
+        uniqueVisitorsCount += day.uniqueVisitors;
     });
 
     roomRequestsSection.querySelector('span').textContent = roomRequestsCount;
     roomsListRequestsSection.querySelector('span').textContent = roomsListRequestsCount;
     availableRoomsRequestsSection.querySelector('span').textContent = availableRoomsRequestsCount;
     internalErrorsSection.querySelector('span').textContent = internalErrorsCount;
-    uniqueVisitorsSection.querySelector('span').textContent = Math.round(uniqueVisitorsCount / data.daily_stats.length * 100) / 100 + '/jour';
+    uniqueVisitorsSection.querySelector('span').textContent = Math.round(uniqueVisitorsCount / data.dailyStats.length * 100) / 100 + '/jour';
 
-    const roomRequestsDataset = data.daily_stats.map((item) => ({
+    const roomRequestsDataset = data.dailyStats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.room_requests
+        value: item.roomRequests
     }));
     drawBarChart(roomRequestsSection.querySelector('.chart'), roomRequestsDataset);
 
-    const roomsListRequestsDataset = data.daily_stats.map((item) => ({
+    const roomsListRequestsDataset = data.dailyStats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.rooms_list_requests
+        value: item.roomsListRequests
     }));
     drawBarChart(roomsListRequestsSection.querySelector('.chart'), roomsListRequestsDataset);
 
-    const availableRoomsRequestsDataset = data.daily_stats.map((item) => ({
+    const availableRoomsRequestsDataset = data.dailyStats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.available_rooms_requests
+        value: item.availableRoomsRequests
     }));
     drawBarChart(availableRoomsRequestsSection.querySelector('.chart'), availableRoomsRequestsDataset);
 
-    const uniqueVisitorsDataset = data.daily_stats.map((item) => ({
+    const uniqueVisitorsDataset = data.dailyStats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.unique_visitors
+        value: item.uniqueVisitors
     }));
     drawBarChart(uniqueVisitorsSection.querySelector('.chart'), uniqueVisitorsDataset);
 
-    const internalErrorsDataset = data.daily_stats.map((item) => ({
+    const internalErrorsDataset = data.dailyStats.map((item) => ({
         legend: new Date(item.date).getDate() > 9 ? new Date(item.date).getDate() : '0' + new Date(item.date).getDate(),
-        value: item.internal_errors
+        value: item.internalErrors
     }));
     drawBarChart(internalErrorsSection.querySelector('.chart'), internalErrorsDataset);
 
-    const clientOSDataset = Object.keys(data.monthly_stats.os).map((item) => ({
+    const clientOSDataset = Object.keys(data.monthlyStats.os).map((item) => ({
         legend: item,
-        value: data.monthly_stats.os[item]
+        value: data.monthlyStats.os[item]
     }));
     drawPieChart(clientOSSection.querySelector('.chart.pie-chart'), clientOSDataset);
 
-    const clientBrowsersDataset = Object.keys(data.monthly_stats.browsers).map((item) => ({
+    const clientBrowsersDataset = Object.keys(data.monthlyStats.browsers).map((item) => ({
         legend: item,
-        value: data.monthly_stats.browsers[item]
+        value: data.monthlyStats.browsers[item]
     }));
     drawPieChart(clientBrowsersSection.querySelector('.chart.pie-chart'), clientBrowsersDataset);
 }

@@ -63,13 +63,13 @@ async function getRoom(id) {
     boardsSection.querySelectorAll('input').forEach((input) => {
         input.value = 0;
     });
-    Object.keys(data.board).forEach((type) => {
-        if (type == 'BLANC') {
-            boardsSection.querySelector('input[name="blanc"]').value = data.board[type];
-        } else if (type == 'NOIR') {
-            boardsSection.querySelector('input[name="noir"]').value = data.board[type];
-        } if (type == 'ECRAN') {
-            boardsSection.querySelector('input[name="ecran"]').value = data.board[type];
+    Object.keys(data.boards).forEach((type) => {
+        if (type == 'white') {
+            boardsSection.querySelector('input[name="white"]').value = data.boards[type];
+        } else if (type == 'black') {
+            boardsSection.querySelector('input[name="black"]').value = data.boards[type];
+        } if (type == 'display') {
+            boardsSection.querySelector('input[name="display"]').value = data.boards[type];
         }
     });
     detailsSection.querySelectorAll('.chip').forEach((chip) => {
@@ -219,18 +219,18 @@ async function initRoomsManagerPage() {
     const saveBtn = roomsManagerPage.querySelector('.save-button');
     saveBtn.addEventListener('click', () => {
         const boardObj = {
-            NOIR: boardsSection.querySelector('input[name="noir"]').value,
-            BLANC: boardsSection.querySelector('input[name="blanc"]').value,
-            ECRAN: boardsSection.querySelector('input[name="ecran"]').value
+            black: boardsSection.querySelector('input[name="black"]').value,
+            white: boardsSection.querySelector('input[name="white"]').value,
+            display: boardsSection.querySelector('input[name="display"]').value
         };
         const detailsArray = [...detailsSection.querySelectorAll('.chip>span')].map((chip) => {
             return chip.textContent;
         });
         const data = {
             alias: aliasSection.value,
-            places_assises: seatsSection.value,
-            tableau: boardObj,
-            caracteristiques: detailsArray,
+            seats: seatsSection.value,
+            boards: boardObj,
+            features: detailsArray,
             banned: bannedSection.checked,
             type: typeSection.value
         }

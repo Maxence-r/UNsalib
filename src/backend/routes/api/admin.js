@@ -1,5 +1,5 @@
 import express from 'express';
-import Salle from '../../models/room.js';
+import Room from '../../models/room.js';
 import Account from '../../models/account.js';
 import Course from '../../models/course.js';
 import Stat from '../../models/stat.js';
@@ -61,15 +61,13 @@ router.get('/rooms', async (req, res) => {
 
     try {
         // Getting all the rooms
-        let rooms = await Salle.find({}).select(
-            '-__v -identifiant'
-        );
+        let rooms = await Room.find({});
 
         // Formatting the response
         const formattedResponse = rooms.map((doc) => ({
             id: doc._id,
-            name: doc.nom_salle,
-            building: doc.batiment,
+            name: doc.name,
+            building: doc.building,
             banned: doc.banned,
             type: doc.type
         }));
@@ -99,22 +97,19 @@ router.get('/room', async (req, res) => {
 
     try {
         // Getting the room
-        let room = await Salle.findOne({ _id: id }).select(
-            '-__v -identifiant'
-        );
+        let room = await Room.findOne({ _id: id });
 
         // Formatting the response
         room = {
             id: room._id,
-            name: room.nom_salle,
+            name: room.name,
             alias: room.alias,
-            seats: room.places_assises,
-            building: room.batiment,
-            board: room.tableau,
+            seats: room.seats,
+            building: room.building,
+            boards: room.boards,
             type: room.type,
-            features: room.caracteristiques,
-            banned: room.banned,
-            type: room.type
+            features: room.features,
+            banned: room.banned
         };
 
         res.status(200).json(room);
@@ -139,7 +134,7 @@ router.post('/update-room', async (req, res) => {
 
     try {
         // Updating the room
-        const success = await Salle.findOneAndUpdate({ _id: roomId }, { $set: data }, { new: true });
+        const success = await Room.findOneAndUpdate({ _id: roomId }, { $set: data }, { new: true });
         if (!success) {
             return res.status(400).json({ error: 'UNKNOWN_ROOM' });
         }

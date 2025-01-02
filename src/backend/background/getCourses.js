@@ -10,6 +10,8 @@ import io from '../../../server.js';
 const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 // Number of days to fetch for each timetable
 const DAYS_TO_RETRIEVE = 90; // 3 weeks
+// Storage of the average processing time for each group
+let averageProcessingTime = 0;
 
 // Gets the start and end dates for the request to the timetable website
 function getRequestDates(increment) {
@@ -189,10 +191,13 @@ async function processGroupCourses(univData, dbData, groupInfos) {
 
 // Retrieves courses for a group
 async function fetchCourses(group) {
+    // Saving the start date
+    const startProcessingTime = new Date();
+
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
-    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
+    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end} (moy : ${averageProcessingTime / 1000}s)`);
 
     // Building request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
@@ -215,6 +220,10 @@ async function fetchCourses(group) {
 
         // Sending an update message to all clients
         io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
+
+        // Calculating the average processing time
+        const processingTime = new Date() - startProcessingTime;
+        averageProcessingTime = averageProcessingTime == 0 ? processingTime : parseFloat('' + processingTime).toFixed(2);;
     } catch (error) {
         console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
     }

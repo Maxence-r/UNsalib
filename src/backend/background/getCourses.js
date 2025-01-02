@@ -11,7 +11,7 @@ const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 // Number of days to fetch for each timetable
 const DAYS_TO_RETRIEVE = 90; // 3 weeks
 // Storage of the average processing time for each group
-let averageProcessingTime = 0;
+let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 
 // Gets the start and end dates for the request to the timetable website
 function getRequestDates(increment) {
@@ -197,7 +197,7 @@ async function fetchCourses(group) {
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
-    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end} (moy : ${averageProcessingTime / 1000}s)`);
+    process.stdout.write(`\r\x1b[KRécupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end} (tps moy de traitement : ${parseFloat('' + ((averageProcessingTime.timeSum / averageProcessingTime.measuresNumber) / 1000)).toFixed(2)}s)`);
 
     // Building request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
@@ -221,9 +221,10 @@ async function fetchCourses(group) {
         // Sending an update message to all clients
         io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
 
-        // Calculating the average processing time
+        // Calculating the new average processing time
         const processingTime = new Date() - startProcessingTime;
-        averageProcessingTime = averageProcessingTime == 0 ? processingTime : parseFloat('' + processingTime).toFixed(2);;
+        averageProcessingTime.timeSum += processingTime;
+        averageProcessingTime.measuresNumber++;
     } catch (error) {
         console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
     }
@@ -244,6 +245,7 @@ async function getCourses() {
     if (process.env.FORCER_TRAITEMENT_GPES === 'true') {
         console.log('Traitement de tous les groupes ACTIVÉ - Démarrage du processus...');
         await processBatchGroups(groups);
+        averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
     } else {
         console.log('Traitement de tous les groupes DÉSACTIVÉ');
     }
@@ -253,7 +255,7 @@ async function getCourses() {
     const intervalBetweenGroups = Math.floor(CYCLE_INTERVAL / groupsNumber);
 
     // Function to start the update cycle
-    const startUpdateCycle = () => {
+    function startUpdateCycle() {
         let groupIndex = 0;
 
         // Function to schedule the next group to update
@@ -270,6 +272,7 @@ async function getCourses() {
                 groupIndex = 0;
                 setTimeout(() => {
                     console.log('Démarrage d\'un nouveau cycle de 12h');
+                    averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
                     scheduleNextGroup();
                 }, intervalBetweenGroups);
             }

@@ -62,9 +62,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         return await Promise.all(univData.map(async (courseData) => {
             let rooms = [], teachers = [], modules = [];
             if (courseData.rooms_for_blocks && courseData.rooms_for_blocks != '') {
-                rooms = courseData.rooms_for_blocks.split(';').map((room) => {
-                    return room.includes('(') ? room.split('(')[0].trim() : room.trim();
-                });
+                rooms = courseData.rooms_for_blocks.split(';').map((room) => room.trim());
                 rooms.sort();
             }
             if (courseData.teachers_for_blocks && courseData.teachers_for_blocks != '') {
@@ -92,7 +90,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         return await Promise.all(dbData.map(async (courseData) => {
             let rooms = await Promise.all(courseData.rooms.map(async (roomId) => {
                 const room = await Room.findOne({ _id: roomId });
-                return room.name;
+                return `${room.name} (${room.building})`;
             }));
             rooms.sort()
             let modules = courseData.modules;
@@ -127,8 +125,10 @@ async function processGroupCourses(univData, dbData, groupInfos) {
     const filteredArrays = removeCommonElements(jsonParsedUnivData, jsonParsedDBData);
     jsonParsedUnivData = filteredArrays[0], jsonParsedDBData = filteredArrays[1];
 
-    jsonParsedDBData.forEach(async (course, index) => {
-        if (course != '{}') {
+    let jsonCourse;
+    for (let index = 0; index < jsonParsedDBData.length; index++) {
+        jsonCourse = jsonParsedDBData[index];
+        if (jsonCourse != '{}') {
             if (dbData[index].groups.length > 1) {
                 let updatedCourse = dbData[index];
                 updatedCourse.groups.splice(updatedCourse.groups.indexOf(groupInfos._id.toString()), 1);
@@ -139,15 +139,15 @@ async function processGroupCourses(univData, dbData, groupInfos) {
                 await Course.deleteOne({ _id: dbData[index]._id });
             }
         }
-    });
+    }
 
     for (let index = 0; index < jsonParsedUnivData.length; index++) {
-        let course = jsonParsedUnivData[index];
-        if (course != '{}') {
-            course = JSON.parse(course);
+        jsonCourse = jsonParsedUnivData[index];
+        if (jsonCourse != '{}') {
+            let course = JSON.parse(jsonCourse);
             const courseData = univData[index];
 
-            // Checking if data is valid (ie exclude vacations with no room associated)
+            // Checking if data is valid (e.g: excludes holidays with no associated rooms)
             if (!courseData.start_at || !courseData.end_at || !courseData.id || !courseData.celcat_id || !courseData.rooms_for_blocks) continue;
 
             // Checking if the course already exists in the database
@@ -159,12 +159,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
 
             if (existingCourse === null || existingCourse === undefined) {
                 // If the course doesn't exists, create it the database
-                let rooms = courseData.rooms_for_blocks.split(';');
-                rooms = await Promise.all(rooms.map(async (roomName) => {
-                    roomName = roomName.includes('(') ? roomName.split('(')[0].trim() : roomName.trim();
-                    const roomId = await processRoom(roomName);
-                    return roomId._id;
-                }));
+                const rooms = await Promise.all(course.rooms.map(async (roomName) => (await processRoom(roomName))._id));
                 const newCourse = new Course({
                     univId: courseData.id,
                     celcatId: courseData.celcat_id,

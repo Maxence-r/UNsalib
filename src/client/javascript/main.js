@@ -110,7 +110,6 @@ if (
     if (!isFromSelect) {
         document.querySelector('.loader').style.display = 'none';
     }
-    document.querySelector(".version").innerHTML = "BETA";
 
 } else {
     document.querySelector(".version").innerHTML = "Installer";
@@ -124,6 +123,7 @@ window.addEventListener("beforeinstallprompt", (event) => {
     defferedPrompt = event;
     addbtn.style.display = "block";
 });
+
 
 addbtn.addEventListener("click", (event) => {
     if (defferedPrompt) {

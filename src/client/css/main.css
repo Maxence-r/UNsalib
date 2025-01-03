@@ -189,6 +189,20 @@ body {
     outline: 2px solid transparent;
     outline-offset: 6px;
     transition: all 0.3s;
+/*     animation: showing 0.8s ease-out;
+    animation-iteration-count: 3 */
+}
+
+@keyframes showing {
+    0% {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
+    }
+
+    100% {
+        outline: 2px solid transparent;
+        outline-offset: 8px;
+    }
 }
 
 .campus_selector:hover {
@@ -284,8 +298,8 @@ body {
     flex-direction: row;
     width: calc(100% - 16px);
     padding: 8px;
-    background-color: #E1E1E1;
-    border-radius: var(--border-radius);
+    background-color: #e2e2e2;
+    border-radius: 16px;
 }
 
 .action {
@@ -294,7 +308,7 @@ body {
     justify-content: center;
     flex: 1;
 
-    border-radius: 6px;
+    border-radius: 10px;
     height: 40px;
     cursor: pointer;
 
@@ -405,7 +419,7 @@ p.no-results {
 .tags {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -424,8 +438,8 @@ p.no-results {
 }
 
 .tag.selected {
-    background-color: #f8f8f8;
-    border: 1px solid var(--accent-color);
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 .tag>p {
@@ -560,7 +574,7 @@ button {
     position: relative;
     height: 40px;
 
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     background-color: var(--accent-color);
 
     cursor: pointer;
@@ -898,6 +912,7 @@ button {
     width: 12px;
     cursor: pointer;
 }
+
 
 .week-switcher>p {
     margin: 0;

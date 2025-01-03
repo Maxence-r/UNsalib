@@ -58,24 +58,22 @@ async function processRoom(roomName) {
 
 // Processes all the courses in a given group to perform add/remove/update operations in our database
 async function processGroupCourses(univData, dbData, groupInfos) {
+    // Parses our database's raw course data and returns a standardized array
     async function parseUnivData(univData) {
         return await Promise.all(univData.map(async (courseData) => {
-            let rooms = [], teachers = [], modules = [];
-            if (courseData.rooms_for_blocks && courseData.rooms_for_blocks != '') {
-                rooms = courseData.rooms_for_blocks.split(';').map((room) => room.trim());
-                rooms.sort();
+            function splitAndSortBlocks(blocks) {
+                if (blocks && blocks !== '') {
+                    return blocks.split(';').map(item => item.trim()).sort();
+                }
+                return [];
             }
-            if (courseData.teachers_for_blocks && courseData.teachers_for_blocks != '') {
-                teachers = courseData.teachers_for_blocks.split(';').map((teacher) => teacher.trim());
-                teachers.sort();
-            }
-            if (courseData.modules_for_blocks && courseData.modules_for_blocks != '') {
-                modules = courseData.modules_for_blocks.split(';').map((module) => module.trim());
-                modules.sort()
-            }
+            
+            let rooms = splitAndSortBlocks(courseData.rooms_for_blocks);
+            let teachers = splitAndSortBlocks(courseData.teachers_for_blocks);
+            let modules = splitAndSortBlocks(courseData.modules_for_blocks);
             return JSON.stringify({
                 id: courseData.id.toString(),
-                category: courseData.categories,
+                category: courseData.categories || '',
                 start: courseData.start_at,
                 end: courseData.end_at,
                 notes: courseData.notes || '',
@@ -86,17 +84,15 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         }));
     }
 
+    // Parses the university's raw course data and returns a standardized array
     async function parseDbData(dbData) {
         return await Promise.all(dbData.map(async (courseData) => {
             let rooms = await Promise.all(courseData.rooms.map(async (roomId) => {
-                const room = await Room.findOne({ _id: roomId });
+                let room = await Room.findOne({ _id: roomId });
                 return `${room.name} (${room.building})`;
             }));
-            rooms.sort()
-            let modules = courseData.modules;
-            modules.sort()
-            let teachers = courseData.teachers;
-            teachers.sort()
+            rooms.sort();
+            let modules = courseData.modules.sort(), teachers = courseData.teachers.sort();
             return JSON.stringify({
                 id: courseData.univId.toString(),
                 category: courseData.category,
@@ -110,6 +106,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         }));
     }
 
+    // Replaces the common elements of 2 arrays with empty objects
     function removeCommonElements(array1, array2) {
         const filteredArray1 = array1.map((item) => array2.includes(item) ? '{}' : item);
         const filteredArray2 = array2.map((item) => array1.includes(item) ? '{}' : item);
@@ -125,22 +122,25 @@ async function processGroupCourses(univData, dbData, groupInfos) {
     const filteredArrays = removeCommonElements(jsonParsedUnivData, jsonParsedDBData);
     jsonParsedUnivData = filteredArrays[0], jsonParsedDBData = filteredArrays[1];
 
+    // Browsing the courses remaining in our database (to be deleted from our database)
     let jsonCourse;
     for (let index = 0; index < jsonParsedDBData.length; index++) {
         jsonCourse = jsonParsedDBData[index];
         if (jsonCourse != '{}') {
             if (dbData[index].groups.length > 1) {
+                // If there are several groups in the course record, modify it by just deleting the group
                 let updatedCourse = dbData[index];
                 updatedCourse.groups.splice(updatedCourse.groups.indexOf(groupInfos._id.toString()), 1);
                 await Course.findOneAndUpdate({ _id: updatedCourse._id }, {
                     $set: { groups: updatedCourse.groups }
                 });
             } else {
+                // If there is only one group in the course record, delete it
                 await Course.deleteOne({ _id: dbData[index]._id });
             }
         }
     }
-
+    // Browsing courses that remain in the university's data (new to our database)
     for (let index = 0; index < jsonParsedUnivData.length; index++) {
         jsonCourse = jsonParsedUnivData[index];
         if (jsonCourse != '{}') {

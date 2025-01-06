@@ -19,12 +19,10 @@ const VACATIONS = [52, 1];
 router.get('/', async (req, res) => {
     try {
         // Updating stats
-        await updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
+        updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
 
         // Getting all the rooms that are not banned
-        let rooms = await Room.find({ banned: { $ne: true } }).select(
-            '-__v -identifiant'
-        );
+        let rooms = await Room.find({ banned: { $ne: true } });
 
         // Finding out which rooms are currently available
         const now = new Date();
@@ -41,7 +39,7 @@ router.get('/', async (req, res) => {
         });
         let availableRooms = await Room.find({
             _id: { $nin: Object.keys(busyRoomsIds) },
-        }).select('-__v -batiment -places_assises -nom_salle');
+        });
 
         // Creating an array with the ids of all available rooms
         availableRooms = availableRooms.map((room) => room._id.toString());
@@ -68,7 +66,7 @@ router.get('/', async (req, res) => {
         res.json(formattedResponse);
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
-        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
+        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
@@ -103,7 +101,7 @@ router.get('/available', async (req, res) => {
 
     try {
         // Updating stats
-        await updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
+        updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
 
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
@@ -165,7 +163,7 @@ router.get('/available', async (req, res) => {
             _id: { $nin: Object.keys(busyRoomsIds) }, // free rooms are those not being used for classes
             banned: { $ne: true },
             $and: attributes
-        }).select('-__v');
+        });
 
         // Formatting the response
         const formattedResponse = availableRooms.map((doc) => ({
@@ -180,7 +178,7 @@ router.get('/available', async (req, res) => {
         res.json(formattedResponse);
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
-        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
+        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
@@ -210,7 +208,7 @@ router.get('/timetable', async (req, res) => {
 
     try {
         // Updating stats
-        await updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
+        updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
 
         // Vacations
         if (VACATIONS.includes(requestedWeek.number)) {
@@ -250,7 +248,7 @@ router.get('/timetable', async (req, res) => {
                 { start: { $gte: requestedWeek.start } },
                 { end: { $lte: requestedWeek.end } },
             ],
-        }).select('-__v -identifiant');
+        });
 
         // Getting all busy rooms ids from the courses array
         const groups = await Group.find();
@@ -284,7 +282,7 @@ router.get('/timetable', async (req, res) => {
         res.send({ courses: formattedResponse, weekInfos: requestedWeek });
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
-        await updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
+        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });

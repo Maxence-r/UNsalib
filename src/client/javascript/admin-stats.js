@@ -193,6 +193,22 @@ const clientBrowsersSection = statsPage.querySelector('section.client-browsers')
 
 async function initStatsPage() {
     await getStats();
+
+    socket.on('connect', () => {
+        console.log('Connected to Socket.IO server');
+    });
+    
+    socket.on('statsUpdated', async (data) => {
+        await getStats();
+    });
+    
+    socket.on('disconnect', () => {
+        console.log('Disconnected from Socket.IO server');
+    });
+    
+    socket.on('error', (error) => {
+        console.error('Socket.IO error:', error);
+    });
 }
 
 export { initStatsPage };

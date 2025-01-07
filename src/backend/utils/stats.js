@@ -1,4 +1,5 @@
 import Stat from "../models/stat.js";
+import io from '../../../server.js';
 
 // Compares two statistics to sort them
 function compareStatsObjs(a, b) {
@@ -41,6 +42,7 @@ async function updateStats(statName, userId, userAgent) {
             update.userAgent = userAgent;
             await Stat.findOneAndUpdate({ userId: userId, date: today }, update, {});
         }
+        io.emit('statsUpdated', { message: '' });
     } catch (error) {
         console.error(`Erreur pendant l'enregistrement de statistiques (${error})`);
     }

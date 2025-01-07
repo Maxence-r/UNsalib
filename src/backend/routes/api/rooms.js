@@ -18,9 +18,6 @@ const VACATIONS = [52, 1];
 
 router.get('/', async (req, res) => {
     try {
-        // Updating stats
-        updateStats('rooms_list_requests', req.statsUUID, req.get('User-Agent'));
-
         // Getting all the rooms that are not banned
         let rooms = await Room.find({ banned: { $ne: true } });
 
@@ -100,9 +97,6 @@ router.get('/available', async (req, res) => {
     }
 
     try {
-        // Updating stats
-        updateStats('available_rooms_requests', req.statsUUID, req.get('User-Agent'));
-
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -207,9 +201,6 @@ router.get('/timetable', async (req, res) => {
     }
 
     try {
-        // Updating stats
-        updateStats('room_requests', req.statsUUID, req.get('User-Agent'));
-
         // Vacations
         if (VACATIONS.includes(requestedWeek.number)) {
             const vacationCourses = [];

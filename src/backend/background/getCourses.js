@@ -9,7 +9,7 @@ import io from '../../../server.js';
 // Groups update interval in milliseconds
 const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 // Number of days to fetch for each timetable
-const DAYS_TO_RETRIEVE = 125; // 3 weeks
+const DAYS_TO_RETRIEVE = 125;
 // Storage of the average processing time for each group
 let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 

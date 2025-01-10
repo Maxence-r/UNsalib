@@ -37,6 +37,12 @@ async function updateRoom(id, data) {
     }
     if (!success.error) {
         showToast('Les informations ont été mises à jour avec succès.', false);
+        const container = roomsManagerPage.querySelector('.rooms-list-container');
+        const containerScroll = container.scrollTop;
+        await getRooms();
+        refreshRoomsList();
+        document.querySelector(`.room-item[data-id="${id}"]`).classList.add('selected');
+        container.scrollTop = containerScroll;
     } else {
         showToast('Erreur lors de la mise à jour des informations : ' + success.error, true);
     }
@@ -127,9 +133,6 @@ async function getRooms() {
             roomsManagerPage.querySelector('.rooms-list').classList.add('swipe-left');
         });
     });
-    await getRoom(roomsManagerPage.querySelector('.room-item').getAttribute('data-id'));
-    roomsManagerPage.querySelector('.room-item').classList.add('selected');
-    document.querySelector('#room-editor').style.display = 'flex';
 }
 
 function refreshRoomsList() {
@@ -196,6 +199,9 @@ searchBannedCheckbox.checked = true;
 async function initRoomsManagerPage() {
     await getRooms();
     refreshRoomsList();
+    await getRoom(roomsManagerPage.querySelector('.room-item').getAttribute('data-id'));
+    roomsManagerPage.querySelector('.room-item').classList.add('selected');
+    document.querySelector('#room-editor').style.display = 'flex';
 
     detailsSection.querySelector('input').addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {

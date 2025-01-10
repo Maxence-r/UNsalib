@@ -153,7 +153,7 @@ router.get('/account-infos', async (req, res) => {
     try {
         // Getting the user
         const user = await Account.findOne({ _id: req.userId }).select(
-            '-__v -identifiant -_id -password'
+            '-__v -_id -password'
         );
 
         res.status(200).json(user);

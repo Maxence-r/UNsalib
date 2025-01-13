@@ -56,7 +56,12 @@ function getWeeksNumber() {
 
     // If it's Saturday (6) or Sunday (0), incrementing the week number
     if (currentDay === 6 || currentDay === 0) {
-        weekNumber += 1;
+        weekNumber++;
+    }
+
+    // Fixing start week number (0 or 1)
+    if (startDate.getDay() >= 3) {
+        weekNumber++;
     }
 
     return weekNumber;

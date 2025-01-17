@@ -46,10 +46,60 @@ Rename exemple.env to .env and complete fields
 node server.js
 ```
 
+### Structure
+
+```
+src
+|
+|--- backend
+|    |
+|    |--- background
+|    |
+|    |--- middlewares
+|    |
+|    |--- models
+|    |
+|    |--- utils
+|    |
+|    |--- routes
+|         |
+|         |--- api
+|
+|--- client
+     |
+     |--- assets
+     |
+     |--- css
+     |
+     |--- html
+     |
+     |--- javascript
+     |
+     |--- manifest
+```
+
+> All backend code is in the `backend` folder and frontend code is in the `client` folder.
+
+#### Contents of `backend`
+
+- `background`: scripts running permanently in the background (for example, to retrieve and process timetables)
+- `middlewares`: middlewares used to process requests (authentication and statistics)
+- `models`: schemas used for the database
+- `routes` : code used to serve static resources and also API endpoints in the `api` subfolder
+- `utils`: files containing code that can be reused in the backend (date processing, color...)
+
+#### Contents of `client`
+
+- `assets`: media files and more
+- `css`: CSS stylesheets for the various HTML pages
+- `html`: static HTML pages served by the backend
+- `javascript`: JS files for the various HTML pages
+- `manifest`: manifest for the PWA
+
 ## 🙏 Acknowledgments
 
 Thank you to Nantes Université for their support and to our teachers! This project was made possible thanks to the existing timetable service: https://edt-v2.univ-nantes.fr/sciences/
 
 ## 📄 License
 
-UNsalib is licensed under the <strong>GNU General Public License v3.0 (GPL-3.0)</strong>, a copyleft license that ensures users’ freedom to run, study, share, and modify the software. Licensed works, modifications, and larger works must also be distributed under GPL-3.0, and source code must be provided or made available.
+UNsalib is licensed under the **GNU General Public License v3.0 (GPL-3.0)**, a copyleft license that ensures users’ freedom to run, study, share, and modify the software. Licensed works, modifications, and larger works must also be distributed under GPL-3.0, and source code must be provided or made available.

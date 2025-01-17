@@ -52,29 +52,18 @@ node server.js
 src
 |
 |--- backend
-|    |
 |    |--- background
-|    |
 |    |--- middlewares
-|    |
 |    |--- models
-|    |
 |    |--- utils
-|    |
 |    |--- routes
-|         |
 |         |--- api
 |
 |--- client
-     |
      |--- assets
-     |
      |--- css
-     |
      |--- html
-     |
      |--- javascript
-     |
      |--- manifest
 ```
 

@@ -23,32 +23,12 @@ for (let k = 0; k < 5; k++) {
 }
 
 let currentWeekNumber = "--";
-
-function getWeekOfMonth(date) {
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    const firstDay = firstDayOfMonth.getDay();
-    let offset = firstDay === 0 ? 6 : firstDay - 1; // Adjust to previous Monday
-    const firstMonday = new Date(firstDayOfMonth);
-    firstMonday.setDate(firstMonday.getDate() - offset);
-    const diff = date - firstMonday;
-    return Math.ceil((diff / 86400000 + 1) / 7);
-}
-
 function setHourIndicator() {
     let dateActuelle = new Date();
     let jourActuel = dateActuelle.getDay();
     let heureActuelle = dateActuelle.getHours();
     let minuteActuelle = dateActuelle.getMinutes();
-
-    // Calculate current week number and month
-    const weekOfMonth = getWeekOfMonth(dateActuelle);
-    const month = (dateActuelle.getMonth() + 1).toString().padStart(2, '0');
-    currentWeekNumber = `${weekOfMonth.toString().padStart(2, '0')}/${month}`;
-
-    // Update the week display to current week
-    document.querySelector(".week-number").innerText = currentWeekNumber;
-
-    if (heureActuelle >= heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber === document.querySelector(".week-number").innerText) {
+    if (heureActuelle >= heureDebut && heureActuelle < heureFin && jourActuel > 0 && jourActuel < 6 && currentWeekNumber == document.querySelector(".week-number").innerText) {
         console.log(`[${heureActuelle}:${minuteActuelle}] Updating hour indicator`);
         columns[jourActuel - 1].appendChild(indicatorHour);
         indicatorHour.style.display = "block";
@@ -56,7 +36,7 @@ function setHourIndicator() {
         let top = (100 * (heureActuelle - heureDebut)) / dureeJournee + (100 / dureeJournee) * (minuteActuelle / 60);
         indicator.style.top = `${top}%`;
         indicatorHour.style.top = `${top}%`;
-        indicator.innerText = heureActuelle + ":" + (minuteActuelle.toString().length === 2 ? minuteActuelle : "0" + minuteActuelle);
+        indicator.innerText = heureActuelle + ":" + (minuteActuelle.toString().length == 2 ? minuteActuelle : "0" + minuteActuelle);
     } else {
         indicator.style.display = "none";
         indicatorHour.style.display = "none";

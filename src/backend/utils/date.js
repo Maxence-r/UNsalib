@@ -1,6 +1,7 @@
 // Checks whether a date is in the format 'yyyy-MM-ddTHH:mm:ss+HH:mm'
 function isValidDate(date) {
-    const regex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
+    const regex =
+        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
     return regex.test(date);
 }
 
@@ -28,8 +29,8 @@ function getWeekInfos(weekNumber) {
     // Formatting dates in YYYY-MM-DD format to avoid time zone problems
     const formatDate = (date) => {
         const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
         return `${year}-${month}-${day}`;
     };
 
@@ -56,12 +57,7 @@ function getWeeksNumber() {
 
     // If it's Saturday (6) or Sunday (0), incrementing the week number
     if (currentDay === 6 || currentDay === 0) {
-        weekNumber++;
-    }
-
-    // Fixing start week number (0 or 1)
-    if (startDate.getDay() >= 3) {
-        weekNumber++;
+        weekNumber += 1;
     }
 
     return weekNumber;
@@ -76,9 +72,11 @@ function getMinutesOverflow(date) {
 
 // Checks if two dates are equal
 function isSameDay(d1, d2) {
-    return d1.getFullYear() === d2.getFullYear() &&
+    return (
+        d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate();
+        d1.getDate() === d2.getDate()
+    );
 }
 
 export {
@@ -86,5 +84,5 @@ export {
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
-    isSameDay
+    isSameDay,
 };

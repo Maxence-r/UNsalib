@@ -67,7 +67,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
                 }
                 return [];
             }
-            
+
             let rooms = splitAndSortBlocks(courseData.rooms_for_blocks);
             let teachers = splitAndSortBlocks(courseData.teachers_for_blocks);
             let modules = splitAndSortBlocks(courseData.modules_for_blocks);
@@ -226,7 +226,8 @@ async function fetchCourses(group) {
 }
 
 // Processes a batch of groups
-async function processBatchGroups(groups) {
+async function processBatchGroups() {
+    const groups = await Group.find();
     for (const group of groups) {
         await fetchCourses(group);
     }
@@ -235,15 +236,7 @@ async function processBatchGroups(groups) {
 // Main
 async function getCourses() {
     const groups = await Group.find();
-
-    // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
-    if (process.env.FORCER_TRAITEMENT_GPES === 'true') {
-        console.log('Traitement de tous les groupes ACTIVÉ - Démarrage du processus...');
-        await processBatchGroups(groups);
-        averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
-    } else {
-        console.log('Traitement de tous les groupes DÉSACTIVÉ');
-    }
+    // averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 
     // Calculating the interval between each group for a CYCLE_INTERVAL-hour distribution
     const groupsNumber = groups.length;
@@ -284,4 +277,4 @@ async function getCourses() {
     startUpdateCycle();
 }
 
-export default getCourses;
+export { getCourses, processBatchGroups };

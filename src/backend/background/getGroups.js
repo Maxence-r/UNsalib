@@ -1,7 +1,5 @@
 import Group from '../models/group.js';
 import { parse } from 'node-html-parser';
-import getCourses from './getCourses.js';
-import 'dotenv/config'
 
 // CONSTANTS
 // The URL to get the timetable page
@@ -21,13 +19,6 @@ async function getHTML(url) {
 
 // Main
 async function getGroups() {
-    // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately
-    if (process.env.FORCER_RECUP_GPES === 'false') {
-        console.log('Récupération des groupes DÉSACTIVÉE');
-        return getCourses();
-    }
-    console.log('Récupération des groupes ACTIVÉE - Démarrage du processus...');
-
     // Deleting all the stored groups
     await Group.deleteMany({});
 
@@ -54,8 +45,6 @@ async function getGroups() {
                 process.stdout.write(groupsInputs.indexOf(input) + 1 + '/' + groupsInputs.length + ' obtenus' + '\r');
             }
         }
-            
-        getCourses();
     } else { // there is an error when fetching groups
         console.error('Erreur lors de la récupération des groupes.');
     }

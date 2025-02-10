@@ -6,6 +6,7 @@ import { hash } from 'bcrypt';
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import getGroups from "./src/backend/background/getGroups.js";
+import launch from "./src/backend/background/main.js";
 import sallesApi from "./src/backend/routes/api/rooms.js";
 import adminApi from "./src/backend/routes/api/admin.js";
 import appInfosApi from "./src/backend/routes/api/app.js";
@@ -47,7 +48,7 @@ set("strictQuery", true);
     } finally {
         // console.log('Jean-Michel', await hash("lesupermotdepasse", 10))
         // EXECUTION PERMANENTE
-        getGroups();
+        launch();
     }
 })();
 

@@ -126,7 +126,7 @@ body {
     width: 100%;
 }
 
-.loader-indicator{
+.loader-indicator {
     position: absolute;
     display: none;
     flex-direction: column;
@@ -189,7 +189,7 @@ body {
     outline: 2px solid transparent;
     outline-offset: 6px;
     transition: all 0.3s;
-/*     animation: showing 0.8s ease-out;
+    /*     animation: showing 0.8s ease-out;
     animation-iteration-count: 3 */
 }
 
@@ -571,48 +571,6 @@ input[type=number] {
     outline-offset: 2px;
 }
 
-button {
-    position: relative;
-    height: 40px;
-
-    border-radius: var(--border-radius);
-    background-color: var(--accent-color);
-
-    cursor: pointer;
-    border: none;
-}
-
-.button__text {
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: "Space Grotesk", sans-serif;
-}
-
-.button--loading .button__text {
-    visibility: hidden;
-    opacity: 0;
-}
-
-
-.button--loading::after {
-    content: "";
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    border: 2px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: button-loading-spinner 1s ease infinite;
-}
-
-
-
 .notif {
     display: flex;
     position: absolute;
@@ -641,16 +599,6 @@ button {
     font-size: 14px;
     font-weight: 600;
     color: white;
-}
-
-@keyframes button-loading-spinner {
-    from {
-        transform: rotate(0turn);
-    }
-
-    to {
-        transform: rotate(1turn);
-    }
 }
 
 .search-button:hover {
@@ -1341,16 +1289,6 @@ button {
 
     100% {
         width: 250px;
-    }
-}
-
-@keyframes button-loading-spinner {
-    from {
-        transform: rotate(0turn);
-    }
-
-    to {
-        transform: rotate(1turn);
     }
 }
 

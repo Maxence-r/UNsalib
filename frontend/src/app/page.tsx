@@ -231,7 +231,7 @@ export default function Home() {
                 <div className="actions_container">
 
                     <div className="edt-finder displayed">
-                        <input data-search="edt" className="search" type="text" placeholder="Rechercher une salle, un bâtiment..." />
+                        <Input className="search" type="text" placeholder="Rechercher une salle, un bâtiment..."></Input>
 
                         <div className="results-head">
                             <p>Résultats de recherche</p>
@@ -249,11 +249,9 @@ export default function Home() {
 
                     <div className="room-finder">
                         <div className="advanced-search">
-                            <button type="button" className="filter-button">
-                                <span className="button__text">Chercher une salle libre</span>
-                            </button>
+                            <Button className="filter-button">Chercher une salle libre</Button>
                         </div>
-                        <input data-search="available" className="search" type="text" placeholder="Filtrer par salle, bâtiment..." />
+                        <Input className="search" type="text" placeholder="Filtrer par salle, bâtiment..."></Input>
                         <div className="results-head">
                             <p>Résultats de recherche</p>
                             <div className="indicator">

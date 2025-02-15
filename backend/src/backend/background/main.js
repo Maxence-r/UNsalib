@@ -29,7 +29,7 @@ async function launch() {
     // await processGroup('281PA')
     // await processGroup('285')
     // await processGroup('221')
-    getCourses();
+    // getCourses();
 }
 
 export default launch;

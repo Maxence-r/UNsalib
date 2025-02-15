@@ -3,6 +3,13 @@
   --foreground: #171717;
 }
 
+:root {
+  --border-color: #F0F0F0;
+  --sub-border-color: #E1E1E1;
+  --border-radius: 12px;
+  --accent-color: #3452FF;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

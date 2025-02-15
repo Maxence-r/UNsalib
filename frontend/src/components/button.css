@@ -1,0 +1,49 @@
+.button {
+    position: relative;
+    height: 40px;
+
+    border-radius: var(--border-radius);
+    background-color: var(--accent-color);
+
+    cursor: pointer;
+    border: none;
+}
+
+.button__text {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.button--loading .button__text {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+.button--loading::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
+}

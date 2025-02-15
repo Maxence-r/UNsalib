@@ -1,0 +1,11 @@
+.input {
+    width: calc(100% - 32px);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    min-height: 50px;
+    border-radius: var(--border-radius);
+    padding: 0px 16px;
+    background-color: #ECECEC;
+    border: none;
+    outline: none;
+}

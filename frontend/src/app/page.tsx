@@ -1,9 +1,8 @@
-'use client';
-import { useState } from 'react'
 import Button from "@/components/button";
 import Input from "@/components/input";
-import Menu from './menu';
+import Panel from './panel';
 import Calendar from './calendar';
+import RoomsList from "./roomsList";
 
 export default function Home() {
     return (
@@ -198,7 +197,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            <Menu></Menu>
+            <Panel></Panel>
             <Calendar></Calendar>
 
             <div className="notif">

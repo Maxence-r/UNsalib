@@ -2,34 +2,13 @@
 import { useState } from 'react'
 import Button from "@/components/button";
 import Input from "@/components/input";
+import { RoomsListType } from "./types";
 
-export default function Menu() {
+export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
-    
+
     return (
-        <div tabIndex={-1} className="pannel">
-
-            <div className="loader-indicator">
-                <span className="spin"></span>
-                <p>Chargement des salles...</p>
-            </div>
-
-
-            <div className="campus">
-                <div className="campus_selector">
-                    <p>SCIENCES ET TECHNIQUES</p>
-                    <div className="version">V1.0</div>
-                </div>
-                <div className="campus_feed">
-                    <img src="/lsh.png" alt="placeholder" />
-
-                    <div className="overlay"></div>
-                    <div className="campus_feed_content">
-                        <p>ICI S'AFFICHERA LA MISE A JOUR DES GROUPES</p>
-                    </div>
-                </div>
-            </div>
-
+        <>
             <div className="actions_selector">
                 <div onClick={() => setActiveTab("edt-finder")} data-ref="edt-finder" className={`action ${activeTab == "edt-finder" ? "tab-active" : ""}`}>
                     EDT des salles
@@ -52,11 +31,12 @@ export default function Menu() {
                         </div>
                     </div>
                     <div className="results edt">
+                        <span>
+                            {JSON.stringify(roomsList)}
+                        </span>
                         <p className="no-results">Aucune salle n'a été trouvée.</p>
                     </div>
                 </div>
-
-
 
                 <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
                     <div className="advanced-search">
@@ -76,6 +56,6 @@ export default function Menu() {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }

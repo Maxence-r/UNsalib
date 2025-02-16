@@ -11,7 +11,7 @@ export default function Home() {
             </section>
             <section className="loader">
                 <div className="progress">
-                    <img src="../assets/loader.svg" />
+                    <img src="/loader.svg" />
                 </div>
             </section>
             <div tabIndex={-1} className="modal">
@@ -129,19 +129,19 @@ export default function Home() {
                     <div className="pictos">
                         <div className="option">
                             <p>Salle info/vidéo</p>
-                            <img src="../assets/video.svg" alt="info" />
+                            <img src="/video.svg" alt="info" />
                         </div>
                         <div className="option">
                             <p>Salle de visioconférence</p>
-                            <img src="../assets/visio.svg" alt="info" />
+                            <img src="/visio.svg" alt="info" />
                         </div>
                         <div className="option">
                             <p>Salle en ilot</p>
-                            <img src="../assets/ilot.svg" alt="info" />
+                            <img src="/ilot.svg" alt="info" />
                         </div>
                         <div className="option">
                             <p>Salle à badge</p>
-                            <img src="../assets/badge.svg" alt="info" />
+                            <img src="/badge.svg" alt="info" />
                         </div>
 
                         <button type="button" className="search-button">
@@ -156,15 +156,15 @@ export default function Home() {
                         </div>
                         <div className="browsers">
                             <div className="browser iosMobile">
-                                <img src="../assets/safari.svg" alt="safari" />
+                                <img src="/safari.svg" alt="safari" />
                                 <p>Safari</p>
                             </div>
                             <div className="browser androidMobile computer">
-                                <img src="../assets/chrome.svg" alt="safari" />
+                                <img src="/chrome.svg" alt="safari" />
                                 <p>Google Chrome</p>
                             </div>
                             <div className="browser computer">
-                                <img src="../assets/edge.svg" alt="safari" />
+                                <img src="/edge.svg" alt="safari" />
                                 <p>Edge</p>
                             </div>
                         </div>
@@ -184,11 +184,11 @@ export default function Home() {
                     <div className="safariInstall">
                         <div className="option">
                             <p>1. Cliquez sur le bouton "Partager"</p>
-                            <img src="../assets/share.svg" alt="share" />
+                            <img src="/share.svg" alt="share" />
                         </div>
                         <div className="option">
                             <p>2. Cliquez sur "Ajouter à l'écran d'accueil"</p>
-                            <img src="../assets/add.svg" alt="add" />
+                            <img src="/add.svg" alt="add" />
                         </div>
                         <button type="button" className="search-button">
                             <span className="button__text">Compris !</span>
@@ -210,7 +210,7 @@ export default function Home() {
                         <div className="version">V1.0</div>
                     </div>
                     <div className="campus_feed">
-                        <img src="../assets/lsh.png" alt="placeholder" />
+                        <img src="/lsh.png" alt="placeholder" />
 
                         <div className="overlay"></div>
                         <div className="campus_feed_content">
@@ -236,7 +236,7 @@ export default function Home() {
                         <div className="results-head">
                             <p>Résultats de recherche</p>
                             <div className="indicator">
-                                <img src="../assets/info.svg"/>
+                                <img src="/info.svg"/>
                                     <p>Pictos</p>
                             </div>
                         </div>
@@ -255,7 +255,7 @@ export default function Home() {
                         <div className="results-head">
                             <p>Résultats de recherche</p>
                             <div className="indicator">
-                                <img src="../assets/info.svg"/>
+                                <img src="/info.svg"/>
                                     <p>Pictos</p>
                             </div>
                         </div>
@@ -273,9 +273,9 @@ export default function Home() {
                 </div>
                 <div className="calendar-header">
                     <div className="week-switcher">
-                        <img src="../assets/chevrons-left.svg" alt="previous" />
+                        <img src="/chevrons-left.svg" alt="previous" />
                         <p>SEMAINE <span className="week-number">--</span></p>
-                        <img src="../assets/chevrons-right.svg" alt="next" />
+                        <img src="/chevrons-right.svg" alt="next" />
                     </div>
                     <div className="avaibility">
                         <div className="avaibility-box">
@@ -334,7 +334,7 @@ export default function Home() {
                         </div>
                     </div>
                     <div tabIndex={-1} className="about">
-                        <h2>À PROPOS<img src="../assets/arrow.svg"/></h2>
+                        <h2>À PROPOS<img src="/arrow.svg"/></h2>
                         <div className="about-content">
                             <div className="links">
                                 <div className="link whitePaper">
@@ -343,7 +343,7 @@ export default function Home() {
                                         <p>Document de nos recherches</p>
                                     </div>
                                     <button tabIndex={-1}>
-                                        <img src="../assets/download.svg" alt="Download"/>
+                                        <img src="/download.svg" alt="Download"/>
                                     </button>
                                 </div>
                             </div>
@@ -353,21 +353,21 @@ export default function Home() {
                                         <h2>Maxence.R</h2>
                                         <p>Développeur</p>
                                     </div>
-                                    <img src="../assets/maxence.png"/>
+                                    <img src="/maxence.png"/>
                                 </div>
                                 <div className="link ">
                                     <div className="link-infos">
                                         <h2>Mael.B</h2>
                                         <p>Développeur</p>
                                     </div>
-                                    <img src="../assets/profile.png"/>
+                                    <img src="/profile.png"/>
                                 </div>
                                 <div className="link">
                                     <div className="link-infos">
                                         <h2>Ethann.A</h2>
                                         <p>Testeur</p>
                                     </div>
-                                    <img src="../assets/profile.png"/>
+                                    <img src="/profile.png"/>
                                 </div>
                             </div>
                         </div>

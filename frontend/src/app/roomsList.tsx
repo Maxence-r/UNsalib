@@ -5,7 +5,12 @@ import Input from "@/components/input";
 import { RoomsListType } from "./types";
 
 export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
+    function normalizeString(value: string) {
+        return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+    }
+
     const [activeTab, setActiveTab] = useState("edt-finder");
+    const [search, setSearch] = useState("");
 
     return (
         <>
@@ -21,8 +26,14 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
             <div className="actions_container">
 
                 <div className={`edt-finder ${activeTab == "edt-finder" ? "displayed" : ""}`}>
-                    <Input className="search" type="text" placeholder="Rechercher une salle, un bâtiment..."></Input>
-
+                    <Input
+                        className="search"
+                        type="text"
+                        placeholder="Rechercher une salle, un bâtiment..."
+                        onInput={(event) => {
+                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
+                        }}
+                    ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
@@ -32,7 +43,11 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                     </div>
                     <div className="results edt">
                         {roomsList.map(room => (
-                            <div key={room.id} className="result" onClick={() => { }}>
+                            <div
+                                key={room.id}
+                                className={`result ${normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search) ? "" : "hidden"}`}
+                                onClick={() => { }}
+                            >
                                 <p>
                                     {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
                                     <span className="bat">{room.building}</span>
@@ -43,7 +58,8 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                                 </div>
                             </div>
                         ))}
-                        <p className="no-results">Aucune salle n'a été trouvée.</p>
+                        {/* TODO: display the no result component */}
+                        {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
                     </div>
                 </div>
 

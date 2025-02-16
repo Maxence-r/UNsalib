@@ -15,12 +15,6 @@ export default async function Panel() {
 
     return (
         <div tabIndex={-1} className="pannel">
-
-            <div className="loader-indicator">
-                <span className="spin"></span>
-                <p>Chargement des salles...</p>
-            </div>
-
             <div className="campus">
                 <div className="campus_selector">
                     <p>SCIENCES ET TECHNIQUES</p>

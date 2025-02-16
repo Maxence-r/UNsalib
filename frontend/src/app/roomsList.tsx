@@ -31,9 +31,18 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                         </div>
                     </div>
                     <div className="results edt">
-                        <span>
-                            {JSON.stringify(roomsList)}
-                        </span>
+                        {roomsList.map(room => (
+                            <div key={room.id} className="result" onClick={() => { }}>
+                                <p>
+                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
+                                    <span className="bat">{room.building}</span>
+                                </p>
+                                <div className="badges">
+                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
+                                    <div className={room.available ? "ping blue" : "ping red"}></div>
+                                </div>
+                            </div>
+                        ))}
                         <p className="no-results">Aucune salle n'a été trouvée.</p>
                     </div>
                 </div>

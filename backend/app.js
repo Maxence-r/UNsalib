@@ -1,5 +1,6 @@
 import express, { json, urlencoded, static as serveStatic } from "express";
 const app = express();
+import cors from 'cors';
 
 import { set, connect } from "mongoose";
 import { hash } from 'bcrypt';
@@ -20,6 +21,9 @@ app.disable("x-powered-by");
 app.use(cookieParser());
 
 // DEFAULT MIDDLEWARES
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));

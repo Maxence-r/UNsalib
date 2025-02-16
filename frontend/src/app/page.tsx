@@ -1,7 +1,8 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import { useState } from 'react'
 import Button from "@/components/button";
 import Input from "@/components/input";
+import Menu from './menu';
 
 export default function Home() {
     return (
@@ -47,11 +48,11 @@ export default function Home() {
                                 <div className="picker-container">
                                     <p>Chercher de :</p>
                                     <div className="time-picker">
-                                        <input type="number" max="24" maxLength={2}  className="time" placeholder="--" />
+                                        <input type="number" max="24" maxLength={2} className="time" placeholder="--" />
                                         <p>:</p>
-                                        <input type="number" max="59" maxLength={2}  className="time" placeholder="--" />
+                                        <input type="number" max="59" maxLength={2} className="time" placeholder="--" />
                                         <p>à</p>
-                                        <input type="number" max="24" maxLength={2}  className="time" placeholder="--" />
+                                        <input type="number" max="24" maxLength={2} className="time" placeholder="--" />
                                         <p>:</p>
                                         <input type="number" max="59" maxLength={2} className="time" placeholder="--" />
                                     </div>
@@ -59,9 +60,9 @@ export default function Home() {
                                 <div className="picker-container">
                                     <p>Le :</p>
                                     <div className="time-picker">
-                                        <input type="number" max="31" maxLength={2}  className="time" placeholder="--" />
+                                        <input type="number" max="31" maxLength={2} className="time" placeholder="--" />
                                         <p>/</p>
-                                        <input type="number" max="12" maxLength={2}  className="time" placeholder="--" />
+                                        <input type="number" max="12" maxLength={2} className="time" placeholder="--" />
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +71,7 @@ export default function Home() {
                         <div className="option">
                             <p>Avec au moins <span className="numb" data-ref="placesAssises" id="places">6</span> places assises</p>
                             <div className="slidecontainer">
-                                <input type="range" min="2" max="100" value="6" className="slider" id="placesAssises"/>
+                                <input type="range" min="2" max="100" value="6" className="slider" id="placesAssises" />
                             </div>
                         </div>
 
@@ -80,13 +81,13 @@ export default function Home() {
                                 <div className="slide-selector">
                                     <p><span className="numb" data-ref="blanc">0</span> tableau(x) blanc(s)</p>
                                     <div className="slidecontainer">
-                                        <input type="range" min="0" max="4" value="0" className="slider" id="blanc"/>
+                                        <input type="range" min="0" max="4" value="0" className="slider" id="blanc" />
                                     </div>
                                 </div>
                                 <div className="slide-selector">
                                     <p><span className="numb" id="places" data-ref="noir">0</span> tableau(x) noir(s)</p>
                                     <div className="slidecontainer">
-                                        <input type="range" min="0" max="4" value="0" className="slider" id="noir"/>
+                                        <input type="range" min="0" max="4" value="0" className="slider" id="noir" />
                                     </div>
                                 </div>
                             </div>
@@ -196,76 +197,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            <div tabIndex={-1} className="pannel">
-
-                <div className="loader-indicator">
-                    <span className="spin"></span>
-                    <p>Chargement des salles...</p>
-                </div>
-
-
-                <div className="campus">
-                    <div className="campus_selector">
-                        <p>SCIENCES ET TECHNIQUES</p>
-                        <div className="version">V1.0</div>
-                    </div>
-                    <div className="campus_feed">
-                        <img src="/lsh.png" alt="placeholder" />
-
-                        <div className="overlay"></div>
-                        <div className="campus_feed_content">
-                            <p>ICI S'AFFICHERA LA MISE A JOUR DES GROUPES</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="actions_selector">
-                    <div data-ref="edt-finder" className="action tab-active">
-                        EDT des salles
-                    </div>
-                    <div data-ref="room-finder" className="action">
-                        Trouver une salle
-                    </div>
-                </div>
-
-                <div className="actions_container">
-
-                    <div className="edt-finder displayed">
-                        <Input className="search" type="text" placeholder="Rechercher une salle, un bâtiment..."></Input>
-
-                        <div className="results-head">
-                            <p>Résultats de recherche</p>
-                            <div className="indicator">
-                                <img src="/info.svg"/>
-                                    <p>Pictos</p>
-                            </div>
-                        </div>
-                        <div className="results edt">
-                            <p className="no-results">Aucune salle n'a été trouvée.</p>
-                        </div>
-                    </div>
-
-
-
-                    <div className="room-finder">
-                        <div className="advanced-search">
-                            <Button className="filter-button">Chercher une salle libre</Button>
-                        </div>
-                        <Input className="search" type="text" placeholder="Filtrer par salle, bâtiment..."></Input>
-                        <div className="results-head">
-                            <p>Résultats de recherche</p>
-                            <div className="indicator">
-                                <img src="/info.svg"/>
-                                    <p>Pictos</p>
-                            </div>
-                        </div>
-
-                        <div className="results available">
-                            <p className="no-results">Aucune salle n'a été trouvée.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Menu></Menu>
             <div className="calendar">
                 <div className="loader-indicator">
                     <span className="spin"></span>
@@ -334,7 +266,7 @@ export default function Home() {
                         </div>
                     </div>
                     <div tabIndex={-1} className="about">
-                        <h2>À PROPOS<img src="/arrow.svg"/></h2>
+                        <h2>À PROPOS<img src="/arrow.svg" /></h2>
                         <div className="about-content">
                             <div className="links">
                                 <div className="link whitePaper">
@@ -343,7 +275,7 @@ export default function Home() {
                                         <p>Document de nos recherches</p>
                                     </div>
                                     <button tabIndex={-1}>
-                                        <img src="/download.svg" alt="Download"/>
+                                        <img src="/download.svg" alt="Download" />
                                     </button>
                                 </div>
                             </div>
@@ -353,21 +285,21 @@ export default function Home() {
                                         <h2>Maxence.R</h2>
                                         <p>Développeur</p>
                                     </div>
-                                    <img src="/maxence.png"/>
+                                    <img src="/maxence.png" />
                                 </div>
                                 <div className="link ">
                                     <div className="link-infos">
                                         <h2>Mael.B</h2>
                                         <p>Développeur</p>
                                     </div>
-                                    <img src="/profile.png"/>
+                                    <img src="/profile.png" />
                                 </div>
                                 <div className="link">
                                     <div className="link-infos">
                                         <h2>Ethann.A</h2>
                                         <p>Testeur</p>
                                     </div>
-                                    <img src="/profile.png"/>
+                                    <img src="/profile.png" />
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,42 @@
+{
+  "short_name": "UNsalib",
+  "name": "UNsalib",
+  "categories": ["productivity", "utilities", "social"],
+  "description": "UNsalib permet aux étudiants/professeurs de Nantes Université de trouver les salles libres du campus et d'afficher leurs emplois du temps",
+  "id": "/unsalib/v1",
+  "icons": [
+    {
+      "src": "/logo96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "../?utm_source=PWA",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#3452FF",
+  "background_color": "#3452FF",
+  "screenshots": [
+    {
+      "src": "/sc1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Visualisation d'un EDT"
+    }
+  ]
+}

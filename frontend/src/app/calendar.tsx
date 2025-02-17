@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useContext } from "react";
-import { SelectedRoomContext, LoadingTimetableContext } from "./contexts";
+import { SelectedRoomContext, LoadingTimetableContext, ModalContentContext, ModalStateContext } from "./contexts";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
+import Modal from "@/components/modal";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -22,20 +23,30 @@ function joinArrayElements(array: string[], separator: string, splitter: string,
 }
 
 function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
+    const { isModalOpened, setModalState } = useContext(ModalStateContext);
+    const { modalContent, setModalContent } = useContext(ModalContentContext);
+
     return (
         <div className="content-box">
             {hourCourses.map(course => {
-                let courseModule: string;
+                let module: string;
                 if (course.modules.length > 0) {
-                    courseModule = joinArrayElements(course.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(course.modules, ';', ' - ');;
+                    module = joinArrayElements(course.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(course.modules, ';', ' - ');;
                 } else if (course.category) {
-                    courseModule = course.category;
+                    module = course.category;
                 } else {
-                    courseModule = "Cours inconnu";
+                    module = "Cours inconnu";
                 }
-                let courseTeacher = course.teachers.length > 0 ? course.teachers.join(' ; ') : '';
+                const teacher = course.teachers.length > 0 ? course.teachers.join(' ; ') : '';
+                const startDate: Date = new Date(course.start);
+                const endDate: Date = new Date(course.end);
+                let durationHours = endDate.getHours() - startDate.getHours() > 0 ? endDate.getHours() - startDate.getHours() + "h" : "";
+                let durationMinutes = endDate.getMinutes() - startDate.getMinutes() > 0 ? endDate.getMinutes() - startDate.getMinutes() + "min" : "";
+                durationMinutes = durationHours == "" && durationMinutes == "" ? "0min" : durationMinutes;
+
                 return (
                     <div
+                        key={course.courseId}
                         style={{
                             top: `${course.overflow}%`,
                             backgroundColor: course.color,
@@ -46,9 +57,41 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
                             // TODO: handle concurrent courses
                         }}
                         className="course"
+                        onClick={() => {
+                            setModalContent(
+                                <>
+                                    <div className="course-details">
+                                        <div className="course-box">
+                                            <p className="course-start">{startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes())}</p>
+                                            <div className="course-container" style={{ backgroundColor: course.color }}>
+                                                <p>{module}</p>
+                                            </div>
+                                            <p className="course-end">{endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes())}</p>
+                                        </div>
+                                        <div className="detail">
+                                            <h2>Enseignant(e)(s) :</h2>
+                                            <p id="teacher-name">{teacher == '' ? 'Non renseigné' : teacher}</p>
+                                        </div>
+                                        <div className="detail">
+                                            <h2>Module :</h2>
+                                            <p id="module">{course.modules.length > 0 ? joinArrayElements(course.modules, ';', ' - ', true) : 'Inconnu'}</p>
+                                        </div>
+                                        <div className="detail">
+                                            <h2>Durée :</h2>
+                                            <p id="duration">{durationHours + durationMinutes}</p>
+                                        </div>
+                                        <div className="detail">
+                                            <h2>Groupe(s) :</h2>
+                                            <p id="groupes">{course.groups.join(' ; ') == '' ? 'Non renseigné' : course.groups.join(' ; ')}</p>
+                                        </div>
+                                    </div>
+                                </>
+                            );
+                            setModalState(true);
+                        }}
                     >
-                        <h2>{courseModule}</h2>
-                        <p>{courseTeacher}</p>
+                        <h2>{module}</h2>
+                        <p>{teacher}</p>
                     </div>
                 );
             })}
@@ -224,9 +267,9 @@ export default function Calendar() {
             </div>
             <div className="calendar-header">
                 <div className="week-switcher">
-                    <img src="/chevrons-left.svg" alt="previous" onClick={() => setIncrement(increment - 1)} />
+                    <img src="/chevrons-left.svg" alt="previous" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }} />
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
-                    <img src="/chevrons-right.svg" alt="next" onClick={() => setIncrement(increment + 1)} />
+                    <img src="/chevrons-right.svg" alt="next" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }} />
                 </div>
                 <div className="avaibility">
                     <div className="avaibility-box">

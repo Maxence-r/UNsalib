@@ -12,7 +12,7 @@ function normalizeString(value: string) {
 export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [search, setSearch] = useState("");
-    const { selectedRoomId, setSelectedRoomId } = useContext(SelectedRoomContext);
+    const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
 
     return (
         <>
@@ -48,7 +48,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             <div
                                 key={room.id}
                                 className={`result ${normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search) ? "" : "hidden"}`}
-                                onClick={() => setSelectedRoomId(room.id)}
+                                onClick={() => setSelectedRoom({ id: room.id, name: room.name })}
                             >
                                 <p>
                                     {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}

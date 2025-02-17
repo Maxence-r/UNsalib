@@ -2,8 +2,8 @@
 import { createContext, JSX } from "react";
 
 const SelectedRoomContext = createContext({
-    selectedRoomId: "",
-    setSelectedRoomId: (roomId: string) => { }
+    selectedRoom: { id: "", name: "" },
+    setSelectedRoom: (roomInfos: { id: string, name: string }) => { }
 });
 
 const LoadingTimetableContext = createContext({

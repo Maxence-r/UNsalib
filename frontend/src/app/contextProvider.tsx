@@ -4,8 +4,8 @@ import { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalC
 import Modal from "@/components/modal";
 
 export default function ContextProvider({ children }: { children: ReactNode }) {
-    const [selectedRoomId, setSelectedRoomId] = useState("");
-    const selectedRoomIdValue = { selectedRoomId, setSelectedRoomId };
+    const [selectedRoom, setSelectedRoom] = useState({ id: "", name: "" });
+    const selectedRoomValue = { selectedRoom, setSelectedRoom };
     const [loadingTimetable, setLoadingTimetable] = useState(false);
     const loadingTimetableValue = { loadingTimetable, setLoadingTimetable };
     const [isModalOpened, setModalState] = useState(false);
@@ -14,7 +14,7 @@ export default function ContextProvider({ children }: { children: ReactNode }) {
     const modalContentValue = { modalContent, setModalContent };
 
     return (
-        <SelectedRoomContext.Provider value={selectedRoomIdValue}>
+        <SelectedRoomContext.Provider value={selectedRoomValue}>
             <LoadingTimetableContext.Provider value={loadingTimetableValue}>
                 <ModalStateContext.Provider value={isModalOpenedValue}>
                     <ModalContentContext.Provider value={modalContentValue}>

@@ -228,7 +228,7 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
 }
 
 export default function Calendar() {
-    const { selectedRoomId, setSelectedRoomId } = useContext(SelectedRoomContext);
+    const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
     const { loadingTimetable, setLoadingTimetable } = useContext(LoadingTimetableContext);
     const [courses, setCourses] = useState({
         "courses": [],
@@ -245,7 +245,7 @@ export default function Calendar() {
             setLoadingTimetable(true);
             try {
                 const response = await fetch(
-                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoomId}&increment=${increment}`
+                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`
                 );
                 const coursesData = await response.json();
                 setCourses(coursesData);
@@ -254,10 +254,10 @@ export default function Calendar() {
             }
         }
 
-        if (selectedRoomId != "") {
+        if (selectedRoom.id != "") {
             render();
         }
-    }, [selectedRoomId, increment]);
+    }, [selectedRoom, increment]);
 
     return (
         <div className="calendar">
@@ -274,7 +274,7 @@ export default function Calendar() {
                 <div className="avaibility">
                     <div className="avaibility-box">
                         <div className="red ping"></div>
-                        <p>SÉLECTIONNEZ UNE SALLE</p>
+                        <p>{selectedRoom.id == "" ? "SÉLECTIONNEZ UNE SALLE" : selectedRoom.name}</p>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,74 @@
+.modal {
+    position: absolute;
+    display: none;
+    align-items: end;
+    opacity: 0;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+.modal.active {
+    display: flex;
+    animation: modalOpen 0.3s ease-in-out forwards;
+}
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal.active>.modal-content {
+    animation: modalContentOpen 0.3s ease-in-out forwards;
+}
+
+@keyframes modalContentOpen {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-content {
+    position: absolute;
+    display: flex;
+    height: calc(100% - 48px);
+    width: 400px;
+    padding: 24px;
+    background-color: white;
+    right: 0;
+}
+
+.modal-content>div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+    .modal-content {
+        width: calc(100% - 48px);
+        height: fit-content;
+    }
+
+    @keyframes modalContentOpen {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+}

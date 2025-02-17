@@ -1,5 +1,5 @@
 "use client";
-import { createContext } from "react";
+import { createContext, JSX } from "react";
 
 const SelectedRoomContext = createContext({
     selectedRoomId: "",
@@ -11,4 +11,14 @@ const LoadingTimetableContext = createContext({
     setLoadingTimetable: (state: boolean) => { }
 });
 
-export { SelectedRoomContext, LoadingTimetableContext };
+const ModalStateContext = createContext({
+    isModalOpened: false,
+    setModalState: (state: boolean) => { }
+});
+
+const ModalContentContext = createContext({
+    modalContent: <></>,
+    setModalContent: (content: JSX.Element) => { }
+});
+
+export { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalContentContext };

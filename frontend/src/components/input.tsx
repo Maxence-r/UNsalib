@@ -1,4 +1,3 @@
-import { ScriptProps } from "next/script";
 import "./input.css";
 
 export default function Input({ className, type, placeholder, onInput }: { className: string, type: string, placeholder: string, onInput: React.KeyboardEventHandler<HTMLInputElement> }) {

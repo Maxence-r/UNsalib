@@ -3,10 +3,11 @@ import Input from "@/components/input";
 import Panel from './panel';
 import Calendar from './calendar';
 import RoomsList from "./roomsList";
+import ContextProvider from "./contextProvider";
 
 export default function Home() {
     return (
-        <>
+        <ContextProvider>
             <section className="no-compatible">
                 <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
             </section>
@@ -203,6 +204,6 @@ export default function Home() {
             <div className="notif">
                 <p>Attention vous avez dépassé</p>
             </div>
-        </>
+        </ContextProvider>
     );
 }

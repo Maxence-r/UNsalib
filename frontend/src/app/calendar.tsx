@@ -106,7 +106,7 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
 
     const currentWeekDays: DayType[] = [];
     const currentWeekStartDay: number = new Date(courses.weekInfos.start).getDate() || -1;
-    
+
     WEEK_DAYS.forEach((dayName, i) => {
         let dayNumber: string = "--";
         if (currentWeekStartDay != -1) {
@@ -195,13 +195,14 @@ export default function Calendar() {
             "number": "--"
         }
     });
+    const [increment, setIncrement] = useState(0);
 
     useEffect(() => {
         async function render() {
             setLoadingTimetable(true);
             try {
                 const response = await fetch(
-                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoomId}&increment=${1}`
+                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoomId}&increment=${increment}`
                 );
                 const coursesData = await response.json();
                 setCourses(coursesData);
@@ -213,7 +214,7 @@ export default function Calendar() {
         if (selectedRoomId != "") {
             render();
         }
-    }, [selectedRoomId]);
+    }, [selectedRoomId, increment]);
 
     return (
         <div className="calendar">
@@ -223,9 +224,9 @@ export default function Calendar() {
             </div>
             <div className="calendar-header">
                 <div className="week-switcher">
-                    <img src="/chevrons-left.svg" alt="previous" />
-                    <p>SEMAINE <span className="week-number">--</span></p>
-                    <img src="/chevrons-right.svg" alt="next" />
+                    <img src="/chevrons-left.svg" alt="previous" onClick={() => setIncrement(increment - 1)} />
+                    <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                    <img src="/chevrons-right.svg" alt="next" onClick={() => setIncrement(increment + 1)} />
                 </div>
                 <div className="avaibility">
                     <div className="avaibility-box">

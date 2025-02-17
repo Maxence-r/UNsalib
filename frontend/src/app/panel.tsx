@@ -1,6 +1,3 @@
-// import Button from "@/components/button";
-// import Input from "@/components/input";
-// import { fetchRooms } from './requestsManager';
 import RoomsList from "./roomsList";
 import { RoomsListType } from "./types";
 

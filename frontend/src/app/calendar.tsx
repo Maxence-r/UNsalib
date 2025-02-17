@@ -2,7 +2,6 @@
 import { useState, useEffect, useContext } from "react";
 import { SelectedRoomContext, LoadingTimetableContext, ModalContentContext, ModalStateContext } from "./contexts";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
-import Modal from "@/components/modal";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -59,33 +58,31 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
                         className="course"
                         onClick={() => {
                             setModalContent(
-                                <>
-                                    <div className="course-details">
-                                        <div className="course-box">
-                                            <p className="course-start">{startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes())}</p>
-                                            <div className="course-container" style={{ backgroundColor: course.color }}>
-                                                <p>{module}</p>
-                                            </div>
-                                            <p className="course-end">{endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes())}</p>
+                                <div className="course-details">
+                                    <div className="course-box">
+                                        <p className="course-start">{startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes())}</p>
+                                        <div className="course-container" style={{ backgroundColor: course.color }}>
+                                            <p>{module}</p>
                                         </div>
-                                        <div className="detail">
-                                            <h2>Enseignant(e)(s) :</h2>
-                                            <p id="teacher-name">{teacher == '' ? 'Non renseigné' : teacher}</p>
-                                        </div>
-                                        <div className="detail">
-                                            <h2>Module :</h2>
-                                            <p id="module">{course.modules.length > 0 ? joinArrayElements(course.modules, ';', ' - ', true) : 'Inconnu'}</p>
-                                        </div>
-                                        <div className="detail">
-                                            <h2>Durée :</h2>
-                                            <p id="duration">{durationHours + durationMinutes}</p>
-                                        </div>
-                                        <div className="detail">
-                                            <h2>Groupe(s) :</h2>
-                                            <p id="groupes">{course.groups.join(' ; ') == '' ? 'Non renseigné' : course.groups.join(' ; ')}</p>
-                                        </div>
+                                        <p className="course-end">{endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes())}</p>
                                     </div>
-                                </>
+                                    <div className="detail">
+                                        <h2>Enseignant(e)(s) :</h2>
+                                        <p id="teacher-name">{teacher == '' ? 'Non renseigné' : teacher}</p>
+                                    </div>
+                                    <div className="detail">
+                                        <h2>Module :</h2>
+                                        <p id="module">{course.modules.length > 0 ? joinArrayElements(course.modules, ';', ' - ', true) : 'Inconnu'}</p>
+                                    </div>
+                                    <div className="detail">
+                                        <h2>Durée :</h2>
+                                        <p id="duration">{durationHours + durationMinutes}</p>
+                                    </div>
+                                    <div className="detail">
+                                        <h2>Groupe(s) :</h2>
+                                        <p id="groupes">{course.groups.join(' ; ') == '' ? 'Non renseigné' : course.groups.join(' ; ')}</p>
+                                    </div>
+                                </div>
                             );
                             setModalState(true);
                         }}

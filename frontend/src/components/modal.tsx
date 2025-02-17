@@ -13,7 +13,12 @@ export default function Modal({ children, modalStateContext }: { children: React
         <div
             tabIndex={-1}
             className={`modal ${isModalOpened ? "active" : ""}`}
-            onClick={() => setModalState(false)}
+            onClick={(event) => {
+                let target = event.target as HTMLInputElement;
+                if (target.classList.contains("modal")) {
+                    setModalState(false);
+                }
+            }}
         >
             <div className="modal-content">
                 {children}

@@ -462,7 +462,9 @@ p.no-results {
     cursor: pointer;
 }
 
-
+.result.hidden {
+    display: none;
+}
 
 .result:hover {
     background-color: #f8f8f8;
@@ -678,6 +680,7 @@ input[type=number] {
 
 .calendar-top>p>.day {
     color: #000000;
+    margin-left: 4px;
 }
 
 .column-content {
@@ -903,7 +906,7 @@ input[type=number] {
 
 .loader {
     position: fixed;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: 100%;

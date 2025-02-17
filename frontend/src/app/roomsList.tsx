@@ -5,11 +5,11 @@ import Input from "@/components/input";
 import { RoomsListType } from "./types";
 import { SelectedRoomContext } from "./contexts";
 
-export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
-    function normalizeString(value: string) {
-        return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-    }
+function normalizeString(value: string) {
+    return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
+}
 
+export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [search, setSearch] = useState("");
     const { selectedRoomId, setSelectedRoomId } = useContext(SelectedRoomContext);

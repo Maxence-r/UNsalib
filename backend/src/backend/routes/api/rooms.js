@@ -14,7 +14,7 @@ import {
     updateStats
 } from '../../utils/stats.js';
 
-const VACATIONS = [52, 1];
+const VACATIONS = ["52", "1"];
 
 router.get('/', async (req, res) => {
     try {
@@ -201,6 +201,8 @@ router.get('/timetable', async (req, res) => {
     }
 
     try {
+        requestedWeek.number = requestedWeek.number.toString();
+
         // Vacations
         if (VACATIONS.includes(requestedWeek.number)) {
             const vacationCourses = [];

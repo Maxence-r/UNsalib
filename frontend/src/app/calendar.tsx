@@ -1,124 +1,223 @@
-'use client';
-import { useState, useEffect, useContext } from 'react'
-import Button from "@/components/button";
-import Input from "@/components/input";
-import { SelectedRoomContext } from "./contexts";
+"use client";
+import { useState, useEffect, useContext } from "react";
+import { SelectedRoomContext, LoadingTimetableContext } from "./contexts";
+import { ApiCoursesResponseType, ApiCourseType } from "./types";
 
-// function displayTimetable() {
-//     let increment = 0;
-//     let currentSalle = null;
+const START_DAY_HOUR = 8;
+const END_DAY_HOUR = 19;
+const DAY_DURATION = END_DAY_HOUR - START_DAY_HOUR;
+const WEEK_DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 
-//     async function afficherSalle(salle, delta) {
+function joinArrayElements(array: string[], separator: string, splitter: string, chooseBeforeSplit = false) {
+    let string = '';
+    array.forEach((element) => {
+        if (splitter) {
+            string += element.split(splitter)[chooseBeforeSplit ? 0 : 1] + ' ' + separator + ' ';
+        } else {
+            string += element + separator + ' ';
+        }
+    });
+    string = string.substring(0, string.length - separator.length - 1);
+    return string;
+}
 
-//         const canVibrate = window.navigator.vibrate
-//         if (canVibrate) window.navigator.vibrate(10)
+function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
+    return (
+        <div className="content-box">
+            {hourCourses.map(course => {
+                let courseModule: string;
+                if (course.modules.length > 0) {
+                    courseModule = joinArrayElements(course.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(course.modules, ';', ' - ');;
+                } else if (course.category) {
+                    courseModule = course.category;
+                } else {
+                    courseModule = "Cours inconnu";
+                }
+                let courseTeacher = course.teachers.length > 0 ? course.teachers.join(' ; ') : '';
+                return (
+                    <div
+                        style={{
+                            top: `${course.overflow}%`,
+                            backgroundColor: course.color,
+                            height: `calc(${course.duration}% + ${(course.duration > 100 ? Math.floor(course.duration / 100) * 2 : 0)}px)`,
+                            // width: `${100 / course.length}%`
+                            width: "100%"
+                            // left:
+                            // TODO: handle concurrent courses
+                        }}
+                        className="course"
+                    >
+                        <h2>{courseModule}</h2>
+                        <p>{courseTeacher}</p>
+                    </div>
+                );
+            })}
+        </div>
+    )
+}
 
-//         const newIncrement = (delta == 0) ? 0 : increment + delta;
+function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, dayNumber: string, dayCourses: ApiCourseType[] }) {
+    interface HourType {
+        hour: string,
+        courses: ApiCourseType[]
+    };
 
-//         toggleLoading()
+    const currentDayHours: HourType[] = [];
+    for (let i = START_DAY_HOUR; i < END_DAY_HOUR; i++) {
+        currentDayHours.push({
+            hour: (i < 10 ? "0" + i : i).toString(),
+            courses: []
+        })
+    }
 
-//         const response = await fetch(
-//             `/api/rooms/timetable/?id=${salle.id}&increment=${newIncrement}`
-//         );
+    dayCourses.forEach(course => {
+        currentDayHours.forEach((hour, i) => {
+            if (course.start.split("T")[1].startsWith(hour.hour)) {
+                hour.courses.push(course);
+                return;
+            }
+        });
+    });
 
-//         if (!response.ok) {
-//             console.log("Error fetching data");
-//             toggleLoading("disable");
-//             displayNotification("Les données n'ont pas été enregistrées au-delà !");
-//             return;
-//         }
+    return (
+        <div className="column">
+            <div className="calendar-top">
+                <p>{dayName}<span className="day">{" " + dayNumber}</span></p>
+            </div>
+            <div className="column-content">
+                {currentDayHours.map(dayHour => <CalendarBox key={dayHour.hour} hourCourses={dayHour.courses}></CalendarBox>)}
+            </div>
+        </div>
+    )
+}
 
-//         document.getElementById("room-name").innerText = salle?.alias || salle.name;
-//         document.querySelector(".avaibility-box>p").innerText = salle?.alias || salle.name;
-//         document.querySelector('.avaibility-box .ping').className = salle.available ? "ping blue" : "ping red";
-//         document.querySelector('.avaibility-box .ping').style.display = "block";
+function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
+    const dayHours = [];
+    for (let i = 1; i < DAY_DURATION; i++) {
+        dayHours.push(<p key={i}>{START_DAY_HOUR + i + ":00"}</p>)
+    }
 
-//         document.querySelectorAll(".course").forEach((el) => el.remove());
+    interface DayType {
+        name: string,
+        number: string,
+        date: string,
+        courses: ApiCourseType[]
+    };
 
-//         const salleData = await response.json();
+    const currentWeekDays: DayType[] = [];
+    const currentWeekStartDay: number = new Date(courses.weekInfos.start).getDate() || -1;
+    
+    WEEK_DAYS.forEach((dayName, i) => {
+        let dayNumber: string = "--";
+        if (currentWeekStartDay != -1) {
+            dayNumber = ((currentWeekStartDay + i) < 10 ? "0" + (currentWeekStartDay + i) : (currentWeekStartDay + i)).toString();
+        }
+        currentWeekDays.push({
+            name: dayName,
+            number: dayNumber,
+            date: courses.weekInfos.start.substring(0, courses.weekInfos.start.length - 2) + dayNumber,
+            courses: []
+        });
+    });
 
-//         // Update increment and currentSalle only if the request succeeds
-//         increment = newIncrement;
-//         currentSalle = salle;
+    courses.courses.forEach(course => {
+        currentWeekDays.forEach((day, i) => {
+            if (course.start.startsWith(day.date)) {
+                day.courses.push(course);
+                return;
+            }
+        });
+    });
 
-//         const startDate = salleData.weekInfos.start.split("-")[2];
-
-//         document.querySelectorAll(".day").forEach((el, i = 0) => {
-//             el.innerText = " " + (parseInt(startDate) + i);
-//             i++;
-//         });
-
-//         document.querySelector(".week-number").innerText = salleData.weekInfos.number;
-
-//         if (currentWeekNumber == "--") {
-//             currentWeekNumber = salleData.weekInfos.number;
-//         }
-//         setHourIndicator();
-
-//         const parsedCourses = groupOverlappingCourses(salleData.courses);
-//         parsedCourses.forEach((coursesArray) => {
-//             coursesArray.forEach((coursData, index) => {
-//                 const courseStart = new Date(coursData.start);
-//                 const column = courseStart.getDay() - 1;
-//                 if (column > 4) return;
-
-//                 const course_content = document.createElement("div");
-//                 const course_module = document.createElement("h2");
-//                 const course_prof = document.createElement("p");
-
-//                 course_content.onclick = () => {
-//                     openModal("course-details");
-//                     displayDetails(coursData);
-//                 };
-
-//                 if (coursData.modules.length > 0) {
-//                     course_module.innerText = joinArrayElements(coursData.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(coursData.modules, ';', ' - ');;
-//                 } else if (coursData.category) {
-//                     course_module.innerText = coursData.category;
-//                 } else {
-//                     course_module.innerText = 'Cours inconnu';
-//                 }
-//                 course_prof.innerText = coursData.teachers.length > 0 ? coursData.teachers.join(' ; ') : '';
-
-//                 course_content.appendChild(course_module);
-//                 course_content.appendChild(course_prof);
-
-//                 course_content.style.top = `${coursData.overflow}%`;
-//                 course_content.style.backgroundColor = coursData.color;
-
-//                 course_content.style.height = `calc(${coursData.duration}% + ${(coursData.duration > 100 ? Math.floor(coursData.duration / 100) * 2 : 0)}px)`;
-//                 course_content.style.width = `${100 / coursesArray.length}%`;
-//                 course_content.style.left = `${100 - (100 / coursesArray.length) * (coursesArray.length - index)}%`;
-//                 course_content.classList.add("course");
-
-//                 const row = courseStart.getHours() - heureDebut;
-
-//                 columns[column]
-//                     .querySelectorAll(".content-box")[row]
-//                     .appendChild(course_content);
-//             });
-//         });
-//         toggleLoading("disable");
-//     }
-// }
+    return (
+        <div className="calendar-container">
+            <div className="calendar-hours">
+                <div className="calendar-top"></div>
+                <div className="calendar-hours-display">
+                    {dayHours}
+                    <div className="indicator-hour"></div>
+                </div>
+            </div>
+            <div className="calendar-columns">
+                {currentWeekDays.map(currentDay => <CalendarColumn key={currentDay.name} dayName={currentDay.name} dayNumber={currentDay.number} dayCourses={currentDay.courses}></CalendarColumn>)}
+            </div>
+            <div tabIndex={-1} className="about">
+                <h2>À PROPOS<img src="/arrow.svg" /></h2>
+                <div className="about-content">
+                    <div className="links">
+                        <div className="link whitePaper">
+                            <div className="link-infos">
+                                <h2>WhitePaper</h2>
+                                <p>Document de nos recherches</p>
+                            </div>
+                            <button tabIndex={-1}>
+                                <img src="/download.svg" alt="Download" />
+                            </button>
+                        </div>
+                    </div>
+                    <div className="links profile">
+                        <div className="link">
+                            <div className="link-infos">
+                                <h2>Maxence.R</h2>
+                                <p>Développeur</p>
+                            </div>
+                            <img src="/maxence.png" />
+                        </div>
+                        <div className="link ">
+                            <div className="link-infos">
+                                <h2>Mael.B</h2>
+                                <p>Développeur</p>
+                            </div>
+                            <img src="/profile.png" />
+                        </div>
+                        <div className="link">
+                            <div className="link-infos">
+                                <h2>Ethann.A</h2>
+                                <p>Testeur</p>
+                            </div>
+                            <img src="/profile.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default function Calendar() {
-    const [activeTab, setActiveTab] = useState("edt-finder");
-    const [events, setEvents] = useState([]);
     const { selectedRoomId, setSelectedRoomId } = useContext(SelectedRoomContext);
+    const { loadingTimetable, setLoadingTimetable } = useContext(LoadingTimetableContext);
+    const [courses, setCourses] = useState({
+        "courses": [],
+        "weekInfos": {
+            "start": "--",
+            "end": "--",
+            "number": "--"
+        }
+    });
 
     useEffect(() => {
-        // if (selectedRoom) {
-        //     fetch(`http://localhost:9000/api/rooms/timetable/?id=${selectedRoom}`)
-        //         .then((res) => res.json())
-        //         .then((data) => setEvents(data));
-        // }
-        console.log("changed")
+        async function render() {
+            setLoadingTimetable(true);
+            try {
+                const response = await fetch(
+                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoomId}&increment=${1}`
+                );
+                const coursesData = await response.json();
+                setCourses(coursesData);
+            } finally {
+                setLoadingTimetable(false);
+            }
+        }
+
+        if (selectedRoomId != "") {
+            render();
+        }
     }, [selectedRoomId]);
 
     return (
         <div className="calendar">
-            <div className="loader-indicator">
+            <div className="loader-indicator" style={{ display: loadingTimetable ? "flex" : "none" }}>
                 <span className="spin"></span>
                 <p>Chargement de l'EDT...</p>
             </div>
@@ -135,98 +234,7 @@ export default function Calendar() {
                     </div>
                 </div>
             </div>
-            <div className="calendar-container">
-                <div className="calendar-hours">
-                    <div className="calendar-top"></div>
-                    <div className="calendar-hours-display">
-                        <div className="indicator-hour">
-
-                        </div>
-                    </div>
-                </div>
-                <div className="calendar-columns">
-                    <h2>{selectedRoomId}</h2>
-                    <ul>
-                        {JSON.stringify(events)}
-                    </ul>
-                    <div className="column">
-                        <div className="calendar-top">
-                            <p>Lundi<span className="day"> --</span></p>
-                        </div>
-
-                        <div className="column-content">
-
-                        </div>
-                    </div>
-                    <div className="column">
-                        <div className="calendar-top">
-                            <p>Mardi<span className="day"> --</span></p>
-                        </div>
-
-                        <div className="column-content"></div>
-                    </div>
-                    <div className="column">
-                        <div className="calendar-top">
-                            <p>Mercredi<span className="day"> --</span></p>
-                        </div>
-
-                        <div className="column-content"></div>
-                    </div>
-                    <div className="column">
-                        <div className="calendar-top">
-                            <p>Jeudi<span className="day"> --</span></p>
-                        </div>
-
-                        <div className="column-content"></div>
-                    </div>
-                    <div className="column">
-                        <div className="calendar-top">
-                            <p>Vendredi<span className="day"> --</span></p>
-                        </div>
-
-                        <div className="column-content"></div>
-                    </div>
-                </div>
-                <div tabIndex={-1} className="about">
-                    <h2>À PROPOS<img src="/arrow.svg" /></h2>
-                    <div className="about-content">
-                        <div className="links">
-                            <div className="link whitePaper">
-                                <div className="link-infos">
-                                    <h2>WhitePaper</h2>
-                                    <p>Document de nos recherches</p>
-                                </div>
-                                <button tabIndex={-1}>
-                                    <img src="/download.svg" alt="Download" />
-                                </button>
-                            </div>
-                        </div>
-                        <div className="links profile">
-                            <div className="link">
-                                <div className="link-infos">
-                                    <h2>Maxence.R</h2>
-                                    <p>Développeur</p>
-                                </div>
-                                <img src="/maxence.png" />
-                            </div>
-                            <div className="link ">
-                                <div className="link-infos">
-                                    <h2>Mael.B</h2>
-                                    <p>Développeur</p>
-                                </div>
-                                <img src="/profile.png" />
-                            </div>
-                            <div className="link">
-                                <div className="link-infos">
-                                    <h2>Ethann.A</h2>
-                                    <p>Testeur</p>
-                                </div>
-                                <img src="/profile.png" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <CalendarContainer courses={courses}></CalendarContainer>
             <div className="menu-mobile">
                 <div className="current-room">
                     <p>Salle actuelle:</p>

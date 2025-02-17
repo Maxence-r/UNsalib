@@ -6,4 +6,9 @@ const SelectedRoomContext = createContext({
     setSelectedRoomId: (roomId: string) => { }
 });
 
-export { SelectedRoomContext };
+const LoadingTimetableContext = createContext({
+    loadingTimetable: false,
+    setLoadingTimetable: (state: boolean) => { }
+});
+
+export { SelectedRoomContext, LoadingTimetableContext };

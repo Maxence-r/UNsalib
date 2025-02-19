@@ -26,9 +26,7 @@ async function launch() {
         console.log('Correction des groupes incorrects DÉSACTIVÉE');
     }
     
-    // await processGroup('281PA')
-    // await processGroup('285')
-    // await processGroup('221')
+    // await processGroup('L1')
     getCourses();
 }
 

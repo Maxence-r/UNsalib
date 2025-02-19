@@ -232,9 +232,10 @@ async function fetchCourses(group) {
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
-    process.stdout.cursorTo(0, process.stdout.rows - 3);
-    process.stdout.clearLine(1);
-    process.stdout.write(`Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
+    // Logging if needed
+    if (process.env.LOGS_RECUP_GPES == "true") {
+        console.log(`---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
+    }
 
     // Building request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
@@ -260,12 +261,11 @@ async function fetchCourses(group) {
         averageProcessingTime.timeSum += processingTime;
         averageProcessingTime.measuresNumber++;
 
-        process.stdout.cursorTo(0, process.stdout.rows - 2);
-        process.stdout.clearLine(0);
-        process.stdout.write(`Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`);
-        process.stdout.cursorTo(0, process.stdout.rows);
-        process.stdout.clearLine(0);        
-        process.stdout.write(`Temps de traitement : ${parseFloat('' + (processingTime / 1000)).toFixed(2)}s | Temps de traitement moyen : ${parseFloat('' + ((averageProcessingTime.timeSum / averageProcessingTime.measuresNumber) / 1000)).toFixed(2)}s`);
+        // Logging if needed
+        if (process.env.LOGS_RECUP_GPES == "true") {
+            console.log(`Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`);
+            console.log(`Temps de traitement : ${parseFloat('' + (processingTime / 1000)).toFixed(2)}s | Temps de traitement moyen : ${parseFloat('' + ((averageProcessingTime.timeSum / averageProcessingTime.measuresNumber) / 1000)).toFixed(2)}s`)
+        }
 
         // Sending an update message to all clients
         io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
@@ -276,7 +276,6 @@ async function fetchCourses(group) {
 
 // Processes a batch of groups
 async function processBatchGroups() {
-    console.log('\n\n');
     const groups = await Group.find();
     for (const group of groups) {
         await fetchCourses(group);
@@ -285,7 +284,6 @@ async function processBatchGroups() {
 
 // Process only one group
 async function processGroup(groupName) {
-    console.log('\n\n');
     const group = await Group.findOne({ name: groupName });
     // console.log(group)
     await fetchCourses(group);
@@ -328,10 +326,9 @@ async function getCourses() {
     };
 
     // Starting the update process
-    console.log('\nDémarrage du cycle de mise à jour...');
+    console.log('Démarrage du cycle de mise à jour...');
     console.log(`${groupsNumber} groupes seront traités toutes les ${CYCLE_INTERVAL / 1000 / 60 / 60}h`);
     console.log(`Intervalle entre chaque groupe : ${intervalBetweenGroups / 1000} secondes`);
-    console.log('\n\n');
     startUpdateCycle();
 }
 

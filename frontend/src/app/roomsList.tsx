@@ -13,7 +13,9 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
     const { isModalOpened, setModalState } = useContext(ModalStateContext);
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
-    const [features, setFeatures] = useState<string[]>([]);
+    const [visioFeature, setVisioFeature] = useState(false);
+    const [ilotFeature, setIlotFeature] = useState(false);
+    const [nobadgeFeature, setNobadgeFeature] = useState(false);
     const [seats, setSeats] = useState(6);
     const [whiteBoards, setWhiteBoards] = useState(0);
     const [blackBoards, setBlackBoards] = useState(0);
@@ -68,22 +70,18 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             const debut = `${dateString}T${startTime}`;
             const fin = `${dateString}T${endTime}`;
 
+            let nobadgeUrl = nobadgeFeature ? "true" : "";
             let featuresUrl = "";
-            let noBadgeUrl = "";
-            features.forEach((feature: string) => {
-                if (feature.startsWith('VISIO')) {
-                    featuresUrl += 'visio-';
-                } else if (feature.startsWith('IL')) {
-                    featuresUrl += 'ilot-';
-                } else if (feature.startsWith('ACC')) {
-                    noBadgeUrl = 'true';
-                }
-            });
-            featuresUrl = featuresUrl[featuresUrl.length - 1] == '-' ? featuresUrl.substring(0, featuresUrl.length - 1) : featuresUrl;
+            if (visioFeature) {
+                featuresUrl += "visio";
+                featuresUrl += ilotFeature ? "-ilot" : "";
+            } else {
+                featuresUrl += ilotFeature ? "ilot" : "";
+            }
 
             try {
                 const response = await fetch(
-                    `http://localhost:9000/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${noBadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
+                    `http://localhost:9000/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
                 );
                 const coursesData = await response.json();
 
@@ -102,7 +100,6 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             render();
         }
     }, [searchLaunched]);
-
 
     return (
         <div className="filter-rooms">
@@ -159,43 +156,20 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                 <p>Caractéristiques :</p>
                 <div className="tags" id="caracteristiques">
                     <div
-                        className={`tag ${features.includes("visio") ? "selected" : ""}`}
-                        onClick={() => {
-                            if (features.includes("visio")) {
-                                setFeatures(features.splice(features.indexOf("visio"), 1));
-                            } else {
-                                let currentFeatures = features;
-                                currentFeatures.push("visio");
-                                setFeatures(currentFeatures);
-                            }
-                            console.log(features)
-                        }}
+                        className={`tag ${visioFeature ? "selected" : ""}`}
+                        onClick={() => { if (visioFeature) setVisioFeature(false); else setVisioFeature(true); }}
                     >
                         <p>VISIOCONFÉRENCE</p>
                     </div>
                     <div
-                        className={`tag ${features.includes("ilot") ? "selected" : ""}`}
-                        onClick={() => {
-                            if (features.includes("ilot")) {
-                                setFeatures(features.splice(features.indexOf("ilot"), 1));
-                            } else {
-                                setFeatures([...features, "ilot"]);
-                            }
-                            console.log(features)
-                        }}
+                        className={`tag ${ilotFeature ? "selected" : ""}`}
+                        onClick={() => { if (ilotFeature) setIlotFeature(false); else setIlotFeature(true); }}
                     >
                         <p>ILOT</p>
                     </div>
                     <div
-                        className={`tag ${features.includes("nobadge") ? "selected" : ""}`}
-                        onClick={() => {
-                            if (features.includes("nobadge")) {
-                                setFeatures(features.splice(features.indexOf("nobadge"), 1));
-                            } else {
-                                setFeatures([...features, "nobadge"]);
-                            }
-                            console.log(features)
-                        }}
+                        className={`tag ${nobadgeFeature ? "selected" : ""}`}
+                        onClick={() => { if (nobadgeFeature) setNobadgeFeature(false); else setNobadgeFeature(true); }}
                     >
                         <p>ACCÈS SANS BADGE</p>
                     </div>

@@ -21,4 +21,9 @@ const ModalContentContext = createContext({
     setModalContent: (content: JSX.Element) => { }
 });
 
-export { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalContentContext };
+const PanelContext = createContext({
+    isPanelActive: true,
+    setPanelState: (state: boolean) => { }
+});
+
+export { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalContentContext, PanelContext };

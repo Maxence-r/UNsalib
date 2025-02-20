@@ -1,17 +1,14 @@
+"use client";
 import RoomsList from "./roomsList";
 import { RoomsListType } from "./types";
+import { useContext } from "react";
+import { PanelContext } from "./contexts";
 
-export default async function Panel() {
-    const response = await fetch(`${process.env.API_URI}/rooms`);
-    const rooms: RoomsListType[] = await response.json();
-    // try {
-        
-    // } catch (error) {
-    //     console.error("Erreur lors de la récupération des salles :", error);
-    // }
+export default function Panel({ roomsList }: { roomsList: RoomsListType[] }) {
+    const { isPanelActive, setPanelState } = useContext(PanelContext);
 
     return (
-        <div tabIndex={-1} className="pannel">
+        <div tabIndex={-1} className={`pannel ${isPanelActive ? "" : "hidden"}`}>
             <div className="campus">
                 <div className="campus_selector">
                     <p>SCIENCES ET TECHNIQUES</p>
@@ -27,7 +24,7 @@ export default async function Panel() {
                 </div>
             </div>
 
-            <RoomsList roomsList={rooms}></RoomsList>
+            <RoomsList roomsList={roomsList}></RoomsList>
         </div>
     )
 }

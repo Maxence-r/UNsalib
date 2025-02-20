@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { RoomsListType } from "./types";
-import { SelectedRoomContext, ModalContentContext, ModalStateContext } from "./contexts";
+import { SelectedRoomContext, ModalContentContext, ModalStateContext, PanelContext } from "./contexts";
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
@@ -219,6 +219,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
     const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
     const { isModalOpened, setModalState } = useContext(ModalStateContext);
     const { modalContent, setModalContent } = useContext(ModalContentContext);
+    const { isPanelActive, setPanelState } = useContext(PanelContext);
 
     return (
         <>
@@ -254,7 +255,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             <div
                                 key={room.id}
                                 className={`result ${activeTab == "edt-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => setSelectedRoom({ id: room.id, name: room.name })}
+                                onClick={() => { setPanelState(false); setSelectedRoom({ id: room.id, name: room.name }) }}
                             >
                                 <p>
                                     {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
@@ -304,7 +305,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             <div
                                 key={room.id}
                                 className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => setSelectedRoom({ id: room.id, name: room.name })}
+                                onClick={() => { setPanelState(false); setSelectedRoom({ id: room.id, name: room.name }) }}
                             >
                                 <p>
                                     {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}

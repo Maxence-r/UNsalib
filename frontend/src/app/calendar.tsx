@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useContext } from "react";
-import { SelectedRoomContext, LoadingTimetableContext, ModalContentContext, ModalStateContext } from "./contexts";
+import { SelectedRoomContext, LoadingTimetableContext, ModalContentContext, ModalStateContext, PanelContext } from "./contexts";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
 
 const START_DAY_HOUR = 8;
@@ -227,6 +227,7 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
 export default function Calendar() {
     const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
     const { loadingTimetable, setLoadingTimetable } = useContext(LoadingTimetableContext);
+    const { isPanelActive, setPanelState } = useContext(PanelContext);
     const [courses, setCourses] = useState({
         "courses": [],
         "weekInfos": {
@@ -278,10 +279,10 @@ export default function Calendar() {
             <CalendarContainer courses={courses}></CalendarContainer>
             <div className="menu-mobile">
                 <div className="current-room">
-                    <p>Salle actuelle:</p>
-                    <h2 id="room-name">---</h2>
+                    <p>Salle actuelle :</p>
+                    <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <button className="menu-button">
+                <button className="menu-button" onClick={() => setPanelState(true)}>
                     MENU
                 </button>
             </div>

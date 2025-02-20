@@ -1,6 +1,6 @@
 "use client";
 import { ReactNode, useState } from "react";
-import { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalContentContext } from "./contexts";
+import { SelectedRoomContext, LoadingTimetableContext, ModalStateContext, ModalContentContext, PanelContext } from "./contexts";
 import Modal from "@/components/modal";
 
 export default function ContextProvider({ children }: { children: ReactNode }) {
@@ -12,14 +12,18 @@ export default function ContextProvider({ children }: { children: ReactNode }) {
     const isModalOpenedValue = { isModalOpened, setModalState };
     const [modalContent, setModalContent] = useState(<></>);
     const modalContentValue = { modalContent, setModalContent };
+    const [isPanelActive, setPanelState] = useState(false);
+    const isPanelActiveValue = { isPanelActive, setPanelState };
 
     return (
         <SelectedRoomContext.Provider value={selectedRoomValue}>
             <LoadingTimetableContext.Provider value={loadingTimetableValue}>
                 <ModalStateContext.Provider value={isModalOpenedValue}>
                     <ModalContentContext.Provider value={modalContentValue}>
-                        {children}
-                        <Modal modalStateContext={isModalOpenedValue}>{modalContent}</Modal>
+                        <PanelContext.Provider value={isPanelActiveValue}>
+                            {children}
+                            <Modal modalStateContext={isModalOpenedValue}>{modalContent}</Modal>
+                        </PanelContext.Provider>
                     </ModalContentContext.Provider>
                 </ModalStateContext.Provider>
             </LoadingTimetableContext.Provider>

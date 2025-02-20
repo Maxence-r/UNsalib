@@ -19,8 +19,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="fr">
-            <body tabIndex={-1}>
-                {children}
+            <body>
+                <main tabIndex={-1}>
+                    {children}
+                </main>
             </body>
         </html>
     );

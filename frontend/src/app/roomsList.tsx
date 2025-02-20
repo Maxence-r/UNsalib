@@ -253,7 +253,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                         {roomsList.map((room: RoomsListType) => (
                             <div
                                 key={room.id}
-                                className={`result ${normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search) ? "" : "hidden"}`}
+                                className={`result ${activeTab == "edt-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
                                 onClick={() => setSelectedRoom({ id: room.id, name: room.name })}
                             >
                                 <p>
@@ -283,7 +283,14 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             Chercher une salle libre
                         </Button>
                     </div>
-                    <Input className="search" type="text" placeholder="Filtrer par salle, bâtiment..."></Input>
+                    <Input
+                        className="search"
+                        type="text"
+                        placeholder="Filtrer par salle, bâtiment..."
+                        onInput={(event) => {
+                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
+                        }}
+                    ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
@@ -296,7 +303,7 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                         {availableRoomsList.map((room: RoomsListType) => (
                             <div
                                 key={room.id}
-                                className={`result ${normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search) ? "" : "hidden"}`}
+                                className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
                                 onClick={() => setSelectedRoom({ id: room.id, name: room.name })}
                             >
                                 <p>

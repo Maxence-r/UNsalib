@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { RoomsListType } from "./types";
-import { useModalStore, usePanelStore, useSelectedRoomStore } from './store';
+import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } from './store';
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
@@ -11,6 +11,9 @@ function normalizeString(value: string) {
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: any }) {
     const closeModal = useModalStore((state) => state.close);
+    const showToast = useToastStore((state) => state.open);
+    const setToastContent = useToastStore((state) => state.setContent);
+    const setToastAsError = useToastStore((state) => state.setError);
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
     const [visioFeature, setVisioFeature] = useState(false);
@@ -54,9 +57,10 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             if (startDateTime > endDateTime) errors.push('L\'heure de fin doit être après l\'heure de début.');
 
             if (errors.length > 0) {
-                // document.querySelector('.search-button').classList.remove('button--loading')
-                // displayNotification(errors.join(' '))
-                console.log("error")
+                setToastContent(errors.join(' '));
+                setToastAsError(true);
+                showToast();
+
                 launchSearch(false);
                 return;
             }

@@ -18,7 +18,7 @@ export default function Panel({ roomsList }: { roomsList: RoomsListType[] }) {
 
                     <div className="overlay"></div>
                     <div className="campus_feed_content">
-                        <p>ICI S'AFFICHERA LA MISE A JOUR DES GROUPES</p>
+                        <p>ICI S'AFFICHERA LA MISE À JOUR DES GROUPES</p>
                     </div>
                 </div>
             </div>

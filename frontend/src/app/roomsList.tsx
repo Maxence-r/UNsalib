@@ -263,72 +263,86 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             <div
                                 key={room.id}
                                 className={`result ${activeTab == "edt-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => { closePanel(); setSelectedRoom(room.id, room.name) }}
+                                onClick={() => {
+                                    try {
+                                        window.navigator.vibrate(10);
+                                    } finally {
+                                        closePanel();
+                                        setSelectedRoom(room.id, room.name);
+                                    }
+                                }}
                             >
-                        <p>
-                            {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                            <span className="bat">{room.building}</span>
-                        </p>
-                        <div className="badges">
-                            {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                            <div className={room.available ? "ping blue" : "ping red"}></div>
+                                <p>
+                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
+                                    <span className="bat">{room.building}</span>
+                                </p>
+                                <div className="badges">
+                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
+                                    <div className={room.available ? "ping blue" : "ping red"}></div>
+                                </div>
+                            </div>
+                        ))}
+                        {/* TODO: display the no result component */}
+                        {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
+                    </div>
+                </div>
+
+                <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
+                    <div className="advanced-search">
+                        <Button
+                            className="filter-button"
+                            onClick={() => {
+                                setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
+                                openModal();
+                            }}
+                        >
+                            Chercher une salle libre
+                        </Button>
+                    </div>
+                    <Input
+                        className="search"
+                        type="text"
+                        placeholder="Filtrer par salle, bâtiment..."
+                        onInput={(event) => {
+                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
+                        }}
+                    ></Input>
+                    <div className="results-head">
+                        <p>Résultats de recherche</p>
+                        <div className="indicator">
+                            <img src="/info.svg" />
+                            <p>Pictos</p>
                         </div>
                     </div>
-                        ))}
-                    {/* TODO: display the no result component */}
-                    {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
-                </div>
-            </div>
 
-            <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
-                <div className="advanced-search">
-                    <Button
-                        className="filter-button"
-                        onClick={() => {
-                            setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
-                            openModal();
-                        }}
-                    >
-                        Chercher une salle libre
-                    </Button>
-                </div>
-                <Input
-                    className="search"
-                    type="text"
-                    placeholder="Filtrer par salle, bâtiment..."
-                    onInput={(event) => {
-                        setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
-                    }}
-                ></Input>
-                <div className="results-head">
-                    <p>Résultats de recherche</p>
-                    <div className="indicator">
-                        <img src="/info.svg" />
-                        <p>Pictos</p>
-                    </div>
-                </div>
-
-                <div className="results available">
-                    {availableRoomsList.map((room: RoomsListType) => (
-                        <div
-                            key={room.id}
-                            className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                            onClick={() => { closePanel(); setSelectedRoom(room.id, room.name); }}
+                    <div className="results available">
+                        {availableRoomsList.map((room: RoomsListType) => (
+                            <div
+                                key={room.id}
+                                className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
+                                onClick={() => {
+                                    try {
+                                        window.navigator.vibrate(10);
+                                    } finally {
+                                        closePanel();
+                                        setSelectedRoom(room.id, room.name);
+                                    }
+                                }}
                             >
-                    <p>
-                        {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                        <span className="bat">{room.building}</span>
-                    </p>
-                    <div className="badges">
-                        {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                        <div className={room.available ? "ping blue" : "ping red"}></div>
-                    </div>
-                </div>
+                                <p>
+                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
+                                    <span className="bat">{room.building}</span>
+                                </p>
+                                <div className="badges">
+                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
+                                    <div className={room.available ? "ping blue" : "ping red"}></div>
+                                </div>
+                            </div>
                         ))}
-                {/* TODO: display the no result component */}
-                {/* <p className="no-results">Aucune salle n'a été trouvée.</p> */}
-            </div>
-        </div >
+                        {/* TODO: display the no result component */}
+                        {/* <p className="no-results">Aucune salle n'a été trouvée.</p> */}
+                    </div>
+                </div >
             </div >
         </>
     )

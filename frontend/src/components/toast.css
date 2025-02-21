@@ -1,6 +1,6 @@
 .notif {
     display: flex;
-    position: absolute;
+    position: fixed;
     margin: 20px;
     bottom: 0;
     right: 0;

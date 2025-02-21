@@ -16,6 +16,10 @@
     font-family: "Space Grotesk", sans-serif;
 }
 
+.button:hover {
+    background-color: #1f2dff;
+}
+
 .button--loading .button__text {
     visibility: hidden;
     opacity: 0;

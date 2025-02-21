@@ -517,10 +517,6 @@ input[type=number] {
     outline-offset: 2px;
 }
 
-.search-button:hover {
-    background-color: #1f2dff;
-}
-
 .calendar-container {
     display: flex;
 

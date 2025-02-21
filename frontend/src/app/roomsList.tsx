@@ -22,12 +22,16 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
     const [seats, setSeats] = useState(6);
     const [whiteBoards, setWhiteBoards] = useState(0);
     const [blackBoards, setBlackBoards] = useState(0);
-    const [startHour, setStartHour] = useState("");
-    const [startMinute, setStartMinute] = useState("");
-    const [endHour, setEndHour] = useState("");
-    const [endMinute, setEndMinute] = useState("");
-    const [day, setDay] = useState("");
-    const [month, setMonth] = useState("");
+
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+    const [startHour, setStartHour] = useState(now.getHours().toString().padStart(2, '0'));
+    const [startMinute, setStartMinute] = useState(now.getMinutes().toString().padStart(2, '0'));
+    const [endHour, setEndHour] = useState(oneHourLater.getHours().toString().padStart(2, '0'));
+    const [endMinute, setEndMinute] = useState(oneHourLater.getMinutes().toString().padStart(2, '0'));
+    const [day, setDay] = useState(now.getDate().toString().padStart(2, '0'));
+    const [month, setMonth] = useState((now.getMonth() + 1).toString().padStart(2, '0'));
 
     useEffect(() => {
         async function render() {

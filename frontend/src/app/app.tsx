@@ -21,7 +21,6 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: Room
             <Panel roomsList={prefetchedRoomsList}></Panel>
             <Calendar></Calendar>
             <Modal isOpened={useModalStore((state) => state.isOpened)} closeFunction={useModalStore((state) => state.close)}>{useModalStore((state) => state.content)}</Modal>
-            <Toast></Toast>
         </>
     );
 }

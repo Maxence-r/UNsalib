@@ -1,11 +1,12 @@
+import { ReactNode } from "react";
 import "./toast.css";
 
-export default function Toast({ message, error, show }: { message: string, error: boolean, show: boolean }) {
+export default function Toast({ children, error, show }: { children: ReactNode, error: boolean, show: boolean }) {
     return (
         <div className={`notif ${show ? "active" : ""}`} style={{ backgroundColor: error ? "red" : "green" }}>
-            <p>{message}</p>
+            <p>{children}</p>
         </div>
     )
 }
 
-Toast.defaultProps = { message: "", error: false, show: false };
+Toast.defaultProps = { error: false, show: false };

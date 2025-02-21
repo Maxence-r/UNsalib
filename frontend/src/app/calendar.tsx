@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useContext } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
-import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore } from './store';
+import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -238,16 +238,21 @@ export default function Calendar() {
     const selectedRoom = useSelectedRoomStore((state) => state.room);
     const setTimetableLoadState = useTimetableStore((state) => state.setLoading);
     const isTimetableLoading = useTimetableStore((state) => state.isLoading);
+    const showToast = useToastStore((state) => state.open);
+    const setToastContent = useToastStore((state) => state.setContent);
+    const setToastAsError = useToastStore((state) => state.setError);
 
     useEffect(() => {
         async function render() {
             setTimetableLoadState(true);
             try {
-                const response = await fetch(
-                    `http://localhost:9000/api/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`
-                );
+                const response = await fetch(`http://localhost:9000/api/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
                 const coursesData = await response.json();
                 setCourses(coursesData);
+            } catch {
+                setToastContent("Impossible de récupérer les données, elles n'ont sans doute pas été enregistrées au-delà !");
+                setToastAsError(true);
+                showToast();
             } finally {
                 setTimetableLoadState(false);
             }

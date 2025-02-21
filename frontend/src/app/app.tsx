@@ -2,6 +2,7 @@
 import Panel from './panel';
 import Calendar from './calendar';
 import Modal from "@/components/modal";
+import Toast from '@/components/toast';
 import { RoomsListType } from "./types";
 import { useModalStore } from './store';
 
@@ -20,9 +21,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: Room
             <Panel roomsList={prefetchedRoomsList}></Panel>
             <Calendar></Calendar>
             <Modal isOpened={useModalStore((state) => state.isOpened)} closeFunction={useModalStore((state) => state.close)}>{useModalStore((state) => state.content)}</Modal>
-            <div className="notif">
-                <p>Attention vous avez dépassé</p>
-            </div>
+            <Toast></Toast>
         </>
     );
 }

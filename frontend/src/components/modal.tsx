@@ -1,22 +1,15 @@
 import "./modal.css";
-import { ReactNode, Dispatch, SetStateAction } from "react";
+import { ReactNode } from "react";
 
-interface ModalStateContextType {
-    isModalOpened: boolean, 
-    setModalState: Dispatch<SetStateAction<boolean>>
-};
-
-export default function Modal({ children, modalStateContext }: { children: ReactNode, modalStateContext: ModalStateContextType }) {
-    const { isModalOpened, setModalState } = modalStateContext;
-
+export default function Modal({ children, isOpened, closeFunction }: { children: ReactNode, isOpened: boolean, closeFunction: () => void }) {
     return (
         <div
             tabIndex={-1}
-            className={`modal ${isModalOpened ? "active" : ""}`}
+            className={`modal ${isOpened ? "active" : ""}`}
             onClick={(event) => {
                 let target = event.target as HTMLInputElement;
                 if (target.classList.contains("modal")) {
-                    setModalState(false);
+                    closeFunction();
                 }
             }}
         >

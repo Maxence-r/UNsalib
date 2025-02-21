@@ -3,14 +3,14 @@ import { useState, useContext, useEffect } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { RoomsListType } from "./types";
-import { SelectedRoomContext, ModalContentContext, ModalStateContext, PanelContext } from "./contexts";
+import { useModalStore, usePanelStore, useSelectedRoomStore } from './store';
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
 }
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: any }) {
-    const { isModalOpened, setModalState } = useContext(ModalStateContext);
+    const closeModal = useModalStore((state) => state.close);
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
     const [visioFeature, setVisioFeature] = useState(false);
@@ -92,7 +92,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                 console.error(e);
             } finally {
                 launchSearch(false);
-                setModalState(false);
+                closeModal();
             }
         }
 
@@ -216,10 +216,10 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [search, setSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState([]);
-    const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
-    const { isModalOpened, setModalState } = useContext(ModalStateContext);
-    const { modalContent, setModalContent } = useContext(ModalContentContext);
-    const { isPanelActive, setPanelState } = useContext(PanelContext);
+    const openModal = useModalStore((state) => state.open);
+    const setModalContent = useModalStore((state) => state.setContent);
+    const closePanel = usePanelStore((state) => state.close);
+    const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
     return (
         <>
@@ -255,73 +255,73 @@ export default function RoomsList({ roomsList }: { roomsList: RoomsListType[] })
                             <div
                                 key={room.id}
                                 className={`result ${activeTab == "edt-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => { setPanelState(false); setSelectedRoom({ id: room.id, name: room.name }) }}
+                                onClick={() => { closePanel(); setSelectedRoom(room.id, room.name) }}
                             >
-                                <p>
-                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                                    <span className="bat">{room.building}</span>
-                                </p>
-                                <div className="badges">
-                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                                    <div className={room.available ? "ping blue" : "ping red"}></div>
-                                </div>
-                            </div>
-                        ))}
-                        {/* TODO: display the no result component */}
-                        {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
-                    </div>
-                </div>
-
-                <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
-                    <div className="advanced-search">
-                        <Button
-                            className="filter-button"
-                            onClick={() => {
-                                setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
-                                setModalState(true);
-                            }}
-                        >
-                            Chercher une salle libre
-                        </Button>
-                    </div>
-                    <Input
-                        className="search"
-                        type="text"
-                        placeholder="Filtrer par salle, bâtiment..."
-                        onInput={(event) => {
-                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
-                        }}
-                    ></Input>
-                    <div className="results-head">
-                        <p>Résultats de recherche</p>
-                        <div className="indicator">
-                            <img src="/info.svg" />
-                            <p>Pictos</p>
+                        <p>
+                            {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
+                            <span className="bat">{room.building}</span>
+                        </p>
+                        <div className="badges">
+                            {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
+                            <div className={room.available ? "ping blue" : "ping red"}></div>
                         </div>
                     </div>
-
-                    <div className="results available">
-                        {availableRoomsList.map((room: RoomsListType) => (
-                            <div
-                                key={room.id}
-                                className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => { setPanelState(false); setSelectedRoom({ id: room.id, name: room.name }) }}
-                            >
-                                <p>
-                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                                    <span className="bat">{room.building}</span>
-                                </p>
-                                <div className="badges">
-                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                                    <div className={room.available ? "ping blue" : "ping red"}></div>
-                                </div>
-                            </div>
                         ))}
-                        {/* TODO: display the no result component */}
-                        {/* <p className="no-results">Aucune salle n'a été trouvée.</p> */}
-                    </div>
+                    {/* TODO: display the no result component */}
+                    {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
                 </div>
             </div>
+
+            <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
+                <div className="advanced-search">
+                    <Button
+                        className="filter-button"
+                        onClick={() => {
+                            setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
+                            openModal();
+                        }}
+                    >
+                        Chercher une salle libre
+                    </Button>
+                </div>
+                <Input
+                    className="search"
+                    type="text"
+                    placeholder="Filtrer par salle, bâtiment..."
+                    onInput={(event) => {
+                        setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
+                    }}
+                ></Input>
+                <div className="results-head">
+                    <p>Résultats de recherche</p>
+                    <div className="indicator">
+                        <img src="/info.svg" />
+                        <p>Pictos</p>
+                    </div>
+                </div>
+
+                <div className="results available">
+                    {availableRoomsList.map((room: RoomsListType) => (
+                        <div
+                            key={room.id}
+                            className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
+                            onClick={() => { closePanel(); setSelectedRoom(room.id, room.name); }}
+                            >
+                    <p>
+                        {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
+                        <span className="bat">{room.building}</span>
+                    </p>
+                    <div className="badges">
+                        {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
+                        <div className={room.available ? "ping blue" : "ping red"}></div>
+                    </div>
+                </div>
+                        ))}
+                {/* TODO: display the no result component */}
+                {/* <p className="no-results">Aucune salle n'a été trouvée.</p> */}
+            </div>
+        </div >
+            </div >
         </>
     )
 }

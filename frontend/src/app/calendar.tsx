@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useContext } from "react";
-import { SelectedRoomContext, LoadingTimetableContext, ModalContentContext, ModalStateContext, PanelContext } from "./contexts";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
+import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore } from './store';
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -22,8 +22,8 @@ function joinArrayElements(array: string[], separator: string, splitter: string,
 }
 
 function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
-    const { isModalOpened, setModalState } = useContext(ModalStateContext);
-    const { modalContent, setModalContent } = useContext(ModalContentContext);
+    const openModal = useModalStore((state) => state.open);
+    const setModalContent = useModalStore((state) => state.setContent);
 
     return (
         <div className="content-box">
@@ -84,7 +84,7 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
                                     </div>
                                 </div>
                             );
-                            setModalState(true);
+                            openModal();
                         }}
                     >
                         <h2>{module}</h2>
@@ -225,9 +225,6 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
 }
 
 export default function Calendar() {
-    const { selectedRoom, setSelectedRoom } = useContext(SelectedRoomContext);
-    const { loadingTimetable, setLoadingTimetable } = useContext(LoadingTimetableContext);
-    const { isPanelActive, setPanelState } = useContext(PanelContext);
     const [courses, setCourses] = useState({
         "courses": [],
         "weekInfos": {
@@ -237,10 +234,14 @@ export default function Calendar() {
         }
     });
     const [increment, setIncrement] = useState(0);
+    const openPanel = usePanelStore((state) => state.open);
+    const selectedRoom = useSelectedRoomStore((state) => state.room);
+    const setTimetableLoadState = useTimetableStore((state) => state.setLoading);
+    const isTimetableLoading = useTimetableStore((state) => state.isLoading);
 
     useEffect(() => {
         async function render() {
-            setLoadingTimetable(true);
+            setTimetableLoadState(true);
             try {
                 const response = await fetch(
                     `http://localhost:9000/api/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`
@@ -248,7 +249,7 @@ export default function Calendar() {
                 const coursesData = await response.json();
                 setCourses(coursesData);
             } finally {
-                setLoadingTimetable(false);
+                setTimetableLoadState(false);
             }
         }
 
@@ -259,7 +260,7 @@ export default function Calendar() {
 
     return (
         <div className="calendar">
-            <div className="loader-indicator" style={{ display: loadingTimetable ? "flex" : "none" }}>
+            <div className="loader-indicator" style={{ display: isTimetableLoading ? "flex" : "none" }}>
                 <span className="spin"></span>
                 <p>Chargement de l'EDT...</p>
             </div>
@@ -282,7 +283,7 @@ export default function Calendar() {
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <button className="menu-button" onClick={() => setPanelState(true)}>
+                <button className="menu-button" onClick={() => openPanel()}>
                     MENU
                 </button>
             </div>

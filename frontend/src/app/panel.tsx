@@ -1,14 +1,13 @@
 "use client";
 import RoomsList from "./roomsList";
 import { RoomsListType } from "./types";
-import { useContext } from "react";
-import { PanelContext } from "./contexts";
+import { usePanelStore } from "./store";
 
 export default function Panel({ roomsList }: { roomsList: RoomsListType[] }) {
-    const { isPanelActive, setPanelState } = useContext(PanelContext);
+    const isPanelOpened = usePanelStore((state) => state.isOpened);
 
     return (
-        <div tabIndex={-1} className={`pannel ${isPanelActive ? "" : "hidden"}`}>
+        <div tabIndex={-1} className={`pannel ${isPanelOpened ? "" : "hidden"}`}>
             <div className="campus">
                 <div className="campus_selector">
                     <p>SCIENCES ET TECHNIQUES</p>

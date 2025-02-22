@@ -131,7 +131,7 @@ function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, d
     )
 }
 
-function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
+function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, displayHourIndicator }: { courses: ApiCoursesResponseType, hourIndicatorValue: string, hourIndicatorTop: string, displayHourIndicator: boolean }) {
     const dayHours = [];
     for (let i = 1; i < DAY_DURATION; i++) {
         dayHours.push(<p key={i}>{START_DAY_HOUR + i + ":00"}</p>)
@@ -175,11 +175,24 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
                 <div className="calendar-top"></div>
                 <div className="calendar-hours-display">
                     {dayHours}
-                    <div className="indicator-hour"></div>
+                    <div
+                        className="indicator-hour"
+                        style={{ display: displayHourIndicator ? "flex" : "none", top: hourIndicatorTop + "%" }}
+                    >
+                        <span className="bubble">{hourIndicatorValue}</span>
+                        <div className="bar"></div>
+                    </div>
                 </div>
             </div>
             <div className="calendar-columns">
-                {currentWeekDays.map(currentDay => <CalendarColumn key={currentDay.name} dayName={currentDay.name} dayNumber={currentDay.number} dayCourses={currentDay.courses}></CalendarColumn>)}
+                {currentWeekDays.map(currentDay => (
+                    <CalendarColumn
+                        key={currentDay.name}
+                        dayName={currentDay.name}
+                        dayNumber={currentDay.number}
+                        dayCourses={currentDay.courses}
+                    ></CalendarColumn>
+                ))}
             </div>
             <div tabIndex={-1} className="about">
                 <h2>À PROPOS<img src="/arrow.svg" /></h2>
@@ -220,11 +233,28 @@ function CalendarContainer({ courses }: { courses: ApiCoursesResponseType }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
 export default function Calendar() {
+    function computeHourIndicator() {
+        let dateActuelle = new Date();
+        let jourActuel = dateActuelle.getDay();
+        let heureActuelle = dateActuelle.getHours();
+        let minuteActuelle = dateActuelle.getMinutes();
+        if (heureActuelle >= START_DAY_HOUR && heureActuelle < END_DAY_HOUR && jourActuel > 0 && jourActuel <= WEEK_DAYS.length) {
+            let top = (100 * (heureActuelle - START_DAY_HOUR)) / DAY_DURATION + (100 / DAY_DURATION) * (minuteActuelle / 60);
+            return {
+                value: heureActuelle + ":" + (minuteActuelle.toString().length == 2 ? minuteActuelle : "0" + minuteActuelle),
+                top: top.toString(),
+                display: true
+            };
+        } else {
+            return { value: "", top: "", display: false };
+        }
+    }
+
     const [courses, setCourses] = useState({
         "courses": [],
         "weekInfos": {
@@ -241,6 +271,20 @@ export default function Calendar() {
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
     const setToastAsError = useToastStore((state) => state.setError);
+    const [hourIndicatorValue, setHourIndicatorValue] = useState(computeHourIndicator().value);
+    const [hourIndicatorTop, setHourIndicatorTop] = useState(computeHourIndicator().top);
+    const [displayHourIndicator, setHourIndicatorDisplay] = useState(true);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const hourIndicatorProperties = computeHourIndicator();
+            setHourIndicatorDisplay(hourIndicatorProperties.display);
+            setHourIndicatorValue(hourIndicatorProperties.value);
+            setHourIndicatorTop(hourIndicatorProperties.top);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [hourIndicatorValue]);
 
     useEffect(() => {
         async function render() {
@@ -282,7 +326,12 @@ export default function Calendar() {
                     </div>
                 </div>
             </div>
-            <CalendarContainer courses={courses}></CalendarContainer>
+            <CalendarContainer
+                courses={courses}
+                hourIndicatorValue={hourIndicatorValue}
+                hourIndicatorTop={hourIndicatorTop}
+                displayHourIndicator={displayHourIndicator}
+            ></CalendarContainer>
             <div className="menu-mobile">
                 <div className="current-room">
                     <p>Salle actuelle :</p>

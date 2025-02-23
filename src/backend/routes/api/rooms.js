@@ -258,7 +258,7 @@ router.get('/timetable', async (req, res) => {
             const startHour = startDate.getHours();
             return {
                 courseId: doc._id,
-                start: startHour >= 8 ? doc.start : startDate.setHours(8, 0, 0, 0).toISOString(),
+                start: startHour >= 8 ? doc.start : startDate.setHours(8, 0, 0, 0).toString(),
                 end: doc.end,
                 notes: doc.notes,
                 category: doc.category,

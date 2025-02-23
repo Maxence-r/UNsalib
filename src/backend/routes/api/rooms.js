@@ -254,20 +254,9 @@ router.get('/timetable', async (req, res) => {
             const duration = ((new Date(doc.end).valueOf() - new Date(doc.start).valueOf()) / 1000 / 60 / 60) * 100;
             // Getting the overflow as a percentage
             const overflow = getMinutesOverflow(new Date(doc.start));
-            const startDate = new Date(doc.start);
-            const startHour = startDate.getHours();
-
-            // Adjust start time to 8:00 AM if it is earlier than 8:00 AM
-            if (startHour < 8) {
-                startDate.setHours(8, 0, 0, 0);
-            }
-
-            // Format the start date as an ISO string with the desired time zone offset
-            const startISO = startDate.toISOString().replace('Z', '+01:00');
-
             return {
                 courseId: doc._id,
-                start: startISO,
+                start: doc.start,
                 end: doc.end,
                 notes: doc.notes,
                 category: doc.category,

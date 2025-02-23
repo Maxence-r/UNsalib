@@ -256,9 +256,18 @@ router.get('/timetable', async (req, res) => {
             const overflow = getMinutesOverflow(new Date(doc.start));
             const startDate = new Date(doc.start);
             const startHour = startDate.getHours();
+
+            // Adjust start time to 8:00 AM if it is earlier than 8:00 AM
+            if (startHour < 8) {
+                startDate.setHours(8, 0, 0, 0);
+            }
+
+            // Format the start date as an ISO string with the desired time zone offset
+            const startISO = startDate.toISOString().replace('Z', '+01:00');
+
             return {
                 courseId: doc._id,
-                start: startHour >= 8 ? doc.start : startDate.setHours(8, 0, 0, 0).toString(),
+                start: startISO,
                 end: doc.end,
                 notes: doc.notes,
                 category: doc.category,

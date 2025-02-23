@@ -254,6 +254,8 @@ router.get('/timetable', async (req, res) => {
             const duration = ((new Date(doc.end).valueOf() - new Date(doc.start).valueOf()) / 1000 / 60 / 60) * 100;
             // Getting the overflow as a percentage
             const overflow = getMinutesOverflow(new Date(doc.start));
+            const startDate = new Date(doc.start);
+            const startHour = startDate.getHours();
             return {
                 courseId: doc._id,
                 start: startHour >= 8 ? doc.start : startDate.setHours(8, 0, 0, 0).toISOString(),

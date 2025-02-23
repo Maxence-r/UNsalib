@@ -14,7 +14,7 @@ import {
     updateStats
 } from '../../utils/stats.js';
 
-const VACATIONS = [52, 1];
+const VACATIONS = [52, 1, 8, 16];
 
 router.get('/', async (req, res) => {
     try {
@@ -256,7 +256,7 @@ router.get('/timetable', async (req, res) => {
             const overflow = getMinutesOverflow(new Date(doc.start));
             return {
                 courseId: doc._id,
-                start: doc.start,
+                start: startHour >= 8 ? doc.start : startDate.setHours(8, 0, 0, 0).toISOString(),
                 end: doc.end,
                 notes: doc.notes,
                 category: doc.category,

@@ -15,6 +15,7 @@ import {
 } from '../../utils/stats.js';
 
 const VACATIONS = [52, 1, 8, 16];
+const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };
 
 router.get('/', async (req, res) => {
     try {
@@ -159,8 +160,31 @@ router.get('/available', async (req, res) => {
             $and: attributes
         });
 
+        // Filtering info rooms when the CIE is closed
+        const availableRoomsFiltered = [];
+        availableRooms.map((room) => {
+            if (room.building.includes('C I E') && new Date(start).getDay() == CIE_CLOSING_DATE.dayNumber) {
+                const startTime = new Date(start).getTime() / 1000;
+                const endTime = new Date(end).getTime() / 1000;
+                let startClosingTime = new Date(start);
+                startClosingTime.setHours(CIE_CLOSING_DATE.startTime.split(':')[0]);
+                startClosingTime.setMinutes(CIE_CLOSING_DATE.startTime.split(':')[1]);
+                startClosingTime = startClosingTime.getTime() / 1000;
+                let endClosingTime = new Date(end);
+                endClosingTime.setHours(CIE_CLOSING_DATE.endTime.split(':')[0]);
+                endClosingTime.setMinutes(CIE_CLOSING_DATE.endTime.split(':')[1]);
+                endClosingTime = endClosingTime.getTime() / 1000;
+                if (!(startClosingTime < endTime && endClosingTime > startTime)) {
+                    console.log("flute")
+                    availableRoomsFiltered.push(room);
+                }
+                return;
+            }
+            availableRoomsFiltered.push(room);
+        });
+
         // Formatting the response
-        const formattedResponse = availableRooms.map((doc) => ({
+        const formattedResponse = availableRoomsFiltered.map((doc) => ({
             id: doc._id,
             name: doc.name,
             alias: doc.alias,

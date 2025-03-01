@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
 import Image from "next/image";
+import { PUBLIC_API_URL } from "./store";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -291,7 +292,7 @@ export default function Calendar() {
         async function render() {
             setTimetableLoadState(true);
             try {
-                const response = await fetch(`http://localhost:9000/api/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
+                const response = await fetch(`${PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
                 const coursesData = await response.json();
                 setCourses(coursesData);
             } catch {

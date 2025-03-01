@@ -73,3 +73,5 @@ export const useToastStore = create<ToastState>()((set) => ({
     setContent: (newContent) => set({ content: newContent }),
     setError: (state) => set({ isError: state }),
 }));
+
+export const PUBLIC_API_URL = process.env.API_URL;

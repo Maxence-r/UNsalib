@@ -7,6 +7,7 @@ import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } fro
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
+import { PUBLIC_API_URL } from "./store";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -88,7 +89,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
 
             try {
                 const response = await fetch(
-                    `http://localhost:9000/api/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
+                    `${PUBLIC_API_URL}/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
                 );
                 const coursesData = await response.json();
 

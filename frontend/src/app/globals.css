@@ -41,12 +41,10 @@ main {
 .pannel {
     display: flex;
     flex-direction: column;
-
     position: relative;
-
-    padding: 24px 24px 0 24px;
+    padding: 24px;
     width: 22%;
-    height: calc(100% - 24px);
+    height: calc(100% - 48px);
     min-width: 350px;
     gap: 24px;
     overflow: hidden;
@@ -293,7 +291,6 @@ main {
     gap: 16px;
     overflow: hidden;
     position: relative;
-    padding-bottom: 16px;
 }
 
 .displayed {
@@ -924,6 +921,10 @@ input[type=number] {
     flex-grow: 1;
 }
 
+.about .grid#team .item:last-child {
+    flex-grow: 0;
+}
+
 .about .grid .item .infos {
     display: flex;
     flex-direction: column;
@@ -1206,11 +1207,13 @@ input[type=number] {
         position: absolute;
         top: 0;
         left: 0;
-        width: calc(100% - 48px);
+        width: calc(100% - 32px);
+        height: calc(100% - 32px);
         border: none;
         min-width: auto;
         transition: transform 0.3s;
         transform: translateY(0);
+        padding: 16px;
     }
 
     .pannel.hidden {
@@ -1253,7 +1256,7 @@ input[type=number] {
 
 @media screen and (max-height: 900px) {
     .campus_feed {
-        height: 100px;
+        height: 110px;
     }
 }
 

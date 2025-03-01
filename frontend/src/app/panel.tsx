@@ -303,13 +303,13 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
+                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
                 <div className="content">
                     <p>UNsalib est un site web qui permet aux étudiants et professeurs de Nantes Université de trouver les salles libres du campus et d'afficher leurs emplois du temps.</p>
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>L'ÉQUIPE</h4>
+                <h4 className="title"><Image src="/team.svg" width={24} height={24} alt=""></Image>L'ÉQUIPE</h4>
                 <div className="content">
                     <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l'Université.</p>
                     <div className="grid" id="team">
@@ -325,20 +325,19 @@ function AboutModalContent() {
                                 <h2>Maël</h2>
                                 <p>Développeur</p>
                             </div>
-                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
+                            <Image src="/mael.png" width={64} height={64} alt=""></Image>
                         </div>
                         <div className="item">
                             <div className="infos">
                                 <h2>Ethann</h2>
-                                <p>Admin DB & Testeur</p>
+                                <p>Admin DB & testeur</p>
                             </div>
-                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>LIENS</h4>
+                <h4 className="title"><Image src="/link.svg" width={24} height={24} alt=""></Image>LIENS</h4>
                 <div className="content">
                     <div className="grid">
                         <div className="item">
@@ -353,10 +352,10 @@ function AboutModalContent() {
                         <div className="item">
                             <div className="infos">
                                 <h2>Github</h2>
-                                <p>Sources</p>
+                                <p>Code source</p>
                             </div>
                             <button>
-                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le repo Github"></Image>
                             </button>
                         </div>
                     </div>
@@ -389,7 +388,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                     </div>
                 </div>
                 <div className="campus_feed">
-                    <Image src="/lsh.png" width={398} height={202} alt=""></Image>
+                    <Image src="/campus_st.jpg" width={680} height={346} alt=""></Image>
 
                     <div className="overlay"></div>
                     <div className="campus_feed_content">

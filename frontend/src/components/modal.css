@@ -54,12 +54,15 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: fit-content;
 }
 
 @media screen and (max-width: 1024px) {
     .modal-content {
         width: calc(100% - 48px);
         height: fit-content;
+        max-height: 75%;
+        overflow: auto;
     }
 
     @keyframes modalContentOpen {

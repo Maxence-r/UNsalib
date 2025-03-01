@@ -312,7 +312,7 @@ function AboutModalContent() {
                 <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>L'ÉQUIPE</h4>
                 <div className="content">
                     <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l'Université.</p>
-                    <div className="grid">
+                    <div className="grid" id="team">
                         <div className="item">
                             <div className="infos">
                                 <h2>Maxence</h2>

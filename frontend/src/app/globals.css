@@ -894,6 +894,10 @@ input[type=number] {
     margin-bottom: 36px;
 }
 
+.about .modal-section:last-child {
+    margin-bottom: 0px;
+}
+
 .about .modal-section .content p {
     margin-block: 0px;
     font-size: 15px;
@@ -903,6 +907,9 @@ input[type=number] {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.grid#team {
     margin-top: 12px;
 }
 

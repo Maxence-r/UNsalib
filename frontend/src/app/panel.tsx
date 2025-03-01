@@ -301,45 +301,68 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
 function AboutModalContent() {
 
     return (
-        <>
-            <h2>À PROPOS<Image src="/arrow.svg" width={11} height={11} alt=""></Image></h2>
-            <div className="about-content">
-                <div className="links">
-                    <div className="link whitePaper">
-                        <div className="link-infos">
-                            <h2>WhitePaper</h2>
-                            <p>Document de nos recherches</p>
-                        </div>
-                        <button tabIndex={-1}>
-                            <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
-                        </button>
-                    </div>
+        <div className="about">
+            <div className="modal-section">
+                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
+                <div className="content">
+                    <p>UNsalib est un site web qui permet aux étudiants et professeurs de Nantes Université de trouver les salles libres du campus et d'afficher leurs emplois du temps.</p>
                 </div>
-                <div className="links profile">
-                    <div className="link">
-                        <div className="link-infos">
-                            <h2>Maxence.R</h2>
-                            <p>Développeur</p>
+            </div>
+            <div className="modal-section">
+                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>L'ÉQUIPE</h4>
+                <div className="content">
+                    <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l'Université.</p>
+                    <div className="grid">
+                        <div className="item">
+                            <div className="infos">
+                                <h2>Maxence</h2>
+                                <p>Développeur</p>
+                            </div>
+                            <Image src="/maxence.png" width={36} height={36} alt=""></Image>
                         </div>
-                        <Image src="/maxence.png" width={36} height={36} alt=""></Image>
-                    </div>
-                    <div className="link ">
-                        <div className="link-infos">
-                            <h2>Mael.B</h2>
-                            <p>Développeur</p>
+                        <div className="item ">
+                            <div className="infos">
+                                <h2>Maël</h2>
+                                <p>Développeur</p>
+                            </div>
+                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
                         </div>
-                        <Image src="/profile.png" width={36} height={36} alt=""></Image>
-                    </div>
-                    <div className="link">
-                        <div className="link-infos">
-                            <h2>Ethann.A</h2>
-                            <p>Testeur</p>
+                        <div className="item">
+                            <div className="infos">
+                                <h2>Ethann</h2>
+                                <p>Admin DB & Testeur</p>
+                            </div>
+                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
                         </div>
-                        <Image src="/profile.png" width={36} height={36} alt=""></Image>
                     </div>
                 </div>
             </div>
-        </>
+            <div className="modal-section">
+                <h4 className="title"><Image src="/arrow.svg" width={11} height={11} alt=""></Image>LIENS</h4>
+                <div className="content">
+                    <div className="grid">
+                        <div className="item">
+                            <div className="infos">
+                                <h2>WhitePaper</h2>
+                                <p>Infos de conception</p>
+                            </div>
+                            <button>
+                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                            </button>
+                        </div>
+                        <div className="item">
+                            <div className="infos">
+                                <h2>Github</h2>
+                                <p>Sources</p>
+                            </div>
+                            <button>
+                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 

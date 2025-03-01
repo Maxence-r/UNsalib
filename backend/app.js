@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 // DEFAULT MIDDLEWARES
 app.use(cors({
-    origin: 'http://localhost:3000'
+    origin: process.env.FRONTEND_URL
 }));
 app.use(json());
 app.use(urlencoded({ extended: true }));

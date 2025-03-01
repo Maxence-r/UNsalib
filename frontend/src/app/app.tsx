@@ -3,10 +3,10 @@ import Panel from './panel';
 import Calendar from './calendar';
 import Modal from "@/components/modal";
 import Toast from '@/components/toast';
-import { RoomsListType } from "./types";
+import { ApiRoomType } from "./types";
 import { useModalStore, useToastStore } from './store';
 
-export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: RoomsListType[] }) {
+export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     return (
         <>
             <section className="no-compatible">

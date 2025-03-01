@@ -1,4 +1,4 @@
-export interface RoomsListType {
+export interface ApiRoomType {
     id: string,
     name: string,
     alias: string,

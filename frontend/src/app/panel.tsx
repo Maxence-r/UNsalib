@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
-import { RoomsListType } from "./types";
+import { ApiRoomType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } from './store';
+import RoomsList from "@/components/roomsList";
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
@@ -220,14 +221,20 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
     )
 }
 
-function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
+function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
-    const [search, setSearch] = useState("");
+    const [timetableTabSearch, setTimetableTabSearch] = useState("");
+    const [availableTabSearch, setAvailableTabSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState([]);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
     const closePanel = usePanelStore((state) => state.close);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
+
+    function loadTimetable(room: ApiRoomType) {
+        closePanel();
+        setSelectedRoom(room.id, room.name);
+    }
 
     return (
         <>
@@ -247,9 +254,7 @@ function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
                         className="search"
                         type="text"
                         placeholder="Rechercher une salle, un bâtiment..."
-                        onInput={(event) => {
-                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
-                        }}
+                        onInput={(event) => setTimetableTabSearch((event.target as HTMLInputElement).value.toString())}
                     ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
@@ -258,33 +263,7 @@ function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-                    <div className="results edt">
-                        {roomsList.map((room: RoomsListType) => (
-                            <div
-                                key={room.id}
-                                className={`result ${activeTab == "edt-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => {
-                                    try {
-                                        window.navigator.vibrate(10);
-                                    } finally {
-                                        closePanel();
-                                        setSelectedRoom(room.id, room.name);
-                                    }
-                                }}
-                            >
-                                <p>
-                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                                    <span className="bat">{room.building}</span>
-                                </p>
-                                <div className="badges">
-                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                                    <div className={room.available ? "ping blue" : "ping red"}></div>
-                                </div>
-                            </div>
-                        ))}
-                        {/* TODO: display the no result component */}
-                        {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
-                    </div>
+                    <RoomsList containerClassName="edt" roomsList={roomsList} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
                 </div>
 
                 <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
@@ -303,9 +282,7 @@ function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
                         className="search"
                         type="text"
                         placeholder="Filtrer par salle, bâtiment..."
-                        onInput={(event) => {
-                            setSearch(normalizeString((event.target as HTMLInputElement).value.toString()))
-                        }}
+                        onInput={(event) => setAvailableTabSearch((event.target as HTMLInputElement).value.toString())}
                     ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
@@ -314,41 +291,14 @@ function RoomsList({ roomsList }: { roomsList: RoomsListType[] }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-
-                    <div className="results available">
-                        {availableRoomsList.map((room: RoomsListType) => (
-                            <div
-                                key={room.id}
-                                className={`result ${activeTab == "room-finder" && (normalizeString(room.name).includes(search) || normalizeString(room.building).includes(search)) ? "" : "hidden"}`}
-                                onClick={() => {
-                                    try {
-                                        window.navigator.vibrate(10);
-                                    } finally {
-                                        closePanel();
-                                        setSelectedRoom(room.id, room.name);
-                                    }
-                                }}
-                            >
-                                <p>
-                                    {room.alias != "" ? `${room.alias.toUpperCase()} ` : `${room.name.toUpperCase()} `}
-                                    <span className="bat">{room.building}</span>
-                                </p>
-                                <div className="badges">
-                                    {room.features.map(feature => <img key={feature} alt={feature} src={`/${feature}.svg`}></img>)}
-                                    <div className={room.available ? "ping blue" : "ping red"}></div>
-                                </div>
-                            </div>
-                        ))}
-                        {/* TODO: display the no result component */}
-                        {/* <p className="no-results">Aucune salle n'a été trouvée.</p> */}
-                    </div>
-                </div >
-            </div >
+                    <RoomsList containerClassName="available" roomsList={availableRoomsList} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                </div>
+            </div>
         </>
     )
 }
 
-export default function Panel({ roomsList }: { roomsList: RoomsListType[] }) {
+export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
 
     return (
@@ -367,7 +317,7 @@ export default function Panel({ roomsList }: { roomsList: RoomsListType[] }) {
                     </div>
                 </div>
             </div>
-            {roomsList.length > 0 ? <RoomsList roomsList={roomsList}></RoomsList> : <div>Impossible de charger les salles</div>}
+            <TabView roomsList={roomsList}></TabView>
         </div>
     )
 }

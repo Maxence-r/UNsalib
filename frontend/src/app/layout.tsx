@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk } from 'next/font/google'
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,7 +11,13 @@ export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 1
-}
+};
+
+const font = Space_Grotesk({
+    weight: ['300', '400', '500', '600', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+});
 
 export default function RootLayout({
     children,
@@ -18,7 +25,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="fr">
+        <html lang="fr" className={font.className}>
             <body>
                 <main tabIndex={-1}>
                     {children}
@@ -26,4 +33,4 @@ export default function RootLayout({
             </body>
         </html>
     );
-}
+};

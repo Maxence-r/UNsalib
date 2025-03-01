@@ -305,13 +305,13 @@ function AboutModalContent() {
             <div className="modal-section">
                 <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
                 <div className="content">
-                    <p>UNsalib est un site web qui permet aux étudiants et professeurs de Nantes Université de trouver les salles libres du campus et d'afficher leurs emplois du temps.</p>
+                    <p>UNsalib est un site web qui permet aux étudiants et professeurs de Nantes Université de trouver les salles libres du campus et d&apos;afficher leurs emplois du temps.</p>
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/team.svg" width={24} height={24} alt=""></Image>L'ÉQUIPE</h4>
+                <h4 className="title"><Image src="/team.svg" width={24} height={24} alt=""></Image>L&apos;ÉQUIPE</h4>
                 <div className="content">
-                    <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l'Université.</p>
+                    <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l&apos;Université.</p>
                     <div className="grid" id="team">
                         <div className="item">
                             <div className="infos">

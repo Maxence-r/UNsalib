@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
 import Image from "next/image";
-import { PUBLIC_API_URL } from "./store";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -197,7 +196,7 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                 ))}
             </div>
             <div tabIndex={-1} className="about">
-                <h2>À PROPOS<Image src="/arrow.svg" alt=""></Image></h2>
+                <h2>À PROPOS<Image src="/arrow.svg" width={11} height={11} alt=""></Image></h2>
                 <div className="about-content">
                     <div className="links">
                         <div className="link whitePaper">
@@ -206,7 +205,7 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                                 <p>Document de nos recherches</p>
                             </div>
                             <button tabIndex={-1}>
-                                <Image src="/download.svg" alt="Ouvrir le whitepaper"></Image>
+                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
                             </button>
                         </div>
                     </div>
@@ -216,21 +215,21 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                                 <h2>Maxence.R</h2>
                                 <p>Développeur</p>
                             </div>
-                            <Image src="/maxence.png" alt=""></Image>
+                            <Image src="/maxence.png" width={36} height={36} alt=""></Image>
                         </div>
                         <div className="link ">
                             <div className="link-infos">
                                 <h2>Mael.B</h2>
                                 <p>Développeur</p>
                             </div>
-                            <Image src="/profile.png" alt=""></Image>
+                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
                         </div>
                         <div className="link">
                             <div className="link-infos">
                                 <h2>Ethann.A</h2>
                                 <p>Testeur</p>
                             </div>
-                            <Image src="/profile.png" alt=""></Image>
+                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
                         </div>
                     </div>
                 </div>
@@ -292,7 +291,7 @@ export default function Calendar() {
         async function render() {
             setTimetableLoadState(true);
             try {
-                const response = await fetch(`${PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
                 const coursesData = await response.json();
                 setCourses(coursesData);
             } catch {
@@ -317,9 +316,9 @@ export default function Calendar() {
             </div>
             <div className="calendar-header">
                 <div className="week-switcher">
-                    <Image src="/chevrons-left.svg" alt="Semaine précédente" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}></Image>
+                    <Image src="/chevrons-left.svg" width={11} height={11} alt="Semaine précédente" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}></Image>
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
-                    <Image src="/chevrons-right.svg" alt="Semaine suivante" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}></Image>
+                    <Image src="/chevrons-right.svg" width={11} height={11} alt="Semaine suivante" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}></Image>
                 </div>
                 <div className="avaibility">
                     <div className="avaibility-box">

@@ -15,7 +15,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             </section>
             <section className="loader">
                 <div className="progress">
-                    <Image src="/loader.svg" alt="Chargement..."></Image>
+                    <Image src="/loader.svg" width={808} height={64} alt="Chargement..."></Image>
                 </div>
             </section>
             <Panel roomsList={prefetchedRoomsList}></Panel>

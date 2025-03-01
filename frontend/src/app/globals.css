@@ -311,6 +311,7 @@ main {
 
 .indicator>img {
     height: 16px;
+    width: auto;
 }
 
 .ping {
@@ -434,6 +435,7 @@ p.no-results {
 
 .badges>img {
     height: 14px;
+    width: auto;
 }
 
 
@@ -724,6 +726,7 @@ input[type=number] {
     height: 100%;
     border-radius: 4px;
     cursor: pointer;
+    width: auto;
 }
 
 .profile {
@@ -769,7 +772,8 @@ input[type=number] {
 }
 
 .week-switcher>img {
-    width: 12px;
+    height: 12px;
+    width: auto;
     cursor: pointer;
 }
 
@@ -969,6 +973,11 @@ input[type=number] {
     white-space: nowrap;
     overflow: visible;
     font-weight: 600;
+}
+
+.about>h2>img {
+    height: 16px;
+    width: auto;
 }
 
 .about:hover {

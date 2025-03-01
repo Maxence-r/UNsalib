@@ -7,7 +7,6 @@ import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } fro
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
-import { PUBLIC_API_URL } from "./store";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -89,7 +88,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
 
             try {
                 const response = await fetch(
-                    `${PUBLIC_API_URL}/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
+                    `${process.env.NEXT_PUBLIC_API_URL}/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
                 );
                 const coursesData = await response.json();
 
@@ -258,7 +257,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
-                            <Image src="/info.svg" alt="Infos sur les pictogrammes"></Image>
+                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -286,7 +285,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
-                            <Image src="/info.svg" alt="Infos sur les pictogrammes"></Image>
+                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -308,7 +307,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="version">V1.0</div>
                 </div>
                 <div className="campus_feed">
-                    <Image src="/lsh.png" alt=""></Image>
+                    <Image src="/lsh.png" width={398} height={202} alt=""></Image>
 
                     <div className="overlay"></div>
                     <div className="campus_feed_content">

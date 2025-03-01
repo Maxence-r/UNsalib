@@ -25,7 +25,7 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
                         <span className="bat">{room.building}</span>
                     </p>
                     <div className="badges">
-                        {room.features.map(feature => <Image key={feature} alt={feature} src={`/${feature}.svg`}></Image>)}
+                        {room.features.map(feature => <Image key={feature} alt={feature} width={25} height={25} src={`/${feature}.svg`}></Image>)}
                         <div className={room.available ? "ping blue" : "ping red"}></div>
                     </div>
                 </div>

@@ -5,12 +5,10 @@ import Input from "@/components/input";
 import { ApiRoomType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } from './store';
 import RoomsList from "@/components/roomsList";
+import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
 
-function normalizeString(value: string) {
-    return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
-}
-
-function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: any }) {
+function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
@@ -38,12 +36,12 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
         async function render() {
             launchSearch(true);
 
-            let startHourNumber = parseInt(startHour, 10);
-            let startMinuteNumber = parseInt(startMinute, 10);
-            let endHourNumber = parseInt(endHour, 10);
-            let endMinuteNumber = parseInt(endMinute, 10);
-            let dayNumber = parseInt(day, 10);
-            let monthNumber = parseInt(month, 10);
+            const startHourNumber = parseInt(startHour, 10);
+            const startMinuteNumber = parseInt(startMinute, 10);
+            const endHourNumber = parseInt(endHour, 10);
+            const endMinuteNumber = parseInt(endMinute, 10);
+            const dayNumber = parseInt(day, 10);
+            const monthNumber = parseInt(month, 10);
 
             // Validate inputs
             const errors = [];
@@ -79,7 +77,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             const debut = `${dateString}T${startTime}`;
             const fin = `${dateString}T${endTime}`;
 
-            let nobadgeUrl = nobadgeFeature ? "true" : "";
+            const nobadgeUrl = nobadgeFeature ? "true" : "";
             let featuresUrl = "";
             if (visioFeature) {
                 featuresUrl += "visio";
@@ -259,7 +257,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
-                            <img src="/info.svg" />
+                            <Image src="/info.svg" alt="Infos sur les pictogrammes"></Image>
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -287,7 +285,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div className="indicator">
-                            <img src="/info.svg" />
+                            <Image src="/info.svg" alt="Infos sur les pictogrammes"></Image>
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -309,11 +307,11 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                     <div className="version">V1.0</div>
                 </div>
                 <div className="campus_feed">
-                    <img src="/lsh.png" alt="placeholder" />
+                    <Image src="/lsh.png" alt=""></Image>
 
                     <div className="overlay"></div>
                     <div className="campus_feed_content">
-                        <p>ICI S'AFFICHERA LA MISE À JOUR DES GROUPES</p>
+                        <p>ICI S&apos;AFFICHERA LA MISE À JOUR DES GROUPES</p>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
+import Image from "next/image";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -28,18 +29,18 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
     return (
         <div className="content-box">
             {hourCourses.map(course => {
-                let module: string;
+                let courseModule: string;
                 if (course.modules.length > 0) {
-                    module = joinArrayElements(course.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(course.modules, ';', ' - ');;
+                    courseModule = joinArrayElements(course.modules, ';', ' - ') == '' ? 'Cours inconnu' : joinArrayElements(course.modules, ';', ' - ');
                 } else if (course.category) {
-                    module = course.category;
+                    courseModule = course.category;
                 } else {
-                    module = "Cours inconnu";
+                    courseModule = "Cours inconnu";
                 }
                 const teacher = course.teachers.length > 0 ? course.teachers.join(' ; ') : '';
                 const startDate: Date = new Date(course.start);
                 const endDate: Date = new Date(course.end);
-                let durationHours = endDate.getHours() - startDate.getHours() > 0 ? endDate.getHours() - startDate.getHours() + "h" : "";
+                const durationHours = endDate.getHours() - startDate.getHours() > 0 ? endDate.getHours() - startDate.getHours() + "h" : "";
                 let durationMinutes = endDate.getMinutes() - startDate.getMinutes() > 0 ? endDate.getMinutes() - startDate.getMinutes() + "min" : "";
                 durationMinutes = durationHours == "" && durationMinutes == "" ? "0min" : durationMinutes;
 
@@ -62,7 +63,7 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
                                     <div className="course-box">
                                         <p className="course-start">{startDate.getHours() + ":" + (startDate.getMinutes().toString().length == 2 ? startDate.getMinutes() : "0" + startDate.getMinutes())}</p>
                                         <div className="course-container" style={{ backgroundColor: course.color }}>
-                                            <p>{module}</p>
+                                            <p>{courseModule}</p>
                                         </div>
                                         <p className="course-end">{endDate.getHours() + ":" + (endDate.getMinutes().toString().length == 2 ? endDate.getMinutes() : "0" + endDate.getMinutes())}</p>
                                     </div>
@@ -87,7 +88,7 @@ function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
                             openModal();
                         }}
                     >
-                        <h2>{module}</h2>
+                        <h2>{courseModule}</h2>
                         <p>{teacher}</p>
                     </div>
                 );
@@ -111,7 +112,7 @@ function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, d
     }
 
     dayCourses.forEach(course => {
-        currentDayHours.forEach((hour, i) => {
+        currentDayHours.forEach((hour) => {
             if (course.start.split("T")[1].startsWith(hour.hour)) {
                 hour.courses.push(course);
                 return;
@@ -161,7 +162,7 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
     });
 
     courses.courses.forEach(course => {
-        currentWeekDays.forEach((day, i) => {
+        currentWeekDays.forEach((day) => {
             if (course.start.startsWith(day.date)) {
                 day.courses.push(course);
                 return;
@@ -195,7 +196,7 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                 ))}
             </div>
             <div tabIndex={-1} className="about">
-                <h2>À PROPOS<img src="/arrow.svg" /></h2>
+                <h2>À PROPOS<Image src="/arrow.svg" alt=""></Image></h2>
                 <div className="about-content">
                     <div className="links">
                         <div className="link whitePaper">
@@ -204,7 +205,7 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                                 <p>Document de nos recherches</p>
                             </div>
                             <button tabIndex={-1}>
-                                <img src="/download.svg" alt="Download" />
+                                <Image src="/download.svg" alt="Ouvrir le whitepaper"></Image>
                             </button>
                         </div>
                     </div>
@@ -214,21 +215,21 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                                 <h2>Maxence.R</h2>
                                 <p>Développeur</p>
                             </div>
-                            <img src="/maxence.png" />
+                            <Image src="/maxence.png" alt=""></Image>
                         </div>
                         <div className="link ">
                             <div className="link-infos">
                                 <h2>Mael.B</h2>
                                 <p>Développeur</p>
                             </div>
-                            <img src="/profile.png" />
+                            <Image src="/profile.png" alt=""></Image>
                         </div>
                         <div className="link">
                             <div className="link-infos">
                                 <h2>Ethann.A</h2>
                                 <p>Testeur</p>
                             </div>
-                            <img src="/profile.png" />
+                            <Image src="/profile.png" alt=""></Image>
                         </div>
                     </div>
                 </div>
@@ -239,12 +240,12 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
 
 export default function Calendar() {
     function computeHourIndicator() {
-        let dateActuelle = new Date();
-        let jourActuel = dateActuelle.getDay();
-        let heureActuelle = dateActuelle.getHours();
-        let minuteActuelle = dateActuelle.getMinutes();
+        const dateActuelle = new Date();
+        const jourActuel = dateActuelle.getDay();
+        const heureActuelle = dateActuelle.getHours();
+        const minuteActuelle = dateActuelle.getMinutes();
         if (heureActuelle >= START_DAY_HOUR && heureActuelle < END_DAY_HOUR && jourActuel > 0 && jourActuel <= WEEK_DAYS.length) {
-            let top = (100 * (heureActuelle - START_DAY_HOUR)) / DAY_DURATION + (100 / DAY_DURATION) * (minuteActuelle / 60);
+            const top = (100 * (heureActuelle - START_DAY_HOUR)) / DAY_DURATION + (100 / DAY_DURATION) * (minuteActuelle / 60);
             return {
                 value: heureActuelle + ":" + (minuteActuelle.toString().length == 2 ? minuteActuelle : "0" + minuteActuelle),
                 top: top.toString(),
@@ -311,13 +312,13 @@ export default function Calendar() {
         <div className="calendar">
             <div className="loader-indicator" style={{ display: isTimetableLoading ? "flex" : "none" }}>
                 <span className="spin"></span>
-                <p>Chargement de l'EDT...</p>
+                <p>Chargement de l&apos;EDT...</p>
             </div>
             <div className="calendar-header">
                 <div className="week-switcher">
-                    <img src="/chevrons-left.svg" alt="previous" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }} />
+                    <Image src="/chevrons-left.svg" alt="Semaine précédente" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}></Image>
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
-                    <img src="/chevrons-right.svg" alt="next" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }} />
+                    <Image src="/chevrons-right.svg" alt="Semaine suivante" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}></Image>
                 </div>
                 <div className="avaibility">
                     <div className="avaibility-box">

@@ -7,7 +7,7 @@ export default function Modal({ children, isOpened, closeFunction }: { children:
             tabIndex={-1}
             className={`modal ${isOpened ? "active" : ""}`}
             onClick={(event) => {
-                let target = event.target as HTMLInputElement;
+                const target = event.target as HTMLInputElement;
                 if (target.classList.contains("modal")) {
                     closeFunction();
                 }

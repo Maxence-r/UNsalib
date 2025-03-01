@@ -5,6 +5,7 @@ import Modal from "@/components/modal";
 import Toast from '@/components/toast';
 import { ApiRoomType } from "./types";
 import { useModalStore, useToastStore } from './store';
+import Image from 'next/image';
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     return (
@@ -14,7 +15,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             </section>
             <section className="loader">
                 <div className="progress">
-                    <img src="/loader.svg" />
+                    <Image src="/loader.svg" alt="Chargement..."></Image>
                 </div>
             </section>
             <Panel roomsList={prefetchedRoomsList}></Panel>

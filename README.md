@@ -22,7 +22,6 @@ We're proud to present this project. After dedicating significant time to findin
 Only the necessary data is stored on the device, and the application does not collect any personal information.
 
 - [x] No tracking
-- [x] No analytics
 - [x] No ads
 
 ## 🛠️ Development

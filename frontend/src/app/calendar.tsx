@@ -195,45 +195,6 @@ function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, disp
                     ></CalendarColumn>
                 ))}
             </div>
-            <div tabIndex={-1} className="about">
-                <h2>À PROPOS<Image src="/arrow.svg" width={11} height={11} alt=""></Image></h2>
-                <div className="about-content">
-                    <div className="links">
-                        <div className="link whitePaper">
-                            <div className="link-infos">
-                                <h2>WhitePaper</h2>
-                                <p>Document de nos recherches</p>
-                            </div>
-                            <button tabIndex={-1}>
-                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
-                            </button>
-                        </div>
-                    </div>
-                    <div className="links profile">
-                        <div className="link">
-                            <div className="link-infos">
-                                <h2>Maxence.R</h2>
-                                <p>Développeur</p>
-                            </div>
-                            <Image src="/maxence.png" width={36} height={36} alt=""></Image>
-                        </div>
-                        <div className="link ">
-                            <div className="link-infos">
-                                <h2>Mael.B</h2>
-                                <p>Développeur</p>
-                            </div>
-                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
-                        </div>
-                        <div className="link">
-                            <div className="link-infos">
-                                <h2>Ethann.A</h2>
-                                <p>Testeur</p>
-                            </div>
-                            <Image src="/profile.png" width={36} height={36} alt=""></Image>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div >
     )
 }

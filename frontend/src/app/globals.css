@@ -122,17 +122,14 @@ main {
     display: flex;
     flex-direction: row;
     align-items: center;
-    cursor: pointer;
     gap: 12px;
     justify-content: space-between;
-    padding: 8px;
+    padding: 8px 12px 8px 8px;
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
-    outline: 2px solid transparent;
-    outline-offset: 6px;
-    transition: all 0.3s;
-    /*     animation: showing 0.8s ease-out;
-    animation-iteration-count: 3 */
+    flex-grow: 1;
+    height: 45px;
+    box-sizing: border-box;
 }
 
 @keyframes showing {
@@ -147,12 +144,6 @@ main {
     }
 }
 
-.campus_selector:hover {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
-}
-
-
 .campus_selector>p {
     margin: 0;
     font-size: 14px;
@@ -160,13 +151,37 @@ main {
     margin-left: 4px;
 }
 
-.campus_selector>.version {
-    font-size: 12px;
-    font-weight: normal;
-    color: #ffffff;
-    padding: 4px 8px;
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-direction: row;
+}
+
+.header>.version {
+    padding: 12px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--border-color);
+    height: 45px;
+    box-sizing: border-box;
+}
+
+.header>.version>img {
+    height: 16px;
+    width: auto;
+}
+
+.header>.version:hover {
+    background-color: #f8f8f8;
+}
+
+.campus_selector>img {
+    height: 25px;
+    width: auto;
     border-radius: 6px;
-    background-color: var(--accent-color);
 }
 
 .campus_feed {
@@ -350,7 +365,7 @@ main {
     width: 100%;
     height: 100%;
     overflow: auto;
-    gap: 12px;
+    gap: 8px;
 }
 
 p.no-results {
@@ -671,10 +686,7 @@ input[type=number] {
     text-overflow: ellipsis;
 }
 
-
-
-
-.about-content {
+/* .about-content {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -688,7 +700,7 @@ input[type=number] {
     font-size: 14px;
     font-weight: 600;
     color: #5F5F5F;
-}
+} */
 
 .links {
     display: flex;
@@ -948,7 +960,7 @@ input[type=number] {
 
 }
 
-.about {
+/* .about {
     position: absolute;
     display: flex;
     flex-direction: row;
@@ -982,7 +994,7 @@ input[type=number] {
 
 .about:hover {
     transform: translateX(0);
-}
+} */
 
 
 .course-box {

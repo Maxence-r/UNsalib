@@ -8,6 +8,8 @@ import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 
+const APP_VERSION = "v2.0"
+
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
     const showToast = useToastStore((state) => state.open);
@@ -296,15 +298,72 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
     )
 }
 
+function AboutModalContent() {
+
+    return (
+        <>
+            <h2>À PROPOS<Image src="/arrow.svg" width={11} height={11} alt=""></Image></h2>
+            <div className="about-content">
+                <div className="links">
+                    <div className="link whitePaper">
+                        <div className="link-infos">
+                            <h2>WhitePaper</h2>
+                            <p>Document de nos recherches</p>
+                        </div>
+                        <button tabIndex={-1}>
+                            <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                        </button>
+                    </div>
+                </div>
+                <div className="links profile">
+                    <div className="link">
+                        <div className="link-infos">
+                            <h2>Maxence.R</h2>
+                            <p>Développeur</p>
+                        </div>
+                        <Image src="/maxence.png" width={36} height={36} alt=""></Image>
+                    </div>
+                    <div className="link ">
+                        <div className="link-infos">
+                            <h2>Mael.B</h2>
+                            <p>Développeur</p>
+                        </div>
+                        <Image src="/profile.png" width={36} height={36} alt=""></Image>
+                    </div>
+                    <div className="link">
+                        <div className="link-infos">
+                            <h2>Ethann.A</h2>
+                            <p>Testeur</p>
+                        </div>
+                        <Image src="/profile.png" width={36} height={36} alt=""></Image>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
 export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
+    const openModal = useModalStore((state) => state.open);
+    const setModalContent = useModalStore((state) => state.setContent);
 
     return (
         <div tabIndex={-1} className={`pannel ${isPanelOpened ? "" : "hidden"}`}>
             <div className="campus">
-                <div className="campus_selector">
-                    <p>SCIENCES ET TECHNIQUES</p>
-                    <div className="version">V1.0</div>
+                <div className="header">
+                    <div className="campus_selector">
+                        <Image src="/logo96.png" height={96} width={96} alt="Logo"></Image>
+                        <p>SCIENCES ET TECHNIQUES</p>
+                    </div>
+                    <div className="version"
+                        onClick={() => {
+                            setModalContent(<AboutModalContent></AboutModalContent>);
+                            openModal();
+                        }}
+                    >
+                        <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                    </div>
                 </div>
                 <div className="campus_feed">
                     <Image src="/lsh.png" width={398} height={202} alt=""></Image>

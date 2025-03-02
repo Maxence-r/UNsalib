@@ -4,7 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
     title: "UNsalib - Sciences et techniques",
-    description: "Trouvez les salles libres de Nantes Université et affichez leurs emplois du temps"
+    description: "Trouvez les salles libres de Nantes Université et affichez leurs emplois du temps",
+    themeColor: "#ffffff",
 };
 
 export const viewport: Viewport = {

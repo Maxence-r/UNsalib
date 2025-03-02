@@ -156,7 +156,7 @@ main {
     flex-direction: row;
 }
 
-.header>.version {
+.header>.version, .header>.install {
     padding: 12px;
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -167,9 +167,19 @@ main {
     box-sizing: border-box;
 }
 
-.header>.version>img {
+.header>.version>img, .header>.install>img {
     height: 16px;
     width: auto;
+}
+
+.header>.install {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.header>.install:hover {
+    background-color: #1f2dff;
+    border-color: #1f2dff;
 }
 
 .header>.version:hover {

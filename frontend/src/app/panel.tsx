@@ -299,7 +299,6 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
 }
 
 function AboutModalContent() {
-
     return (
         <div className="about">
             <div className="modal-section">
@@ -346,7 +345,7 @@ function AboutModalContent() {
                                 <p>Infos de conception</p>
                             </div>
                             <button>
-                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                                <Image src="/open.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
                             </button>
                         </div>
                         <div className="item">
@@ -355,7 +354,7 @@ function AboutModalContent() {
                                 <p>Code source</p>
                             </div>
                             <button>
-                                <Image src="/download.svg" width={24} height={24} alt="Ouvrir le repo Github"></Image>
+                                <Image src="/open.svg" width={24} height={24} alt="Ouvrir le repo Github"></Image>
                             </button>
                         </div>
                     </div>
@@ -384,7 +383,12 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                             openModal();
                         }}
                     >
-                        <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                        <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
+                    </div>
+                    <div className="install"
+                        onClick={() => {}}
+                    >
+                        <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
                     </div>
                 </div>
                 <div className="campus_feed">

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { ApiRoomType } from "./types";
-import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore } from './store';
+import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore, useInstallationStore } from './store';
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
@@ -368,6 +368,9 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
+    const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
+    const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
+    const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
 
     return (
         <div tabIndex={-1} className={`pannel ${isPanelOpened ? "" : "hidden"}`}>
@@ -386,10 +389,10 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
                     </div>
                     <div className="install"
-                        onClick={() => {}}
+                        onClick={() => dismissInstallation() }
                     >
                         <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
-                        <span className="badge"></span>
+                        <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>
                     </div>
                 </div>
                 <div className="campus_feed">

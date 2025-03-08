@@ -192,6 +192,7 @@ main {
     border-radius: 20px;
     margin-left: 12px;
     margin-top: 12px;
+    display: none;
 }
 
 .campus_selector>img {

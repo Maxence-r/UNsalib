@@ -389,6 +389,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         onClick={() => {}}
                     >
                         <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
+                        <span className="badge"></span>
                     </div>
                 </div>
                 <div className="campus_feed">

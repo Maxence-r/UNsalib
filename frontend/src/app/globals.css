@@ -160,7 +160,8 @@ main {
     width: 100%;
 }
 
-.header>.version, .header>.install {
+.header>.version,
+.header>.install {
     border-radius: var(--border-radius);
     cursor: pointer;
     display: flex;
@@ -172,23 +173,25 @@ main {
     width: 45px;
 }
 
-.header>.version>img, .header>.install>img {
+.header>.version>img,
+.header>.install>img {
     height: 16px;
     width: auto;
 }
 
-.header>.install {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
+.header>.version:hover,
 .header>.install:hover {
-    background-color: #1f2dff;
-    border-color: #1f2dff;
+    background-color: #f8f8f8;
 }
 
-.header>.version:hover {
-    background-color: #f8f8f8;
+.header>.install .badge {
+    position: absolute;
+    height: 8px;
+    width: 8px;
+    background-color: var(--accent-color);
+    border-radius: 20px;
+    margin-left: 12px;
+    margin-top: 12px;
 }
 
 .campus_selector>img {

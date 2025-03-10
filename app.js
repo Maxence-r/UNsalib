@@ -2,10 +2,8 @@ import express, { json, urlencoded, static as serveStatic } from "express";
 const app = express();
 
 import { set, connect } from "mongoose";
-import { hash } from 'bcrypt';
 import "dotenv/config";
 import cookieParser from "cookie-parser";
-import getGroups from "./src/backend/background/getGroups.js";
 import launch from "./src/backend/background/main.js";
 import sallesApi from "./src/backend/routes/api/rooms.js";
 import adminApi from "./src/backend/routes/api/admin.js";
@@ -23,6 +21,9 @@ app.use(cookieParser());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(serveStatic("./src/client"));
+
+// Serve the .well-known directory
+app.use('/.well-known', serveStatic('./.well-known'));
 
 // API ROUTES
 app.use(authentication);

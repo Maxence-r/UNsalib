@@ -221,83 +221,6 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
     )
 }
 
-function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
-    const [activeTab, setActiveTab] = useState("edt-finder");
-    const [timetableTabSearch, setTimetableTabSearch] = useState("");
-    const [availableTabSearch, setAvailableTabSearch] = useState("");
-    const [availableRoomsList, setAvailableRoomsList] = useState([]);
-    const openModal = useModalStore((state) => state.open);
-    const setModalContent = useModalStore((state) => state.setContent);
-    const closePanel = usePanelStore((state) => state.close);
-    const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
-
-    function loadTimetable(room: ApiRoomType) {
-        closePanel();
-        setSelectedRoom(room.id, room.name);
-    }
-
-    return (
-        <>
-            <div className="actions_selector">
-                <div onClick={() => setActiveTab("edt-finder")} data-ref="edt-finder" className={`action ${activeTab == "edt-finder" ? "tab-active" : ""}`}>
-                    EDT des salles
-                </div>
-                <div onClick={() => setActiveTab("room-finder")} data-ref="room-finder" className={`action ${activeTab == "room-finder" ? "tab-active" : ""}`}>
-                    Trouver une salle
-                </div>
-            </div>
-
-            <div className="actions_container">
-
-                <div className={`edt-finder ${activeTab == "edt-finder" ? "displayed" : ""}`}>
-                    <Input
-                        className="search"
-                        type="text"
-                        placeholder="Rechercher une salle, un bâtiment..."
-                        onInput={(event) => setTimetableTabSearch((event.target as HTMLInputElement).value.toString())}
-                    ></Input>
-                    <div className="results-head">
-                        <p>Résultats de recherche</p>
-                        <div className="indicator">
-                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
-                            <p>Pictos</p>
-                        </div>
-                    </div>
-                    <RoomsList containerClassName="edt" roomsList={roomsList} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
-                </div>
-
-                <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
-                    <div className="advanced-search">
-                        <Button
-                            className="filter-button"
-                            onClick={() => {
-                                setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
-                                openModal();
-                            }}
-                        >
-                            Chercher une salle libre
-                        </Button>
-                    </div>
-                    <Input
-                        className="search"
-                        type="text"
-                        placeholder="Filtrer par salle, bâtiment..."
-                        onInput={(event) => setAvailableTabSearch((event.target as HTMLInputElement).value.toString())}
-                    ></Input>
-                    <div className="results-head">
-                        <p>Résultats de recherche</p>
-                        <div className="indicator">
-                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
-                            <p>Pictos</p>
-                        </div>
-                    </div>
-                    <RoomsList containerClassName="available" roomsList={availableRoomsList} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
-                </div>
-            </div>
-        </>
-    )
-}
-
 function AboutModalContent() {
     return (
         <div className="about">
@@ -364,6 +287,122 @@ function AboutModalContent() {
     );
 }
 
+function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
+    const [activeTab, setActiveTab] = useState("edt-finder");
+    const [timetableTabSearch, setTimetableTabSearch] = useState("");
+    const [availableTabSearch, setAvailableTabSearch] = useState("");
+    const [availableRoomsList, setAvailableRoomsList] = useState([]);
+    const openModal = useModalStore((state) => state.open);
+    const setModalContent = useModalStore((state) => state.setContent);
+    const closePanel = usePanelStore((state) => state.close);
+    const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
+
+    function loadTimetable(room: ApiRoomType) {
+        closePanel();
+        setSelectedRoom(room.id, room.name);
+    }
+
+    return (
+        <>
+            <div className="actions_selector">
+                <div onClick={() => setActiveTab("edt-finder")} data-ref="edt-finder" className={`action ${activeTab == "edt-finder" ? "tab-active" : ""}`}>
+                    EDT des salles
+                </div>
+                <div onClick={() => setActiveTab("room-finder")} data-ref="room-finder" className={`action ${activeTab == "room-finder" ? "tab-active" : ""}`}>
+                    Trouver une salle
+                </div>
+            </div>
+
+            <div className="actions_container">
+
+                <div className={`edt-finder ${activeTab == "edt-finder" ? "displayed" : ""}`}>
+                    <Input
+                        className="search"
+                        type="text"
+                        placeholder="Rechercher une salle, un bâtiment..."
+                        onInput={(event) => setTimetableTabSearch((event.target as HTMLInputElement).value.toString())}
+                    ></Input>
+                    <div className="results-head">
+                        <p>Résultats de recherche</p>
+                        <div
+                            className="indicator"
+                            onClick={() => {
+                                setModalContent(<AboutPictosModalContent></AboutPictosModalContent>);
+                                openModal();
+                            }}
+                        >
+                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                            <p>Pictos</p>
+                        </div>
+                    </div>
+                    <RoomsList containerClassName="edt" roomsList={roomsList} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                </div>
+
+                <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
+                    <div className="advanced-search">
+                        <Button
+                            className="filter-button"
+                            onClick={() => {
+                                setModalContent(<SearchAvailableModalContent availableRoomsListHook={setAvailableRoomsList}></SearchAvailableModalContent>);
+                                openModal();
+                            }}
+                        >
+                            Chercher une salle libre
+                        </Button>
+                    </div>
+                    <Input
+                        className="search"
+                        type="text"
+                        placeholder="Filtrer par salle, bâtiment..."
+                        onInput={(event) => setAvailableTabSearch((event.target as HTMLInputElement).value.toString())}
+                    ></Input>
+                    <div className="results-head">
+                        <p>Résultats de recherche</p>
+                        <div
+                            className="indicator"
+                            onClick={() => {
+                                setModalContent(<AboutPictosModalContent></AboutPictosModalContent>);
+                                openModal();
+                            }}
+                        >
+                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                            <p>Pictos</p>
+                        </div>
+                    </div>
+                    <RoomsList containerClassName="available" roomsList={availableRoomsList} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                </div>
+            </div>
+        </>
+    )
+}
+
+function AboutPictosModalContent() {
+    const closeModal = useModalStore((state) => state.close);
+
+    return (
+        <div className="pictos">
+            <div className="option">
+                <p>Salle info/vidéo</p>
+                <img src="/video.svg" alt="video" />
+            </div>
+            <div className="option">
+                <p>Salle de visioconférence</p>
+                <img src="/visio.svg" alt="visio" />
+            </div>
+            <div className="option">
+                <p>Salle en ilot</p>
+                <img src="/ilot.svg" alt="ilot" />
+            </div>
+            <div className="option">
+                <p>Salle à badge</p>
+                <img src="/badge.svg" alt="badge" />
+            </div>
+
+            <Button onClick={() => closeModal()}>Compris !</Button>
+        </div>
+    );
+}
+
 export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const openModal = useModalStore((state) => state.open);
@@ -389,7 +428,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
                     </div>
                     <div className="install"
-                        onClick={() => dismissInstallation() }
+                        onClick={() => dismissInstallation()}
                     >
                         <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
                         <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>

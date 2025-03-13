@@ -38,7 +38,7 @@ main {
     --accent-color: #3452FF;
 }
 
-.pannel {
+.panel {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -46,7 +46,7 @@ main {
     width: 22%;
     height: calc(100% - 48px);
     min-width: 350px;
-    gap: 24px;
+    gap: 16px;
     overflow: hidden;
     background-color: white;
     z-index: 10;
@@ -112,7 +112,7 @@ main {
 .campus {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 @keyframes showing {
@@ -1239,7 +1239,7 @@ input[type=number] {
 
 
 @media screen and (max-width: 1024px) {
-    .pannel {
+    .panel {
         position: absolute;
         top: 0;
         left: 0;
@@ -1252,7 +1252,7 @@ input[type=number] {
         padding: 16px 16px 0px 16px;
     }
 
-    .pannel.hidden {
+    .panel.hidden {
         transform: translateY(100%);
     }
 

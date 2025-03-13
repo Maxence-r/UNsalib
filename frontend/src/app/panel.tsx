@@ -453,7 +453,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     }, []);
 
     return (
-        <div tabIndex={-1} className={`pannel ${isPanelOpened ? "" : "hidden"}`}>
+        <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
             <div className="campus">
                 <div className="header">
                     <div className="campus_selector">

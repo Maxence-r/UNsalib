@@ -286,7 +286,6 @@ export default function Calendar() {
                 </div>
                 <div className="avaibility">
                     <div className="avaibility-box">
-                        <div className="red ping"></div>
                         <p>{selectedRoom.id == "" ? "SÉLECTIONNEZ UNE SALLE" : selectedRoom.name}</p>
                     </div>
                 </div>

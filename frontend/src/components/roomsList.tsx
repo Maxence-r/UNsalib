@@ -1,5 +1,7 @@
 import { ApiRoomType } from "@/app/types";
 import Image from "next/image";
+import Ping from "./ping";
+import "./roomsList.css";
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
@@ -26,7 +28,7 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
                     </p>
                     <div className="badges">
                         {room.features.map(feature => <Image key={feature} alt={feature} width={25} height={25} src={`/${feature}.svg`}></Image>)}
-                        <div className={room.available ? "ping blue" : "ping red"}></div>
+                        <Ping error={room.available ? false : true}></Ping>
                     </div>
                 </div>
             )) : <p className="no-results" style={{ display: "block" }}>Aucune salle n&apos;a été trouvée.</p>}

@@ -406,23 +406,6 @@ main {
     filter: invert(var(--icon-color-invert-value));
 }
 
-.ping {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin: 4px;
-}
-
-.red {
-    background-color: #ff0000;
-    box-shadow: 0px 0px 0px 4px rgba(255, 0, 0, 0.295);
-}
-
-.blue {
-    background-color: var(--accent-color);
-    box-shadow: 0px 0px 0px 4px rgba(0, 38, 255, 0.295);
-}
-
 .results-head {
     display: flex;
     flex-direction: row;
@@ -433,23 +416,6 @@ main {
 
 .results-head>p {
     margin: 0;
-}
-
-.results {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    gap: 8px;
-}
-
-p.no-results {
-    display: none;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
 }
 
 .tags {
@@ -484,53 +450,6 @@ p.no-results {
     font-size: 12px;
     font-weight: 600;
 }
-
-
-.result {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border: 1px solid var(--neutral-color-light);
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.result.hidden {
-    display: none;
-}
-
-.result:hover {
-    background-color: #f8f8f8;
-}
-
-.result>p {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.bat {
-    font-weight: 400;
-}
-
-.badges {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-}
-
-.badges>img {
-    height: 14px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
-}
-
 
 .advanced-search {
     display: flex;
@@ -832,10 +751,6 @@ input[type=number] {
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-}
-
-.avaibility-box>.ping {
-    display: none;
 }
 
 .loader {
@@ -1309,17 +1224,13 @@ input[type=number] {
         height: calc(100% - 16px);
         border: none;
         min-width: auto;
-        transition: transform 0.3s;
+        transition: transform var(--animation-duration), background-color var(--animation-duration);
         transform: translateY(0);
         padding: 16px 16px 0px 16px;
     }
 
     .panel.hidden {
         transform: translateY(100%);
-    }
-
-    .results {
-        padding-bottom: 24px;
     }
 
     .calendar {

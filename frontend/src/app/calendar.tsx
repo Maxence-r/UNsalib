@@ -284,8 +284,8 @@ export default function Calendar() {
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
                     <Image src="/chevrons-right.svg" width={11} height={11} alt="Semaine suivante" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}></Image>
                 </div>
-                <div className="avaibility">
-                    <div className="avaibility-box">
+                <div className="availability">
+                    <div className="availability-box">
                         <p>{selectedRoom.id == "" ? "SÉLECTIONNEZ UNE SALLE" : selectedRoom.name}</p>
                     </div>
                 </div>

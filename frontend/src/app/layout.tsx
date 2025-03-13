@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from 'next/font/google'
 import "./globals.css";
+import "../theme.css";
 
 export const metadata: Metadata = {
     title: "UNsalib - Sciences et techniques",

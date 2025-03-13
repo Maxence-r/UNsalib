@@ -122,8 +122,11 @@ function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, d
 
     return (
         <div className="column">
-            <div className="calendar-top">
-                <p>{dayName}<span className="day">{" " + dayNumber}</span></p>
+            <div className={`calendar-top ${new Date().getDate() == parseInt(dayNumber) ? "selected" : ""}`}>
+                <p>
+                    {dayName}
+                    <span className="day">{" " + dayNumber}</span>
+                </p>
             </div>
             <div className="column-content">
                 {currentDayHours.map(dayHour => <CalendarBox key={dayHour.hour} hourCourses={dayHour.courses}></CalendarBox>)}

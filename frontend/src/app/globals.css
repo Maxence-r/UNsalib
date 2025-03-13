@@ -624,6 +624,24 @@ input[type=number] {
     margin-left: 4px;
 }
 
+.calendar-top.selected>p,
+.calendar-top.selected>p>.day {
+    color: var(--accent-color);
+}
+
+.calendar-top.selected {
+    background-color: var(--border-color);
+    border-bottom: 2px solid var(--sub-border-color);
+}
+
+.column:has(.calendar-top.selected) .content-box {
+    background-color: var(--border-color);
+}
+
+.column:has(.calendar-top.selected) .content-box {
+    border-bottom: 2px solid var(--sub-border-color);
+}
+
 .column-content {
     display: flex;
     position: relative;
@@ -856,7 +874,7 @@ input[type=number] {
 .indicator-hour {
     position: absolute;
     transform: translateY(-12.5px);
-    z-index: 1;
+    z-index: 2;
     right: -10px;
     display: flex;
     align-items: center;

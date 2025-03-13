@@ -24,7 +24,7 @@ main {
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: #cfcfcf #ffffff;
+    scrollbar-color: var(--neutral-color-dark) var(--neutral-color-light);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;

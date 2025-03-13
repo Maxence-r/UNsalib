@@ -2,6 +2,7 @@ import { ApiRoomType } from "@/app/types";
 import Image from "next/image";
 import Ping from "./ping";
 import "./roomsList.css";
+import "../theme.css";
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");

@@ -17,6 +17,9 @@ main {
     display: flex;
     flex-direction: row;
     gap: 34px;
+    background-color: var(--surface-color);
+    transition: background-color var(--animation-duration);
+    color: var(--on-surface-color);
 }
 
 * {
@@ -32,10 +35,65 @@ main {
 }
 
 :root {
-    --border-color: #F0F0F0;
-    --sub-border-color: #E1E1E1;
+    --accent-color: #3452ff;
+    --on-accent-color: #ffffff;
+    --accent-color-dark: #1f2dff;
+    --on-accent-color-dark: #ffffff;
+    --neutral-color-dark: #676767;
+    --on-neutral-color-dark: #ffffff;
+    --neutral-color: #ececec;
+    --on-neutral-color: #000000;
+    --neutral-color-light: #e1e1e1;
+    --on-neutral-color-light: #000000;
+    --success-color: #44c235;
+    --on-success-color: #ffffff;
+    --error-color: #e64242;
+    --on-error-color: #ffffff;
+    --background-color: #fbfbfb;
+    --on-background-color: #000000;
+    --surface-color: #ffffff;
+    --on-surface-color: #000000;
+    --scrim-color: rgba(0, 0, 0, 0.3);
+    --icon-color-invert-value: 0;
+
+    --extra-large-space: 24px;
+    --large-space: 16px;
+    --space: 12px;
+    --small-space: 8px;
+    --extra-small-space: 4px;
+
+    --border-radius-full: 100px;
     --border-radius: 12px;
-    --accent-color: #3452FF;
+    --border-radius-sharp: 6px;
+
+    --box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+
+    --animation-duration: .3s;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent-color: #3452ff;
+        --on-accent-color: #ffffff;
+        --accent-color-dark: #1f2dff;
+        --on-accent-color-dark: #ffffff;
+        --neutral-color-dark: #808080;
+        --on-neutral-color-dark: #ffffff;
+        --neutral-color: #404040;
+        --on-neutral-color: #ffffff;
+        --neutral-color-light: #303030;
+        --on-neutral-color-light: #ffffff;
+        --success-color: #44c235;
+        --on-success-color: #ffffff;
+        --error-color: #e64242;
+        --on-error-color: #ffffff;
+        --background-color: #202020;
+        --on-background-color: #ffffff;
+        --surface-color: #111111;
+        --on-surface-color: #ffffff;
+        --scrim-color: rgba(255, 255, 255, 0.3);
+        --icon-color-invert-value: 1;
+    }
 }
 
 .panel {
@@ -48,11 +106,13 @@ main {
     min-width: 350px;
     gap: 16px;
     overflow: hidden;
-    background-color: white;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
     z-index: 10;
-    border-right: 2px solid var(--border-color);
+    border-right: 2px solid var(--neutral-color);
     border-radius: 0;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    transition: background-color var(--animation-duration);
 }
 
 
@@ -134,7 +194,7 @@ main {
     gap: 12px;
     justify-content: space-between;
     padding: 8px 12px 8px 8px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     border-radius: var(--border-radius);
     height: 45px;
     box-sizing: border-box;
@@ -166,7 +226,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     height: 45px;
     box-sizing: border-box;
     width: 45px;
@@ -176,6 +236,7 @@ main {
 .header>.install>img {
     height: 16px;
     width: auto;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 .header>.version:hover,
@@ -271,7 +332,7 @@ main {
     flex-direction: row;
     width: calc(100% - 16px);
     padding: 8px;
-    background-color: #e2e2e2;
+    background-color: var(--neutral-color);
     border-radius: 16px;
 }
 
@@ -290,7 +351,7 @@ main {
 }
 
 .action.tab-active {
-    background-color: white;
+    background-color: var(--surface-color);
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -342,6 +403,7 @@ main {
 .indicator>img {
     height: 16px;
     width: auto;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 .ping {
@@ -407,7 +469,7 @@ p.no-results {
     gap: 8px;
     padding: 8px 14px;
     border-radius: 6px;
-    border: 1px solid var(--sub-border-color);
+    border: 1px solid var(--neutral-color-light);
     cursor: pointer;
 }
 
@@ -430,7 +492,7 @@ p.no-results {
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border: 1px solid var(--sub-border-color);
+    border: 1px solid var(--neutral-color-light);
     border-radius: 6px;
     cursor: pointer;
 }
@@ -466,6 +528,7 @@ p.no-results {
 .badges>img {
     height: 14px;
     width: auto;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 
@@ -535,7 +598,7 @@ input[type=number] {
     text-align: center;
     font-family: "Space Grotesk", sans-serif;
     border-radius: 6px;
-    border: 1px solid var(--sub-border-color);
+    border: 1px solid var(--neutral-color-light);
     font-weight: 400;
     padding: 3px 4px;
     outline: none;
@@ -549,14 +612,13 @@ input[type=number] {
 
 .calendar-container {
     display: flex;
-
     flex-direction: row;
-
     height: 100%;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     border-radius: var(--border-radius) 0 0 0;
     overflow: hidden;
-    background-color: #FBFBFB;
+    background-color: var(--background-color);
+    transition: background-color var(--animation-duration);
 }
 
 .calendar-hours {
@@ -564,7 +626,7 @@ input[type=number] {
     flex-direction: column;
     min-width: 70px;
     height: 100%;
-    border-right: 2px solid var(--border-color);
+    border-right: 2px solid var(--neutral-color);
 }
 
 .calendar-columns {
@@ -584,7 +646,7 @@ input[type=number] {
     width: 100%;
     height: 100%;
     min-width: 115px;
-    border-right: 2px solid var(--border-color);
+    border-right: 2px solid var(--neutral-color);
 }
 
 .column:last-child {
@@ -598,15 +660,14 @@ input[type=number] {
     justify-content: center;
     width: 100%;
     min-height: 50px;
-    background-color: white;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--neutral-color);
 }
 
 .calendar-hours-display>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
     height: 0;
     transform: translateY(-10px);
 }
@@ -615,11 +676,11 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .calendar-top>p>.day {
-    color: #000000;
+    color: var(--on-background-color);
     margin-left: 4px;
 }
 
@@ -629,16 +690,16 @@ input[type=number] {
 }
 
 .calendar-top.selected {
-    background-color: var(--border-color);
-    border-bottom: 2px solid var(--sub-border-color);
+    background-color: var(--neutral-color);
+    border-bottom: 2px solid var(--neutral-color-light);
 }
 
 .column:has(.calendar-top.selected) .content-box {
-    background-color: var(--border-color);
+    background-color: var(--neutral-color);
 }
 
 .column:has(.calendar-top.selected) .content-box {
-    border-bottom: 2px solid var(--sub-border-color);
+    border-bottom: 2px solid var(--neutral-color-light);
 }
 
 .column-content {
@@ -654,7 +715,7 @@ input[type=number] {
     position: relative;
     flex-direction: row;
     flex: 1;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--neutral-color);
 }
 
 
@@ -726,7 +787,7 @@ input[type=number] {
     justify-content: center;
     gap: 16px;
     padding: 0 20px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     border-top: 0;
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
@@ -735,6 +796,7 @@ input[type=number] {
     height: 12px;
     width: auto;
     cursor: pointer;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 
@@ -746,7 +808,7 @@ input[type=number] {
 }
 
 .week-number {
-    color: #000000;
+    color: var(--on-surface-color);
 }
 
 
@@ -758,7 +820,7 @@ input[type=number] {
     gap: 16px;
     height: 100%;
     padding: 0 20px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     border-top: 0;
     border-right: 0;
     border-radius: 0 0 0 var(--border-radius);
@@ -766,7 +828,7 @@ input[type=number] {
 
 .avaibility-box>p {
     margin: 0;
-    color: #000000;
+    color: var(--on-surface-color);
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
@@ -951,7 +1013,7 @@ input[type=number] {
     justify-content: space-between;
     border-radius: 8px;
     padding: 8px;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--neutral-color);
     gap: 12px;
     align-items: center;
     flex-grow: 1;

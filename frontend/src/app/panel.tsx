@@ -389,19 +389,19 @@ function AboutPictosModalContent() {
         <div className="pictos">
             <div className="option">
                 <p>Salle info/vidéo</p>
-                <img src="/video.svg" alt="video" />
+                <Image src="/video.svg" width={25} height={25} alt="video"></Image>
             </div>
             <div className="option">
                 <p>Salle de visioconférence</p>
-                <img src="/visio.svg" alt="visio" />
+                <Image src="/visio.svg" width={25} height={25} alt="visio"></Image>
             </div>
             <div className="option">
                 <p>Salle en ilot</p>
-                <img src="/ilot.svg" alt="ilot" />
+                <Image src="/ilot.svg" width={25} height={25} alt="ilot"></Image>
             </div>
             <div className="option">
                 <p>Salle à badge</p>
-                <img src="/badge.svg" alt="badge" />
+                <Image src="/badge.svg" width={25} height={25} alt="badge"></Image>
             </div>
 
             <Button onClick={() => closeModal()}>Compris !</Button>

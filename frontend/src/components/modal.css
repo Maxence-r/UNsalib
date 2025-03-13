@@ -7,16 +7,16 @@
     width: 100%;
     height: 100%;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease-in-out;
+    background-color: var(--scrim-color);
+    transition: all var(--animation-duration) ease-in-out;
 }
 
 .modal.active {
     display: flex;
-    animation: modalOpen 0.3s ease-in-out forwards;
+    animation: scrim-open var(--animation-duration) ease-in-out forwards;
 }
 
-@keyframes modalOpen {
+@keyframes scrim-open {
     from {
         opacity: 0;
     }
@@ -27,10 +27,10 @@
 }
 
 .modal.active>.modal-content {
-    animation: modalContentOpen 0.3s ease-in-out forwards;
+    animation: modal-open var(--animation-duration) ease-in-out forwards;
 }
 
-@keyframes modalContentOpen {
+@keyframes modal-open {
     from {
         transform: translateX(100%);
     }
@@ -46,7 +46,8 @@
     height: calc(100% - 48px);
     width: 400px;
     padding: 24px;
-    background-color: white;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
     right: 0;
 }
 

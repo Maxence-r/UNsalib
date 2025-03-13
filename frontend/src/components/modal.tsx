@@ -1,4 +1,5 @@
 import "./modal.css";
+import "../theme.css";
 import { ReactNode } from "react";
 
 export default function Modal({ children, isOpened, closeFunction }: { children: ReactNode, isOpened: boolean, closeFunction: () => void }) {

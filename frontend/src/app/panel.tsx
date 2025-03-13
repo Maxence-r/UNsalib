@@ -1,14 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import { ApiRoomType } from "./types";
-import { useModalStore, usePanelStore, useSelectedRoomStore, useToastStore, useInstallationStore } from './store';
+import {
+    useModalStore,
+    usePanelStore,
+    useSelectedRoomStore,
+    useToastStore,
+    useInstallationStore
+} from './store';
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+import { socket } from "../socket";
 
-const APP_VERSION = "v2.0"
+const APP_VERSION = "v2.0";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -410,6 +416,41 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
     const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
+    const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
+
+    useEffect(() => {
+        if (socket.connected) {
+            onConnect();
+        }
+
+        function onConnect() {
+            console.log("Connected to Socket.IO server");
+        }
+
+        function onDisconnect() {
+            console.log("Disconnected from Socket.IO server");
+        }
+
+        function onGroupUpdated(value: { message: string }) {
+            setUpdatedGroupsList(previous => [...previous, value.message]);
+        }
+
+        function onError(error: string) {
+            console.error("Socket.IO error:", error);
+        }
+
+        socket.on("connect", onConnect);
+        socket.on("disconnect", onDisconnect);
+        socket.on("groupUpdated", onGroupUpdated);
+        socket.on("error", onError);
+
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("disconnect", onDisconnect);
+            socket.on("groupUpdated", onDisconnect);
+            socket.off("error", onError);
+        };
+    }, []);
 
     return (
         <div tabIndex={-1} className={`pannel ${isPanelOpened ? "" : "hidden"}`}>
@@ -439,7 +480,11 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
 
                     <div className="overlay"></div>
                     <div className="campus_feed_content">
-                        <p>ICI S&apos;AFFICHERA LA MISE À JOUR DES GROUPES</p>
+                        {
+                            updatedGroupsList.map(groupMsg => {
+                                return <p key={groupMsg + new Date().toISOString}>{groupMsg}</p>
+                            })
+                        }
                     </div>
                 </div>
             </div>

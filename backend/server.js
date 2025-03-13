@@ -49,6 +49,10 @@ server.on("listening", () => {
 server.listen(port);
 
 // Initialize Socket.IO here
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL
+    }
+});
 
 export default io;

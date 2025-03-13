@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk } from 'next/font/google'
+import { Space_Grotesk } from "next/font/google"
 import "./globals.css";
 import "../theme.css";
 
@@ -13,15 +13,15 @@ export const viewport: Viewport = {
     initialScale: 1,
     maximumScale: 1,
     themeColor: [
-        { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-        // { media: '(prefers-color-scheme: dark)', color: 'black' },
+        { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+        { media: "(prefers-color-scheme: dark)", color: "#111111" },
     ]
 };
 
 const font = Space_Grotesk({
-    weight: ['300', '400', '500', '600', '700'],
-    subsets: ['latin'],
-    display: 'swap'
+    weight: ["300", "400", "500", "600", "700"],
+    subsets: ["latin"],
+    display: "swap"
 });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

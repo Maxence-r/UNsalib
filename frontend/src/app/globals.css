@@ -50,7 +50,6 @@ main {
     overflow: hidden;
     background-color: white;
     z-index: 10;
-
     border-right: 2px solid var(--border-color);
     border-radius: 0;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
@@ -1245,16 +1244,20 @@ input[type=number] {
         top: 0;
         left: 0;
         width: calc(100% - 32px);
-        height: calc(100% - 32px);
+        height: calc(100% - 16px);
         border: none;
         min-width: auto;
         transition: transform 0.3s;
         transform: translateY(0);
-        padding: 16px;
+        padding: 16px 16px 0px 16px;
     }
 
     .pannel.hidden {
         transform: translateY(100%);
+    }
+
+    .results {
+        padding-bottom: 24px;
     }
 
     .calendar {

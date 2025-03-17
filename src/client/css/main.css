@@ -336,7 +336,6 @@ body {
     gap: 16px;
     overflow: hidden;
     position: relative;
-    padding-bottom: 16px;
 }
 
 .displayed {
@@ -456,9 +455,9 @@ p.no-results {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 18px 22px;
     border: 1px solid var(--sub-border-color);
-    border-radius: 6px;
+    border-radius: 16px;
     cursor: pointer;
 }
 

@@ -324,18 +324,22 @@ body {
 
 .actions_container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     height: 100%;
     overflow: hidden;
+    touch-action: pan-y;
+    width: 200%; 
 }
 
 .actions_container>div {
-    display: none;
+    display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 50%; 
     gap: 16px;
     overflow: hidden;
     position: relative;
+    will-change: transform; 
+    transition: opacity 0.3s ease; 
 }
 
 .displayed {

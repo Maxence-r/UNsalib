@@ -5,10 +5,10 @@
     --on-accent-color-dark: #ffffff;
     --neutral-color-dark: #676767;
     --on-neutral-color-dark: #ffffff;
-    --neutral-color: #ececec;
-    --on-neutral-color: #000000;
-    --neutral-color-light: #e1e1e1;
+    --neutral-color-light: #ececec;
     --on-neutral-color-light: #000000;
+    --neutral-color: #e1e1e1;
+    --on-neutral-color: #000000;
     --success-color: #44c235;
     --on-success-color: #ffffff;
     --error-color: #e64242;
@@ -45,7 +45,7 @@
         --on-neutral-color-dark: #ffffff;
         --neutral-color: #404040;
         --on-neutral-color: #ffffff;
-        --neutral-color-light: #303030;
+        --neutral-color-light: #242424;
         --on-neutral-color-light: #ffffff;
         --success-color: #44c235;
         --on-success-color: #ffffff;

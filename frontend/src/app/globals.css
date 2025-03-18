@@ -24,7 +24,7 @@ main {
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--neutral-color-dark) var(--neutral-color-light);
+    scrollbar-color: var(--neutral-color-dark) var(--surface-color);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -179,7 +179,7 @@ main {
 
 .header>.version:hover,
 .header>.install:hover {
-    background-color: #f8f8f8;
+    background-color: var(--neutral-color-light);
 }
 
 .header>.install .badge {
@@ -314,18 +314,6 @@ main {
     display: flex !important;
 }
 
-.search {
-    width: calc(100% - 32px);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    min-height: 50px;
-    border-radius: var(--border-radius);
-    padding: 0px 16px;
-    background-color: #ECECEC;
-    border: none;
-    outline: none;
-}
-
 .indicator {
     display: flex;
     flex-direction: row;
@@ -373,7 +361,7 @@ main {
     gap: 8px;
     padding: 8px 14px;
     border-radius: 6px;
-    border: 1px solid var(--neutral-color-light);
+    border: 1px solid var(--neutral-color);
     cursor: pointer;
 }
 
@@ -460,6 +448,8 @@ input[type=number] {
     padding: 3px 4px;
     outline: none;
     -moz-appearance: textfield;
+    background-color: var(--neutral-color-light);
+    color: var(--on-neutral-color-light);
 }
 
 .time-picker>input:focus {
@@ -543,7 +533,7 @@ input[type=number] {
 
 .calendar-top.selected>p,
 .calendar-top.selected>p>.day {
-    color: var(--accent-color);
+    color: var(--on-neutral-color);
 }
 
 .calendar-top.selected {
@@ -591,13 +581,6 @@ input[type=number] {
     width: 100%;
     background-color: var(--accent-color);
     height: 2px;
-}
-
-.calendar-hours-display>div>p {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #5F5F5F;
 }
 
 .course {
@@ -659,7 +642,7 @@ input[type=number] {
 
 .week-switcher>p {
     margin: 0;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
     font-size: 14px;
     font-weight: 600;
 }
@@ -775,14 +758,14 @@ input[type=number] {
     margin: 0;
     font-size: 12px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .current-room>h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #030303;
+    color: var(--on-surface-color);
 }
 
 .indicator-hour {
@@ -833,6 +816,7 @@ input[type=number] {
 .about .modal-section .title>img {
     height: 20px;
     width: auto;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 .about .modal-section {
@@ -886,18 +870,19 @@ input[type=number] {
     margin: 0;
     font-size: 12px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);;
 }
 
 .about .grid .item .infos>h2 {
     margin: 0;
     font-size: 15px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
+    margin-block-end: 2px;
 }
 
 .about .grid .item>img {
-    height: 34px;
+    height: 36px;
     border-radius: 4px;
     width: auto;
 }
@@ -906,8 +891,8 @@ input[type=number] {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 4px;
     background-color: var(--accent-color);
     border: none;
@@ -919,7 +904,7 @@ input[type=number] {
     padding: 4px 6px;
     border-radius: 4px;
     font-size: 12px;
-    color: #ffffff;
+    color: var(--on-accent-color);
 }
 
 .course-box {
@@ -933,7 +918,7 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .course-box>.course-container {
@@ -962,14 +947,14 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .detail>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
     max-height: 20vh;
     overflow-y: auto;
     word-break: break-word;
@@ -986,15 +971,13 @@ input[type=number] {
     width: 100%;
     height: 6px;
     border-radius: 5px;
-    background: #d3d3d3;
+    background: var(--neutral-color-light);
     outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
+    transition: background .2s;
 }
 
 .slider:hover {
-    opacity: 1;
+    background: var(--neutral-color);
 }
 
 .slider::-webkit-slider-thumb {
@@ -1026,12 +1009,13 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
 }
 
 .option>img {
     width: 18px;
     align-self: baseline;
+    filter: invert(var(--icon-color-invert-value));
 }
 
 .search-button {
@@ -1051,14 +1035,14 @@ input[type=number] {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .centered>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
 }
 
 .browsers {
@@ -1076,7 +1060,7 @@ input[type=number] {
     align-items: center;
     padding: 8px;
     background-color: aliceblue;
-    border: 1px solid #cfcfcf;
+    border: 1px solid var(--neutral-color-light);
     border-radius: 12px;
     gap: 8px;
 }
@@ -1090,7 +1074,7 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
 }
 
 .numb {
@@ -1113,7 +1097,7 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #5F5F5F;
+    color: var(--neutral-color-dark);
 }
 
 .slide-selector>.slidecontainer {
@@ -1136,7 +1120,7 @@ input[type=number] {
     transform: translate(-50%, -50%);
     font-size: 14px;
     font-weight: 600;
-    color: #000000;
+    color: var(--on-surface-color);
     text-align: center;
     margin: 0;
 }

@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border: 1px solid var(--neutral-color-light);
+    border: 1px solid var(--neutral-color);
     border-radius: 6px;
     cursor: pointer;
 }

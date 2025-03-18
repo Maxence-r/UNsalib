@@ -5,9 +5,10 @@
     min-height: 50px;
     border-radius: var(--border-radius);
     padding: 0px 16px;
-    background-color: var(--neutral-color);
+    background-color: var(--neutral-color-light);
     border: none;
     outline: none;
+    color: var(--on-neutral-color-light);
 }
 
 input:not(input[type="checkbox"])::placeholder {

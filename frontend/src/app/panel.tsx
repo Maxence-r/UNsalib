@@ -233,7 +233,7 @@ function AboutModalContent() {
             <div className="modal-section">
                 <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
                 <div className="content">
-                    <p>UNsalib est un site web qui permet aux étudiants et professeurs de Nantes Université de trouver les salles libres du campus et d&apos;afficher leurs emplois du temps.</p>
+                    <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>
             </div>
             <div className="modal-section">
@@ -262,6 +262,14 @@ function AboutModalContent() {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="modal-section">
+                <h4 className="title"><Image src="/smile.svg" width={24} height={24} alt=""></Image>REMERCIEMENTS</h4>
+                <div className="content">
+                    <p>Merci à <strong>Christophe Lino</strong> pour sa confiance et son implication dans le projet, et par ailleurs pour avoir été le premier professeur à utiliser UNsalib.</p>
+                    <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure, en particulier Mewenn pour nous avoir fait part de l'insalubrité de notre application...</p>
+                    <p>Merci enfin à <strong>Nantes Université</strong> d'avoir publié les emplois du temps des différentes formations en libre accès.</p>
                 </div>
             </div>
             <div className="modal-section">

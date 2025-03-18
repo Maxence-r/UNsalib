@@ -268,8 +268,8 @@ function AboutModalContent() {
                 <h4 className="title"><Image src="/smile.svg" width={24} height={24} alt=""></Image>REMERCIEMENTS</h4>
                 <div className="content">
                     <p>Merci à <strong>Christophe Lino</strong> pour sa confiance et son implication dans le projet, et par ailleurs pour avoir été le premier professeur à utiliser UNsalib.</p>
-                    <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure, en particulier Mewenn pour nous avoir fait part de l'insalubrité de notre application...</p>
-                    <p>Merci enfin à <strong>Nantes Université</strong> d'avoir publié les emplois du temps des différentes formations en libre accès.</p>
+                    <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure, en particulier Mewenn pour nous avoir fait part de l&apos;insalubrité de notre application...</p>
+                    <p>Merci enfin à <strong>Nantes Université</strong> d&apos;avoir publié les emplois du temps des différentes formations en libre accès.</p>
                 </div>
             </div>
             <div className="modal-section">

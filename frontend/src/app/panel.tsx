@@ -278,10 +278,10 @@ function AboutModalContent() {
                     <div className="grid">
                         <div className="item">
                             <div className="infos">
-                                <h2>WhitePaper</h2>
+                                <h2>White Paper</h2>
                                 <p>Infos de conception</p>
                             </div>
-                            <button>
+                            <button onClick={() => window.open("/white-paper.pdf", "_blank")}>
                                 <Image src="/open.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
                             </button>
                         </div>
@@ -290,7 +290,7 @@ function AboutModalContent() {
                                 <h2>Github</h2>
                                 <p>Code source</p>
                             </div>
-                            <button>
+                            <button onClick={() => window.open("https://github.com/Maxence-r/UNsalib_Modern-Timetable-Viewer", "_blank")}>
                                 <Image src="/open.svg" width={24} height={24} alt="Ouvrir le repo Github"></Image>
                             </button>
                         </div>

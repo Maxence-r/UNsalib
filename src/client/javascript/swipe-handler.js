@@ -19,13 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     actionsContainer.style.flexDirection = 'row';
     actionsContainer.style.width = '200%';
     actionsContainer.style.transition = 'transform 0.3s ease';
+    actionsContainer.style.overflow = 'auto';
     
     edtFinder.style.width = '50%';
     roomFinder.style.width = '50%';
     
     // Touch event handlers
     actionsContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
-    actionsContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    actionsContainer.addEventListener('touchmove', handleTouchMove, { passive: true });
     actionsContainer.addEventListener('touchend', handleTouchEnd);
     
     // Mouse event handlers for desktop testing
@@ -74,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             edtFinder.style.opacity = progress;
             roomFinder.style.opacity = 1 - progress * 0.5;
         }
-        
-        e.preventDefault(); // Prevent scrolling while swiping
     }
     
     function handleTouchEnd() {

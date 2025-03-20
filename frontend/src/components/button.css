@@ -5,6 +5,14 @@
     background-color: var(--accent-color);
     cursor: pointer;
     border: none;
+    padding: 0px 18px;
+}
+
+.button:has(.button__icon) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .button__text {
@@ -12,6 +20,11 @@
     font-size: 14px;
     font-weight: 600;
     font-family: "Space Grotesk", sans-serif;
+}
+
+.button__icon {
+    height: 18px;
+    width: auto;
 }
 
 .button:hover {

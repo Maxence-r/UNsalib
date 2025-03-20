@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
 import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
 import Image from "next/image";
+import Button from "@/components/button";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
@@ -301,9 +302,7 @@ export default function Calendar() {
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <button className="menu-button" onClick={() => openPanel()}>
-                    MENU
-                </button>
+                <Button iconPath="/up.svg" onClick={() => openPanel()}>Menu</Button>
             </div>
         </div>
     )

@@ -447,6 +447,12 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
             console.error("Socket.IO error:", error);
         }
 
+        // function onPopState(event) {
+        //     console.log(event)
+        //     history.pushState({}, "", "http://coucou");
+        // }
+        // window.addEventListener('popstate', onPopState);
+
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
         socket.on("groupUpdated", onGroupUpdated);
@@ -457,6 +463,9 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
             socket.off("disconnect", onDisconnect);
             socket.on("groupUpdated", onDisconnect);
             socket.off("error", onError);
+            // setTimeout(() => {
+            //     window.removeEventListener('popstate', onPopState);
+            // }, 0);
         };
     }, []);
 

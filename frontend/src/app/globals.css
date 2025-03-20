@@ -737,17 +737,6 @@ input[type=number] {
     padding: 20px;
 }
 
-.menu-button {
-    padding: 0 16px;
-    height: 100%;
-    background-color: var(--accent-color);
-    font-family: "Space Grotesk", sans-serif;
-    border: none;
-    border-radius: var(--border-radius);
-    color: white;
-}
-
-
 .current-room {
     display: flex;
     flex-direction: column;

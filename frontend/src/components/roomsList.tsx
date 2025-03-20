@@ -1,20 +1,32 @@
+
+"use client";
 import { ApiRoomType } from "@/app/types";
 import Image from "next/image";
 import Ping from "./ping";
 import "./roomsList.css";
 import "../theme.css";
+import { useState, useEffect } from "react";
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");
 }
 
-export default function RoomsList({ containerClassName, onRoomClick, roomsList, filter }: { containerClassName: string, onRoomClick: (room: ApiRoomType) => void, roomsList: ApiRoomType[], filter: string }) {
+export default function RoomsList({ containerClassName, onRoomClick, roomsList, filter }: { containerClassName: string, onRoomClick: (room: ApiRoomType) => void, roomsList: ApiRoomType[], filter: string }) {    
+    const [filteredRoomsList, setFilteredRoomsList] = useState(roomsList);
+    
+    useEffect(() => {
+		const filtered = roomsList.filter(room =>
+            normalizeString(room.name).includes(normalizeString(filter)) || normalizeString(room.building).includes(normalizeString(filter))
+		);
+		setFilteredRoomsList(filtered);
+	}, [filter]);
+    
     return (
         <div className={`results ${containerClassName}`}>
-            {roomsList.length > 0 ? roomsList.map((room: ApiRoomType) => (
+            {filteredRoomsList.length > 0 ? filteredRoomsList.map((room: ApiRoomType) => (
                 <div
                     key={room.id}
-                    className={`result ${(normalizeString(room.name).includes(normalizeString(filter)) || normalizeString(room.building).includes(normalizeString(filter))) ? "" : "hidden"}`}
+                    className="result"
                     onClick={() => {
                         try {
                             window.navigator.vibrate(10);
@@ -33,8 +45,6 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
                     </div>
                 </div>
             )) : <p className="no-results" style={{ display: "block" }}>Aucune salle n&apos;a été trouvée.</p>}
-            {/* TODO: display the no result component */}
-            {/* <p className="no-results" style={{ display: document.querySelectorAll('.result:not(.hidden)').length == 0 ? "block" : "none" }}>Aucune salle n'a été trouvée.</p> */}
         </div>
     );
 }

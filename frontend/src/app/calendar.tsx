@@ -231,6 +231,7 @@ export default function Calendar() {
     });
     const [increment, setIncrement] = useState(0);
     const openPanel = usePanelStore((state) => state.open);
+    const isPanelOpened = usePanelStore((state) => state.isOpened);
     const selectedRoom = useSelectedRoomStore((state) => state.room);
     const setTimetableLoadState = useTimetableStore((state) => state.setLoading);
     const isTimetableLoading = useTimetableStore((state) => state.isLoading);
@@ -251,6 +252,20 @@ export default function Calendar() {
 
         return () => clearInterval(interval);
     }, [hourIndicatorValue]);
+
+    useEffect(() => {
+        if (!isPanelOpened) {
+            window.history.pushState({ modalOpened: true }, "");
+
+            const handlePopState = () => {
+                if (!isPanelOpened) openPanel();
+            };
+
+            window.addEventListener("popstate", handlePopState);
+
+            return () => window.removeEventListener("popstate", handlePopState);
+        }
+    }, [isPanelOpened, openPanel]);
 
     useEffect(() => {
         async function render() {

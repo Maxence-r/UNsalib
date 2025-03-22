@@ -100,3 +100,23 @@ export const useToastStore = create<ToastState>()((set) => ({
     setContent: (newContent) => set({ content: newContent }),
     setError: (state) => set({ isError: state }),
 }));
+
+interface HistoryState {
+    stack: string[],
+    push: (value: string) => void,
+    pop: () => void
+};
+
+export const useHistoryStore = create<HistoryState>()((set) => ({
+    stack: [],
+    push: (value) => set(state => {
+        let newStack = state.stack;
+        newStack.push(value);
+        return { stack: newStack };
+    }),
+    pop: () => set(state => {
+        let newStack = state.stack;
+        newStack.pop();
+        return { stack: newStack };
+    })
+}));

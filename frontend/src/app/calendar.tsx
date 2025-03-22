@@ -1,7 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ApiCoursesResponseType, ApiCourseType } from "./types";
-import { useModalStore, usePanelStore, useSelectedRoomStore, useTimetableStore, useToastStore } from './store';
+import { 
+    useModalStore, 
+    usePanelStore, 
+    useSelectedRoomStore, 
+    useTimetableStore, 
+    useToastStore, 
+    useHistoryStore 
+} from './store';
 import Image from "next/image";
 import Button from "@/components/button";
 
@@ -238,6 +245,9 @@ export default function Calendar() {
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
     const setToastAsError = useToastStore((state) => state.setError);
+    const historyStackPush = useHistoryStore((state) => state.push);
+    const historyStackPop = useHistoryStore((state) => state.pop);
+    const historyStack = useHistoryStore((state) => state.stack);
     const [hourIndicatorValue, setHourIndicatorValue] = useState(computeHourIndicator().value);
     const [hourIndicatorTop, setHourIndicatorTop] = useState(computeHourIndicator().top);
     const [displayHourIndicator, setHourIndicatorDisplay] = useState(true);
@@ -255,10 +265,14 @@ export default function Calendar() {
 
     useEffect(() => {
         if (!isPanelOpened) {
-            window.history.pushState({ modalOpened: true }, "");
+            window.history.pushState({ panelClosed: true }, "");
+            historyStackPush("panelClosed");
 
             const handlePopState = () => {
-                if (!isPanelOpened) openPanel();
+                if (historyStack[historyStack.length - 1] == "panelClosed" && !isPanelOpened) {
+                    historyStackPop();
+                    openPanel();
+                }
             };
 
             window.addEventListener("popstate", handlePopState);

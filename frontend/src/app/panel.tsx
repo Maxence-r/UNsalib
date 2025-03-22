@@ -8,7 +8,8 @@ import {
     usePanelStore,
     useSelectedRoomStore,
     useToastStore,
-    useInstallationStore
+    useInstallationStore,
+    useHistoryStore
 } from './store';
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
@@ -101,6 +102,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                 const coursesData = await response.json();
 
                 if (coursesData) {
+                    console.log(coursesData)
                     availableRoomsListHook(coursesData)
                 }
             } catch (e) {
@@ -306,6 +308,9 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState([]);
+    const historyStackPush = useHistoryStore((state) => state.push);
+    const historyStackPop = useHistoryStore((state) => state.pop);
+    const historyStack = useHistoryStore((state) => state.stack);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
     const closePanel = usePanelStore((state) => state.close);
@@ -315,6 +320,24 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
         closePanel();
         setSelectedRoom(room.id, room.name);
     }
+
+    useEffect(() => {
+        if (activeTab != "edt-finder") {
+            window.history.pushState({ tabClicked: true }, "");
+            historyStackPush("tabClicked");
+
+            const handlePopState = () => {
+                if (historyStack[historyStack.length - 1] == "tabClicked" && activeTab != "edt-finder") {
+                    historyStackPop();
+                    setActiveTab("edt-finder");
+                }
+            };
+
+            window.addEventListener("popstate", handlePopState);
+
+            return () => window.removeEventListener("popstate", handlePopState);
+        }
+    }, [activeTab, setActiveTab]);
 
     return (
         <>

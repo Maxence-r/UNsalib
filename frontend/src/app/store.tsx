@@ -110,12 +110,12 @@ interface HistoryState {
 export const useHistoryStore = create<HistoryState>()((set) => ({
     stack: [],
     push: (value) => set(state => {
-        let newStack = state.stack;
+        const newStack = state.stack;
         newStack.push(value);
         return { stack: newStack };
     }),
     pop: () => set(state => {
-        let newStack = state.stack;
+        const newStack = state.stack;
         newStack.pop();
         return { stack: newStack };
     })

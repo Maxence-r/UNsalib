@@ -137,6 +137,7 @@ main {
     height: 45px;
     box-sizing: border-box;
     width: calc(100% - 90px - 24px);
+    flex-grow: 1;
 }
 
 .campus_selector>p {

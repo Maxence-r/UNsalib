@@ -447,6 +447,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
     const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
+    const isAppInstalled = useInstallationStore((state) => state.isInstalled);
     const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
 
     useEffect(() => {
@@ -501,6 +502,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                     </div>
                     <div className="install"
                         onClick={() => dismissInstallation()}
+                        style={{display: !isStorageHydrated || isAppInstalled ? "none" : "flex" }}
                     >
                         <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
                         <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>

@@ -1002,6 +1002,7 @@ input[type=number] {
 
 .option>img {
     width: 18px;
+    height: auto;
     align-self: baseline;
     filter: invert(var(--icon-color-invert-value));
 }

@@ -4,7 +4,7 @@ import { ApiRoomType } from "@/app/types";
 import Image from "next/image";
 import Ping from "./ping";
 import "./roomsList.css";
-import "../theme.css";
+import "@/theme.css";
 import { useState, useEffect } from "react";
 
 function normalizeString(value: string) {
@@ -19,7 +19,7 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
             normalizeString(room.name).includes(normalizeString(filter)) || normalizeString(room.building).includes(normalizeString(filter))
 		);
 		setFilteredRoomsList(filtered);
-	}, [filter]);
+	}, [filter, roomsList]);
     
     return (
         <div className={`results ${containerClassName}`}>
@@ -44,7 +44,7 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
                         <Ping error={room.available ? false : true}></Ping>
                     </div>
                 </div>
-            )) : <p className="no-results" style={{ display: "block" }}>Aucune salle n&apos;a été trouvée.</p>}
+            )) : <p className="no-results">Aucune salle n&apos;a été trouvée.</p>}
         </div>
     );
 }

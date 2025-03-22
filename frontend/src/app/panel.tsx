@@ -14,6 +14,7 @@ import {
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { socket } from "../socket";
+// import { useAddToHomescreenPrompt } from "@/install";
 
 const APP_VERSION = "v2.0";
 
@@ -107,6 +108,9 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                 }
             } catch (e) {
                 console.error(e);
+                setToastContent("Impossible de rechercher une salle pour l'instant. Réessayez plus tard.");
+                setToastAsError(true);
+                showToast();
             } finally {
                 launchSearch(false);
                 closeModal();
@@ -449,6 +453,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
     const isAppInstalled = useInstallationStore((state) => state.isInstalled);
     const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
+    // const [prompt, promptToInstall] = useAddToHomescreenPrompt();
 
     useEffect(() => {
         if (socket.connected) {
@@ -479,7 +484,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
-            socket.on("groupUpdated", onDisconnect);
+            socket.off("groupUpdated", onGroupUpdated);
             socket.off("error", onError);
         };
     }, []);
@@ -501,8 +506,11 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
                     </div>
                     <div className="install"
-                        onClick={() => dismissInstallation()}
-                        style={{display: !isStorageHydrated || isAppInstalled ? "none" : "flex" }}
+                        onClick={() => {
+                            dismissInstallation();
+                            // promptToInstall();
+                        }}
+                        style={{ display: /*!prompt ||*/ !isStorageHydrated || isAppInstalled ? "none" : "flex" }}
                     >
                         <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
                         <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>

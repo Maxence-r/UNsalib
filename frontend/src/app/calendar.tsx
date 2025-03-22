@@ -240,7 +240,7 @@ export default function Calendar() {
     const setToastAsError = useToastStore((state) => state.setError);
     const [hourIndicatorValue, setHourIndicatorValue] = useState(computeHourIndicator().value);
     const [hourIndicatorTop, setHourIndicatorTop] = useState(computeHourIndicator().top);
-    const [displayHourIndicator, setHourIndicatorDisplay] = useState(true);
+    const [displayHourIndicator, setHourIndicatorDisplay] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {

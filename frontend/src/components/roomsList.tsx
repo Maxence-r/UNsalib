@@ -1,6 +1,6 @@
 
 "use client";
-import { ApiRoomType } from "@/app/types";
+import { ApiRoomType } from "@/app/_utils/types";
 import Image from "next/image";
 import Ping from "./ping";
 import "./roomsList.css";

@@ -2,14 +2,14 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
-import { ApiRoomType } from "./types";
+import { ApiRoomType } from "./_utils/types";
 import {
     useModalStore,
     usePanelStore,
     useSelectedRoomStore,
     useToastStore,
     useHistoryStore
-} from './store';
+} from './_utils/store';
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { socket } from "../socket";

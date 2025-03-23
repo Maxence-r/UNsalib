@@ -1,4 +1,4 @@
-import { ApiRoomType } from "./types";
+import { ApiRoomType } from "./_utils/types";
 import App from './app';
 
 export default async function PreFetchData() {

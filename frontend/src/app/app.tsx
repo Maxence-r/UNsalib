@@ -3,8 +3,8 @@ import Panel from './panel';
 import Calendar from './calendar';
 import Modal from "@/components/modal";
 import Toast from '@/components/toast';
-import { ApiRoomType } from "./types";
-import { useModalStore, useToastStore } from './store';
+import { ApiRoomType } from "./_utils/types";
+import { useModalStore, useToastStore } from './_utils/store';
 import Image from 'next/image';
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {

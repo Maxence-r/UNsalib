@@ -2,7 +2,7 @@
 import "./modal.css";
 import "../theme.css";
 import { ReactNode, useEffect, useState } from "react";
-import { useHistoryStore } from "@/app/store";
+import { useHistoryStore } from "@/app/_utils/store";
 
 export default function Modal({ children, isOpened, closeFunction }: { children: ReactNode, isOpened: boolean, closeFunction: () => void }) {
     const historyStackPush = useHistoryStore((state) => state.push);

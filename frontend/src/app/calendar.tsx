@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ApiCoursesResponseType, ApiCourseType } from "./types";
+import { ApiCoursesResponseType, ApiCourseType } from "./_utils/types";
 import { 
     useModalStore, 
     usePanelStore, 
@@ -8,7 +8,7 @@ import {
     useTimetableStore, 
     useToastStore, 
     useHistoryStore 
-} from './store';
+} from './_utils/store';
 import Image from "next/image";
 import Button from "@/components/button";
 

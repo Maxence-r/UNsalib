@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import "./toast.css";
-import "../theme.css";
+import "@/_utils/theme.css";
 
 export default function Toast({ children, error, show }: { children: ReactNode, error: boolean, show: boolean }) {
     return (

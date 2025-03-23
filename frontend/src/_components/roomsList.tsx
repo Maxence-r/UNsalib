@@ -4,7 +4,7 @@ import { ApiRoomType } from "@/app/_utils/types";
 import Image from "next/image";
 import Ping from "./ping";
 import "./roomsList.css";
-import "@/theme.css";
+import "@/_utils/theme.css";
 import { useState, useEffect } from "react";
 
 function normalizeString(value: string) {

@@ -1,6 +1,6 @@
 "use client";
 import "./modal.css";
-import "../theme.css";
+import "@/_utils/theme.css";
 import { ReactNode, useEffect, useState } from "react";
 import { useHistoryStore } from "@/app/_utils/store";
 

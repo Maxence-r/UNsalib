@@ -1,5 +1,5 @@
 import "./button.css";
-import "../theme.css";
+import "@/_utils/theme.css";
 import { ReactNode } from "react";
 import Image from "next/image";
 

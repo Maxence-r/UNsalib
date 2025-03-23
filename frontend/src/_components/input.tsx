@@ -1,5 +1,5 @@
 import "./input.css";
-import "../theme.css";
+import "@/_utils/theme.css";
 
 export default function Input({ className, type, placeholder, onInput, id }: { className: string, type: string, placeholder: string, onInput: React.KeyboardEventHandler<HTMLInputElement>, id: string }) {
     return (

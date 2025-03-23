@@ -14,7 +14,7 @@ import {
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
 import { socket } from "../socket";
-// import { useAddToHomescreenPrompt } from "@/install";
+import PWAInstallButton from "./installButton";
 
 const APP_VERSION = "v2.0";
 
@@ -448,12 +448,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
-    const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
-    const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
-    const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
-    const isAppInstalled = useInstallationStore((state) => state.isInstalled);
     const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
-    // const [prompt, promptToInstall] = useAddToHomescreenPrompt();
 
     useEffect(() => {
         if (socket.connected) {
@@ -505,16 +500,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                     >
                         <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
                     </div>
-                    <div className="install"
-                        onClick={() => {
-                            dismissInstallation();
-                            // promptToInstall();
-                        }}
-                        style={{ display: /*!prompt ||*/ !isStorageHydrated || isAppInstalled ? "none" : "flex" }}
-                    >
-                        <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
-                        <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>
-                    </div>
+                    <PWAInstallButton></PWAInstallButton>
                 </div>
                 <div className="campus_feed">
                     <Image src="/campus_st.jpg" width={680} height={346} alt=""></Image>

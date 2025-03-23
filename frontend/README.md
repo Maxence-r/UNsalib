@@ -10,10 +10,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## PWA Installation
 
-- | Chrome | Edge | Opera | Firefox | Safari
--- | -- | -- | -- | -- | --
-Windows | ✅ | ✅ | ❌ | ❌ | -
-Android | ❓ | ❓ | ❓ | ❌ | -
-iOS | ❌ | ❌ | ❌ | ❌ | ❓
-MacOS | ❓ | ❓ | ❓ | ❌ | ❓
-Linux | ❓ | ❓ | ❓ | ❌ | -
+| - | Chrome | Edge | Opera | Firefox | Safari |
+| -- | -- | -- | -- | -- | -- |
+| Windows | ✅ | ✅ | ❌ | ❌ | - |
+| Android | ❓ | ❓ | ❓ | ❌ | - |
+| iOS | ❌ | ❌ | ❌ | ❌ | ❓ |
+| MacOS | ❓ | ❓ | ❓ | ❌ | ❓ |
+| Linux | ❓ | ❓ | ❓ | ❌ | - |

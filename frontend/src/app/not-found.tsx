@@ -1,5 +1,5 @@
 "use client";
-import Button from "@/components/button";
+import Button from "@/_components/button";
 import Image from "next/image";
 
 export default function NotFound() {

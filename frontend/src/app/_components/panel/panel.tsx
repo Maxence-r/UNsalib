@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import Button from "@/components/button";
-import Input from "@/components/input";
+import Button from "@/_components/button";
+import Input from "@/_components/input";
 import { ApiRoomType } from "../../_utils/types";
 import {
     useModalStore,
@@ -10,10 +10,10 @@ import {
     useToastStore,
     useHistoryStore
 } from '../../_utils/store';
-import RoomsList from "@/components/roomsList";
+import RoomsList from "@/_components/roomsList";
 import Image from "next/image";
-import { socket } from "../../../socket";
-import PWAInstallButton from "../../installButton";
+import { socket } from "../../../_utils/socket";
+import PWAInstallButton from "./installButton";
 import "./panel.css";
 
 const APP_VERSION = "v2.0";

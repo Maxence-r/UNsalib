@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useInstallationStore } from "./_utils/store";
+import { useInstallationStore } from "../../_utils/store";
 import Image from "next/image";
 
 export default function PWAInstallButton() {

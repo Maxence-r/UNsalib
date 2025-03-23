@@ -1,7 +1,7 @@
 "use client";
 import "./auth.css";
-import Button from "@/components/button";
-import Input from "@/components/input";
+import Button from "@/_components/button";
+import Input from "@/_components/input";
 
 export default function AuthPanel() {
     return (

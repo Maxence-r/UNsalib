@@ -1,8 +1,8 @@
 "use client";
 import Panel from './_components/panel/panel';
 import Calendar from './_components/calendar/calendar';
-import Modal from "@/components/modal";
-import Toast from '@/components/toast';
+import Modal from "@/_components/modal";
+import Toast from '@/_components/toast';
 import { ApiRoomType } from "./_utils/types";
 import { useModalStore, useToastStore } from './_utils/store';
 import Image from 'next/image';

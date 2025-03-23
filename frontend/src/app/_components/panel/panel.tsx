@@ -2,18 +2,19 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Button from "@/components/button";
 import Input from "@/components/input";
-import { ApiRoomType } from "./_utils/types";
+import { ApiRoomType } from "../../_utils/types";
 import {
     useModalStore,
     usePanelStore,
     useSelectedRoomStore,
     useToastStore,
     useHistoryStore
-} from './_utils/store';
+} from '../../_utils/store';
 import RoomsList from "@/components/roomsList";
 import Image from "next/image";
-import { socket } from "../socket";
-import PWAInstallButton from "./installButton";
+import { socket } from "../../../socket";
+import PWAInstallButton from "../../installButton";
+import "./panel.css";
 
 const APP_VERSION = "v2.0";
 

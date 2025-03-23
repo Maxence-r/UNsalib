@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ApiCoursesResponseType, ApiCourseType } from "./_utils/types";
+import { ApiCoursesResponseType, ApiCourseType } from "../../_utils/types";
 import { 
     useModalStore, 
     usePanelStore, 
@@ -8,9 +8,10 @@ import {
     useTimetableStore, 
     useToastStore, 
     useHistoryStore 
-} from './_utils/store';
+} from '../../_utils/store';
 import Image from "next/image";
 import Button from "@/components/button";
+import "./calendar.css";
 
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;

@@ -1,6 +1,6 @@
 "use client";
-import Panel from './panel';
-import Calendar from './calendar';
+import Panel from './_components/panel/panel';
+import Calendar from './_components/calendar/calendar';
 import Modal from "@/components/modal";
 import Toast from '@/components/toast';
 import { ApiRoomType } from "./_utils/types";

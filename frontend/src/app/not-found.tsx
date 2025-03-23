@@ -1,6 +1,7 @@
 "use client";
 import Button from "@/_components/button";
 import Image from "next/image";
+import "@/_utils/theme.css";
 
 export default function NotFound() {
     return (
@@ -15,7 +16,9 @@ export default function NotFound() {
                 flexDirection: "column",
                 padding: "24px",
                 textAlign: "center",
-                boxSizing: "border-box"
+                boxSizing: "border-box",
+                backgroundColor: "var(--background-color)",
+                color: "var(--on-background-color)"
             }}
         >
             <Image

@@ -13,7 +13,7 @@ main {
     touch-action: pan-x pan-y;
 }
 
-main {
+main.main {
     display: flex;
     flex-direction: row;
     gap: 34px;

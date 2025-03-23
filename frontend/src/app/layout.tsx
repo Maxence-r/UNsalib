@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk } from "next/font/google"
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import "../theme.css";
+import "@/theme.css";
 
 export const metadata: Metadata = {
     title: "UNsalib - Sciences et techniques",
@@ -28,9 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="fr" className={font.className}>
             <body>
-                <main tabIndex={-1}>
-                    {children}
-                </main>
+                {children}
             </body>
         </html>
     );

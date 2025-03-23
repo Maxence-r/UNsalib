@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     return (
-        <>
+        <main tabIndex={-1} className="main">
             <section className="no-compatible">
                 <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
             </section>
@@ -22,6 +22,6 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             <Calendar></Calendar>
             <Modal isOpened={useModalStore((state) => state.isOpened)} closeFunction={useModalStore((state) => state.close)}>{useModalStore((state) => state.content)}</Modal>
             <Toast show={useToastStore((state) => state.isOpened)} error={useToastStore((state) => state.isError)}>{useToastStore((state) => state.content)}</Toast>
-        </>
+        </main>
     );
 }

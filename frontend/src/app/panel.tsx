@@ -8,7 +8,6 @@ import {
     usePanelStore,
     useSelectedRoomStore,
     useToastStore,
-    useInstallationStore,
     useHistoryStore
 } from './store';
 import RoomsList from "@/components/roomsList";

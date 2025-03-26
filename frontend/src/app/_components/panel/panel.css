@@ -11,7 +11,7 @@
     background-color: var(--surface-color);
     color: var(--on-surface-color);
     z-index: 10;
-    border-right: 2px solid var(--neutral-color);
+    border-right: 2px solid var(--border-color);
     border-radius: 0;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     transition: background-color var(--animation-duration);
@@ -30,7 +30,7 @@
     gap: 12px;
     justify-content: space-between;
     padding: 8px 12px 8px 8px;
-    border: 2px solid var(--neutral-color);
+    border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     height: 45px;
     box-sizing: border-box;
@@ -63,7 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--neutral-color);
+    border: 2px solid var(--border-color);
     height: 45px;
     box-sizing: border-box;
     width: 45px;

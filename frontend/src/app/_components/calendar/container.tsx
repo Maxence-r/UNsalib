@@ -7,7 +7,7 @@ import {
 import { ApiCourseType, ApiCoursesResponseType } from "../../_utils/types";
 import CalendarBox from "./box";
 
-function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, dayNumber: string, dayCourses: ApiCourseType[] }) {
+function CalendarColumn({ dayName, dayNumber, dayCourses, fullDate }: { dayName: string, dayNumber: string, dayCourses: ApiCourseType[], fullDate: string }) {
     interface HourType {
         hour: string,
         courses: ApiCourseType[]
@@ -32,7 +32,7 @@ function CalendarColumn({ dayName, dayNumber, dayCourses }: { dayName: string, d
 
     return (
         <div className="column">
-            <div className={`calendar-top ${new Date().getDate() == parseInt(dayNumber) ? "selected" : ""}`}>
+            <div className={`calendar-top ${new Date().toISOString().split("T")[0] == fullDate ? "selected" : ""}`}>
                 <p>
                     {dayName}
                     <span className="day">{" " + dayNumber}</span>
@@ -105,6 +105,7 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
                         dayName={currentDay.name}
                         dayNumber={currentDay.number}
                         dayCourses={currentDay.courses}
+                        fullDate={currentDay.date}
                     ></CalendarColumn>
                 ))}
             </div>

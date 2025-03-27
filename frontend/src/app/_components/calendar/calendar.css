@@ -141,11 +141,11 @@
 }
 
 .column:has(.calendar-top.selected) .content-box {
-    background-color: var(--neutral-color);
+    background-color: var(--neutral-color-light);
 }
 
 .column:has(.calendar-top.selected) .content-box {
-    border-bottom: 2px solid var(--neutral-color-light);
+    border-bottom: 2px solid var(--neutral-color);
 }
 
 .column-content {

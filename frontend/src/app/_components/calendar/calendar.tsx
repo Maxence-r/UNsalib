@@ -45,6 +45,7 @@ export default function Calendar() {
         }
     });
     const [increment, setIncrement] = useState(0);
+    const [previousIncrement, setPreviousIncrement] = useState(0);
     const openPanel = usePanelStore((state) => state.open);
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const selectedRoom = useSelectedRoomStore((state) => state.room);
@@ -95,11 +96,16 @@ export default function Calendar() {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
                 const coursesData = await response.json();
+                if (coursesData.error) {
+                    throw new Error("Error fetching the timetable:", coursesData.error);
+                }
                 setCourses(coursesData);
+                setPreviousIncrement(increment);
             } catch {
                 setToastContent("Impossible de récupérer les données, elles n'ont sans doute pas été enregistrées au-delà !");
                 setToastAsError(true);
                 showToast();
+                setIncrement(previousIncrement);
             } finally {
                 setTimetableLoadState(false);
             }

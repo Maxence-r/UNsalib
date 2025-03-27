@@ -56,7 +56,7 @@
         --on-background-color: #ffffff;
         --surface-color: #111111;
         --on-surface-color: #ffffff;
-        --scrim-color: rgba(255, 255, 255, 0.3);
+        --scrim-color: rgba(0, 0, 0, 0.5);
         --border-color: #202020;
         --icon-color-invert-value: 1;
     }

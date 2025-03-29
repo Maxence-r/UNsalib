@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { 
-    usePanelStore, 
-    useSelectedRoomStore, 
-    useTimetableStore, 
-    useToastStore, 
-    useHistoryStore 
+import {
+    usePanelStore,
+    useSelectedRoomStore,
+    useTimetableStore,
+    useToastStore,
+    useHistoryStore
 } from '../../_utils/store';
 import Image from "next/image";
 import Button from "@/_components/button";
@@ -94,7 +94,10 @@ export default function Calendar() {
         async function render() {
             setTimetableLoadState(true);
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`);
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`,
+                    { credentials: "include" }
+                );
                 const coursesData = await response.json();
                 if (coursesData.error) {
                     throw new Error("Error fetching the timetable:", coursesData.error);

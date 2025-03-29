@@ -98,13 +98,22 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
 
             try {
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/rooms/available?start=${encodeURIComponent(debut)}&end=${encodeURIComponent(fin)}&type=${type}&features=${featuresUrl}&nobadge=${nobadgeUrl}&seats=${seats.toString()}&whiteboards=${whiteBoards.toString()}&blackboards=${blackBoards.toString()}`
+                    `${process.env.NEXT_PUBLIC_API_URL
+                    }/rooms/available?start=${encodeURIComponent(debut)
+                    }&end=${encodeURIComponent(fin)
+                    }&type=${type
+                    }&features=${featuresUrl
+                    }&nobadge=${nobadgeUrl
+                    }&seats=${seats.toString()
+                    }&whiteboards=${whiteBoards.toString()
+                    }&blackboards=${blackBoards.toString()
+                    }`,
+                    { credentials: "include" }
                 );
-                const coursesData = await response.json();
+                const availableRooms = await response.json();
 
-                if (coursesData) {
-                    console.log(coursesData)
-                    availableRoomsListHook(coursesData)
+                if (availableRooms) {
+                    availableRoomsListHook(availableRooms)
                 }
             } catch (e) {
                 console.error(e);

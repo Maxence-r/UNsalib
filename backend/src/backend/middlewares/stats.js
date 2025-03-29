@@ -4,19 +4,7 @@ import {
 } from '../utils/stats.js';
 
 const stats = async (req, res, next) => {
-    const UUID = req.cookies.uuid;
-
-    if (!UUID) {
-        try {
-            const newUUID = crypto.randomBytes(16).toString('hex');
-            res.cookie('uuid', newUUID, { maxAge: 365 * 24 * 60 * 60 * 1000, sameSite: 'Lax' });
-            req.statsUUID = newUUID;
-        } catch {
-            return next();
-        }
-    } else {
-        req.statsUUID = UUID;
-    }
+    req.statsUUID = req.cookies.clientId;
 
     // Updating stats
     if (req.path == '/api/rooms' || req.path == '/api/rooms/') {

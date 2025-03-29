@@ -32,11 +32,11 @@ export default function PWAInstallButton() {
             deferredPrompt.prompt();
             const choiceResult = await deferredPrompt.userChoice;
             if (choiceResult.outcome === "accepted") {
-                console.log("L'utilisateur a accepté l'installation de la PWA.");
+                console.log("The user has approved the installation of the PWA");
                 setDeferredPrompt(null);
                 setPwaPrompt(false);
             } else {
-                console.log("L'utilisateur a refusé l'installation de la PWA.");
+                console.log("The user has denied the installation of the PWA");
             }
         }
     };

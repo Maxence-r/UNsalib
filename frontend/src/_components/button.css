@@ -6,6 +6,7 @@
     cursor: pointer;
     border: none;
     padding: 0px 18px;
+    flex-shrink: 0;
 }
 
 .button:has(.button__icon) {

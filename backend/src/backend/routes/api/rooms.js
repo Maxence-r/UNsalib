@@ -2,7 +2,6 @@ import express from 'express';
 const router = express.Router();
 import Room from '../../models/room.js';
 import Course from '../../models/course.js';
-import Group from '../../models/group.js';
 import mongoose from 'mongoose';
 import {
     isValidDate,
@@ -13,6 +12,7 @@ import {
 import {
     updateStats
 } from '../../utils/stats.js';
+import { getGroupsFromCoursesList } from '../../utils/dbProcessing.js';
 
 const VACATIONS = [52, 1, 8, 16];
 const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };
@@ -175,7 +175,6 @@ router.get('/available', async (req, res) => {
                 endClosingTime.setMinutes(CIE_CLOSING_DATE.endTime.split(':')[1]);
                 endClosingTime = endClosingTime.getTime() / 1000;
                 if (!(startClosingTime < endTime && endClosingTime > startTime)) {
-                    console.log("flute")
                     availableRoomsFiltered.push(room);
                 }
                 return;
@@ -267,12 +266,8 @@ router.get('/timetable', async (req, res) => {
             ],
         });
 
-        // Getting all busy rooms ids from the courses array
-        const groups = await Group.find();
-        const parsedGroups = {};
-        groups.forEach((group) => {
-            parsedGroups[group._id] = group.name;
-        });
+        // Getting all groups found in courses as a dictionnary
+        const parsedGroups = getGroupsFromCoursesList(courses);
 
         // Formatting the response
         const formattedResponse = courses.map((doc) => {

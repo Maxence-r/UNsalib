@@ -105,7 +105,7 @@ export default function Calendar() {
                 setCourses(coursesData);
                 setPreviousIncrement(increment);
             } catch {
-                setToastContent("Impossible de récupérer les données, elles n'ont sans doute pas été enregistrées au-delà !");
+                setToastContent("Impossible de récupérer les données pour cette salle.");
                 setToastAsError(true);
                 showToast();
                 setIncrement(previousIncrement);

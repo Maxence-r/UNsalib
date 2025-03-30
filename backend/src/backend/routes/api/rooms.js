@@ -267,7 +267,7 @@ router.get('/timetable', async (req, res) => {
         });
 
         // Getting all groups found in courses as a dictionnary
-        const parsedGroups = getGroupsFromCoursesList(courses);
+        const parsedGroups = await getGroupsFromCoursesList(courses);
 
         // Formatting the response
         const formattedResponse = courses.map((doc) => {

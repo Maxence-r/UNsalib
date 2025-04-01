@@ -63,16 +63,18 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
 
     WEEK_DAYS.forEach((dayName, i) => {
         let dayNumber: string = "--";
-        let currentWeekDay = new Date(courses.weekInfos.start);
+        let dayDate: string = "";
         if (currentWeekStartDay != -1) {
+            let currentWeekDay = new Date(courses.weekInfos.start);
             currentWeekDay.setDate(currentWeekDay.getDate() + i);
             dayNumber = currentWeekDay.getDate().toString();
             dayNumber = dayNumber.length < 2 ? "0" + dayNumber : dayNumber;
+            dayDate = currentWeekDay.toISOString().split("T")[0];
         }
         currentWeekDays.push({
             name: dayName,
             number: dayNumber,
-            date: currentWeekDay.toISOString().split("T")[0],
+            date: dayDate,
             courses: []
         });
     });

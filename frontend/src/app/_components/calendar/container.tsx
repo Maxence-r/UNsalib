@@ -63,8 +63,11 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
 
     WEEK_DAYS.forEach((dayName, i) => {
         let dayNumber: string = "--";
+        let currentWeekDay = new Date(courses.weekInfos.start);
         if (currentWeekStartDay != -1) {
-            dayNumber = ((currentWeekStartDay + i) < 10 ? "0" + (currentWeekStartDay + i) : (currentWeekStartDay + i)).toString();
+            currentWeekDay.setDate(currentWeekDay.getDate() + i);
+            dayNumber = currentWeekDay.getDate().toString();
+            dayNumber = dayNumber.length < 2 ? "0" + dayNumber : dayNumber;
         }
         currentWeekDays.push({
             name: dayName,

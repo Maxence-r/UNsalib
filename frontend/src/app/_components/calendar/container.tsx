@@ -72,7 +72,7 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
         currentWeekDays.push({
             name: dayName,
             number: dayNumber,
-            date: courses.weekInfos.start.substring(0, courses.weekInfos.start.length - 2) + dayNumber,
+            date: currentWeekDay.toISOString().split("T")[0],
             courses: []
         });
     });

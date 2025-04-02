@@ -65,7 +65,7 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
         let dayNumber: string = "--";
         let dayDate: string = "";
         if (currentWeekStartDay != -1) {
-            let currentWeekDay = new Date(courses.weekInfos.start);
+            const currentWeekDay = new Date(courses.weekInfos.start);
             currentWeekDay.setDate(currentWeekDay.getDate() + i);
             dayNumber = currentWeekDay.getDate().toString();
             dayNumber = dayNumber.length < 2 ? "0" + dayNumber : dayNumber;

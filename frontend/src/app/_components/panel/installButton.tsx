@@ -1,31 +1,39 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import { useInstallationStore } from "../../_utils/store";
+import { useInstallationStore, useModalStore } from "../../_utils/store";
 import Image from "next/image";
+import Button from "@/_components/button";
+
+function SafariInstallModalContent() {
+    const closeModal = useModalStore((state) => state.close);
+
+    return (
+        <div className="safariInstall">
+            <div className="option">
+                <p>1. Cliquez sur le bouton "Partager"</p>
+                <Image src="/share.svg" alt="" width={24} height={24}></Image>
+            </div>
+            <div className="option">
+                <p>2. Cliquez sur "Sur l'écran d'accueil"</p>
+                <Image src="/add.svg" alt="" width={21} height={22}></Image>
+            </div>
+            <Button onClick={() => closeModal()}>Compris !</Button>
+        </div>
+    );
+}
 
 export default function PWAInstallButton() {
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isSupported, setIsSupported] = useState(false);
+    const [isSafari, setIsSafari] = useState(false);
     const pwaPrompt = useInstallationStore((state) => state.pwaPrompt);
     const setPwaPrompt = useInstallationStore((state) => state.setPwaPrompt);
     const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
     const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
     const isAppInstalled = useInstallationStore((state) => state.isInstalled);
-
-    useEffect(() => {
-        const handler = (e: Event) => {
-            e.preventDefault();
-            setDeferredPrompt(e as BeforeInstallPromptEvent);
-            setIsSupported(true);
-            setPwaPrompt(true);
-        };
-
-        window.addEventListener("beforeinstallprompt", handler);
-
-        return () => window.removeEventListener("beforeinstallprompt", handler);
-    }, []);
+    const openModal = useModalStore((state) => state.open);
+    const setModalContent = useModalStore((state) => state.setContent);
 
     const handleInstallClick = async () => {
         if (deferredPrompt) {
@@ -41,15 +49,43 @@ export default function PWAInstallButton() {
         }
     };
 
-    useEffect(() => { if (pwaPrompt) setIsSupported(true) }, []);
+    useEffect(() => {
+        const handler = (e: Event) => {
+            e.preventDefault();
+            setDeferredPrompt(e as BeforeInstallPromptEvent);
+            setIsSupported(true);
+            setPwaPrompt(true);
+        };
+
+        window.addEventListener("beforeinstallprompt", handler);
+
+        return () => window.removeEventListener("beforeinstallprompt", handler);
+    }, []);
+
+    useEffect(() => {
+        const ua = window.navigator.userAgent;
+        const isIos = /iPad|iPhone|iPod/.test(ua);
+        const isIpadOs = ua.toLowerCase().indexOf('macintosh') > -1 && navigator.maxTouchPoints && navigator.maxTouchPoints > 2;
+        const isWebkit = /WebKit/i.test(ua);
+        if ((isIos || isIpadOs) && isWebkit) { // Safari on iOS
+            setIsSafari(true);
+        } else if (pwaPrompt) {
+            setIsSupported(true);
+        }
+    }, []);
 
     return (
         <div className="install"
             onClick={() => {
                 dismissInstallation();
-                handleInstallClick();
+                if (isSafari) {
+                    setModalContent(<SafariInstallModalContent></SafariInstallModalContent>);
+                    openModal();
+                } else {
+                    handleInstallClick();
+                }
             }}
-            style={{ display: !isSupported || !isStorageHydrated || isAppInstalled ? "none" : "flex" }}
+            style={{ display: isStorageHydrated && (!window.matchMedia("(display-mode: standalone)").matches && (isSupported || isSafari)) ? "flex" : "none" }}
         >
             <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
             <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>

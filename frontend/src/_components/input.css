@@ -1,0 +1,16 @@
+.input {
+    width: calc(100% - 32px);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    min-height: 50px;
+    border-radius: var(--border-radius);
+    padding: 0px 16px;
+    background-color: var(--neutral-color-light);
+    border: none;
+    outline: none;
+    color: var(--on-neutral-color-light);
+}
+
+input:not(input[type="checkbox"])::placeholder {
+    color: var(--neutral-color-dark);
+}

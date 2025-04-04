@@ -1,5 +1,5 @@
 .modal {
-    position: absolute;
+    position: fixed;
     display: none;
     align-items: end;
     opacity: 0;

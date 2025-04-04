@@ -1,12 +1,13 @@
 # UNsalib
 
 <div style="display: flex; gap: 12px; padding-bottom: 12px;">
-  <img href="https://www.oracle.com/fr/cloud/" alt="Oracle Cloud" src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white">
-  <img href="https://www.mongodb.com/" alt="MongoDB" src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white">
-  <img alt="HTML 5" src="https://img.shields.io/badge/-HTML5-F06529?logo=html5&logoColor=FFFFFF&style=for-the-badge">
+  <img alt="Oracle Cloud" src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white">
+  <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white">
+  <img alt="React" src="https://img.shields.io/badge/React-00d8ff?&style=for-the-badge&logo=React&logoColor=white">
+  <img alt="Next.JS" src="https://img.shields.io/badge/Next.JS-050406?&style=for-the-badge&logo=React&logoColor=white">
   <img alt="CSS 3" src="https://img.shields.io/badge/-CSS%203-2965f1?logo=css3&logoColor=FFFFFF&style=for-the-badge">
-  <img alt="Nodejs" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
-  <img alt="Socketio" src="https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white">
+  <img alt="Node.JS" src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
+  <img alt="Socket.IO" src="https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white">
 </div>
 
 <p align="center">
@@ -32,57 +33,91 @@ You will need to have a downloaded version of nodejs at least v20:  https://node
 
 ### Quick start
 
+1. Move to the backend directory
 ```bash
-git clone https://github.com/Maxence-r/UNsalib.git && cd UNsalib
+cd backend
+```
 
-# Install dependencies
+2. Install dependencies
+```bash
 npm install
-
-# Rename and complete .env
-Rename exemple.env to .env and complete fields
-
-# Start server
-node server.js
 ```
 
-### Structure
-
-```
-src
-|
-|--- backend
-|    |--- background
-|    |--- middlewares
-|    |--- models
-|    |--- utils
-|    |--- routes
-|         |--- api
-|
-|--- client
-     |--- assets
-     |--- css
-     |--- html
-     |--- javascript
-     |--- manifest
+3. Rename and complete .env
+```bash
+mv example.env .env
+nano .env
 ```
 
-> All backend code is in the `backend` folder and frontend code is in the `client` folder.
+4. Start the backend server
+```bash
+npm run dev
+```
 
-#### Contents of `backend`
+5. Move to the frontend directory
+```bash
+cd ../frontend
+```
 
-- `background`: scripts running permanently in the background (for example, to retrieve and process timetables)
-- `middlewares`: middlewares used to process requests (authentication and statistics)
-- `models`: schemas used for the database
-- `routes` : code used to serve static resources and also API endpoints in the `api` subfolder
-- `utils`: files containing code that can be reused in the backend (date processing, color...)
+6. Install dependencies
+```bash
+npm install
+```
 
-#### Contents of `client`
+7. Rename and complete .env
+```bash
+mv example.env .env
+nano .env
+```
 
-- `assets`: media files and more
-- `css`: CSS stylesheets for the various HTML pages
-- `html`: static HTML pages served by the backend
-- `javascript`: JS files for the various HTML pages
-- `manifest`: manifest for the PWA
+8. Run the frontend development server
+```bash
+npm run dev
+```
+
+9. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
+
+### Production build (with PM2)
+
+1. Move to the backend directory
+```bash
+cd backend
+```
+
+2. Start the backend production server
+```bash
+pm2 start server.js --name unsalib-backend
+```
+
+3. Move to the frontend directory
+```bash
+cd ../frontend
+```
+
+4. Build the application
+```bash
+npm run build
+```
+
+5. Run the frontend production server
+```bash
+pm2 start --name unsalib-frontend -- npm run start
+```
+
+6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
+
+### PWA installation
+
+This table sum up the browsers supported for installing UNsalib as a PWA
+
+| - | Chrome | Edge | Opera | Firefox | Safari |
+| -- | -- | -- | -- | -- | -- |
+| Windows | ✅ | ✅ | ❌ | ❌ | - |
+| Android | ✅ | ❓ | ❌ | ❌ | - |
+| iOS | ❓ | ❓ | ❓ | ❓ | ❓ |
+| iPadOS | ❌ | ❓ | ❓ | ❌ | ✅ |
+| MacOS | ❓ | ❓ | ❓ | ❌ | ❓ |
+| Linux | ✅ | ✅ | ❌ | ❌ | - |
 
 ## 🙏 Acknowledgments
 

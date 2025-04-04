@@ -1,6 +1,7 @@
 "use client";
 import Button from "@/_components/button";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { versionNumber, versionName } from "@/_utils/constants";
 
 export default function App() {
     return (
@@ -15,7 +16,7 @@ export default function App() {
             <div className="content-container">
                 <div className="header">
                     <h1 className="title">UNsalib fait peau neuve&nbsp;!</h1>
-                    <h3 className="subtitle">Bienvenue sur la version 2.0</h3>
+                    <h3 className="subtitle">Bienvenue sur la version {versionNumber} "{versionName}"</h3>
                 </div>
                 <div className="features-card">
                     <ul className="features-list">

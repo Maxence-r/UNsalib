@@ -15,8 +15,7 @@ import Image from "next/image";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
-
-const APP_VERSION = "v2.0";
+import { versionName, versionNumber } from "@/_utils/constants";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -246,7 +245,7 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">{APP_VERSION}</span></h4>
+                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{versionNumber} "{versionName}"</span></h4>
                 <div className="content">
                     <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>
@@ -256,21 +255,21 @@ function AboutModalContent() {
                 <div className="content">
                     <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l&apos;Université.</p>
                     <div className="grid" id="team">
-                        <div className="item">
+                        <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">
                                 <h2>Maxence</h2>
                                 <p>Développeur</p>
                             </div>
                             <Image src="/maxence.png" width={36} height={36} alt=""></Image>
                         </div>
-                        <div className="item ">
+                        <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">
                                 <h2>Maël</h2>
                                 <p>Développeur</p>
                             </div>
                             <Image src="/mael.png" width={64} height={64} alt=""></Image>
                         </div>
-                        <div className="item">
+                        <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">
                                 <h2>Ethann</h2>
                                 <p>Admin DB & testeur</p>

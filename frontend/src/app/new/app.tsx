@@ -16,7 +16,7 @@ export default function App() {
             <div className="content-container">
                 <div className="header">
                     <h1 className="title">UNsalib fait peau neuve&nbsp;!</h1>
-                    <h3 className="subtitle">Bienvenue sur la version {versionNumber} "{versionName}"</h3>
+                    <h3 className="subtitle">Bienvenue sur la version {versionNumber} &quot;{versionName}&quot;</h3>
                 </div>
                 <div className="features-card">
                     <ul className="features-list">

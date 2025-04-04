@@ -245,7 +245,7 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{versionNumber} "{versionName}"</span></h4>
+                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{versionNumber} &quot;{versionName}&quot;</span></h4>
                 <div className="content">
                     <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>

@@ -127,9 +127,13 @@ export default function Calendar() {
             </div>
             <div className="calendar-header">
                 <div className="week-switcher">
-                    <Image src="/chevrons-left.svg" width={11} height={11} alt="Semaine précédente" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}></Image>
+                    <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}>
+                        <Image src="/chevrons-left.svg" width={11} height={11} alt="Semaine précédente"></Image>
+                    </div>
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
-                    <Image src="/chevrons-right.svg" width={11} height={11} alt="Semaine suivante" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}></Image>
+                    <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}>
+                        <Image src="/chevrons-right.svg" width={11} height={11} alt="Semaine suivante"></Image>
+                    </div>
                 </div>
                 <div className="availability">
                     <div className="availability-box">

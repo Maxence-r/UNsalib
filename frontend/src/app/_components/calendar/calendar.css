@@ -241,17 +241,25 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 0 20px;
+    padding: 0px;
     border: 2px solid var(--border-color);
     border-top: 0;
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
-.week-switcher>img {
+.week-switcher-icon>img {
     height: 12px;
     width: auto;
-    cursor: pointer;
     filter: invert(var(--icon-color-invert-value));
+}
+
+.week-switcher-icon {
+    padding: 0px 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .week-switcher>p {

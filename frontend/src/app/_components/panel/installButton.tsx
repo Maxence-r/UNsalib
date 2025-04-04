@@ -10,11 +10,11 @@ function SafariInstallModalContent() {
     return (
         <div className="safariInstall">
             <div className="option">
-                <p>1. Cliquez sur le bouton "Partager"</p>
+                <p>1. Cliquez sur le bouton &quot;Partager&quot;</p>
                 <Image src="/share.svg" alt="" width={24} height={24}></Image>
             </div>
             <div className="option">
-                <p>2. Cliquez sur "Sur l'écran d'accueil"</p>
+                <p>2. Cliquez sur &quot;Sur l&apos;écran d&apos;accueil&quot;</p>
                 <Image src="/add.svg" alt="" width={21} height={22}></Image>
             </div>
             <Button onClick={() => closeModal()}>Compris !</Button>
@@ -31,7 +31,7 @@ export default function PWAInstallButton() {
     const hideInstallBadge = useInstallationStore((state) => state.installationDismissed);
     const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
-    const isAppInstalled = useInstallationStore((state) => state.isInstalled);
+    // const isAppInstalled = useInstallationStore((state) => state.isInstalled);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
 

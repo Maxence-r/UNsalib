@@ -122,27 +122,3 @@ Returns a room's timetable for a given week (by default, the current week)
     }
 }
 ```
-
-## `GET /api/app/version`
-
-### Purpose
-
-Returns the current version of the application
-
-### Parameters
-
-None
-
-### Example
-
-```
-/api/app/version
-```
-
-### Response (JSON format)
-
-```json
-{
-    "version": VERSION OF THE APPLICATION (STRING)
-}
-```

@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import launch from './src/backend/background/main.js';
 import sallesApi from './src/backend/routes/api/rooms.js';
 import adminApi from './src/backend/routes/api/admin.js';
-import appInfosApi from './src/backend/routes/api/app.js';
 import adminDashboard from './src/backend/routes/admin.js';
 import authentication from './src/backend/middlewares/auth.js';
 import stats from './src/backend/middlewares/stats.js';
@@ -34,7 +33,6 @@ app.use(authentication);
 app.use(stats);
 app.use('/api/rooms', sallesApi);
 app.use('/api/admin', adminApi);
-app.use('/api/app', appInfosApi);
 
 // OTHER ROUTES
 app.use('/admin', adminDashboard);

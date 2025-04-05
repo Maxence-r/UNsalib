@@ -1,0 +1,38 @@
+.pie-chart {
+    height: auto;
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pie-chart .shape {
+    width: 250px;
+    border-radius: 100%;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+}
+
+.pie-chart .legend {
+    flex-grow: 1;
+    display: flex;
+    gap: var(--extra-large-space);
+    flex-wrap: wrap;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.pie-chart .legend-item {
+    height: min-content;
+    display: flex;
+    gap: var(--space);
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.pie-chart .legend-color {
+    height: 20px;
+    width: 20px;
+}

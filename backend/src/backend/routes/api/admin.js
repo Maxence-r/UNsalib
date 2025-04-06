@@ -17,6 +17,8 @@ import {
 const router = express.Router();
 const { sign } = pkg;
 
+const FRONTEND_ADMIN_URL = process.env.FRONTEND_URL + '/admin/beta';
+
 router.post('/auth/login', async (req, res) => {
     try {
         // Checking credentials
@@ -53,6 +55,13 @@ router.get('/auth/logout', async (req, res) => {
     // Clearing the cookie
     res.clearCookie('token');
     res.redirect('/admin/auth');
+});
+
+router.get('/auth/status', async (req, res) => {
+    if (req.connected) {
+        return res.json({ message: 'LOGGED_IN' });
+    }
+    return res.json({ message: 'NOT_LOGGED_IN' });
 });
 
 router.get('/rooms', async (req, res) => {

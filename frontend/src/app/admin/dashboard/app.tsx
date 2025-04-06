@@ -1,21 +1,16 @@
 "use client";
 
-import Image from "next/image";
-
 import Button from "@/_components/button";
 import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
+import Navbar from "./_components/navbar/navbar";
+import { ApiUserAccount } from "./_utils/types";
 
-export default function App() {
+export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
     return (
         <div className="page">
-            <div className="navbar">
-                <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96}></Image>
-                <h1>UNsalib</h1>
-                <span className="spacer"></span>
-                <Button onClick={() => window.location.href = "/"}>Accueil</Button>
-            </div>
+            <Navbar userAccount={userAccount} />
             <div className="main dashboard">
                 <div className="main-content">
                     <div className="section">
@@ -63,16 +58,16 @@ export default function App() {
                                 <Card>
                                     <CardHeader>Plateformes</CardHeader>
                                     <CardContent>
-                                        <PieChart 
-                                        dataset={
-                                            [
-                                                {legend: "Toto", value: 50},
-                                                {legend: "Tata", value: 100},
-                                                {legend: "Tutu", value: 200}
-                                            ]
-                                        }
-                                        sortDataset="asc"
-                                        chartId="platforms"
+                                        <PieChart
+                                            dataset={
+                                                [
+                                                    { legend: "Toto", value: 50 },
+                                                    { legend: "Tata", value: 100 },
+                                                    { legend: "Tutu", value: 200 }
+                                                ]
+                                            }
+                                            sortDataset="asc"
+                                            chartId="platforms"
                                         ></PieChart>
                                     </CardContent>
                                 </Card>

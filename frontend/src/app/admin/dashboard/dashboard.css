@@ -9,32 +9,6 @@
     color: var(--on-background-color);
 }
 
-.navbar {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 24px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
-    gap: 18px;
-    height: 100px;
-    position: relative;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.navbar h1 {
-    margin-block: 0px;
-}
-
-.logo {
-    height: 46px;
-    width: auto;
-    border-radius: var(--border-radius);
-}
-
-.spacer {
-    flex-grow: 1;
-}
-
 .main.dashboard {
     background-color: var(--background-color);
     width: 100%;

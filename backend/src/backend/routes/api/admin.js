@@ -17,8 +17,6 @@ import {
 const router = express.Router();
 const { sign } = pkg;
 
-const FRONTEND_ADMIN_URL = process.env.FRONTEND_URL + '/admin/beta';
-
 router.post('/auth/login', async (req, res) => {
     try {
         // Checking credentials
@@ -53,8 +51,7 @@ router.post('/auth/login', async (req, res) => {
 
 router.get('/auth/logout', async (req, res) => {
     // Clearing the cookie
-    res.clearCookie('token');
-    res.redirect('/admin/auth');
+    res.clearCookie('token').json({ message: 'LOGOUT_SUCCESSFUL' });
 });
 
 router.get('/auth/status', async (req, res) => {

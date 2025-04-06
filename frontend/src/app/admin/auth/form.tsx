@@ -10,7 +10,7 @@ export default function Form() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = async () => {
+    const login = async () => {
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/admin/auth/login`,
@@ -35,7 +35,7 @@ export default function Form() {
                 }
                 throw new Error();
             } 
-            window.location.href = "/admin/beta/dashboard";
+            window.location.href = "/admin/dashboard";
         } catch (e) {
             if (e instanceof Error) {
                 setDisplayError(e.toString().replace("Error: ", ""));
@@ -43,14 +43,14 @@ export default function Form() {
                 setDisplayError("Erreur inconnue");
             }
         }
-    }
+    };
 
     return (
         <>
             {displayError != "" ? <div id="error-display">{displayError}</div> : <></>}
             <Input id="username" type="text" placeholder="Entrez un nom d'utilisateur" value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)} />
             <Input id="password" type="password" placeholder="Entrez un mot de passe" value={password} onInput={(e) => setPassword((e.target as HTMLInputElement).value)} />
-            <Button id="submit-button" onClick={handleLogin}>Se connecter</Button>
+            <Button id="submit-button" onClick={login}>Se connecter</Button>
         </>
     )
 }

@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
         });
     }
 
-    if (req.nextUrl.pathname.startsWith("/admin/beta/dashboard")) {
+    if (req.nextUrl.pathname.startsWith("/admin") && req.nextUrl.pathname != "/admin/old") {
         const userToken = req.cookies.get("token")?.value;
         if (userToken) {
             try {
@@ -29,13 +29,18 @@ export async function middleware(req: NextRequest) {
                     }
                 );
                 const loginStatus = await response.json();
-                console.log(loginStatus)
                 if (loginStatus.message === "LOGGED_IN") {
-                    return res;
+                    if (req.nextUrl.pathname.startsWith("/admin/auth")) {
+                        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+                    } else {
+                        return res;
+                    }
                 }
             } catch { }
         }
-        return NextResponse.redirect(new URL("/admin/beta/auth", req.url));
+        if (!req.nextUrl.pathname.startsWith("/admin/auth")) {
+            return NextResponse.redirect(new URL("/admin/auth", req.url));
+        }
     }
 
     return res;

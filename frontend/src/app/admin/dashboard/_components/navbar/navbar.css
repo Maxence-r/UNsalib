@@ -1,0 +1,99 @@
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    gap: 18px;
+    height: 100px;
+    position: relative;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.navbar h1 {
+    margin-block: 0px;
+}
+
+.logo {
+    height: 46px;
+    width: auto;
+    border-radius: var(--border-radius);
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+#account-button {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+    padding: var(--space);
+    background-color: transparent;
+    color: var(--on-surface-color);
+    height: auto;
+    position: relative;
+    font-family: Space Grotesk, sans-serif;
+    font-weight: bold;
+}
+
+#account-button:hover {
+    background-color: var(--neutral-color);
+}
+
+.account-icon {
+    border-radius: var(--border-radius-full);
+    position: relative !important;
+    height: 30px !important;
+    width: auto !important;
+}
+
+#account-button>span {
+    font-size: 16px;
+}
+
+#account-menu {
+    position: fixed;
+    padding: var(--extra-large-space);
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    border-radius: calc(var(--border-radius) + 16px);
+    box-shadow: var(--box-shadow);
+    margin-top: var(--space);
+    right: -100vw;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform var(--animation-duration), opacity var(--animation-duration);
+    z-index: 3;
+    border: 2px solid var(--border-color);
+}
+
+#account-menu.opened {
+    position: absolute;
+    transform: translateY(0px);
+    opacity: 1;
+    right: var(--extra-large-space);
+}
+
+#account-menu .button {
+    width: 100%;
+}
+
+.account-infos {
+    display: flex;
+    gap: var(--extra-large-space);
+    align-items: center;
+    margin-bottom: var(--extra-large-space);
+    position: relative;
+}
+
+.account-infos h2 {
+    margin-block: 0px;
+}
+
+.account-infos img {
+    border-radius: var(--border-radius-full);
+    position: relative !important;
+    height: 50px !important;
+    width: auto !important;
+}

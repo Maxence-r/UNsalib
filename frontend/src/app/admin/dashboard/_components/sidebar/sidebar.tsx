@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef, JSX } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { logout } from "../../_utils/actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";

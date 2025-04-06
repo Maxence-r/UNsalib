@@ -1,8 +1,22 @@
 "use client";
-import "./modal.css";
-import "@/_utils/theme.css";
+
 import { ReactNode, useEffect, useState } from "react";
+// import { createPortal } from "react-dom";
+
 import { useHistoryStore } from "@/app/_utils/store";
+import "@/_utils/theme.css";
+import "./modal.css";
+
+// export function BetaModal({ content }: { content: ReactNode }) {
+//     return (
+//         <>
+//             {/* {createPortal(
+//                 <p>This child is placed in the document body.</p>,
+//                 document.body
+//             )} */}
+//         </>
+//     );
+// }
 
 export default function Modal({ children, isOpened, closeFunction }: { children: ReactNode, isOpened: boolean, closeFunction: () => void }) {
     const historyStackPush = useHistoryStore((state) => state.push);

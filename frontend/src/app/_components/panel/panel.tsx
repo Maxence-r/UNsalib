@@ -15,7 +15,8 @@ import Image from "next/image";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
-import { versionName, versionNumber } from "@/_utils/constants";
+import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
+// import { BetaModal } from "@/_components/modal";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -245,7 +246,7 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{versionNumber} &quot;{versionName}&quot;</span></h4>
+                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
                 <div className="content">
                     <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>
@@ -504,8 +505,10 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         onClick={() => {
                             setModalContent(<AboutModalContent></AboutModalContent>);
                             openModal();
+                            // BetaModal(<AboutModalContent></AboutModalContent>);
                         }}
                     >
+                        {/* <BetaModal content={<></>}></BetaModal> */}
                         <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
                     </div>
                     <PWAInstallButton></PWAInstallButton>

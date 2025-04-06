@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 import "@/_utils/theme.css";
 import { PALETTE_HEX } from "@/_utils/constants";
 import "./chart.css";
@@ -47,7 +45,7 @@ export function PieChart({
     dataset: PieChartDataset,
     sortDataset: "asc" | "desc" | "none"
 }) {
-    let sortedDataset = dataset;
+    const sortedDataset = dataset;
     if (sortDataset === "asc") {
         sortedDataset.sort(comparePieDatasets);
     }

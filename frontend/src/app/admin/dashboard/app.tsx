@@ -1,6 +1,5 @@
 "use client";
 
-import Navbar from "./_components/navbar/navbar";
 import { ApiUserAccount } from "./_utils/types";
 import Sidebar from "./_components/sidebar/sidebar";
 import HomePage from "./_components/home/home";

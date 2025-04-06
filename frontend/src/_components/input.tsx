@@ -1,10 +1,24 @@
 import "./input.css";
 import "@/_utils/theme.css";
 
-export default function Input({ className, type, placeholder, onInput, id }: { className: string, type: string, placeholder: string, onInput: React.KeyboardEventHandler<HTMLInputElement>, id: string }) {
+export default function Input({ 
+    className,
+    id,
+    type, 
+    placeholder,
+    value,
+    onInput
+}: { 
+    className: string,
+    id: string, 
+    type: string,
+    placeholder: string,
+    value: string,
+    onInput: React.KeyboardEventHandler<HTMLInputElement> 
+}) {
     return (
-        <input id={id} className={`input ${className}`} type={type} placeholder={placeholder} onInput={onInput} />
+        <input id={id} className={`input ${className}`} type={type} placeholder={placeholder} value={value} onInput={onInput} />
     );
 }
 
-Input.defaultProps = { className: "", type: "text", placeholder: "", onInput: (() => { }), id: "" };
+Input.defaultProps = { className: "", id: "", type: "text", placeholder: "", value: "", onInput: (() => { }) };

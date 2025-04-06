@@ -61,7 +61,3 @@
         --icon-color-invert-value: 1;
     }
 }
-
-.material-symbols-rounded {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' -25, 'opsz' 24;
-}

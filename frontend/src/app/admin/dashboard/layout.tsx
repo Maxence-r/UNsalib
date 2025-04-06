@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import "material-symbols/rounded.css";
 
 export const metadata: Metadata = {
     title: "UNsalib - Tableau de bord",
-    description: "Trouvez les salles libres de Nantes Université et affichez leurs emplois du temps",
+    description: "Trouvez les salles libres de Nantes Université et affichez leurs emplois du temps"
 };
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {

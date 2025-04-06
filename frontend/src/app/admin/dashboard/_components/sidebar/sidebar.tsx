@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
+import { Pen, House, ChartPie, LogOut } from "lucide-react";
 
 import { logout } from "../../_utils/actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
@@ -10,22 +11,13 @@ import "./sidebar.css";
 type Action = {
     onClick: () => void,
     name: string,
-    iconType: "src" | "icon" | "base64" | "none",
-    icon: string
+    icon: ReactNode
 };
 
-function Action({ onClick, name, iconType, icon }: Action) {
-    let iconNode = <></>;
-    if (iconType === "src") {
-        iconNode = <Image fill src={icon} alt="" />;
-    } else if (iconType === "base64") {
-        iconNode = <Image fill src={`data:image/png;base64,${icon}`} alt="" />;
-    } else if (iconType === "icon") {
-        iconNode = <i className="material-symbols-rounded">{icon}</i>;
-    }
+function Action({ onClick, name, icon }: Action) {
     return (
         <button className="action" onClick={onClick} key={`action ${name}`}>
-            {iconNode}
+            {icon}
             <span>{name}</span>
         </button>
     );
@@ -36,7 +28,7 @@ function ActionsList({ actions }: { actions: Action[] }) {
         <div className="actions-list">
             {actions.map(action => {
                 return (
-                    <Action onClick={action.onClick} name={action.name} iconType={action.iconType} icon={action.icon} key={`action ${action.name}`} />
+                    <Action onClick={action.onClick} name={action.name} icon={action.icon} key={`action ${action.name}`} />
                 );
             })}
         </div>
@@ -80,16 +72,16 @@ export default function Sidebar({ userAccount, className }: { userAccount: ApiUs
             <span className="divider" />
             <ActionsList
                 actions={[
-                    { icon: "home", iconType: "icon", name: "Accueil", onClick: () => { } },
-                    { icon: "edit", iconType: "icon", name: "Gestion", onClick: () => { } },
-                    { icon: "query_stats", iconType: "icon", name: "Statistiques", onClick: () => { } }
+                    { icon: <House size={20} />, name: "Accueil", onClick: () => { } },
+                    { icon: <Pen size={20} />, name: "Gestion", onClick: () => { } },
+                    { icon: <ChartPie size={20} />, name: "Statistiques", onClick: () => { } }
                 ]}
             />
             <span className="spacer" />
             <ActionsList
                 actions={[
-                    { icon: userAccount.icon, iconType: "base64", name: `${userAccount.name} ${userAccount.lastname}`, onClick: () => { } },
-                    { icon: "logout", iconType: "icon", name: "Déconnexion", onClick: handleLogout }
+                    { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, onClick: () => { } },
+                    { icon: <LogOut size={20} />, name: "Déconnexion", onClick: handleLogout }
                 ]}
             />
         </div >

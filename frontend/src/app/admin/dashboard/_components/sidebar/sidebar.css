@@ -78,6 +78,10 @@
     width: auto !important;
 }
 
+.action>svg {
+    margin: 2px;
+}
+
 @media screen and (max-width: 1024px) {
     .sidebar {
         min-width: auto;

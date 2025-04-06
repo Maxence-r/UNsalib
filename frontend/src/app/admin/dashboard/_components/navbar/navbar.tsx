@@ -68,7 +68,6 @@ export default function Navbar({ userAccount }: { userAccount: ApiUserAccount })
                     <Button className="logout" onClick={logout}>Se déconnecter</Button>
                 </div>
             </div>
-            {/* <span className="material-symbols-rounded">face</span> */}
         </div >
     );
 }

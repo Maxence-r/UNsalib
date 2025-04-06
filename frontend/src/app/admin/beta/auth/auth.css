@@ -54,7 +54,6 @@ main.auth {
 }
 
 #error-display {
-    display: none;
     background: var(--error-color);
     border-radius: var(--border-radius-sharp);
     padding: var(--space);

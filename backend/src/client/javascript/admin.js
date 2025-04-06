@@ -121,8 +121,16 @@ async function initApp() {
     });
 
     document.querySelectorAll('.logout').forEach((button) => {
-        button.addEventListener('click', () => {
-            window.location = '/api/admin/auth/logout';
+        button.addEventListener('click', async () => {
+            let response = await fetch('/api/admin/auth/logout', {
+                method: 'GET',
+            });
+            let logoutStatus = await response.json();
+            if (logoutStatus.message === 'LOGOUT_SUCCESSFUL') {
+                window.location = '/admin/auth';
+            } else {
+                showToast("Impossible de déconnecter l'utilisateur.", true);
+            }
         });
     });
 

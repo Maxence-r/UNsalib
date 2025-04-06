@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.13.2",
+    "material-symbols": "^0.29.2",
     "next": "^15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

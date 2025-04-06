@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, useRef, JSX } from "react";
 
-import Button from "@/_components/button";
+import { logout } from "../../_utils/actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
 import "./sidebar.css";
 
@@ -62,20 +62,12 @@ export default function Sidebar({ userAccount, className }: { userAccount: ApiUs
     const accountMenuRef = useRef<HTMLDivElement | null>(null);
     useOutsideClickHandler(accountMenuRef, openUserMenu, setOpenUserMenu);
 
-    const logout = async () => {
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/admin/auth/logout`,
-                { credentials: "include" }
-            );
-            const logoutState = await response.json();
-            if (logoutState.message === "LOGOUT_SUCCESSFUL") {
-                window.location.href = "/admin/auth";
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            console.error(error);
+    const handleLogout = async () => {
+        const result = await logout();
+        if (result.success) {
+            window.location.href = "/admin/auth";
+        } else {
+            console.error(result.error);
         }
     };
 
@@ -85,7 +77,7 @@ export default function Sidebar({ userAccount, className }: { userAccount: ApiUs
                 <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96}></Image>
                 <h1>UNsalib</h1>
             </div>
-            <span className="divider"></span>
+            <span className="divider" />
             <ActionsList
                 actions={[
                     { icon: "home", iconType: "icon", name: "Accueil", onClick: () => { } },
@@ -97,7 +89,7 @@ export default function Sidebar({ userAccount, className }: { userAccount: ApiUs
             <ActionsList
                 actions={[
                     { icon: userAccount.icon, iconType: "base64", name: `${userAccount.name} ${userAccount.lastname}`, onClick: () => { } },
-                    { icon: "logout", iconType: "icon", name: "Déconnexion", onClick: () => { } }
+                    { icon: "logout", iconType: "icon", name: "Déconnexion", onClick: handleLogout }
                 ]}
             />
         </div >

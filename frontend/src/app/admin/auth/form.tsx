@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
 
 import Button from "@/_components/button";
 import Input from "@/_components/input";
@@ -34,7 +35,7 @@ export default function Form() {
                     throw new Error("Erreur interne du serveur");
                 }
                 throw new Error();
-            } 
+            }
             window.location.href = "/admin/dashboard";
         } catch (e) {
             if (e instanceof Error) {
@@ -50,7 +51,10 @@ export default function Form() {
             {displayError != "" ? <div id="error-display">{displayError}</div> : <></>}
             <Input id="username" type="text" placeholder="Entrez un nom d'utilisateur" value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)} />
             <Input id="password" type="password" placeholder="Entrez un mot de passe" value={password} onInput={(e) => setPassword((e.target as HTMLInputElement).value)} />
-            <Button id="submit-button" onClick={login}>Se connecter</Button>
+            <div className="submit-container">
+                <Button id="submit-button" onClick={login}>Se connecter</Button>
+                <Link href="/admin/old">Ancienne version</Link>
+            </div>
         </>
     )
 }

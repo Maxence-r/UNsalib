@@ -1,5 +1,9 @@
 "use client";
+
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import Image from "next/image";
+import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock } from "lucide-react";
+
 import Button from "@/_components/button";
 import Input from "@/_components/input";
 import { ApiRoomType } from "../../_utils/types";
@@ -11,7 +15,6 @@ import {
     useHistoryStore
 } from '../../_utils/store';
 import RoomsList from "@/_components/roomsList";
-import Image from "next/image";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
@@ -246,13 +249,13 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><Image src="/book.svg" width={24} height={24} alt=""></Image>À PROPOS<span id="version">v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
+                <h4 className="title"><BookOpen size={20} />À PROPOS<span id="version">v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
                 <div className="content">
                     <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/team.svg" width={24} height={24} alt=""></Image>L&apos;ÉQUIPE</h4>
+                <h4 className="title"><Users size={20} />L&apos;ÉQUIPE</h4>
                 <div className="content">
                     <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l&apos;Université.</p>
                     <div className="grid" id="team">
@@ -280,7 +283,7 @@ function AboutModalContent() {
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/smile.svg" width={24} height={24} alt=""></Image>REMERCIEMENTS</h4>
+                <h4 className="title"><Smile size={20} />REMERCIEMENTS</h4>
                 <div className="content">
                     <p>Merci à <strong>Christophe Lino</strong> pour sa confiance et son implication dans le projet, et par ailleurs pour avoir été le premier professeur à utiliser UNsalib.</p>
                     <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure, en particulier Mewenn pour nous avoir fait part de l&apos;insalubrité de notre application...</p>
@@ -288,7 +291,7 @@ function AboutModalContent() {
                 </div>
             </div>
             <div className="modal-section">
-                <h4 className="title"><Image src="/link.svg" width={24} height={24} alt=""></Image>LIENS</h4>
+                <h4 className="title"><Link2 size={20} />LIENS</h4>
                 <div className="content">
                     <div className="grid">
                         <div className="item">
@@ -297,7 +300,7 @@ function AboutModalContent() {
                                 <p>Infos de conception</p>
                             </div>
                             <button onClick={() => window.open("/white-paper.pdf", "_blank")}>
-                                <Image src="/open.svg" width={24} height={24} alt="Ouvrir le whitepaper"></Image>
+                                <ArrowUpRight size={20} />
                             </button>
                         </div>
                         <div className="item">
@@ -306,7 +309,7 @@ function AboutModalContent() {
                                 <p>Code source</p>
                             </div>
                             <button onClick={() => window.open("https://github.com/Maxence-r/UNsalib_Modern-Timetable-Viewer", "_blank")}>
-                                <Image src="/open.svg" width={24} height={24} alt="Ouvrir le repo Github"></Image>
+                                <ArrowUpRight size={20} />
                             </button>
                         </div>
                     </div>
@@ -381,7 +384,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                                 openModal();
                             }}
                         >
-                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                            <Info size={16} />
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -415,7 +418,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
                                 openModal();
                             }}
                         >
-                            <Image src="/info.svg" width={24} height={24} alt="Infos sur les pictogrammes"></Image>
+                            <Info size={16} />
                             <p>Pictos</p>
                         </div>
                     </div>
@@ -433,19 +436,19 @@ function AboutPictosModalContent() {
         <div className="pictos">
             <div className="option">
                 <p>Salle info/vidéo</p>
-                <Image src="/video.svg" width={25} height={25} alt="video"></Image>
+                <Monitor size={20} />
             </div>
             <div className="option">
                 <p>Salle de visioconférence</p>
-                <Image src="/visio.svg" width={25} height={25} alt="visio"></Image>
+                <Eye size={20} />
             </div>
             <div className="option">
                 <p>Salle en ilot</p>
-                <Image src="/ilot.svg" width={25} height={25} alt="ilot"></Image>
+                <Users size={20} />
             </div>
             <div className="option">
                 <p>Salle à badge</p>
-                <Image src="/badge.svg" width={25} height={25} alt="badge"></Image>
+                <Lock size={20} />
             </div>
 
             <Button onClick={() => closeModal()}>Compris !</Button>
@@ -509,7 +512,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         }}
                     >
                         {/* <BetaModal content={<></>}></BetaModal> */}
-                        <Image src="/info.svg" width={24} height={24} alt="Infos sur l'application"></Image>
+                        <Info size={16} />
                     </div>
                     <PWAInstallButton></PWAInstallButton>
                 </div>

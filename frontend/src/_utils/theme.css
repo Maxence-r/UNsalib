@@ -19,7 +19,6 @@
     --on-surface-color: #000000;
     --scrim-color: rgba(0, 0, 0, 0.3);
     --border-color: #f0f0f0;
-    --icon-color-invert-value: 0;
 
     --extra-large-space: 24px;
     --large-space: 16px;
@@ -58,6 +57,5 @@
         --on-surface-color: #ffffff;
         --scrim-color: rgba(0, 0, 0, 0.5);
         --border-color: #202020;
-        --icon-color-invert-value: 1;
     }
 }

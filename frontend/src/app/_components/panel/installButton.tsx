@@ -1,7 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { useInstallationStore, useModalStore } from "../../_utils/store";
 import Image from "next/image";
+import { Download } from "lucide-react";
+
+import { useInstallationStore, useModalStore } from "../../_utils/store";
 import Button from "@/_components/button";
 
 function SafariInstallModalContent() {
@@ -87,7 +90,7 @@ export default function PWAInstallButton() {
             }}
             style={{ display: isStorageHydrated && (!window.matchMedia("(display-mode: standalone)").matches && (isSupported || isSafari)) ? "flex" : "none" }}
         >
-            <Image src="/download.svg" width={24} height={24} alt="Installer l'application"></Image>
+            <Download size={16} />
             <span className="badge" style={{ display: !isStorageHydrated || hideInstallBadge ? "none" : "block" }}></span>
         </div>
     );

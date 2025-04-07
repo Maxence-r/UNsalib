@@ -4,7 +4,7 @@ export interface ApiRoomType {
     alias: string,
     building: string,
     available: boolean,
-    features: string[]
+    features: ("visio" | "badge" | "video" | "ilot")[]
 };
 
 export interface ApiCourseType {

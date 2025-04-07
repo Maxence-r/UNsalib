@@ -247,12 +247,6 @@
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
-.week-switcher-icon>img {
-    height: 12px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
-}
-
 .week-switcher-icon {
     padding: 0px 24px;
     height: 100%;

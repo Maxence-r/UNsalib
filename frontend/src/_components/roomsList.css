@@ -53,10 +53,21 @@
     gap: 8px;
 }
 
-.badges>img {
-    height: 14px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
+.ping {
+    width: 6px;
+    height: 6px;
+    border-radius: 100%;
+    margin: 4px;
+}
+
+.ping.red {
+    background-color: #ff0000;
+    box-shadow: 0px 0px 0px 4px rgba(255, 0, 0, 0.295);
+}
+
+.ping.blue {
+    background-color: var(--accent-color);
+    box-shadow: 0px 0px 0px 4px rgba(0, 38, 255, 0.295);
 }
 
 p.no-results {

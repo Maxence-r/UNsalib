@@ -1,5 +1,8 @@
 "use client";
+
 import { useState, useEffect } from "react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+
 import {
     usePanelStore,
     useSelectedRoomStore,
@@ -7,7 +10,6 @@ import {
     useToastStore,
     useHistoryStore
 } from '../../_utils/store';
-import Image from "next/image";
 import Button from "@/_components/button";
 import "./calendar.css";
 import {
@@ -128,11 +130,11 @@ export default function Calendar() {
             <div className="calendar-header">
                 <div className="week-switcher">
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}>
-                        <Image src="/chevrons-left.svg" width={11} height={11} alt="Semaine précédente"></Image>
+                        <ChevronsLeft size={20} />
                     </div>
                     <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}>
-                        <Image src="/chevrons-right.svg" width={11} height={11} alt="Semaine suivante"></Image>
+                        <ChevronsRight size={20} />
                     </div>
                 </div>
                 <div className="availability">

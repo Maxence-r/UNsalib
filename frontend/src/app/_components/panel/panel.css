@@ -69,13 +69,6 @@
     width: 45px;
 }
 
-.header>.version>img,
-.header>.install>img {
-    height: 16px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
-}
-
 .header>.version:hover,
 .header>.install:hover {
     background-color: var(--neutral-color-light);
@@ -224,12 +217,6 @@
     margin: 0;
 }
 
-.indicator>img {
-    height: 16px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
-}
-
 .results-head {
     display: flex;
     flex-direction: row;
@@ -362,12 +349,6 @@ input[type=number] {
     align-items: center;
 }
 
-.about .modal-section .title>img {
-    height: 20px;
-    width: auto;
-    filter: invert(var(--icon-color-invert-value));
-}
-
 .about .modal-section {
     display: flex;
     flex-direction: column;
@@ -446,6 +427,7 @@ input[type=number] {
     background-color: var(--accent-color);
     border: none;
     cursor: pointer;
+    color: var(--on-accent-color);
 }
 
 #version {
@@ -505,13 +487,6 @@ input[type=number] {
     font-size: 14px;
     font-weight: 600;
     color: var(--on-surface-color);
-}
-
-.option>img {
-    width: 18px;
-    height: auto;
-    align-self: baseline;
-    filter: invert(var(--icon-color-invert-value));
 }
 
 .search-button {

@@ -3,36 +3,32 @@
     height: 40px;
     border-radius: var(--border-radius);
     background-color: var(--accent-color);
+    color: var(--on-accent-color);
     cursor: pointer;
     border: none;
     padding: 0px 18px;
     flex-shrink: 0;
 }
 
-.button:has(.button__icon) {
+.button:has(svg) {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
 }
 
-.button__text {
+.button span {
     color: var(--on-accent-color);
     font-size: 14px;
     font-weight: 600;
     font-family: "Space Grotesk", sans-serif;
 }
 
-.button__icon {
-    height: 18px;
-    width: auto;
-}
-
 .button:hover {
     background-color: var(--accent-color-dark);
 }
 
-.button--loading .button__text {
+.button--loading span {
     visibility: hidden;
     opacity: 0;
 }

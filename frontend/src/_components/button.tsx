@@ -3,13 +3,13 @@ import "@/_utils/theme.css";
 import { ReactNode } from "react";
 import Image from "next/image";
 
-export default function Button({ className, children, iconPath, onClick, id }: { className: string, children: ReactNode, iconPath: string, onClick: React.MouseEventHandler<HTMLButtonElement>, id: string }) {
+export default function Button({ className, children, withIcon, icon, onClick, id }: { className: string, children: ReactNode, withIcon: boolean, icon: ReactNode, onClick: React.MouseEventHandler<HTMLButtonElement>, id: string }) {
     return (
         <button id={id} className={`button ${className}`} onClick={onClick}>
-            {iconPath ? <Image className="button__icon" src={iconPath} alt="" height={24} width={24}></Image> : <></>}
-            <span className="button__text">{children}</span>
+            {withIcon ? icon : <></>}
+            <span>{children}</span>
         </button>
     );
 }
 
-Button.defaultProps = { className: "", iconPath: "", onClick: (() => { }), id: "" };
+Button.defaultProps = { className: "", withIcon: false, icon: <></>, onClick: (() => { }), id: "" };

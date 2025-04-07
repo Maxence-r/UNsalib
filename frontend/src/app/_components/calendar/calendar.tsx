@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 
 import {
     usePanelStore,
@@ -154,7 +154,7 @@ export default function Calendar() {
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <Button iconPath="/up.svg" onClick={() => openPanel()}>Menu</Button>
+                <Button withIcon icon={<ChevronUp size={20} />} onClick={() => openPanel()}>Menu</Button>
             </div>
         </div>
     )

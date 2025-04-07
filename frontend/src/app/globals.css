@@ -34,20 +34,6 @@ main.main {
     -ms-user-select: none;
 }
 
-.loader {
-    position: fixed;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    z-index: 1000;
-    height: 100vh;
-    background-color: white;
-    animation: fadeOut .5s ease-in-out forwards;
-    animation-delay: 800ms;
-    pointer-events: none;
-}
-
 @keyframes fadeOut {
     from {
         opacity: 1;
@@ -71,10 +57,6 @@ main.main {
 
 .progress>img {
     min-height: 20px;
-}
-
-.loader>.progress>img {
-    animation: progress 1s cubic-bezier(.42, .49, 0, .99) forwards;
 }
 
 .no-compatible {

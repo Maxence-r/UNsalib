@@ -25,11 +25,6 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             <section className="no-compatible">
                 <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
             </section>
-            <section className="loader">
-                <div className="progress">
-                    <Image src="/loader.svg" width={808} height={64} alt="Chargement..."></Image>
-                </div>
-            </section>
             <Panel roomsList={prefetchedRoomsList}></Panel>
             <Calendar></Calendar>
             <Modal isOpened={useModalStore((state) => state.isOpened)} closeFunction={useModalStore((state) => state.close)}>{useModalStore((state) => state.content)}</Modal>

@@ -7,6 +7,8 @@ import mongoose from 'mongoose';
 import pkg from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { UAParser } from 'ua-parser-js';
+import { Bots } from 'ua-parser-js/extensions';
+import { isBot } from 'ua-parser-js/helpers';
 import {
     isValidDate,
     isSameDay
@@ -274,10 +276,17 @@ router.get('/stats', async (req, res) => {
         const OS = {};
         const browsers = {};
         stats.forEach((userStats) => {
-            const parsedUserAgent = new UAParser(userStats.userAgent);
-            const OSName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
-            const browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
-            OS[OSName] = Object.keys(OS).includes(OSName) ? OS[OSName] + 1 : 1;
+            const parsedUserAgent = new UAParser({ Bots });
+            parsedUserAgent.setUA(userStats.userAgent);
+            let osName, browserName;
+            if (!isBot(parsedUserAgent.getResult())) {
+                osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
+                browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
+            } else {
+                osName = 'Bot';
+                browserName = 'Bot';
+            }
+            OS[osName] = Object.keys(OS).includes(osName) ? OS[osName] + 1 : 1;
             browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
         });
 

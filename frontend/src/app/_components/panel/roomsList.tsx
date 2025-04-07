@@ -1,19 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
 import { ApiRoomType } from "@/app/_utils/types";
 import "./roomsList.css";
 import "@/_utils/theme.css";
-
-const featuresIcons = {
-    visio: <Eye size={14} />,
-    badge: <Lock size={14} />,
-    video: <Monitor size={14} />,
-    ilot: <Users size={14} />
-}
 
 function normalizeString(value: string) {
     return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f\s]/g, "");

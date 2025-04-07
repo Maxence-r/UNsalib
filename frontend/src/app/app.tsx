@@ -1,12 +1,13 @@
 "use client";
+
+import { useEffect } from "react";
+
 import Panel from "./_components/panel/panel";
 import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomType } from "./_utils/types";
 import { useModalStore, useToastStore, useVersionStore } from "./_utils/store";
-import Image from "next/image";
-import { useEffect } from "react";
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     const isStorageHydrated = useVersionStore((state) => state.hasHydrated);

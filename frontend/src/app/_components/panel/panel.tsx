@@ -14,7 +14,7 @@ import {
     useToastStore,
     useHistoryStore
 } from '../../_utils/store';
-import RoomsList from "@/_components/roomsList";
+import RoomsList from "./roomsList";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";

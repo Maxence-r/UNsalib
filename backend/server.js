@@ -51,7 +51,7 @@ server.listen(port);
 // Initialize Socket.IO here
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL
+        origin: [process.env.PUBLIC_FRONTEND_URL, process.env.PRIVATE_FRONTEND_URL]
     }
 });
 

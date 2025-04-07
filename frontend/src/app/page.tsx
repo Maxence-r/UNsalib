@@ -11,7 +11,7 @@ async function getRoomsList() {
         const clientHeaders = await headers();
         const clientId = cookieStore.get("clientId")?.value;
         const clientUserAgent = clientHeaders.get("user-agent");
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+        const response = await fetch(`${process.env.PRIVATE_API_URL}/rooms`, {
             headers: {
                 "content-type": "application/json",
                 "user-agent": clientUserAgent || "",

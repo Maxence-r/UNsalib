@@ -6,7 +6,6 @@ import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 import {
     usePanelStore,
     useSelectedRoomStore,
-    useTimetableStore,
     useToastStore,
     useHistoryStore
 } from '../../_utils/store';
@@ -51,8 +50,7 @@ export default function Calendar() {
     const openPanel = usePanelStore((state) => state.open);
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const selectedRoom = useSelectedRoomStore((state) => state.room);
-    const setTimetableLoadState = useTimetableStore((state) => state.setLoading);
-    const isTimetableLoading = useTimetableStore((state) => state.isLoading);
+    const [isTimetableLoading, setTimetableLoadState] = useState(false);
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
     const setToastAsError = useToastStore((state) => state.setError);

@@ -92,16 +92,6 @@ export const useSelectedRoomStore = create<SelectedRoomState>()((set) => ({
     setRoom: (newId: string, newName: string) => set({ room: { id: newId, name: newName } })
 }));
 
-interface TimetableState {
-    isLoading: boolean,
-    setLoading: (state: boolean) => void
-};
-
-export const useTimetableStore = create<TimetableState>()((set) => ({
-    isLoading: false,
-    setLoading: (state) => set({ isLoading: state }),
-}));
-
 interface ToastState {
     isOpened: boolean,
     isError: boolean,

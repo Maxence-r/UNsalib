@@ -7,7 +7,7 @@ import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomType } from "./_utils/types";
-import { useModalStore, useToastStore, useVersionStore } from "./_utils/store";
+import { useToastStore, useVersionStore } from "./_utils/store";
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     const isStorageHydrated = useVersionStore((state) => state.hasHydrated);
@@ -28,7 +28,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             </section>
             <Panel roomsList={prefetchedRoomsList}></Panel>
             <Calendar></Calendar>
-            <Modal isOpened={useModalStore((state) => state.isOpened)} closeFunction={useModalStore((state) => state.close)}>{useModalStore((state) => state.content)}</Modal>
+            <Modal />
             <Toast show={useToastStore((state) => state.isOpened)} error={useToastStore((state) => state.isError)}>{useToastStore((state) => state.content)}</Toast>
         </main>
     );

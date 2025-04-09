@@ -8,7 +8,6 @@ import Button from "@/_components/button";
 import Input from "@/_components/input";
 import { ApiRoomType } from "../../_utils/types";
 import {
-    useModalStore,
     usePanelStore,
     useSelectedRoomStore,
     useToastStore,
@@ -19,7 +18,7 @@ import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
 import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
-// import { BetaModal } from "@/_components/modal";
+import { useModalStore } from "@/_components/modal";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);

@@ -1,39 +1,47 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-// import { createPortal } from "react-dom";
+import { create } from "zustand";
 
 import { useHistoryStore } from "@/app/_utils/store";
 import "@/_utils/theme.css";
 import "./modal.css";
 
-// export function BetaModal({ content }: { content: ReactNode }) {
-//     return (
-//         <>
-//             {/* {createPortal(
-//                 <p>This child is placed in the document body.</p>,
-//                 document.body
-//             )} */}
-//         </>
-//     );
-// }
+interface ModalState {
+    isOpen: boolean,
+    content: ReactNode,
+    open: () => void,
+    close: () => void,
+    setContent: (newContent: ReactNode) => void
+};
 
-export default function Modal({ children, isOpened, closeFunction }: { children: ReactNode, isOpened: boolean, closeFunction: () => void }) {
+export const useModalStore = create<ModalState>()((set) => ({
+    isOpen: false,
+    content: <></>,
+    open: () => set({ isOpen: true }),
+    close: () => set({ isOpen: false }),
+    setContent: (newContent) => set({ content: newContent })
+}));
+
+export default function Modal() {
+    const closeModal = useModalStore(state => state.close);
+    const isModalOpen = useModalStore(state => state.isOpen);
+    const modalContent = useModalStore(state => state.content);
     const historyStackPush = useHistoryStore((state) => state.push);
     const historyStackPop = useHistoryStore((state) => state.pop);
     const historyStack = useHistoryStore((state) => state.stack);
     const [openStateHistory, setOpenStateHistory] = useState(false);
 
     useEffect(() => {
-        if (isOpened) {
+        if (isModalOpen) {
             setOpenStateHistory(true);
             window.history.pushState({ modalOpened: true }, "");
             historyStackPush("modalOpened");
 
             const handlePopState = () => {
-                if (historyStack[historyStack.length - 1] == "modalOpened" && isOpened) {
+                if (historyStack[historyStack.length - 1] == "modalOpened" && isModalOpen) {
                     historyStackPop();
-                    closeFunction();
+                    closeModal();
                 }
             };
 
@@ -42,28 +50,28 @@ export default function Modal({ children, isOpened, closeFunction }: { children:
             return () => {
                 window.removeEventListener("popstate", handlePopState);
             }
-        } else if (!isOpened && openStateHistory) {
+        } else if (!isModalOpen && openStateHistory) {
             setOpenStateHistory(false);
             if (historyStack[historyStack.length - 1] == "modalOpened") {
                 historyStackPop();
             }
         }
-    }, [isOpened, closeFunction]);
+    }, [isModalOpen, closeModal]);
 
     return (
         <div
             tabIndex={-1}
-            className={`modal ${isOpened ? "active" : ""}`}
+            className={`modal ${isModalOpen ? "active" : ""}`}
             onClick={(event) => {
                 const target = event.target as HTMLInputElement;
                 if (target.classList.contains("modal")) {
-                    closeFunction();
+                    closeModal();
                 }
             }}
         >
             <div className="modal-content">
-                {children}
+                {modalContent}
             </div>
         </div>
-    )
+    );
 }

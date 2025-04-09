@@ -1,5 +1,5 @@
 "use client";
-import { useModalStore } from "../../_utils/store";
+import { useModalStore } from "@/_components/modal";
 import { ApiCourseType } from "../../_utils/types";
 
 function joinArrayElements(array: string[], separator: string, splitter: string, chooseBeforeSplit = false) {

@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Download } from "lucide-react";
 
-import { useInstallationStore, useModalStore } from "../../_utils/store";
+import { useInstallationStore } from "../../_utils/store";
 import Button from "@/_components/button";
+import { useModalStore } from "@/_components/modal";
 
 function SafariInstallModalContent() {
     const closeModal = useModalStore((state) => state.close);

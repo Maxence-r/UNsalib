@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { JSX } from "react";
 import { persist } from "zustand/middleware";
 
 interface InstallationStore {
@@ -53,22 +52,6 @@ export const useVersionStore = create<VersionStore>()(
         }
     )
 );
-
-interface ModalState {
-    isOpened: boolean,
-    content: JSX.Element,
-    open: () => void,
-    close: () => void,
-    setContent: (newContent: JSX.Element) => void
-};
-
-export const useModalStore = create<ModalState>()((set) => ({
-    isOpened: false,
-    content: <></>,
-    open: () => set({ isOpened: true }),
-    close: () => set({ isOpened: false }),
-    setContent: (newContent) => set({ content: newContent })
-}));
 
 interface PanelState {
     isOpened: boolean,

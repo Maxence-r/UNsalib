@@ -1,5 +1,5 @@
 "use client";
-import { useModalStore } from "@/_components/modal";
+import { openModal, setModalContent } from "@/_components/modal";
 import { ApiCourseType } from "../../_utils/types";
 
 function joinArrayElements(array: string[], separator: string, splitter: string, chooseBeforeSplit = false) {
@@ -16,9 +16,6 @@ function joinArrayElements(array: string[], separator: string, splitter: string,
 }
 
 export default function CalendarBox({ hourCourses }: { hourCourses: ApiCourseType[] }) {
-    const openModal = useModalStore((state) => state.open);
-    const setModalContent = useModalStore((state) => state.setContent);
-
     return (
         <div className="content-box">
             {hourCourses.map(course => {

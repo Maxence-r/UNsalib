@@ -13,11 +13,10 @@ import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
 import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
-import { useModalStore } from "@/_components/modal";
+import { closeModal, openModal, setModalContent } from "@/_components/modal";
 import { pushToHistory } from "@/_utils/navigation-manager";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
-    const closeModal = useModalStore((state) => state.close);
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
     const setToastAsError = useToastStore((state) => state.setError);
@@ -319,8 +318,6 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState([]);
-    const openModal = useModalStore((state) => state.open);
-    const setModalContent = useModalStore((state) => state.setContent);
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
@@ -406,8 +403,6 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
 }
 
 function AboutPictosModalContent() {
-    const closeModal = useModalStore((state) => state.close);
-
     return (
         <div className="pictos">
             <div className="option">
@@ -434,8 +429,6 @@ function AboutPictosModalContent() {
 
 export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
-    const openModal = useModalStore((state) => state.open);
-    const setModalContent = useModalStore((state) => state.setContent);
     const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
 
     useEffect(() => {

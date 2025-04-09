@@ -1,29 +1,47 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import { create } from "zustand";
 
 import "@/_utils/theme.css";
 import "./modal.css";
+import { pushToHistory, goBack } from "@/_utils/navigation-manager";
 
 interface ModalState {
     isOpen: boolean,
-    content: ReactNode,
-    open: () => void,
-    close: () => void,
-    setContent: (newContent: ReactNode) => void
+    content: ReactNode
 };
 
-export const useModalStore = create<ModalState>()((set) => ({
+const useModalStore = create<ModalState>()(() => ({
     isOpen: false,
-    content: <></>,
-    open: () => set({ isOpen: true }),
-    close: () => set({ isOpen: false }),
-    setContent: (newContent) => set({ content: newContent })
+    content: <></>
 }));
 
+export function openModal() {
+    console.log("push")
+    pushToHistory("modal", onlyCloseModal);
+    useModalStore.setState(state => {
+        return { isOpen: true };
+    });
+}
+
+function onlyCloseModal() {
+    useModalStore.setState(state => {
+        return { isOpen: false };
+    });
+}
+
+export function closeModal() {
+    goBack();
+}
+
+export function setModalContent(newContent: ReactNode) {
+    useModalStore.setState(state => {
+        return { content: newContent };
+    });
+}
+
 export default function Modal() {
-    const closeModal = useModalStore(state => state.close);
     const isModalOpen = useModalStore(state => state.isOpen);
     const modalContent = useModalStore(state => state.content);
 

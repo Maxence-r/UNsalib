@@ -6,11 +6,9 @@ import { Download } from "lucide-react";
 
 import { useInstallationStore } from "../../_utils/store";
 import Button from "@/_components/button";
-import { useModalStore } from "@/_components/modal";
+import { closeModal, openModal, setModalContent } from "@/_components/modal";
 
 function SafariInstallModalContent() {
-    const closeModal = useModalStore((state) => state.close);
-
     return (
         <div className="safariInstall">
             <div className="option">
@@ -36,8 +34,6 @@ export default function PWAInstallButton() {
     const dismissInstallation = useInstallationStore((state) => state.dismissInstallation);
     const isStorageHydrated = useInstallationStore((state) => state.hasHydrated);
     // const isAppInstalled = useInstallationStore((state) => state.isInstalled);
-    const openModal = useModalStore((state) => state.open);
-    const setModalContent = useModalStore((state) => state.setContent);
 
     const handleInstallClick = async () => {
         if (deferredPrompt) {

@@ -3,13 +3,12 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function middleware(req: NextRequest) {
     const res = NextResponse.next();
-    const clientId = req.cookies.get("clientId")?.value;
+    const clientId = req.cookies.get("clientUuid")?.value;
 
     if (!clientId) {
         const newClientId = uuidv4();
-        res.cookies.set("clientId", newClientId, {
+        res.cookies.set("clientUuid", newClientId, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
             domain: "." + process.env.NEXT_PUBLIC_DOMAIN

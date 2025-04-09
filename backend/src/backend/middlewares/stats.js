@@ -4,7 +4,7 @@ import {
 } from '../utils/stats.js';
 
 const stats = async (req, res, next) => {
-    req.statsUUID = req.cookies.clientId;
+    req.statsUUID = req.cookies.clientUuid;
 
     // Updating stats
     if (req.path == '/api/rooms' || req.path == '/api/rooms/') {

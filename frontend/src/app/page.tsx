@@ -9,13 +9,13 @@ async function getRoomsList() {
     try {
         const cookieStore = await cookies();
         const clientHeaders = await headers();
-        const clientId = cookieStore.get("clientId")?.value;
+        const clientId = cookieStore.get("clientUuid")?.value;
         const clientUserAgent = clientHeaders.get("user-agent");
         const response = await fetch(`${process.env.PRIVATE_API_URL}/rooms`, {
             headers: {
                 "content-type": "application/json",
                 "user-agent": clientUserAgent || "",
-                "cookie": `clientId=${clientId};`
+                "cookie": `clientUuid=${clientId};`
             },
             cache: "no-store"
         });

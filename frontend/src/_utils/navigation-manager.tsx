@@ -7,7 +7,7 @@ interface HistoryState {
     stack: { id: string, backFunction: () => void }[]
 };
 
-const useHistoryStore = create<HistoryState>()((set) => ({
+const useHistoryStore = create<HistoryState>()(() => ({
     stack: []
 }));
 

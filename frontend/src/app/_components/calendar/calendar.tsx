@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 
-import { usePanelStore, useSelectedRoomStore, useToastStore } from '../../_utils/store';
+import { useSelectedRoomStore, useToastStore } from '../../_utils/store';
 import Button from "@/_components/button";
 import "./calendar.css";
 import {
@@ -13,7 +13,7 @@ import {
     WEEK_DAYS
 } from "@/_utils/constants";
 import CalendarContainer from "./container";
-import { pushToHistory, goBack } from "@/_utils/navigation-manager";
+import { goBack } from "@/_utils/navigation-manager";
 
 export default function Calendar() {
     function computeHourIndicator() {
@@ -43,8 +43,6 @@ export default function Calendar() {
     });
     const [increment, setIncrement] = useState(0);
     const [previousIncrement, setPreviousIncrement] = useState(0);
-    const openPanel = usePanelStore((state) => state.open);
-    const isPanelOpened = usePanelStore((state) => state.isOpened);
     const selectedRoom = useSelectedRoomStore((state) => state.room);
     const [isTimetableLoading, setTimetableLoadState] = useState(false);
     const showToast = useToastStore((state) => state.open);

@@ -20,13 +20,13 @@ const useModalStore = create<ModalState>()(() => ({
 export function openModal() {
     console.log("push")
     pushToHistory("modal", onlyCloseModal);
-    useModalStore.setState(state => {
+    useModalStore.setState(() => {
         return { isOpen: true };
     });
 }
 
 function onlyCloseModal() {
-    useModalStore.setState(state => {
+    useModalStore.setState(() => {
         return { isOpen: false };
     });
 }
@@ -36,7 +36,7 @@ export function closeModal() {
 }
 
 export function setModalContent(newContent: ReactNode) {
-    useModalStore.setState(state => {
+    useModalStore.setState(() => {
         return { content: newContent };
     });
 }

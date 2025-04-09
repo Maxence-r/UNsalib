@@ -8,6 +8,7 @@ import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomType } from "./_utils/types";
 import { useToastStore, useVersionStore } from "./_utils/store";
+import NavigationManager from "@/_utils/navigation-manager";
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
     const isStorageHydrated = useVersionStore((state) => state.hasHydrated);
@@ -22,14 +23,16 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
     }, [isStorageHydrated])
 
     return (
-        <main tabIndex={-1} className="main">
-            <section className="no-compatible">
-                <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
-            </section>
-            <Panel roomsList={prefetchedRoomsList}></Panel>
-            <Calendar></Calendar>
-            <Modal />
-            <Toast show={useToastStore((state) => state.isOpened)} error={useToastStore((state) => state.isError)}>{useToastStore((state) => state.content)}</Toast>
-        </main>
+        <NavigationManager>
+            <main tabIndex={-1} className="main">
+                <section className="no-compatible">
+                    <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
+                </section>
+                <Panel roomsList={prefetchedRoomsList}></Panel>
+                <Calendar></Calendar>
+                <Modal />
+                <Toast show={useToastStore((state) => state.isOpened)} error={useToastStore((state) => state.isError)}>{useToastStore((state) => state.content)}</Toast>
+            </main>
+        </NavigationManager>
     );
 }

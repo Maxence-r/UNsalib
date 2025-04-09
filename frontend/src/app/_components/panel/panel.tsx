@@ -7,18 +7,14 @@ import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock }
 import Button from "@/_components/button";
 import Input from "@/_components/input";
 import { ApiRoomType } from "../../_utils/types";
-import {
-    usePanelStore,
-    useSelectedRoomStore,
-    useToastStore,
-    useHistoryStore
-} from '../../_utils/store';
+import { usePanelStore, useSelectedRoomStore, useToastStore } from '../../_utils/store';
 import RoomsList from "./roomsList";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
 import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
 import { useModalStore } from "@/_components/modal";
+import { pushToHistory } from "@/_utils/navigation-manager";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
     const closeModal = useModalStore((state) => state.close);
@@ -323,36 +319,17 @@ function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState([]);
-    const historyStackPush = useHistoryStore((state) => state.push);
-    const historyStackPop = useHistoryStore((state) => state.pop);
-    const historyStack = useHistoryStore((state) => state.stack);
     const openModal = useModalStore((state) => state.open);
     const setModalContent = useModalStore((state) => state.setContent);
     const closePanel = usePanelStore((state) => state.close);
+    const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
     function loadTimetable(room: ApiRoomType) {
+        pushToHistory("panel", openPanel)
         closePanel();
         setSelectedRoom(room.id, room.name);
     }
-
-    useEffect(() => {
-        if (activeTab != "edt-finder") {
-            window.history.pushState({ tabClicked: true }, "");
-            historyStackPush("tabClicked");
-
-            const handlePopState = () => {
-                if (historyStack[historyStack.length - 1] == "tabClicked" && activeTab != "edt-finder") {
-                    historyStackPop();
-                    setActiveTab("edt-finder");
-                }
-            };
-
-            window.addEventListener("popstate", handlePopState);
-
-            return () => window.removeEventListener("popstate", handlePopState);
-        }
-    }, [activeTab, setActiveTab]);
 
     return (
         <>
@@ -507,10 +484,8 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
                         onClick={() => {
                             setModalContent(<AboutModalContent></AboutModalContent>);
                             openModal();
-                            // BetaModal(<AboutModalContent></AboutModalContent>);
                         }}
                     >
-                        {/* <BetaModal content={<></>}></BetaModal> */}
                         <Info size={16} />
                     </div>
                     <PWAInstallButton></PWAInstallButton>

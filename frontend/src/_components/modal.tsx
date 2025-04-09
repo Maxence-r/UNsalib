@@ -3,7 +3,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { create } from "zustand";
 
-import { useHistoryStore } from "@/app/_utils/store";
 import "@/_utils/theme.css";
 import "./modal.css";
 
@@ -27,36 +26,6 @@ export default function Modal() {
     const closeModal = useModalStore(state => state.close);
     const isModalOpen = useModalStore(state => state.isOpen);
     const modalContent = useModalStore(state => state.content);
-    const historyStackPush = useHistoryStore((state) => state.push);
-    const historyStackPop = useHistoryStore((state) => state.pop);
-    const historyStack = useHistoryStore((state) => state.stack);
-    const [openStateHistory, setOpenStateHistory] = useState(false);
-
-    useEffect(() => {
-        if (isModalOpen) {
-            setOpenStateHistory(true);
-            window.history.pushState({ modalOpened: true }, "");
-            historyStackPush("modalOpened");
-
-            const handlePopState = () => {
-                if (historyStack[historyStack.length - 1] == "modalOpened" && isModalOpen) {
-                    historyStackPop();
-                    closeModal();
-                }
-            };
-
-            window.addEventListener("popstate", handlePopState);
-
-            return () => {
-                window.removeEventListener("popstate", handlePopState);
-            }
-        } else if (!isModalOpen && openStateHistory) {
-            setOpenStateHistory(false);
-            if (historyStack[historyStack.length - 1] == "modalOpened") {
-                historyStackPop();
-            }
-        }
-    }, [isModalOpen, closeModal]);
 
     return (
         <div

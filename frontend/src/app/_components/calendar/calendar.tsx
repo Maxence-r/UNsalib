@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 
-import {
-    usePanelStore,
-    useSelectedRoomStore,
-    useToastStore,
-    useHistoryStore
-} from '../../_utils/store';
+import { usePanelStore, useSelectedRoomStore, useToastStore } from '../../_utils/store';
 import Button from "@/_components/button";
 import "./calendar.css";
 import {
@@ -18,6 +13,7 @@ import {
     WEEK_DAYS
 } from "@/_utils/constants";
 import CalendarContainer from "./container";
+import { pushToHistory, goBack } from "@/_utils/navigation-manager";
 
 export default function Calendar() {
     function computeHourIndicator() {
@@ -54,9 +50,6 @@ export default function Calendar() {
     const showToast = useToastStore((state) => state.open);
     const setToastContent = useToastStore((state) => state.setContent);
     const setToastAsError = useToastStore((state) => state.setError);
-    const historyStackPush = useHistoryStore((state) => state.push);
-    const historyStackPop = useHistoryStore((state) => state.pop);
-    const historyStack = useHistoryStore((state) => state.stack);
     const [hourIndicatorValue, setHourIndicatorValue] = useState(computeHourIndicator().value);
     const [hourIndicatorTop, setHourIndicatorTop] = useState(computeHourIndicator().top);
     const [displayHourIndicator, setHourIndicatorDisplay] = useState(false);
@@ -71,24 +64,6 @@ export default function Calendar() {
 
         return () => clearInterval(interval);
     }, [hourIndicatorValue]);
-
-    useEffect(() => {
-        if (!isPanelOpened) {
-            window.history.pushState({ panelClosed: true }, "");
-            historyStackPush("panelClosed");
-
-            const handlePopState = () => {
-                if (historyStack[historyStack.length - 1] == "panelClosed" && !isPanelOpened) {
-                    historyStackPop();
-                    openPanel();
-                }
-            };
-
-            window.addEventListener("popstate", handlePopState);
-
-            return () => window.removeEventListener("popstate", handlePopState);
-        }
-    }, [isPanelOpened, openPanel]);
 
     useEffect(() => {
         async function render() {
@@ -152,7 +127,7 @@ export default function Calendar() {
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <Button withIcon icon={<ChevronUp size={20} />} onClick={() => openPanel()}>Menu</Button>
+                <Button withIcon icon={<ChevronUp size={20} />} onClick={() => {goBack();}}>Menu</Button>
             </div>
         </div>
     )

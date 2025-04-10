@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Download } from "lucide-react";
 
-import { useInstallationStore } from "../../_utils/store";
+import { useInstallationStore } from "../../store";
 import Button from "@/_components/button";
 import { closeModal, openModal, setModalContent } from "@/_components/modal";
 

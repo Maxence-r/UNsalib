@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic"; // fix build error (Route / couldn't be rendered statically because it used `cookies`n)
 
-import { ApiRoomType } from "./_utils/types";
+import { ApiRoomType } from "@/_utils/api-types";
 import App from "./app";
 import { cookies, headers } from "next/headers";
 

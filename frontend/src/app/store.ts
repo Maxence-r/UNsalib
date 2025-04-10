@@ -74,28 +74,3 @@ export const useSelectedRoomStore = create<SelectedRoomState>()((set) => ({
     room: { id: "", name: "" },
     setRoom: (newId: string, newName: string) => set({ room: { id: newId, name: newName } })
 }));
-
-interface ToastState {
-    isOpened: boolean,
-    isError: boolean,
-    content: string,
-    open: () => void,
-    close: () => void,
-    setContent: (newContent: string) => void,
-    setError: (state: boolean) => void
-};
-
-export const useToastStore = create<ToastState>()((set) => ({
-    isOpened: false,
-    isError: false,
-    content: "",
-    open: () => set((state) => {
-        setTimeout(() => {
-            state.close();
-        }, 5000);
-        return { isOpened: true };
-    }),
-    close: () => set({ isOpened: false }),
-    setContent: (newContent) => set({ content: newContent }),
-    setError: (state) => set({ isError: state }),
-}));

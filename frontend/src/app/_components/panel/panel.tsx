@@ -6,10 +6,10 @@ import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock }
 
 import Button from "@/_components/button";
 import Input from "@/_components/input";
-import { ApiRoomType } from "../../_utils/types";
-import { usePanelStore, useSelectedRoomStore } from '../../_utils/store';
+import { ApiRoomType } from "@/_utils/api-types";
+import { usePanelStore, useSelectedRoomStore } from "../../store";
 import RoomsList from "./roomsList";
-import { socket } from "../../../_utils/socket";
+import { socket } from "@/_utils/socket";
 import PWAInstallButton from "./installButton";
 import "./panel.css";
 import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";

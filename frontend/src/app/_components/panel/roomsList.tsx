@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
-import { ApiRoomType } from "@/app/_utils/types";
+import { ApiRoomType } from "@/_utils/api-types";
 import "./roomsList.css";
 import "@/_utils/theme.css";
 

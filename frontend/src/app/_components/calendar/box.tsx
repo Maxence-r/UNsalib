@@ -1,6 +1,6 @@
 "use client";
 import { openModal, setModalContent } from "@/_components/modal";
-import { ApiCourseType } from "../../_utils/types";
+import { ApiCourseType } from "@/_utils/api-types";
 
 function joinArrayElements(array: string[], separator: string, splitter: string, chooseBeforeSplit = false) {
     let string = '';

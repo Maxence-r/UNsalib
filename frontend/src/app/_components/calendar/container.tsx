@@ -4,7 +4,7 @@ import {
     DAY_DURATION, 
     WEEK_DAYS 
 } from "@/_utils/constants";
-import { ApiCourseType, ApiCoursesResponseType } from "../../_utils/types";
+import { ApiCourseType, ApiCoursesResponseType } from "@/_utils/api-types";
 import CalendarBox from "./box";
 
 function CalendarColumn({ dayName, dayNumber, dayCourses, fullDate }: { dayName: string, dayNumber: string, dayCourses: ApiCourseType[], fullDate: string }) {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 
-import { useSelectedRoomStore, useToastStore } from '../../_utils/store';
+import { useSelectedRoomStore } from '../../_utils/store';
 import Button from "@/_components/button";
 import "./calendar.css";
 import {
@@ -13,6 +13,7 @@ import {
     WEEK_DAYS
 } from "@/_utils/constants";
 import CalendarContainer from "./container";
+import { showToast, setToastMessage } from "@/_components/toast";
 import { goBack } from "@/_utils/navigation-manager";
 
 export default function Calendar() {
@@ -45,9 +46,6 @@ export default function Calendar() {
     const [previousIncrement, setPreviousIncrement] = useState(0);
     const selectedRoom = useSelectedRoomStore((state) => state.room);
     const [isTimetableLoading, setTimetableLoadState] = useState(false);
-    const showToast = useToastStore((state) => state.open);
-    const setToastContent = useToastStore((state) => state.setContent);
-    const setToastAsError = useToastStore((state) => state.setError);
     const [hourIndicatorValue, setHourIndicatorValue] = useState(computeHourIndicator().value);
     const [hourIndicatorTop, setHourIndicatorTop] = useState(computeHourIndicator().top);
     const [displayHourIndicator, setHourIndicatorDisplay] = useState(false);
@@ -78,8 +76,7 @@ export default function Calendar() {
                 setCourses(coursesData);
                 setPreviousIncrement(increment);
             } catch {
-                setToastContent("Impossible de récupérer les données pour cette salle.");
-                setToastAsError(true);
+                setToastMessage("Impossible de récupérer les données pour cette salle.", true);
                 showToast();
                 setIncrement(previousIncrement);
             } finally {

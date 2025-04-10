@@ -7,7 +7,7 @@ import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock }
 import Button from "@/_components/button";
 import Input from "@/_components/input";
 import { ApiRoomType } from "../../_utils/types";
-import { usePanelStore, useSelectedRoomStore, useToastStore } from '../../_utils/store';
+import { usePanelStore, useSelectedRoomStore } from '../../_utils/store';
 import RoomsList from "./roomsList";
 import { socket } from "../../../_utils/socket";
 import PWAInstallButton from "./installButton";
@@ -15,11 +15,9 @@ import "./panel.css";
 import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
 import { closeModal, openModal, setModalContent } from "@/_components/modal";
 import { pushToHistory } from "@/_utils/navigation-manager";
+import { showToast, setToastMessage } from "@/_components/toast";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
-    const showToast = useToastStore((state) => state.open);
-    const setToastContent = useToastStore((state) => state.setContent);
-    const setToastAsError = useToastStore((state) => state.setError);
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
     const [visioFeature, setVisioFeature] = useState(false);
@@ -67,8 +65,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             if (startDateTime > endDateTime) errors.push('L\'heure de fin doit être après l\'heure de début.');
 
             if (errors.length > 0) {
-                setToastContent(errors.join(' '));
-                setToastAsError(true);
+                setToastMessage(errors.join(" "), true);
                 showToast();
 
                 launchSearch(false);
@@ -114,8 +111,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                 }
             } catch (e) {
                 console.error(e);
-                setToastContent("Impossible de rechercher une salle pour l'instant. Réessayez plus tard.");
-                setToastAsError(true);
+                setToastMessage("Impossible de rechercher une salle pour l'instant. Réessayez plus tard.", true);
                 showToast();
             } finally {
                 launchSearch(false);

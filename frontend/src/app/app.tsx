@@ -7,7 +7,7 @@ import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomType } from "./_utils/types";
-import { useToastStore, useVersionStore } from "./_utils/store";
+import { useVersionStore } from "./_utils/store";
 import NavigationManager from "@/_utils/navigation-manager";
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
@@ -20,7 +20,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
             setV2Prompt();
             window.location.href = "/new";
         }
-    }, [isStorageHydrated])
+    }, [isStorageHydrated]);
 
     return (
         <NavigationManager>
@@ -28,10 +28,10 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
                 <section className="no-compatible">
                     <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
                 </section>
-                <Panel roomsList={prefetchedRoomsList}></Panel>
-                <Calendar></Calendar>
+                <Panel roomsList={prefetchedRoomsList} />
+                <Calendar />
                 <Modal />
-                <Toast show={useToastStore((state) => state.isOpened)} error={useToastStore((state) => state.isError)}>{useToastStore((state) => state.content)}</Toast>
+                <Toast />
             </main>
         </NavigationManager>
     );

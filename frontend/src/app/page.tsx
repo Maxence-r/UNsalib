@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic"; // fix build error (Route / couldn't be rendered statically because it used `cookies`n)
 
-import { ApiRoomType } from "@/_utils/api-types";
+import { ApiRoomsList } from "@/_utils/api-types";
 import App from "./app";
 import { cookies, headers } from "next/headers";
 
 async function getRoomsList() {
-    let rooms: ApiRoomType[] = [];
+    let rooms: ApiRoomsList = [];
     try {
         const cookieStore = await cookies();
         const clientHeaders = await headers();

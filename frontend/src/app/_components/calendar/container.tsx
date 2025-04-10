@@ -4,13 +4,13 @@ import {
     DAY_DURATION, 
     WEEK_DAYS 
 } from "@/_utils/constants";
-import { ApiCourseType, ApiCoursesResponseType } from "@/_utils/api-types";
+import { ApiCourses, ApiTimetable } from "@/_utils/api-types";
 import CalendarBox from "./box";
 
-function CalendarColumn({ dayName, dayNumber, dayCourses, fullDate }: { dayName: string, dayNumber: string, dayCourses: ApiCourseType[], fullDate: string }) {
+function CalendarColumn({ dayName, dayNumber, dayCourses, fullDate }: { dayName: string, dayNumber: string, dayCourses: ApiCourses, fullDate: string }) {
     interface HourType {
         hour: string,
-        courses: ApiCourseType[]
+        courses: ApiCourses
     };
 
     const currentDayHours: HourType[] = [];
@@ -45,7 +45,7 @@ function CalendarColumn({ dayName, dayNumber, dayCourses, fullDate }: { dayName:
     )
 }
 
-export default function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, displayHourIndicator }: { courses: ApiCoursesResponseType, hourIndicatorValue: string, hourIndicatorTop: string, displayHourIndicator: boolean }) {
+export default function CalendarContainer({ courses, hourIndicatorValue, hourIndicatorTop, displayHourIndicator }: { courses: ApiTimetable, hourIndicatorValue: string, hourIndicatorTop: string, displayHourIndicator: boolean }) {
     const dayHours = [];
     for (let i = 1; i < DAY_DURATION; i++) {
         dayHours.push(<p key={i}>{START_DAY_HOUR + i + ":00"}</p>)
@@ -55,7 +55,7 @@ export default function CalendarContainer({ courses, hourIndicatorValue, hourInd
         name: string,
         number: string,
         date: string,
-        courses: ApiCourseType[]
+        courses: ApiCourses
     };
 
     const currentWeekDays: DayType[] = [];

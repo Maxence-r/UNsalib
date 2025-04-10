@@ -1,4 +1,6 @@
-export interface ApiRoomType {
+// Endpoint: /rooms
+
+export interface ApiRoom {
     id: string,
     name: string,
     alias: string,
@@ -7,7 +9,11 @@ export interface ApiRoomType {
     features: ("visio" | "badge" | "video" | "ilot")[]
 };
 
-export interface ApiCourseType {
+export type ApiRoomsList = ApiRoom[];
+
+// Endpoint: /rooms/timetable
+
+export interface ApiCourse {
     category: string,
     color: string,
     courseId: string,
@@ -22,13 +28,21 @@ export interface ApiCourseType {
     teachers: string[]
 };
 
-export interface ApiWeekInfosType {
+export type ApiCourses = ApiCourse[];
+
+export interface ApiWeekInfos {
     end: string,
     number: string,
     start: string
 };
 
-export interface ApiCoursesResponseType {
-    courses: ApiCourseType[],
-    weekInfos: ApiWeekInfosType
+export interface ApiTimetable {
+    courses: ApiCourses,
+    weekInfos: ApiWeekInfos
+};
+
+// API error
+
+export interface ApiError {
+    error: string
 };

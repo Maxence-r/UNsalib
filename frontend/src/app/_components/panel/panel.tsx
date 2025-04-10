@@ -6,7 +6,7 @@ import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock }
 
 import Button from "@/_components/button";
 import Input from "@/_components/input";
-import { ApiRoomType } from "@/_utils/api-types";
+import { ApiRoom, ApiRoomsList } from "@/_utils/api-types";
 import { usePanelStore, useSelectedRoomStore } from "../../store";
 import RoomsList from "./roomsList";
 import { socket } from "@/_utils/socket";
@@ -17,7 +17,7 @@ import { closeModal, openModal, setModalContent } from "@/_components/modal";
 import { pushToHistory } from "@/_utils/navigation-manager";
 import { showToast, setToastMessage } from "@/_components/toast";
 
-function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<never[]>> }) {
+function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<ApiRoomsList>> }) {
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
     const [visioFeature, setVisioFeature] = useState(false);
@@ -104,7 +104,7 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
                     }`,
                     { credentials: "include" }
                 );
-                const availableRooms = await response.json();
+                const availableRooms: ApiRoomsList = await response.json();
 
                 if (availableRooms) {
                     availableRoomsListHook(availableRooms)
@@ -309,16 +309,16 @@ function AboutModalContent() {
     );
 }
 
-function TabView({ roomsList }: { roomsList: ApiRoomType[] }) {
+function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
-    const [availableRoomsList, setAvailableRoomsList] = useState([]);
+    const [availableRoomsList, setAvailableRoomsList] = useState<ApiRoomsList>([]);
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
-    function loadTimetable(room: ApiRoomType) {
+    function loadTimetable(room: ApiRoom) {
         pushToHistory("panel", openPanel)
         closePanel();
         setSelectedRoom(room.id, room.name);
@@ -423,7 +423,7 @@ function AboutPictosModalContent() {
     );
 }
 
-export default function Panel({ roomsList }: { roomsList: ApiRoomType[] }) {
+export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
     const [updatedGroupsList, setUpdatedGroupsList] = useState(["ICI S'AFFICHERA LA MISE À JOUR DES GROUPES"]);
 

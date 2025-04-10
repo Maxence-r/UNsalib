@@ -15,6 +15,7 @@ import {
 import CalendarContainer from "./container";
 import { showToast, setToastMessage } from "@/_components/toast";
 import { goBack } from "@/_utils/navigation-manager";
+import { ApiError, ApiTimetable } from "@/_utils/api-types";
 
 export default function Calendar() {
     function computeHourIndicator() {
@@ -34,7 +35,7 @@ export default function Calendar() {
         }
     }
 
-    const [courses, setCourses] = useState({
+    const [courses, setCourses] = useState<ApiTimetable>({
         "courses": [],
         "weekInfos": {
             "start": "--",
@@ -69,12 +70,13 @@ export default function Calendar() {
                     `${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`,
                     { credentials: "include" }
                 );
-                const coursesData = await response.json();
-                if (coursesData.error) {
-                    throw new Error("Error fetching the timetable:", coursesData.error);
+                const coursesData: ApiTimetable | ApiError = await response.json();
+                if ("error" in coursesData) {
+                    throw new Error("Error fetching the timetable:", coursesData.error as ErrorOptions);
+                } else {
+                    setCourses(coursesData);
+                    setPreviousIncrement(increment);
                 }
-                setCourses(coursesData);
-                setPreviousIncrement(increment);
             } catch {
                 setToastMessage("Impossible de récupérer les données pour cette salle.", true);
                 showToast();
@@ -122,7 +124,7 @@ export default function Calendar() {
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">{selectedRoom.id == "" ? "--" : selectedRoom.name}</h2>
                 </div>
-                <Button withIcon icon={<ChevronUp size={20} />} onClick={() => {goBack();}}>Menu</Button>
+                <Button withIcon icon={<ChevronUp size={20} />} onClick={() => { goBack(); }}>Menu</Button>
             </div>
         </div>
     )

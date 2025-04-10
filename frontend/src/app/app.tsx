@@ -6,11 +6,11 @@ import Panel from "./_components/panel/panel";
 import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
-import { ApiRoomType } from "@/_utils/api-types";
+import { ApiRoomsList } from "@/_utils/api-types";
 import { useVersionStore } from "./store";
 import NavigationManager from "@/_utils/navigation-manager";
 
-export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomType[] }) {
+export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomsList }) {
     const isStorageHydrated = useVersionStore((state) => state.hasHydrated);
     const v2Prompt = useVersionStore((state) => state.v2Prompt);
     const setV2Prompt = useVersionStore((state) => state.setV2Prompt);

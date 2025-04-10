@@ -7,7 +7,7 @@ import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomsList } from "@/_utils/api-types";
-import { useVersionStore } from "./store";
+import { useVersionStore } from "./_utils/store";
 import NavigationManager from "@/_utils/navigation-manager";
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomsList }) {

@@ -1,36 +1,27 @@
 export const dynamic = "force-dynamic"; // fix build error (Route / couldn't be rendered statically because it used `cookies`n)
 
-import { ApiRoomsList } from "@/_utils/api-types";
-import App from "./app";
 import { cookies, headers } from "next/headers";
 
-async function getRoomsList() {
-    let rooms: ApiRoomsList = [];
-    try {
-        const cookieStore = await cookies();
-        const clientHeaders = await headers();
-        const clientId = cookieStore.get("clientUuid")?.value;
-        const clientUserAgent = clientHeaders.get("user-agent");
-        const response = await fetch(`${process.env.PRIVATE_API_URL}/rooms`, {
-            headers: {
-                "content-type": "application/json",
-                "user-agent": clientUserAgent || "",
-                "cookie": `clientUuid=${clientId};`
-            },
-            cache: "no-store"
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
-        rooms = await response.json();
-        return rooms;
-    } catch (error) {
+import { ApiRoomsList } from "@/_utils/api-types";
+import App from "./app";
+import { getRoomsList } from "./_utils/server-actions";
+
+async function fetchRooms(): Promise<ApiRoomsList> {
+    const cookieStore = await cookies();
+    const clientHeaders = await headers();
+    const clientId = cookieStore.get("clientUuid")?.value;
+    const clientUserAgent = clientHeaders.get("user-agent");
+
+    const rooms = await getRoomsList(clientId ? clientId : "", clientUserAgent ? clientUserAgent : "");
+
+    if (rooms.success) {
+        return rooms.data;
+    } else {
         console.error("Impossible de récupérer la liste des salles !");
-        console.error(error);
+        return [];
     }
-    return rooms;
 }
 
 export default async function PreFetchData() {
-    return <App prefetchedRoomsList={await getRoomsList()}></App>;
+    return <App prefetchedRoomsList={await fetchRooms()}></App>;
 }

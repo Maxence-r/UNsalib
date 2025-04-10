@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
 
-import { useSelectedRoomStore } from "../../store";
+import { useSelectedRoomStore } from "../../_utils/store";
 import Button from "@/_components/button";
 import "./calendar.css";
 import {

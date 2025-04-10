@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { create } from "zustand";
 
 import "./toast.css";
@@ -11,7 +10,7 @@ interface ToastState {
     timeoutId: ReturnType<typeof setTimeout> | undefined
 };
 
-const useToastStore = create<ToastState>()((set) => ({
+const useToastStore = create<ToastState>()(() => ({
     isOpen: false,
     error: false,
     message: "",

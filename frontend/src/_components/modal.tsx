@@ -18,7 +18,6 @@ const useModalStore = create<ModalState>()(() => ({
 }));
 
 export function openModal() {
-    console.log("push")
     pushToHistory("modal", onlyCloseModal);
     useModalStore.setState(() => {
         return { isOpen: true };

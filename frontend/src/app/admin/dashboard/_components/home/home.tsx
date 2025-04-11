@@ -41,13 +41,13 @@ export default function HomePage() {
                         <div className="section-content">
                             <div className="column stats-overview">
                                 <Card>
-                                    <CardHeader>Visiteurs uniques</CardHeader>
+                                    <CardHeader>Visiteurs uniques aujourd'hui</CardHeader>
                                     <CardContent>
                                         <h1>50</h1>
                                     </CardContent>
                                 </Card>
                                 <Card>
-                                    <CardHeader>Vues</CardHeader>
+                                    <CardHeader>Vues aujourd'hui</CardHeader>
                                     <CardContent>
                                         <h1>100</h1>
                                     </CardContent>

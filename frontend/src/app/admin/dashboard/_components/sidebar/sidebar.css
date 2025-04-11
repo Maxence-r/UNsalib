@@ -60,8 +60,18 @@
     color: var(--on-surface-color);
 }
 
+.action.selected {
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
+}
+
 .action:hover {
     background-color: var(--neutral-color);
+}
+
+.action.selected:hover {
+    background-color: var(--accent-color-dark);
+    color: var(--on-accent-color-dark);
 }
 
 .action>span {

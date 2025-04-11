@@ -11,12 +11,13 @@ import "./sidebar.css";
 type Action = {
     onClick: () => void,
     name: string,
-    icon: ReactNode
+    icon: ReactNode,
+    selected: boolean
 };
 
-function Action({ onClick, name, icon }: Action) {
+function Action({ onClick, name, icon, selected }: Action) {
     return (
-        <button className="action" onClick={onClick} key={`action ${name}`}>
+        <button className={`action ${selected ? "selected" : ""}`} onClick={onClick} key={`action ${name}`}>
             {icon}
             <span>{name}</span>
         </button>
@@ -28,7 +29,13 @@ function ActionsList({ actions }: { actions: Action[] }) {
         <div className="actions-list">
             {actions.map(action => {
                 return (
-                    <Action onClick={action.onClick} name={action.name} icon={action.icon} key={`action ${action.name}`} />
+                    <Action
+                        onClick={action.onClick}
+                        name={action.name}
+                        icon={action.icon}
+                        key={`action ${action.name}`}
+                        selected={action.selected}
+                    />
                 );
             })}
         </div>
@@ -49,7 +56,17 @@ function useOutsideClickHandler(ref: React.RefObject<HTMLElement | null>, stateH
     }, [ref, stateHook, setStateHook]);
 }
 
-export default function Sidebar({ userAccount, className }: { userAccount: ApiUserAccount, className: string }) {
+export default function Sidebar({
+    userAccount,
+    className,
+    setSelectedTab,
+    selectedTab
+}: {
+    userAccount: ApiUserAccount,
+    className: string,
+    setSelectedTab: (tab: string) => void,
+    selectedTab: string
+}) {
     const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
     const accountMenuRef = useRef<HTMLDivElement | null>(null);
     useOutsideClickHandler(accountMenuRef, openUserMenu, setOpenUserMenu);
@@ -72,16 +89,16 @@ export default function Sidebar({ userAccount, className }: { userAccount: ApiUs
             <span className="divider" />
             <ActionsList
                 actions={[
-                    { icon: <House size={20} />, name: "Accueil", onClick: () => { } },
-                    { icon: <Pen size={20} />, name: "Gestion", onClick: () => { } },
-                    { icon: <ChartPie size={20} />, name: "Statistiques", onClick: () => { } }
+                    { icon: <House size={20} />, name: "Accueil", selected: selectedTab === "home" ? true : false, onClick: () => setSelectedTab("home") },
+                    { icon: <Pen size={20} />, name: "Gestion", selected: selectedTab === "manage" ? true : false, onClick: () => setSelectedTab("manage") },
+                    { icon: <ChartPie size={20} />, name: "Statistiques", selected: selectedTab === "stats" ? true : false, onClick: () => setSelectedTab("stats") }
                 ]}
             />
             <span className="spacer" />
             <ActionsList
                 actions={[
-                    { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, onClick: () => { } },
-                    { icon: <LogOut size={20} />, name: "Déconnexion", onClick: handleLogout }
+                    { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, selected: selectedTab === "account" ? true : false, onClick: () => setSelectedTab("account") },
+                    { icon: <LogOut size={20} />, name: "Déconnexion", selected: false, onClick: handleLogout }
                 ]}
             />
         </div >

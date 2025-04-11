@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
 import "./home.css";
-import { getDayUniqueVisitors } from "../../_utils/client-actions";
+import { getDayUniqueVisitors, getDayViews } from "../../_utils/client-actions";
 
 
 export default function HomePage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState("-");
+    const [dayViews, setDayViews] = useState("-");
 
     useEffect(() => {
         const fetchDayUniqueVisitors = async () => {
@@ -21,7 +22,17 @@ export default function HomePage() {
         }
 
         fetchDayUniqueVisitors();
-    }, [dayUniqueVisitors, setDayUniqueVisitors])
+    }, [setDayUniqueVisitors])
+
+    useEffect(() => {
+        const fetchDayViews = async () => {
+            const today = new Date().toISOString().split("T")[0];
+            const raw = await getDayViews();
+            setDayViews(raw.data[today].toString());
+        }
+
+        fetchDayViews();
+    }, [setDayViews])
 
     return (
         <div className="main dashboard-home">
@@ -65,7 +76,7 @@ export default function HomePage() {
                                 <Card>
                                     <CardHeader>Vues aujourd&apos;hui</CardHeader>
                                     <CardContent>
-                                        <h1>100</h1>
+                                        <h1>{dayViews}</h1>
                                     </CardContent>
                                 </Card>
                             </div>

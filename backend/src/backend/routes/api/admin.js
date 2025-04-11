@@ -347,4 +347,53 @@ router.get('/stats/unique-visitors', async (req, res) => {
     }
 });
 
+router.get('/stats/views', async (req, res) => {
+    // Redirect user if not logged in
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    // Retrieving query parameters
+    const start = req.query.start;
+    const end = req.query.end;
+
+    // Checking that all the required parameters are present
+    if (!start || !end) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
+    }
+
+    // Checking the date perameters validity
+    try {
+        let startDate = new Date(start).toISOString();
+        let endDate = new Date(end).toISOString();
+        if (startDate > endDate) {
+            throw new Error();
+        }
+    } catch {
+        return res.status(400).json({ error: 'INVALID_DATES' });
+    }
+
+    try {
+        // Getting statistics for the requested days range
+        const stats = await Stat.find({
+            date: {
+                $gte: start,
+                $lte: end
+            }
+        });
+        
+        // Creating an array containing all the dates between start and end
+        let days = getDatesRange(new Date(start), new Date(end));
+        // Counting views per day
+        const viewsPerDay = {};
+        days.forEach((day) => viewsPerDay[day] = 0);
+        stats.forEach((stat) => {
+            viewsPerDay[stat.date] += stat.roomsListRequests;
+        });
+
+        res.status(200).json(viewsPerDay);
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+    }
+});
+
 export default router;

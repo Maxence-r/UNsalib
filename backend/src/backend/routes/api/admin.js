@@ -311,20 +311,29 @@ router.get('/stats/unique-visitors', async (req, res) => {
         return res.status(400).json({ error: 'MISSING_QUERIES' });
     }
 
-    // if (!start instanceof Date || isNaN(start) || !end instanceof Date || isNaN(end)) {
-    //     return res.status(400).json({ error: 'INVALID_DATES' });
-    // }
+    // Checking the date perameters validity
+    try {
+        let startDate = new Date(start).toISOString();
+        let endDate = new Date(end).toISOString();
+        if (startDate > endDate) {
+            throw new Error();
+        }
+    } catch {
+        return res.status(400).json({ error: 'INVALID_DATES' });
+    }
 
     try {
-        // Getting statistics for the requested month
+        // Getting statistics for the requested days range
         const stats = await Stat.find({
             date: {
                 $gte: start,
                 $lte: end
             }
         });
-
+        
+        // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
+        // Counting unique visitors per day
         const uniqueVisitorsPerDay = {};
         days.forEach((day) => uniqueVisitorsPerDay[day] = 0);
         stats.forEach((stat) => {

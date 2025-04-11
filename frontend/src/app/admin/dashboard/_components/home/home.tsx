@@ -11,13 +11,13 @@ import { getDayUniqueVisitors } from "../../_utils/client-actions";
 
 
 export default function HomePage() {
-    const [dayUniqueVisitors, setDayUniqueVisitors] = useState(0);
+    const [dayUniqueVisitors, setDayUniqueVisitors] = useState("-");
 
     useEffect(() => {
         const fetchDayUniqueVisitors = async () => {
             const today = new Date().toISOString().split("T")[0];
             const raw = await getDayUniqueVisitors();
-            setDayUniqueVisitors(raw.data[today]);
+            setDayUniqueVisitors(raw.data[today].toString());
         }
 
         fetchDayUniqueVisitors();

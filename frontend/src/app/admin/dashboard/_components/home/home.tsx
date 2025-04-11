@@ -17,7 +17,7 @@ export default function HomePage() {
         const fetchDayUniqueVisitors = async () => {
             const today = new Date().toISOString().split("T")[0];
             const raw = await getDayUniqueVisitors();
-            setDayUniqueVisitors((raw.data as { [today]: number })[today]);
+            setDayUniqueVisitors(raw.data[today]);
         }
 
         fetchDayUniqueVisitors();
@@ -57,13 +57,13 @@ export default function HomePage() {
                         <div className="section-content">
                             <div className="column stats-overview">
                                 <Card>
-                                    <CardHeader>Visiteurs uniques aujourd'hui</CardHeader>
+                                    <CardHeader>Visiteurs uniques aujourd&apos;hui</CardHeader>
                                     <CardContent>
                                         <h1>{dayUniqueVisitors}</h1>
                                     </CardContent>
                                 </Card>
                                 <Card>
-                                    <CardHeader>Vues aujourd'hui</CardHeader>
+                                    <CardHeader>Vues aujourd&apos;hui</CardHeader>
                                     <CardContent>
                                         <h1>100</h1>
                                     </CardContent>

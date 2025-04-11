@@ -81,10 +81,22 @@ function isSameDay(d1, d2) {
     );
 }
 
+function getDatesRange(start, end) {
+    const range = [];
+    let current = start;
+    while (current < end) {
+        range.push(current.toISOString().split('T')[0]);
+        current.setDate(current.getDate() + 1);
+    }
+    range.push(current.toISOString().split('T')[0]);
+    return range;
+}
+
 export {
     isValidDate,
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
     isSameDay,
+    getDatesRange
 };

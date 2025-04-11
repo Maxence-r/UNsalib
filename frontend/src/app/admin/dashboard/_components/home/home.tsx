@@ -1,12 +1,28 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Button from "@/_components/button";
 import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
 import "./home.css";
+import { getDayUniqueVisitors } from "../../_utils/client-actions";
+
 
 export default function HomePage() {
+    const [dayUniqueVisitors, setDayUniqueVisitors] = useState(0);
+
+    useEffect(() => {
+        const fetchDayUniqueVisitors = async () => {
+            const today = new Date().toISOString().split("T")[0];
+            const raw = await getDayUniqueVisitors();
+            setDayUniqueVisitors((raw.data as { [today]: number })[today]);
+        }
+
+        fetchDayUniqueVisitors();
+    }, [dayUniqueVisitors, setDayUniqueVisitors])
+
     return (
         <div className="main dashboard-home">
             <div className="view">
@@ -43,7 +59,7 @@ export default function HomePage() {
                                 <Card>
                                     <CardHeader>Visiteurs uniques aujourd'hui</CardHeader>
                                     <CardContent>
-                                        <h1>50</h1>
+                                        <h1>{dayUniqueVisitors}</h1>
                                     </CardContent>
                                 </Card>
                                 <Card>

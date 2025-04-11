@@ -41,6 +41,12 @@ export interface ApiTimetable {
     weekInfos: ApiWeekInfos
 };
 
+// Endpoint: /admin/stats/unique-visitors
+
+export interface ApiUniqueVisitors { 
+    [key: string]: number 
+}
+
 // API error
 
 export interface ApiError {

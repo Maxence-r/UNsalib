@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { Pen, House, ChartPie, LogOut } from "lucide-react";
 
-import { logout } from "../../_utils/actions";
+import { logout } from "../../_utils/client-actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
 import "./sidebar.css";
 

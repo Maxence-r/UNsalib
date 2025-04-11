@@ -11,7 +11,8 @@ import { Bots } from 'ua-parser-js/extensions';
 import { isBot } from 'ua-parser-js/helpers';
 import {
     isValidDate,
-    isSameDay
+    isSameDay,
+    getDatesRange
 } from '../../utils/date.js';
 import {
     compareStatsObjs
@@ -291,6 +292,46 @@ router.get('/stats', async (req, res) => {
         });
 
         res.status(200).json({ dailyStats: processedStats, monthlyStats: { os: OS, browsers: browsers } });
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+    }
+});
+
+router.get('/stats/unique-visitors', async (req, res) => {
+    // Redirect user if not logged in
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    // Retrieving query parameters
+    const start = req.query.start;
+    const end = req.query.end;
+
+    // Checking that all the required parameters are present
+    if (!start || !end) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
+    }
+
+    // if (!start instanceof Date || isNaN(start) || !end instanceof Date || isNaN(end)) {
+    //     return res.status(400).json({ error: 'INVALID_DATES' });
+    // }
+
+    try {
+        // Getting statistics for the requested month
+        const stats = await Stat.find({
+            date: {
+                $gte: start,
+                $lte: end
+            }
+        });
+
+        let days = getDatesRange(new Date(start), new Date(end));
+        const uniqueVisitorsPerDay = {};
+        days.forEach((day) => uniqueVisitorsPerDay[day] = 0);
+        stats.forEach((stat) => {
+            uniqueVisitorsPerDay[stat.date] += 1;
+        });
+
+        res.status(200).json(uniqueVisitorsPerDay);
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);

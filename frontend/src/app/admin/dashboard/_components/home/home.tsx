@@ -67,13 +67,13 @@ export default function HomePage() {
                         <h4 className="section-title">Statistiques globales</h4>
                         <div className="section-content">
                             <div className="column stats-overview">
-                                <Card>
+                                <Card isLoading={dayUniqueVisitors === "-" ? true : false}>
                                     <CardHeader>Visiteurs uniques aujourd&apos;hui</CardHeader>
                                     <CardContent>
                                         <h1>{dayUniqueVisitors}</h1>
                                     </CardContent>
                                 </Card>
-                                <Card>
+                                <Card isLoading={dayViews === "-" ? true : false}>
                                     <CardHeader>Vues aujourd&apos;hui</CardHeader>
                                     <CardContent>
                                         <h1>{dayViews}</h1>

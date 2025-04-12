@@ -32,19 +32,22 @@ export function Card({
     children,
     id,
     highlighted,
-    elevated
+    elevated,
+    isLoading
 }: {
     className: string,
     children: ReactNode,
     id: string,
     highlighted: boolean,
-    elevated: boolean
+    elevated: boolean,
+    isLoading: boolean
 }) {
     return (
         <div className={`card${highlighted ? " highlighted" : ""}${elevated ? " elevated" : ""} ${className}`} id={id}>
             {children}
+            {isLoading && <div className="loader"></div>}
         </div>
     );
 }
 
-Card.defaultProps = { className: "", id: "", highlighted: false, elevated: false };
+Card.defaultProps = { className: "", id: "", highlighted: false, elevated: false, isLoading: false };

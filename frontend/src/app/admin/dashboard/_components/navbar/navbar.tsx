@@ -5,26 +5,22 @@ import { useState, useEffect, useRef } from "react";
 
 import Button from "@/_components/button";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
+import MobileMenu from "../mobile-menu/mobile-menu";
 import "./navbar.css";
+import { Menu } from "lucide-react";
 
-function useOutsideClickHandler(ref: React.RefObject<HTMLElement | null>, stateHook: boolean, setStateHook: (state: boolean) => void) {
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (ref.current && !ref.current.contains(event.target as Node) && stateHook) {
-                setStateHook(false);
-            }
-        };
-
-        document.addEventListener("click", handleClickOutside);
-
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, [ref, stateHook, setStateHook]);
-}
-
-export default function Navbar({ userAccount }: { userAccount: ApiUserAccount }) {
-    const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
-    const accountMenuRef = useRef<HTMLDivElement | null>(null);
-    useOutsideClickHandler(accountMenuRef, openUserMenu, setOpenUserMenu);
+export default function Navbar({
+    userAccount,
+    className,
+    setSelectedTab,
+    selectedTab
+}: {
+    userAccount: ApiUserAccount,
+    className: string,
+    setSelectedTab: (tab: string) => void,
+    selectedTab: string
+}) {
+    const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
 
     const logout = async () => {
         try {
@@ -44,30 +40,11 @@ export default function Navbar({ userAccount }: { userAccount: ApiUserAccount })
     };
 
     return (
-        <div className="navbar">
-            <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96}></Image>
+        <div className={`navbar ${className}`}>
+            <MobileMenu userAccount={userAccount} selectedTab={selectedTab} setSelectedTab={setSelectedTab} isOpen={openMobileMenu} setIsOpen={setOpenMobileMenu} />
+            <button onClick={() => setOpenMobileMenu(!openMobileMenu)} className="mobile-menu-button"><Menu size={24} /></button>
             <h1>UNsalib</h1>
-            <span className="spacer"></span>
-            <div className="navbar-account">
-                <button id="account-button" className="button" onClick={() => setOpenUserMenu(true)}>
-                    <span>{`${userAccount.name} ${userAccount.lastname}`}</span>
-                    <Image className="account-icon" fill src={`data:image/png;base64,${userAccount.icon}`} alt="Account icon" />
-                </button>
-                <div
-                    id="account-menu"
-                    className={openUserMenu ? "opened" : ""}
-                    ref={accountMenuRef}
-                >
-                    <div className="account-infos">
-                        <Image className="account-icon" fill src={`data:image/png;base64,${userAccount.icon}`} alt="Account icon" />
-                        <div>
-                            <h2>{`${userAccount.name} ${userAccount.lastname}`}</h2>
-                            <span>{`@${userAccount.username}`}</span>
-                        </div>
-                    </div>
-                    <Button className="logout" onClick={logout}>Se déconnecter</Button>
-                </div>
-            </div>
+            <Image className="account-icon" fill src={`data:image/png;base64,${userAccount.icon}`} alt="Account icon" />
         </div >
     );
 }

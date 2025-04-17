@@ -93,24 +93,24 @@
 }
 
 @media screen and (max-width: 1024px) {
-    .sidebar {
+    .sidebar.shrinkable {
         min-width: auto;
         width: auto;
     }
-
-    .action {
+    
+    .sidebar.shrinkable .action {
         padding: 12px;
     }
-
-    .action>span {
+    
+    .sidebar.shrinkable .action>span {
         display: none;
     }
-
-    .branding h1 {
+    
+    .sidebar.shrinkable .branding h1 {
         display: none;
     }
-
-    .branding {
+    
+    .sidebar.shrinkable .branding {
         justify-content: center;
     }
 }

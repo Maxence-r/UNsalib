@@ -1,0 +1,43 @@
+#mobile-menu {
+    position: fixed;
+    top: 0;
+    z-index: 3;
+}
+
+#mobile-scrim {
+    z-index: 998;
+    position: fixed;
+    width: 100vw;
+    background-color: var(--scrim-color);
+    height: 100%;
+    top: 0px;
+    left: calc(0px - 100%);
+    opacity: 0;
+    transition: opacity var(--animation-duration);
+}
+
+#mobile-menu.opened #mobile-scrim {
+    left: 0px;
+    opacity: 1;
+    transition: opacity var(--animation-duration);
+}
+
+#mobile-window {
+    position: fixed;
+    height: 100%;
+    width: 80%;
+    background-color: var(--surface-color);
+    z-index: 999;
+    left: calc(0px - 80%);
+    transition: left var(--animation-duration);
+    display: block;
+}
+
+#mobile-menu.opened #mobile-window {
+    left: 0px;
+}
+
+.mobile-menu-sidebar {
+    min-width: auto;
+    box-shadow: none;
+}

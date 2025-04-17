@@ -8,5 +8,20 @@
     background-color: var(--background-color);
     color: var(--on-background-color);
     display: flex;
-    flex-direction: row;
+}
+
+@media screen and (max-width: 425px) {
+    .large-screen-nav {
+        display: none;
+    }
+
+    .page.dashboard {
+        flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 426px) {
+    .small-screen-nav {
+        display: none;
+    }
 }

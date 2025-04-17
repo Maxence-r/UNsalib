@@ -58,14 +58,16 @@ function useOutsideClickHandler(ref: React.RefObject<HTMLElement | null>, stateH
 
 export default function Sidebar({
     userAccount,
-    className,
     setSelectedTab,
-    selectedTab
+    selectedTab,
+    embedded,
+    className
 }: {
     userAccount: ApiUserAccount,
-    className: string,
     setSelectedTab: (tab: string) => void,
-    selectedTab: string
+    selectedTab: string,
+    embedded: boolean,
+    className: string
 }) {
     const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
     const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -81,7 +83,7 @@ export default function Sidebar({
     };
 
     return (
-        <div className={`sidebar ${className}`}>
+        <div className={`sidebar ${className}${embedded ? "" : " shrinkable"}`}>
             <div className="branding">
                 <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96}></Image>
                 <h1>UNsalib</h1>

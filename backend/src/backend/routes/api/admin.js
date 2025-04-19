@@ -311,7 +311,7 @@ router.get('/stats/unique-visitors', async (req, res) => {
         return res.status(400).json({ error: 'MISSING_QUERIES' });
     }
 
-    // Checking the date perameters validity
+    // Checking the date parameters validity
     try {
         let startDate = new Date(start).toISOString();
         let endDate = new Date(end).toISOString();
@@ -360,7 +360,7 @@ router.get('/stats/views', async (req, res) => {
         return res.status(400).json({ error: 'MISSING_QUERIES' });
     }
 
-    // Checking the date perameters validity
+    // Checking the date parameters validity
     try {
         let startDate = new Date(start).toISOString();
         let endDate = new Date(end).toISOString();
@@ -390,6 +390,65 @@ router.get('/stats/views', async (req, res) => {
         });
 
         res.status(200).json(viewsPerDay);
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+    }
+});
+
+router.get('/stats/platforms', async (req, res) => {
+    // Redirect user if not logged in
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    // Retrieving query parameters
+    const start = req.query.start;
+    const end = req.query.end;
+
+    // Checking that all the required parameters are present
+    if (!start || !end) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
+    }
+
+    // Checking the date parameters validity
+    try {
+        let startDate = new Date(start).toISOString();
+        let endDate = new Date(end).toISOString();
+        if (startDate > endDate) {
+            throw new Error();
+        }
+    } catch {
+        return res.status(400).json({ error: 'INVALID_DATES' });
+    }
+
+    try {
+        // Getting statistics for the requested days range
+        const stats = await Stat.find({
+            date: {
+                $gte: start,
+                $lte: end
+            }
+        });
+        
+        // Creating an array containing all the dates between start and end
+        let days = getDatesRange(new Date(start), new Date(end));
+        // Counting platforms per day
+        const platformsPerDay = {};
+        days.forEach((day) => platformsPerDay[day] = {});
+        stats.forEach((stat) => {
+            const parsedUserAgent = new UAParser({ Bots });
+            parsedUserAgent.setUA(stat.userAgent);
+            let osName = 'Bot';
+            if (!isBot(parsedUserAgent.getResult())) {
+                osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
+            }
+            if (platformsPerDay[stat.date][osName]) {
+                platformsPerDay[stat.date][osName] += 1;
+            } else {
+                platformsPerDay[stat.date][osName] = 1;
+            }
+        });
+
+        res.status(200).json(platformsPerDay);
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);

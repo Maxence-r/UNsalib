@@ -17,11 +17,12 @@
 .pie-chart .legend {
     flex-grow: 1;
     display: flex;
-    gap: var(--extra-large-space);
+    gap: var(--large-space);
     flex-wrap: wrap;
     height: auto;
     justify-content: center;
     align-items: center;
+    font-size: 14px;
 }
 
 .pie-chart .legend-item {
@@ -33,6 +34,6 @@
 }
 
 .pie-chart .legend-color {
-    height: 20px;
-    width: 20px;
+    height: 12px;
+    width: 12px;
 }

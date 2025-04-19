@@ -20,7 +20,7 @@
     }
 }
 
-@media screen and (min-width: 426px) {
+@media screen and (min-width: 425px) {
     .small-screen-nav {
         display: none;
     }

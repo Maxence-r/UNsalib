@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
 import "./home.css";
-import { getDayUniqueVisitors, getDayViews } from "../../_utils/client-actions";
-
+import { getDayPlatforms, getDayUniqueVisitors, getDayViews } from "../../_utils/client-actions";
 
 export default function HomePage() {
-    const [dayUniqueVisitors, setDayUniqueVisitors] = useState("-");
-    const [dayViews, setDayViews] = useState("-");
+    const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
+    const [dayViews, setDayViews] = useState<string>("-");
+    const [dayPlatforms, setDayPlatforms] = useState<{ legend: string, value: number }[]>([]);
 
     useEffect(() => {
         const fetchDayUniqueVisitors = async () => {
@@ -33,6 +33,19 @@ export default function HomePage() {
 
         fetchDayViews();
     }, [setDayViews])
+
+    useEffect(() => {
+        const fetchDayPlatforms = async () => {
+            const today = new Date().toISOString().split("T")[0];
+            const raw = await getDayPlatforms();
+            setDayPlatforms(Object.keys(raw.data[today]).map(platform => ({ 
+                legend: platform, 
+                value: raw.data[today][platform]
+            })));
+        }
+
+        fetchDayPlatforms();
+    }, [setDayPlatforms])
 
     return (
         <div className="main dashboard-home">
@@ -81,17 +94,11 @@ export default function HomePage() {
                                 </Card>
                             </div>
                             <div className="column">
-                                <Card>
-                                    <CardHeader>Plateformes</CardHeader>
+                                <Card isLoading={dayPlatforms.length === 0 ? true : false}>
+                                    <CardHeader>Plateformes aujourd'hui</CardHeader>
                                     <CardContent>
                                         <PieChart
-                                            dataset={
-                                                [
-                                                    { legend: "Toto", value: 50 },
-                                                    { legend: "Tata", value: 100 },
-                                                    { legend: "Tutu", value: 200 }
-                                                ]
-                                            }
+                                            dataset={dayPlatforms}
                                             sortDataset="asc"
                                             chartId="platforms"
                                         ></PieChart>

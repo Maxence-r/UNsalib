@@ -1,49 +1,42 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, ReactElement } from "react";
 
-import Button from "@/_components/button";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
-import MobileMenu from "../mobile-menu/mobile-menu";
+import MobileMenu from "./mobile-menu";
 import "./navbar.css";
 import { Menu } from "lucide-react";
 
 export default function Navbar({
     userAccount,
     className,
-    setSelectedTab,
-    selectedTab
+    setSelectedTabId,
+    selectedTabId,
+    tabsList
 }: {
     userAccount: ApiUserAccount,
     className: string,
-    setSelectedTab: (tab: string) => void,
-    selectedTab: string
+    setSelectedTabId: (tab: string) => void,
+    selectedTabId: string,
+    tabsList: { id: string, name: string, icon: ReactElement<{ size: number }> }[]
 }) {
     const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
 
-    const logout = async () => {
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/admin/auth/logout`,
-                { credentials: "include" }
-            );
-            const logoutState = await response.json();
-            if (logoutState.message === "LOGOUT_SUCCESSFUL") {
-                window.location.href = "/admin/auth";
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     return (
         <div className={`navbar ${className}`}>
-            <MobileMenu userAccount={userAccount} selectedTab={selectedTab} setSelectedTab={setSelectedTab} isOpen={openMobileMenu} setIsOpen={setOpenMobileMenu} />
+            <MobileMenu
+                userAccount={userAccount}
+                selectedTabId={selectedTabId}
+                setSelectedTabId={setSelectedTabId}
+                isOpen={openMobileMenu}
+                setIsOpen={setOpenMobileMenu}
+                tabsList={tabsList}
+            />
             <button onClick={() => setOpenMobileMenu(!openMobileMenu)} className="mobile-menu-button"><Menu size={24} /></button>
-            <h1>UNsalib</h1>
+            <h2>{
+                tabsList.find(tab => tab.id === selectedTabId)?.name || ""
+            }</h2>
             <Image className="account-icon" fill src={`data:image/png;base64,${userAccount.icon}`} alt="Account icon" />
         </div >
     );

@@ -6,12 +6,11 @@
     padding: 24px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     gap: 18px;
-    height: 100px;
     position: relative;
     border-bottom: 2px solid var(--border-color);
 }
 
-.navbar h1 {
+.navbar h2 {
     margin-block: 0px;
 }
 

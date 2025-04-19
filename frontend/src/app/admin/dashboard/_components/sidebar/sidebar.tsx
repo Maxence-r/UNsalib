@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef, ReactNode } from "react";
+import { useState, useEffect, useRef, cloneElement, ReactElement } from "react";
 import { Pen, House, ChartPie, LogOut } from "lucide-react";
 
 import { logout } from "../../_utils/client-actions";
@@ -11,7 +11,7 @@ import "./sidebar.css";
 type Action = {
     onClick: () => void,
     name: string,
-    icon: ReactNode,
+    icon: ReactElement,
     selected: boolean
 };
 
@@ -58,16 +58,18 @@ function useOutsideClickHandler(ref: React.RefObject<HTMLElement | null>, stateH
 
 export default function Sidebar({
     userAccount,
-    setSelectedTab,
-    selectedTab,
+    setSelectedTabId,
+    selectedTabId,
     embedded,
-    className
+    className,
+    tabsList
 }: {
     userAccount: ApiUserAccount,
-    setSelectedTab: (tab: string) => void,
-    selectedTab: string,
+    setSelectedTabId: (tab: string) => void,
+    selectedTabId: string,
     embedded: boolean,
-    className: string
+    className: string,
+    tabsList: { id: string, name: string, icon: ReactElement<{ size: number }> }[]
 }) {
     const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
     const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -90,16 +92,25 @@ export default function Sidebar({
             </div>
             <span className="divider" />
             <ActionsList
-                actions={[
-                    { icon: <House size={20} />, name: "Accueil", selected: selectedTab === "home" ? true : false, onClick: () => setSelectedTab("home") },
-                    { icon: <Pen size={20} />, name: "Gestion", selected: selectedTab === "manage" ? true : false, onClick: () => setSelectedTab("manage") },
-                    { icon: <ChartPie size={20} />, name: "Statistiques", selected: selectedTab === "stats" ? true : false, onClick: () => setSelectedTab("stats") }
-                ]}
+                actions={tabsList.map(tab => ({
+                    icon: cloneElement(tab.icon, { size: 20 }),
+                    name: tab.name,
+                    selected: selectedTabId === tab.id ? true : false,
+                    onClick: () => setSelectedTabId(tab.id)
+                }))
+
+
+                    // [
+                    //     { icon: <House size={20} />, name: "Accueil", selected: selectedTabId === "home" ? true : false, onClick: () => setSelectedTabId("home") },
+                    //     { icon: <Pen size={20} />, name: "Gestion", selected: selectedTabId === "manage" ? true : false, onClick: () => setSelectedTabId("manage") },
+                    //     { icon: <ChartPie size={20} />, name: "Statistiques", selected: selectedTabId === "stats" ? true : false, onClick: () => setSelectedTabId("stats") }
+                    // ]
+                }
             />
             <span className="spacer" />
             <ActionsList
                 actions={[
-                    { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, selected: selectedTab === "account" ? true : false, onClick: () => setSelectedTab("account") },
+                    { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, selected: selectedTabId === "account" ? true : false, onClick: () => setSelectedTabId("account") },
                     { icon: <LogOut size={20} />, name: "Déconnexion", selected: false, onClick: handleLogout }
                 ]}
             />

@@ -70,4 +70,8 @@
     .view-content .section-content .column {
         max-width: 100%;
     }
+
+    .view-title {
+        display: none;
+    }
 }

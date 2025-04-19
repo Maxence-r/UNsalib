@@ -1,5 +1,7 @@
 "use client";
 
+import { ReactElement } from "react";
+
 import "./mobile-menu.css";
 import Sidebar from "../sidebar/sidebar";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
@@ -9,18 +11,20 @@ export default function MobileMenu({
     userAccount,
     isOpen,
     setIsOpen,
-    setSelectedTab,
-    selectedTab
+    setSelectedTabId,
+    selectedTabId,
+    tabsList
 }: {
     userAccount: ApiUserAccount,
     isOpen: boolean,
     setIsOpen: (state: boolean) => void
-    setSelectedTab: (tab: string) => void,
-    selectedTab: string
+    setSelectedTabId: (tab: string) => void,
+    selectedTabId: string,
+    tabsList: { id: string, name: string, icon: ReactElement<{ size: number }> }[]
 }) {
-    useEffect(() => { 
+    useEffect(() => {
         setIsOpen(false);
-    }, [selectedTab, setIsOpen])
+    }, [selectedTabId, setIsOpen])
 
     return (
         <div id="mobile-menu" className={isOpen ? "opened" : ""}>
@@ -34,7 +38,14 @@ export default function MobileMenu({
                 }}
             ></div>
             <div id="mobile-window">
-                <Sidebar userAccount={userAccount} selectedTab={selectedTab} setSelectedTab={setSelectedTab} embedded={true} className="mobile-menu-sidebar" />
+                <Sidebar
+                    userAccount={userAccount}
+                    selectedTabId={selectedTabId}
+                    setSelectedTabId={setSelectedTabId}
+                    embedded={true}
+                    className="mobile-menu-sidebar"
+                    tabsList={tabsList}
+                />
             </div>
         </div>
     );

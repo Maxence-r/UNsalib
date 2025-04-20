@@ -1,19 +1,19 @@
 .main.dashboard-home {
     background-color: var(--background-color);
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
+    overflow: hidden;
+    width: 100%;
 }
 
 .view {
     max-width: 1440px;
     width: 100%;
     padding: 24px;
-    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    overflow: auto;
 }
 
 .view-title {
@@ -25,7 +25,6 @@
 
 .view-content {
     flex-grow: 1;
-    overflow: auto;
 }
 
 .view-content,

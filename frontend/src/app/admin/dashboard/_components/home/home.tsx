@@ -12,40 +12,34 @@ import { getDayPlatforms, getDayUniqueVisitors, getDayViews } from "../../_utils
 export default function HomePage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
     const [dayViews, setDayViews] = useState<string>("-");
-    const [dayPlatforms, setDayPlatforms] = useState<{ legend: string, value: number }[]>([]);
+    const [dayPlatforms, setDayPlatforms] = useState<{ empty: boolean, data: { legend: string, value: number }[] }>({
+        empty: false,
+        data: []
+    });
 
     useEffect(() => {
+        const today = new Date().toISOString().split("T")[0];
         const fetchDayUniqueVisitors = async () => {
-            const today = new Date().toISOString().split("T")[0];
             const raw = await getDayUniqueVisitors();
             setDayUniqueVisitors(raw.data[today].toString());
         }
-
-        fetchDayUniqueVisitors();
-    }, [setDayUniqueVisitors])
-
-    useEffect(() => {
         const fetchDayViews = async () => {
-            const today = new Date().toISOString().split("T")[0];
             const raw = await getDayViews();
             setDayViews(raw.data[today].toString());
         }
-
-        fetchDayViews();
-    }, [setDayViews])
-
-    useEffect(() => {
         const fetchDayPlatforms = async () => {
-            const today = new Date().toISOString().split("T")[0];
             const raw = await getDayPlatforms();
-            setDayPlatforms(Object.keys(raw.data[today]).map(platform => ({ 
-                legend: platform, 
+            const parsedPlatforms = Object.keys(raw.data[today]).map(platform => ({
+                legend: platform,
                 value: raw.data[today][platform]
-            })));
+            }));
+            setDayPlatforms({ empty: parsedPlatforms.length === 0, data: parsedPlatforms });
         }
 
+        fetchDayUniqueVisitors();
+        fetchDayViews();
         fetchDayPlatforms();
-    }, [setDayPlatforms])
+    }, [setDayUniqueVisitors, setDayViews, setDayPlatforms]);
 
     return (
         <div className="main dashboard-home">
@@ -77,7 +71,7 @@ export default function HomePage() {
                         </div>
                     </div>
                     <div className="section">
-                        <h4 className="section-title">Statistiques globales</h4>
+                        <h4 className="section-title">Statistiques du jour</h4>
                         <div className="section-content">
                             <div className="column stats-overview">
                                 <Card isLoading={dayUniqueVisitors === "-" ? true : false}>
@@ -94,11 +88,11 @@ export default function HomePage() {
                                 </Card>
                             </div>
                             <div className="column">
-                                <Card isLoading={dayPlatforms.length === 0 ? true : false}>
+                                <Card isLoading={dayPlatforms.data.length === 0 && !dayPlatforms.empty ? true : false}>
                                     <CardHeader>Plateformes aujourd'hui</CardHeader>
                                     <CardContent>
                                         <PieChart
-                                            dataset={dayPlatforms}
+                                            dataset={dayPlatforms.data}
                                             sortDataset="asc"
                                             chartId="platforms"
                                         ></PieChart>

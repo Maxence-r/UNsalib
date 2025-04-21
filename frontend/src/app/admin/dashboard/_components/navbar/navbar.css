@@ -20,6 +20,7 @@
     position: relative !important;
     height: 30px !important;
     width: auto !important;
+    margin-left: 10px;
 }
 
 .mobile-menu-button {

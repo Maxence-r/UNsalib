@@ -89,7 +89,7 @@ export default function HomePage() {
                             </div>
                             <div className="column">
                                 <Card isLoading={dayPlatforms.data.length === 0 && !dayPlatforms.empty ? true : false}>
-                                    <CardHeader>Plateformes aujourd'hui</CardHeader>
+                                    <CardHeader>Plateformes aujourd&apos;hui</CardHeader>
                                     <CardContent>
                                         <PieChart
                                             dataset={dayPlatforms.data}

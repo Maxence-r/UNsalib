@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, cloneElement, ReactElement } from "react";
-import { Pen, House, ChartPie, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 import { logout } from "../../_utils/client-actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
@@ -97,15 +97,7 @@ export default function Sidebar({
                     name: tab.name,
                     selected: selectedTabId === tab.id ? true : false,
                     onClick: () => setSelectedTabId(tab.id)
-                }))
-
-
-                    // [
-                    //     { icon: <House size={20} />, name: "Accueil", selected: selectedTabId === "home" ? true : false, onClick: () => setSelectedTabId("home") },
-                    //     { icon: <Pen size={20} />, name: "Gestion", selected: selectedTabId === "manage" ? true : false, onClick: () => setSelectedTabId("manage") },
-                    //     { icon: <ChartPie size={20} />, name: "Statistiques", selected: selectedTabId === "stats" ? true : false, onClick: () => setSelectedTabId("stats") }
-                    // ]
-                }
+                }))}
             />
             <span className="spacer" />
             <ActionsList

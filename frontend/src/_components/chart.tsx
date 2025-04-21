@@ -1,7 +1,6 @@
 "use client";
 
-import { VictoryPie, VictoryContainer, VictoryTheme } from "victory";
-import { useEffect, useState } from "react";
+import { VictoryPie } from "victory";
 
 import "@/_utils/theme.css";
 import { PALETTE_HEX } from "@/_utils/constants";
@@ -37,70 +36,6 @@ function chooseColor(colors: string[], pickedColors: string[]) {
     };
 }
 
-// export function PieChart({
-//     className,
-//     id,
-//     chartId,
-//     dataset,
-//     sortDataset
-// }: {
-//     className: string,
-//     id: string,
-//     chartId: string,
-//     dataset: PieChartDataset,
-//     sortDataset: "asc" | "desc" | "none"
-// }) {
-//     const sortedDataset = dataset;
-//     if (sortDataset === "asc") {
-//         sortedDataset.sort(comparePieDatasets);
-//     }
-
-//     const processedDataset: ProcessedPieChartDataset = [];
-//     const valuesSum = sortedDataset.reduce((a, b) => {
-//         return a + b.value;
-//     }, 0);
-//     let conicGradient = "conic-gradient(";
-//     let radius = 0;
-//     let pickedColors: string[] = [];
-//     let valueRadius, color;
-//     sortedDataset.forEach(data => {
-//         valueRadius = (360 * data.value / valuesSum);
-//         const colorResult = chooseColor(PALETTE_HEX, pickedColors);
-//         color = colorResult.chosenColor;
-//         pickedColors = colorResult.updatedPickedColors;
-//         conicGradient += `${color} ${radius}deg ${radius + valueRadius}deg, `;
-//         radius += valueRadius;
-//         processedDataset.push({
-//             legend: data.legend,
-//             percentValue: Math.round(100 * data.value / valuesSum),
-//             color: color
-//         });
-//     });
-//     conicGradient = conicGradient.slice(0, conicGradient.length - 2) + ")";
-
-//     return (
-//         <div className={`pie-chart ${className}`} id={id}>
-//             <div className="shape" style={{ background: processedDataset.length > 0 ? conicGradient : "var(--neutral-color)" }} />
-//             <div className="legend">
-//                 {
-//                     processedDataset.length > 0 ?
-//                         processedDataset.map((data, index) => {
-//                             return (
-//                                 <div className="legend-item" key={`${chartId} ${index}`}>
-//                                     <div className="legend-color" style={{ backgroundColor: data.color }}></div>
-//                                     <div className="legend-name">
-//                                         {`${data.legend} (${data.percentValue}%)`}
-//                                     </div>
-//                                 </div>
-//                             );
-//                         }) :
-//                         <>Aucune donnée</>
-//                 }
-//             </div>
-//         </div>
-//     );
-// }
-
 export function PieChart({
     className,
     id,
@@ -135,21 +70,6 @@ export function PieChart({
             color: color
         });
     });
-
-    const [data, setData] = useState(getData());
-
-    useEffect(() => {
-        const setStateInterval =
-            window.setInterval(() => {
-                setData(getData());
-            }, 4000);
-
-        return () => {
-            window.clearInterval(
-                setStateInterval,
-            );
-        };
-    }, []);
 
     return (
         <div className={`pie-chart ${className}`} id={id}>
@@ -195,22 +115,5 @@ export function PieChart({
         </div>
     );
 }
-
-function getData() {
-    const rand = () =>
-        Math.max(
-            Math.floor(Math.random() * 10000),
-            1000,
-        );
-    return [
-        { x: "5-13", y: rand() },
-        { x: "14-17", y: rand() },
-        { x: "18-24", y: rand() },
-        { x: "25-44", y: rand() },
-        { x: "45-64", y: rand() },
-        { x: "≥65", y: rand() },
-    ];
-}
-
 
 PieChart.defaultProps = { className: "", id: "", sortDataset: "none" };

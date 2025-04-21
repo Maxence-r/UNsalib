@@ -43,7 +43,7 @@ router.post('/auth/login', async (req, res) => {
                 expiresIn: '60d',
             }
         );
-        res.cookie('token', token, { maxAge: 60 * 24 * 60 * 60 * 1000, sameSite: 'Lax' })
+        res.cookie('token', token, { domain: `.${process.env.PUBLIC_DOMAIN}`, maxAge: 60 * 24 * 60 * 60 * 1000, sameSite: 'Lax' })
             .status(200)
             .json({ message: 'LOGIN_SUCCESSFUL' });
     } catch (error) {
@@ -54,7 +54,7 @@ router.post('/auth/login', async (req, res) => {
 
 router.get('/auth/logout', async (req, res) => {
     // Clearing the cookie
-    res.clearCookie('token').json({ message: 'LOGOUT_SUCCESSFUL' });
+    res.clearCookie('token', { domain: `.${process.env.PUBLIC_DOMAIN}` }).json({ message: 'LOGOUT_SUCCESSFUL' });
 });
 
 router.get('/auth/status', async (req, res) => {
@@ -330,7 +330,7 @@ router.get('/stats/unique-visitors', async (req, res) => {
                 $lte: end
             }
         });
-        
+
         // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
         // Counting unique visitors per day
@@ -379,7 +379,7 @@ router.get('/stats/views', async (req, res) => {
                 $lte: end
             }
         });
-        
+
         // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
         // Counting views per day
@@ -428,7 +428,7 @@ router.get('/stats/platforms', async (req, res) => {
                 $lte: end
             }
         });
-        
+
         // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
         // Counting platforms per day

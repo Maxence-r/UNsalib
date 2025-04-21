@@ -8,6 +8,7 @@
     gap: 18px;
     position: relative;
     border-bottom: 2px solid var(--border-color);
+    background-color: var(--surface-color);
 }
 
 .navbar h2 {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, cloneElement, ReactElement } from "react";
-import { LogOut } from "lucide-react";
+import { LogOut, SquareArrowOutUpRight } from "lucide-react";
 
 import { logout } from "../../_utils/client-actions";
 import { ApiUserAccount } from "@/app/admin/dashboard/_utils/types";
@@ -103,6 +103,7 @@ export default function Sidebar({
             <ActionsList
                 actions={[
                     { icon: <Image fill src={`data:image/png;base64,${userAccount.icon}`} alt="" />, name: `${userAccount.name} ${userAccount.lastname}`, selected: selectedTabId === "account" ? true : false, onClick: () => setSelectedTabId("account") },
+                    { icon: <SquareArrowOutUpRight size={20} />, name: "Ancienne version", selected: false, onClick: () => window.location.href = "/admin/old" },
                     { icon: <LogOut size={20} />, name: "Déconnexion", selected: false, onClick: handleLogout }
                 ]}
             />

@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import launch from './src/backend/background/main.js';
 import sallesApi from './src/backend/routes/api/rooms.js';
 import adminApi from './src/backend/routes/api/admin.js';
-import adminDashboard from './src/backend/routes/admin.js';
 import authentication from './src/backend/middlewares/auth.js';
 import stats from './src/backend/middlewares/stats.js';
 
@@ -31,11 +30,9 @@ app.use('/.well-known', serveStatic('./.well-known'));
 // API ROUTES
 app.use(authentication);
 app.use(stats);
-app.use('/api/rooms', sallesApi);
-app.use('/api/admin', adminApi);
+app.use('/rooms', sallesApi);
+app.use('/admin', adminApi);
 
-// OTHER ROUTES
-app.use('/admin', adminDashboard);
 // 404 FALLBACK
 app.use((req, res) => {
     res.status(404);

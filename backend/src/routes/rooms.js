@@ -1,18 +1,18 @@
 import express from 'express';
 const router = express.Router();
-import Room from '../../models/room.js';
-import Course from '../../models/course.js';
+import Room from '../models/room.js';
+import Course from '../models/course.js';
 import mongoose from 'mongoose';
 import {
     isValidDate,
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
-} from '../../utils/date.js';
+} from '../utils/date.js';
 import {
     updateStats
-} from '../../utils/stats.js';
-import { getGroupsFromCoursesList } from '../../utils/dbProcessing.js';
+} from '../utils/stats.js';
+import { getGroupsFromCoursesList } from '../utils/dbProcessing.js';
 
 const VACATIONS = [52, 1, 8, 16];
 const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };

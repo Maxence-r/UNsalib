@@ -1,7 +1,4 @@
-import pkg from 'jsonwebtoken';
-const { verify } = pkg;
-import 'dotenv/config'
-import Account from '../models/account.js';
+import { getAccountFromToken } from '../utils/auth.js';
 
 const authentication = async (req, res, next) => {
     const token = req.cookies.token;
@@ -11,12 +8,11 @@ const authentication = async (req, res, next) => {
     }
 
     try {
-        const decodedToken = verify(token, process.env.TOKEN.toString());
-        if (await Account.exists({ _id: decodedToken.userId })) {
-            req.userId = decodedToken.userId;
+        req.connected = false;
+        const userId = await getAccountFromToken(token);
+        if (userId) {
+            req.userId = userId;
             req.connected = true;
-        } else {
-            req.connected = false;
         }
         return next();
     } catch (error) {

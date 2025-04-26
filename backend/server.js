@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import app from './app.js';
-import { Server } from 'socket.io';
+import WebSocket from "./src/backend/utils/websockets.js";
 
 const server = createServer(app);
 
@@ -48,11 +48,6 @@ server.on("listening", () => {
 
 server.listen(port);
 
-// Initialize Socket.IO here
-const io = new Server(server, {
-    cors: {
-        origin: [process.env.PUBLIC_FRONTEND_URL, process.env.PRIVATE_FRONTEND_URL]
-    }
-});
+const wsManager = new WebSocket(server);
 
-export default io;
+export default wsManager;

@@ -3,7 +3,7 @@ import Course from '../models/course.js';
 import Room from '../models/room.js';
 import 'dotenv/config';
 import { closestPaletteColor } from '../utils/color.js';
-import io from '../../../server.js';
+import wsManager from '../../../server.js';
 
 // CONSTANTS
 // Groups update interval in milliseconds
@@ -268,7 +268,7 @@ async function fetchCourses(group) {
         }
 
         // Sending an update message to all clients
-        io.emit('groupUpdated', { message: `Groupe ${group.name} mis à jour` });
+        wsManager.sendGroupsUpdate(group.name);
     } catch (error) {
         console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
     }

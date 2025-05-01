@@ -20,6 +20,8 @@ import {
 const router = express.Router();
 const { sign } = pkg;
 
+const TOKEN_VALIDITY_DAYS = 30;
+
 router.post('/auth/login', async (req, res) => {
     try {
         // Checking credentials
@@ -40,10 +42,10 @@ router.post('/auth/login', async (req, res) => {
             },
             process.env.TOKEN.toString(),
             {
-                expiresIn: '60d',
+                expiresIn: `${TOKEN_VALIDITY_DAYS}d`,
             }
         );
-        res.cookie('token', token, { domain: `.${process.env.PUBLIC_DOMAIN}`, maxAge: 60 * 24 * 60 * 60 * 1000, sameSite: 'Lax' })
+        res.cookie('token', token, { domain: `.${process.env.PUBLIC_DOMAIN}`, maxAge: TOKEN_VALIDITY_DAYS * 24 * 60 * 60 * 1000, sameSite: 'Lax' })
             .status(200)
             .json({ message: 'LOGIN_SUCCESSFUL' });
     } catch (error) {

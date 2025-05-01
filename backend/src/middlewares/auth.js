@@ -1,10 +1,11 @@
 import { getAccountFromToken } from "../utils/auth.js";
 
-const authentication = async (req, res, next) => {
+async function authMiddleware(req, res, next) {
     req.userId = undefined;
     req.connected = false;
     if (req.path.startsWith("/admin")) {
         const token = req.cookies?.token;
+        console.log(token)
         const userId = await getAccountFromToken(token);
         if (userId) {
             req.userId = userId;
@@ -17,4 +18,4 @@ const authentication = async (req, res, next) => {
     return next();
 };
 
-export default authentication;
+export default authMiddleware;

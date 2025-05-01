@@ -1,9 +1,6 @@
-import crypto from 'crypto';
-import {
-    updateStats
-} from '../utils/stats.js';
+import { updateStats } from '../utils/stats.js';
 
-const stats = async (req, res, next) => {
+async function statsMiddleware(req, res, next) {
     req.statsUUID = req.cookies.clientUuid;
 
     // Updating stats
@@ -18,4 +15,4 @@ const stats = async (req, res, next) => {
     return next();
 };
 
-export default stats;
+export default statsMiddleware;

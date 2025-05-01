@@ -1,6 +1,7 @@
+import 'dotenv/config';
+
 import Group from '../models/group.js';
 import Course from '../models/course.js';
-import 'dotenv/config'
 
 // Main
 async function fixDb() {

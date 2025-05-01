@@ -1,6 +1,7 @@
 import { createServer } from "http";
+
 import app from './app.js';
-import WebSocket from "./src/backend/utils/websockets.js";
+import WebSocket from "./src/utils/websockets.js";
 
 const server = createServer(app);
 

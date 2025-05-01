@@ -1,5 +1,5 @@
 import Stat from "../models/stat.js";
-import wsManager from "../../../server.js";
+import wsManager from "../../server.js";
 
 // Compares two statistics to sort them
 function compareStatsObjs(a, b) {

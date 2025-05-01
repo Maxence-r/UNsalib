@@ -1,7 +1,8 @@
+import 'dotenv/config';
+
 import fixDb from "./fixDB.js";
 import getGroups from "./getGroups.js";
 import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
-import 'dotenv/config'
 
 async function launch() {
     // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately

@@ -1,9 +1,10 @@
+import 'dotenv/config';
+
 import Group from '../models/group.js';
 import Course from '../models/course.js';
 import Room from '../models/room.js';
-import 'dotenv/config';
 import { closestPaletteColor } from '../utils/color.js';
-import wsManager from '../../../server.js';
+import wsManager from '../../server.js';
 
 // CONSTANTS
 // Groups update interval in milliseconds

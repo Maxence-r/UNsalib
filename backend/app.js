@@ -1,15 +1,16 @@
 import express, { json, urlencoded, static as serveStatic } from 'express';
-const app = express();
 import cors from 'cors';
-
 import { set, connect } from 'mongoose';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
-import launch from './src/backend/background/main.js';
-import sallesApi from './src/backend/routes/api/rooms.js';
-import adminApi from './src/backend/routes/api/admin.js';
-import authentication from './src/backend/middlewares/auth.js';
-import stats from './src/backend/middlewares/stats.js';
+
+import launch from './src/background/main.js';
+import sallesApi from './src/routes/rooms.js';
+import adminApi from './src/routes/admin.js';
+import authentication from './src/middlewares/auth.js';
+import stats from './src/middlewares/stats.js';
+
+const app = express();
 
 // SECURITE SERVER
 app.disable('x-powered-by');

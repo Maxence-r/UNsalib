@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "info.unsalib.twa",
-        "sha256_cert_fingerprints": ["89:93:00:08:06:96:2A:AC:C8:07:C8:75:60:3A:47:01:A7:E0:12:3E:4E:06:11:0C:77:E0:5E:2F:C5:E6:37:5A"]
-      }
-    }]

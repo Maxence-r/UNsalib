@@ -65,9 +65,6 @@ router.get('/auth/status', async (req, res) => {
 });
 
 router.get('/rooms', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     try {
         // Getting all the rooms
         let rooms = await Room.find({});
@@ -89,9 +86,6 @@ router.get('/rooms', async (req, res) => {
 });
 
 router.get('/room', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const id = req.query.id;
 
@@ -129,9 +123,6 @@ router.get('/room', async (req, res) => {
 });
 
 router.post('/update-room', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const roomId = req.body.roomId;
     const data = req.body.data;
@@ -156,9 +147,6 @@ router.post('/update-room', async (req, res) => {
 });
 
 router.get('/account-infos', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     try {
         // Getting the user
         const user = await Account.findOne({ _id: req.userId }).select(
@@ -173,9 +161,6 @@ router.get('/account-infos', async (req, res) => {
 });
 
 router.post('/add-course', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const roomId = req.body.roomId;
     const startAt = req.body.startAt;
@@ -223,9 +208,6 @@ router.post('/add-course', async (req, res) => {
 });
 
 router.get('/stats', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const month = req.query.month;
     const year = req.query.year;
@@ -299,9 +281,6 @@ router.get('/stats', async (req, res) => {
 });
 
 router.get('/stats/unique-visitors', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const start = req.query.start;
     const end = req.query.end;
@@ -348,9 +327,6 @@ router.get('/stats/unique-visitors', async (req, res) => {
 });
 
 router.get('/stats/views', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const start = req.query.start;
     const end = req.query.end;
@@ -397,9 +373,6 @@ router.get('/stats/views', async (req, res) => {
 });
 
 router.get('/stats/platforms', async (req, res) => {
-    // Redirect user if not logged in
-    if (!req.connected) return res.redirect('/admin/auth');
-
     // Retrieving query parameters
     const start = req.query.start;
     const end = req.query.end;

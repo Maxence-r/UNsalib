@@ -8,7 +8,7 @@ interface LogoutResult {
 export async function logout(): Promise<LogoutResult> {
     try {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/admin/auth/logout`,
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
             { credentials: "include" }
         );
         const jsonResponse = await response.json();

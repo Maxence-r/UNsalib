@@ -14,7 +14,7 @@ export default function Form() {
     const login = async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/admin/auth/login`,
+                `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
                 {
                     method: "POST",
                     credentials: "include",

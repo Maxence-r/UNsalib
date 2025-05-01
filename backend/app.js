@@ -1,4 +1,4 @@
-import express, { json, urlencoded, static as serveStatic } from "express";
+import express, { json, urlencoded } from "express";
 import cors from "cors";
 import { set, connect } from "mongoose";
 import "dotenv/config";

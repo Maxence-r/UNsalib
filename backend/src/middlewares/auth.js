@@ -5,7 +5,6 @@ async function authMiddleware(req, res, next) {
     req.connected = false;
     if (req.path.startsWith("/admin")) {
         const token = req.cookies?.token;
-        console.log(token)
         const userId = await getAccountFromToken(token);
         if (userId) {
             req.userId = userId;

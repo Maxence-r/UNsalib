@@ -41,10 +41,12 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
     const [filteredRoomsList, setFilteredRoomsList] = useState(roomsList);
 
     useEffect(() => {
-        const filtered = roomsList.filter(room =>
-            normalizeString(room.name).includes(normalizeString(filter)) || normalizeString(room.building).includes(normalizeString(filter))
-        );
-        setFilteredRoomsList(filtered);
+        if (roomsList) {
+            const filtered = roomsList.filter(room =>
+                normalizeString(room.name).includes(normalizeString(filter)) || normalizeString(room.building).includes(normalizeString(filter))
+            );
+            setFilteredRoomsList(filtered);
+        }
     }, [filter, roomsList]);
 
     return (

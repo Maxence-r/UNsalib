@@ -14,7 +14,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 10px;
+    padding-left: 14px;
+}
+
+.button:has(:only-child) {
+    padding: 0px 12px;
 }
 
 .button span {

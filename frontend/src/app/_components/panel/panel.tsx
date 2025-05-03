@@ -307,7 +307,7 @@ function AboutModalContent() {
                                 <h2>Nouveautés</h2>
                                 <p>Historique des versions</p>
                             </div>
-                            <button onClick={() => window.location.href = "/new"}>
+                            <button onClick={() => window.open("/new", "_blank")}>
                                 <ArrowUpRight size={20} />
                             </button>
                         </div>

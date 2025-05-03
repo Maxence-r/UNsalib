@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Home, Star } from "lucide-react";
+import { ArrowLeft, Star, X } from "lucide-react";
 
 import Button from "@/_components/button";
 import { VERSION_NUMBER } from "@/_utils/constants";
@@ -36,8 +36,8 @@ export default function App() {
                 <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96} />
                 <h1>UNsalib</h1>
                 <span className="spacer" />
-                <Button id="home-mobile" withIcon iconOnly icon={<Home size={20} />} onClick={() => window.location.href = "/"}>Accueil</Button>
-                <Button id="home" withIcon icon={<Home size={20} />} onClick={() => window.location.href = "/"}>Accueil</Button>
+                <Button id="home-mobile" withIcon iconOnly icon={<X size={20} />} onClick={() => window.close()}>Accueil</Button>
+                <Button id="home" withIcon icon={<ArrowLeft size={20} />} onClick={() => window.close()}>Retour à UNsalib</Button>
             </div>
             <main tabIndex={-1} className="main new">
                 <div className="content-container">

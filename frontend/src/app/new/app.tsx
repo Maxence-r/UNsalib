@@ -48,6 +48,7 @@ export default function App() {
                         date="04/2025"
                         features={[
                             { icon: "⚡", description: "Optimisation du code côté client" },
+                            { icon: "📜", description: "Ajout d'une page recensant l'historique des versions" },
                             { icon: "🛠️", description: "Correction de bugs" }
                         ]}
                     />

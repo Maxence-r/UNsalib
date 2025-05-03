@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
 import Panel from "./_components/panel/panel";
 import Calendar from "./_components/calendar/calendar";
 import Modal from "@/_components/modal";

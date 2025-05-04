@@ -31,7 +31,6 @@ class WebSocket {
 
             const userId = await getAccountFromToken(token);
             if (userId) {
-                console.log("*** New admin ***")
                 socket.join("admin");
             }
             next();
@@ -43,7 +42,6 @@ class WebSocket {
     }
 
     sendStatsUpdate() {
-        console.log("stats")
         this.io.to("admin").emit("dashboard:home:updated", { message: "" });
     }
 }

@@ -7,18 +7,36 @@ export default function Input({
     type, 
     placeholder,
     value,
-    onInput
+    onInput,
+    onKeyDown
 }: { 
     className: string,
     id: string, 
     type: string,
     placeholder: string,
     value: string,
-    onInput: React.KeyboardEventHandler<HTMLInputElement> 
+    onInput: React.KeyboardEventHandler<HTMLInputElement>,
+    onKeyDown: React.KeyboardEventHandler<HTMLInputElement>
 }) {
     return (
-        <input id={id} className={`input ${className}`} type={type} placeholder={placeholder} value={value} onInput={onInput} />
+        <input 
+        id={id} 
+        className={`input ${className}`} 
+        type={type} 
+        placeholder={placeholder} 
+        value={value} 
+        onInput={onInput}
+        onKeyDown={onKeyDown}
+        />
     );
 }
 
-Input.defaultProps = { className: "", id: "", type: "text", placeholder: "", value: "", onInput: (() => { }) };
+Input.defaultProps = { 
+    className: "", 
+    id: "", 
+    type: "text", 
+    placeholder: "", 
+    value: "", 
+    onInput: (() => { }), 
+    onKeyDown: (() => { }) 
+};

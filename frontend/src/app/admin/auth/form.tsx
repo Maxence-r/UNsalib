@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
 
 import Button from "@/_components/button";
 import Input from "@/_components/input";
@@ -10,6 +10,7 @@ export default function Form() {
     const [displayError, setDisplayError] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const login = async () => {
         try {
@@ -46,14 +47,28 @@ export default function Form() {
         }
     };
 
+    useEffect(() => {
+        document.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                login();
+            }
+        });
+    }, [])
+
     return (
         <>
-            {displayError != "" ? <div id="error-display">{displayError}</div> : <></>}
-            <Input id="username" type="text" placeholder="Entrez un nom d'utilisateur" value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)} />
-            <Input id="password" type="password" placeholder="Entrez un mot de passe" value={password} onInput={(e) => setPassword((e.target as HTMLInputElement).value)} />
-            <div className="submit-container">
-                <Button id="submit-button" onClick={login}>Se connecter</Button>
-                <Link href="/admin/old">Ancienne version</Link>
+            {displayError != "" ? <div id="error-display"><CircleAlert size={20} />{displayError}</div> : <></>}
+            <div className="inputs-group">
+                <div id="username" className="input-container">
+                    <Input type="text" placeholder="Nom d'utilisateur" value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)} />
+                </div>
+                <div id="password" className="input-container">
+                    <Input type={showPassword ? "text" : "password"} placeholder="Mot de passe" value={password} onInput={(e) => setPassword((e.target as HTMLInputElement).value)} />
+                    <Button onClick={() => setShowPassword(!showPassword)} secondary withIcon iconOnly icon={showPassword ? <EyeOff size={20} /> : <Eye size={20} />}>Afficher le mot de passe</Button>
+                </div>
+            </div>
+            <div className="actions">
+                <Button disabled={username.length < 1 || password.length < 1} id="submit-button" onClick={login} withIcon icon={<KeyRound size={20} />}>Se connecter</Button>
             </div>
         </>
     )

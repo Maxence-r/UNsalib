@@ -450,7 +450,15 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
         }
 
         function onGroupUpdated(value: { message: string }) {
-            setUpdatedGroupsList(previous => [...previous, value.message]);
+            setUpdatedGroupsList(previous => {
+                if (previous.length < 3) {
+                    return [...previous, value.message];
+                } else {
+                    let newArray = previous.slice(previous.length - 3, previous.length);
+                    newArray.push(value.message);
+                    return newArray;
+                }                
+            });
         }
 
         function onError(error: string) {
@@ -459,13 +467,13 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
 
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
-        socket.on("groupUpdated", onGroupUpdated);
+        socket.on("main:groupUpdated", onGroupUpdated);
         socket.on("error", onError);
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
-            socket.off("groupUpdated", onGroupUpdated);
+            socket.off("main:groupUpdated", onGroupUpdated);
             socket.off("error", onError);
         };
     }, []);
@@ -495,7 +503,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
                     <div className="campus_feed_content">
                         {
                             updatedGroupsList.map(groupMsg => {
-                                return <p key={groupMsg + new Date().toISOString}>{groupMsg}</p>
+                                return <p key={groupMsg}>{groupMsg}</p>
                             })
                         }
                     </div>

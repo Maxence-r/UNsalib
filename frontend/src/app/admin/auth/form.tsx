@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
 
 import Button from "@/_components/button";
@@ -47,28 +47,47 @@ export default function Form() {
         }
     };
 
-    useEffect(() => {
-        document.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") {
-                login();
-            }
-        });
-    }, [])
-
     return (
         <>
             {displayError != "" ? <div id="error-display"><CircleAlert size={20} />{displayError}</div> : <></>}
             <div className="inputs-group">
                 <div id="username" className="input-container">
-                    <Input type="text" placeholder="Nom d'utilisateur" value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)} />
+                    <Input
+                        type="text"
+                        placeholder="Nom d'utilisateur"
+                        value={username} onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && username.length > 0 && password.length > 0) login() }}
+                    />
                 </div>
                 <div id="password" className="input-container">
-                    <Input type={showPassword ? "text" : "password"} placeholder="Mot de passe" value={password} onInput={(e) => setPassword((e.target as HTMLInputElement).value)} />
-                    <Button onClick={() => setShowPassword(!showPassword)} secondary withIcon iconOnly icon={showPassword ? <EyeOff size={20} /> : <Eye size={20} />}>Afficher le mot de passe</Button>
+                    <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Mot de passe"
+                        value={password}
+                        onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && username.length > 0 && password.length > 0) login() }}
+                    />
+                    <Button
+                        onClick={() => setShowPassword(!showPassword)}
+                        secondary
+                        withIcon
+                        iconOnly
+                        icon={showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    >
+                        Afficher le mot de passe
+                    </Button>
                 </div>
             </div>
             <div className="actions">
-                <Button disabled={username.length < 1 || password.length < 1} id="submit-button" onClick={login} withIcon icon={<KeyRound size={20} />}>Se connecter</Button>
+                <Button
+                    disabled={username.length < 1 || password.length < 1}
+                    id="submit-button"
+                    onClick={login}
+                    withIcon
+                    icon={<KeyRound size={20} />}
+                >
+                    Se connecter
+                </Button>
             </div>
         </>
     )

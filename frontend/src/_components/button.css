@@ -10,6 +10,17 @@
     flex-shrink: 0;
 }
 
+.button.secondary {
+    background-color: transparent;
+    color: var(--on-surface-color);
+}
+
+.button:disabled {
+    background-color: var(--neutral-color-light);
+    color: var(--neutral-color-dark);
+    cursor: not-allowed;
+}
+
 .button:has(svg) {
     display: flex;
     align-items: center;
@@ -29,8 +40,20 @@
     font-family: "Space Grotesk", sans-serif;
 }
 
+.button:disabled span {
+    color: var(--neutral-color-dark);
+}
+
+.button:disabled:hover {
+    background-color: var(--neutral-color-light);
+}
+
 .button:hover {
     background-color: var(--accent-color-dark);
+}
+
+.button.secondary:hover {
+    background-color: var(--neutral-color);
 }
 
 .button--loading span {

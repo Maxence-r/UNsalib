@@ -1,33 +1,109 @@
 "use client";
+
+import Image from "next/image";
+import { ArrowLeft, Star, X } from "lucide-react";
+
 import Button from "@/_components/button";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { VERSION_NUMBER, VERSION_NAME } from "@/_utils/constants";
+import { VERSION_NUMBER } from "@/_utils/constants";
+import { Card, CardContent } from "@/_components/card";
+
+function ReleaseSection({ versionNumber, versionName, date, features }: { versionNumber: string, versionName: string, date: string, features: { icon: string, description: string }[] }) {
+    return (
+        <div className="section">
+            <div className={`title ${versionNumber == VERSION_NUMBER ? "latest" : ""}`}>
+                <h4>Version {versionNumber} {versionName != "" ? `"${versionName}"` : ""}</h4>
+                <span>•</span>
+                <span>{date}</span>
+                {versionNumber == VERSION_NUMBER ? <Star size={20} /> : <></>}
+            </div>
+            <Card highlighted={versionNumber == VERSION_NUMBER}>
+                <CardContent>
+                    <ul className="features-list">
+                        {features.map(feature => {
+                            return (<li key={feature.description} className="feature"><i>{feature.icon}</i>{feature.description}</li>);
+                        })}
+                    </ul>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
 
 export default function App() {
     return (
-        <main tabIndex={-1} className="main new">
-            <div className="animation-container">
-                <DotLottieReact
-                    src="/new-animation.lottie"
-                    loop
-                    autoplay
-                />
+        <div className="page">
+            <div className="appbar">
+                <Image className="logo" src="/logo96.png" alt="logo" width={96} height={96} />
+                <h1>UNsalib</h1>
+                <span className="spacer" />
+                <Button id="home-mobile" withIcon iconOnly icon={<X size={20} />} onClick={() => window.close()}>Accueil</Button>
+                <Button id="home" withIcon icon={<ArrowLeft size={20} />} onClick={() => window.close()}>Retour à UNsalib</Button>
             </div>
-            <div className="content-container">
-                <div className="header">
-                    <h1 className="title">UNsalib fait peau neuve&nbsp;!</h1>
-                    <h3 className="subtitle">Bienvenue sur la version {VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</h3>
+            <main tabIndex={-1} className="main new">
+                <div className="content-container">
+                    <h2 className="page-title">Journal des mises à jour</h2>
+                    <ReleaseSection
+                        versionNumber="2.1"
+                        versionName="Barbara"
+                        date="04/2025"
+                        features={[
+                            { icon: "⚡", description: "Optimisation du code côté client" },
+                            { icon: "📜", description: "Ajout d'une page recensant l'historique des versions" },
+                            { icon: "🛠️", description: "Correction de bugs" }
+                        ]}
+                    />
+                    <ReleaseSection
+                        versionNumber="2.0"
+                        versionName="Barbara"
+                        date="03/2025"
+                        features={[
+                            { icon: "🌙", description: "Mode sombre automatique pour protéger les yeux" },
+                            { icon: "📱", description: "Navigation sur mobile comme dans une vraie app, avec la prise en charge du bouton de retour" },
+                            { icon: "🦾", description: "Interface plus rapide et plus fiable grâce à la réécriture du code client en React" },
+                            { icon: "⚡", description: "Amélioration du temps de chargement des emplois du temps côté serveur" }
+                        ]}
+                    />
+                    <ReleaseSection
+                        versionNumber="1.1"
+                        versionName=""
+                        date="02/2025"
+                        features={[
+                            { icon: "🛠️", description: "Correction de plusieurs bugs dans l'algorithme de synchronisation des cours affectant de façon critique la fiabilité d'UNsalib" },
+                            { icon: "🛠️", description: "Correction des erreurs accumulées dans la base de données" }
+                        ]}
+                    />
+                    <ReleaseSection
+                        versionNumber="1.0"
+                        versionName=""
+                        date="01/2025"
+                        features={[
+                            { icon: "⚙️", description: "Nouvel algorithme de synchronisation des emplois du temps pour gérer la suppression et la modification de cours" },
+                            { icon: "📅", description: "Gestion de l'affichage des cours concurrents côté client" },
+                            { icon: "⚡", description: "Amélioration du temps de traitement des requêtes côté serveur" }
+                        ]}
+                    />
+                    <ReleaseSection
+                        versionNumber="BETA"
+                        versionName=""
+                        date="12/2024"
+                        features={[
+                            { icon: "📱", description: "Transformation en PWA pour rendre l'installation possible sur les navigateurs compatibles" },
+                            { icon: "✏️", description: "Ajout d'un tableau de bord administrateur pour gérer les salles facilement" },
+                            { icon: "🛠️", description: "Correction de bugs et amélioration de l'apparence" }
+                        ]}
+                    />
+                    <ReleaseSection
+                        versionNumber="BETA"
+                        versionName=""
+                        date="11/2024"
+                        features={[
+                            { icon: "🔍", description: "Recherche de salles libres" },
+                            { icon: "📅", description: "Consultation des emplois du temps de salles" },
+                            { icon: "📱", description: "Interface moderne et responsive" }
+                        ]}
+                    />
                 </div>
-                <div className="features-card">
-                    <ul className="features-list">
-                        <li className="feature"><i>🌙</i>Mode sombre automatique pour protéger les yeux</li>
-                        <li className="feature"><i>📱</i>Navigation sur mobile comme dans une vrai app, avec la prise en charge du bouton de retour</li>
-                        <li className="feature"><i>🦾</i>L&apos;interface que vous connaissez, plus rapide et plus fiable grâce à l&apos;utilisation de React</li>
-                        <li className="feature"><i>⚡</i>Améliorations du temps de chargement des emplois du temps côté serveur</li>
-                    </ul>
-                    <Button onClick={() => window.location.href = "/"}>C&apos;est parti !</Button>
-                </div>
-            </div>
-        </main>
+            </main>
+        </div>
     );
 }

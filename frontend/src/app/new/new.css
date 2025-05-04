@@ -4,57 +4,95 @@
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
     margin-block: 0px;
 }
 
-.title,
-.subtitle {
-    text-align: center;
+.page {
+    display: flex;
+    flex-direction: column;
 }
 
-.subtitle {
-    margin-top: 8px;
-    color: var(--neutral-color-dark);
+.page-title {
+    margin-bottom: 24px;
 }
 
+.page,
 .main.new {
     width: 100%;
     height: 100%;
     background-color: var(--background-color);
     color: var(--on-background-color);
+}
+
+.appbar {
+    width: 100%;
     display: flex;
     align-items: center;
+    padding: 24px;
+    box-shadow: var(--box-shadow);
+    gap: 18px;
+    height: 100px;
+    position: relative;
+    background-color: var(--surface-color);
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.appbar h1 {
+    margin-block: 0px;
+}
+
+.logo {
+    height: 46px;
+    width: auto;
+    border-radius: var(--border-radius);
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+#home-mobile {
+    display: none;
+}
+
+.main.new {
+    align-items: center;
     flex-direction: column;
-    gap: 0px;
+    overflow: auto;
+    min-height: auto;
 }
 
 .content-container {
-    max-width: 1000px;
-    padding: 0px 24px 24px 24px;
+    max-width: 800px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 24px;
-    overflow: hidden;
 }
 
-.features-card {
-    background-color: var(--surface-color);
-    border-radius: var(--border-radius);
-    padding: 24px;
-    box-shadow: var(--box-shadow);
+.section {
+    width: 100%;
+}
+
+.section .title {
+    margin-bottom: 12px;
+    color: var(--neutral-color-dark);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    max-width: 500px;
-    overflow: hidden;
+    gap: 6px;
 }
 
-.animation-container {
-    max-height: 40%;
-    flex-grow: 1;
+.section .title.latest {
+    color: var(--accent-color);
+}
+
+.section .title svg {
+    margin-left: 6px;
 }
 
 .features-list {
@@ -63,8 +101,7 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin: 0px 0px 24px 0px;
-    overflow: auto;
+    margin: 0px;
 }
 
 .feature {
@@ -72,9 +109,16 @@ h3 {
     gap: 12px;
 }
 
-@media screen and (max-width: 1024px) {
-    .animation-container {
-        max-width: 100%;
-        max-height: 30%;
+.feature i {
+    font-style: normal;
+}
+
+@media screen and (max-width: 425px) {
+    #home-mobile {
+        display: flex;
+    }
+
+    #home {
+        display: none;
     }
 }

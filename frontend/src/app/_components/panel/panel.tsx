@@ -302,6 +302,15 @@ function AboutModalContent() {
                                 <ArrowUpRight size={20} />
                             </button>
                         </div>
+                        <div className="item">
+                            <div className="infos">
+                                <h2>Nouveautés</h2>
+                                <p>Historique des versions</p>
+                            </div>
+                            <button onClick={() => window.open("/new", "_blank")}>
+                                <ArrowUpRight size={20} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

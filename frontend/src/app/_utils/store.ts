@@ -31,28 +31,6 @@ export const useInstallationStore = create<InstallationStore>()(
     )
 );
 
-interface VersionStore {
-    v2Prompt: boolean,
-    setV2Prompt: () => void,
-    hasHydrated: boolean,
-    setHasHydrated: (state: boolean) => void
-}
-
-export const useVersionStore = create<VersionStore>()(
-    persist(
-        (set) => ({
-            v2Prompt: false,
-            setV2Prompt: () => set({ v2Prompt: true }),
-            hasHydrated: false,
-            setHasHydrated: (state: boolean) => set({ hasHydrated: state })
-        }),
-        {
-            name: "unsalib-version",
-            onRehydrateStorage: (state) => (() => state.setHasHydrated(true))
-        }
-    )
-);
-
 interface PanelState {
     isOpened: boolean,
     open: () => void,

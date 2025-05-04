@@ -454,7 +454,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
                 if (previous.length < 3) {
                     return [...previous, value.message];
                 } else {
-                    let newArray = previous.slice(previous.length - 3, previous.length);
+                    const newArray = previous.slice(previous.length - 3, previous.length);
                     newArray.push(value.message);
                     return newArray;
                 }                

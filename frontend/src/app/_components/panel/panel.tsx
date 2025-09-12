@@ -330,7 +330,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     function loadTimetable(room: ApiRoom) {
         pushToHistory("panel", openPanel)
         closePanel();
-        setSelectedRoom(room.id, room.name);
+        setSelectedRoom(room.id, room.alias != "" ? `${room.alias.toUpperCase()}` : `${room.name.toUpperCase()}`);
     }
 
     return (

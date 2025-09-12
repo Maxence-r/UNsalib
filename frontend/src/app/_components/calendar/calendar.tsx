@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronUp, CalendarClock } from "lucide-react";
 
 import { useSelectedRoomStore } from "../../_utils/store";
 import Button from "@/_components/button";
@@ -117,9 +117,14 @@ export default function Calendar() {
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}>
                         <ChevronsLeft size={20} />
                     </div>
-                    <div className="week-infos">
-                        <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
-                        {courses.weekInfos.start !== "--" && <span className="week-month">{months[new Date(courses.weekInfos.start).getMonth().toString()]}</span>}
+                    <div className="week-switcher-actions">
+                        <div className="week-infos">
+                            <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                            {courses.weekInfos.start !== "--" && <span className="week-month">{months[new Date(courses.weekInfos.start).getMonth().toString()]}</span>}
+                        </div>
+                        <div className="current-week-icon" onClick={() => { setIncrement(0) }}>
+                            <CalendarClock size={20} />
+                        </div>
                     </div>
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}>
                         <ChevronsRight size={20} />

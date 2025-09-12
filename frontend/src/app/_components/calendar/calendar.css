@@ -296,11 +296,13 @@
     padding: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     z-index: 5;
+    gap: 10px;
 }
 
 .current-room {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .current-room>p {
@@ -315,6 +317,9 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--on-surface-color);
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
 }
 
 .course-box {

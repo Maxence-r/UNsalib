@@ -48,7 +48,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 75px;
+    height: 90px;
 }
 
 .calendar-container {
@@ -256,15 +256,26 @@
     cursor: pointer;
 }
 
-.week-switcher>p {
-    margin: 0;
+.week-infos {
     color: var(--neutral-color-dark);
-    font-size: 14px;
     font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.week-infos p {
+    margin: 0;
 }
 
 .week-number {
     color: var(--on-surface-color);
+}
+
+.week-month {
+    font-size: 12px;
 }
 
 .availability-box {
@@ -274,7 +285,7 @@
     justify-content: center;
     gap: 16px;
     height: 100%;
-    padding: 0 20px;
+    padding: 0 24px;
     border: 2px solid var(--border-color);
     border-top: 0;
     border-right: 0;

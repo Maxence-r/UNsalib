@@ -17,6 +17,21 @@ import { showToast, setToastMessage } from "@/_components/toast";
 import { goBack } from "@/_utils/navigation-manager";
 import { ApiError, ApiTimetable } from "@/_utils/api-types";
 
+const months: { [key: string]: string } = {
+    0: "Janvier",
+    1: "Février",
+    2: "Mars",
+    3: "Avril",
+    4: "Mai",
+    5: "Juin",
+    6: "Juillet",
+    7: "Août",
+    8: "Septembre",
+    9: "Octobre",
+    10: "Novembre",
+    11: "Décembre"
+}
+
 export default function Calendar() {
     function computeHourIndicator() {
         const dateActuelle = new Date();
@@ -102,7 +117,10 @@ export default function Calendar() {
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}>
                         <ChevronsLeft size={20} />
                     </div>
-                    <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                    <div className="week-infos">
+                        <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                        {courses.weekInfos.start !== "--" && <span className="week-month">{months[new Date(courses.weekInfos.start).getMonth().toString()]}</span>}
+                    </div>
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}>
                         <ChevronsRight size={20} />
                     </div>

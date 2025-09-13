@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const GroupSchema = Schema({
+const GroupSchema = new Schema({
     univId: {
         type: String,
         required: true,

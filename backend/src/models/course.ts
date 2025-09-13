@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const CourseSchema = Schema({
+const CourseSchema = new Schema({
     univId: {
         type: String,
         required: true,

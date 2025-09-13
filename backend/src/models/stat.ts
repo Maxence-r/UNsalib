@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const StatSchema = Schema({
+const StatSchema = new Schema({
     date: {
         type: String,
         required: true,

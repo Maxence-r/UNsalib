@@ -3,9 +3,18 @@ import { createServer } from "http";
 import app from "./app.js";
 import WebSocket from "./utils/socket.js";
 
+interface NodeSystemError extends Error {
+    code?: string;
+    errno?: number;
+    syscall?: string;
+    path?: string;
+    address?: string;
+    port?: number;
+}
+
 const server = createServer(app);
 
-const normalizePort = (val) => {
+const normalizePort = (val: string) => {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
@@ -19,7 +28,7 @@ const normalizePort = (val) => {
 const port = normalizePort(process.env.PORT || "9000");
 app.set("port", port);
 
-const errorHandler = (error) => {
+const errorHandler = (error: NodeSystemError) => {
     if (error.syscall !== "listen") {
         throw error;
     }

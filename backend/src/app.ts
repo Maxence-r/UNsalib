@@ -19,8 +19,8 @@ app.disable("x-powered-by");
 app.use(
     cors({
         origin: [
-            process.env.PUBLIC_FRONTEND_URL,
-            process.env.PRIVATE_FRONTEND_URL,
+            process.env.PUBLIC_FRONTEND_URL || "http://localhost:3000",
+            process.env.PRIVATE_FRONTEND_URL || "http://localhost:3000",
         ],
         credentials: true,
     }),

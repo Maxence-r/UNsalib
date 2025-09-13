@@ -1,10 +1,10 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-import Group from '../models/group.js';
-import Course from '../models/course.js';
-import Room from '../models/room.js';
-import { closestPaletteColor } from '../utils/color.js';
-import wsManager from '../../server.js';
+import Group from "../models/group.js";
+import Course from "../models/course.js";
+import Room from "../models/room.js";
+import { closestPaletteColor } from "../utils/color.js";
+import wsManager from "../server.js";
 
 // CONSTANTS
 // Groups update interval in milliseconds
@@ -22,8 +22,8 @@ function getRequestDates(increment) {
     startDate.setDate(startDate.getDate() - 1);
 
     return {
-        start: startDate.toISOString().split('T')[0],
-        end: endDate.toISOString().split('T')[0]
+        start: startDate.toISOString().split("T")[0],
+        end: endDate.toISOString().split("T")[0],
     };
 }
 
@@ -33,11 +33,11 @@ async function processRoom(roomName) {
     if (!roomName) return;
 
     // Formatting the room and building names
-    const formattedRoom = roomName.includes('(')
-        ? roomName.split('(')[0].trim()
+    const formattedRoom = roomName.includes("(")
+        ? roomName.split("(")[0].trim()
         : roomName.trim();
-    const formattedBuilding = roomName.includes('(')
-        ? roomName.split('(')[1].split(')')[0]
+    const formattedBuilding = roomName.includes("(")
+        ? roomName.split("(")[1].split(")")[0]
         : roomName;
 
     // Trying to find the room in the database
@@ -48,20 +48,22 @@ async function processRoom(roomName) {
         room = new Room({
             name: formattedRoom,
             seats: 0,
-            building: formattedBuilding
+            building: formattedBuilding,
         });
         await room.save();
-        console.log(`\r\x1b[KNouvelle salle ajoutée : ${formattedRoom} (${formattedBuilding})`);
+        console.log(
+            `\r\x1b[KNouvelle salle ajoutée : ${formattedRoom} (${formattedBuilding})`,
+        );
     }
 
     return room;
 }
 
-// Splits a string present in the data supplied by the University 
-// (blocks separated by ‘;’) and returns an array of elements 
+// Splits a string present in the data supplied by the University
+// (blocks separated by ‘;’) and returns an array of elements
 function splitUnivDataBlocks(blocks) {
-    if (blocks && blocks !== '') {
-        return blocks.split(';').map(item => item.trim());
+    if (blocks && blocks !== "") {
+        return blocks.split(";").map((item) => item.trim());
     }
     return [];
 }
@@ -84,10 +86,14 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
     }
 
     // Processing the dbCourse's rooms, teachers and modules to put them into a convenient format
-    let dbRooms = await Promise.all(dbCourse.rooms.map(async (roomId) => {
-        let room = await Room.findOne({ _id: roomId });
-        return room.name == room.building ? `${room.name}` : `${room.name} (${room.building})`;
-    }));
+    let dbRooms = await Promise.all(
+        dbCourse.rooms.map(async (roomId) => {
+            let room = await Room.findOne({ _id: roomId });
+            return room.name == room.building
+                ? `${room.name}`
+                : `${room.name} (${room.building})`;
+        }),
+    );
     let dbModules = dbCourse.modules;
     let dbTeachers = dbCourse.teachers;
 
@@ -102,8 +108,15 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
         univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
 
         // Eliminating the course by testing its characteristics from the most likely to differ to the least likely (saves time)
-        if (univCourse.start_at === dbCourse.start && univCourse.end_at === dbCourse.end) {
-            if (univCourse.notes === dbCourse.notes || (univCourse.notes === null && dbCourse.notes === '') || (univCourse.notes === undefined && dbCourse.notes === '')) {
+        if (
+            univCourse.start_at === dbCourse.start &&
+            univCourse.end_at === dbCourse.end
+        ) {
+            if (
+                univCourse.notes === dbCourse.notes ||
+                (univCourse.notes === null && dbCourse.notes === "") ||
+                (univCourse.notes === undefined && dbCourse.notes === "")
+            ) {
                 if (areArraysEqual(univRooms, dbRooms)) {
                     if (areArraysEqual(univTeachers, dbTeachers)) {
                         if (areArraysEqual(univModules, dbModules)) {
@@ -116,7 +129,6 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
                 }
             }
         }
-        
     }
 
     return { found: false };
@@ -133,13 +145,15 @@ async function processGroupCourses(univData, dbData, groupInfos) {
     for (const course of dbData) {
         // Trying to find the course in the latest University data
         wantedCourse = await isDbCourseInUnivArray(course, univData);
-        if (wantedCourse.found) { // if the course is found remove it from univData
+        if (wantedCourse.found) {
+            // if the course is found remove it from univData
             univData.splice(wantedCourse.index, 1);
-        } else { // else flag it for deletion
+        } else {
+            // else flag it for deletion
             dbToRemove.push(course);
         }
     }
-    // Now, univData only contains the courses that need to be added to our DB 
+    // Now, univData only contains the courses that need to be added to our DB
     // and dbToRemove contains the courses that need to be deleted
 
     // Browsing the courses that need to be deleted from our database
@@ -149,12 +163,15 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             const updatedGroups = [];
             course.groups.forEach((group) => {
                 if (group.toString() !== groupInfos._id.toString()) {
-                    updatedGroups.push(group)
+                    updatedGroups.push(group);
                 }
             });
-            await Course.updateOne({ _id: course._id }, {
-                $set: { groups: updatedGroups }
-            });
+            await Course.updateOne(
+                { _id: course._id },
+                {
+                    $set: { groups: updatedGroups },
+                },
+            );
             result.updated += 1;
         } else {
             // If there is only one group in the course record, delete it
@@ -162,15 +179,24 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             result.deleted += 1;
         }
     }
-    
+
     // Browsing courses that remain in univData (new to our database)
     for (const course of univData) {
         // Checking if data is valid (e.g: excludes holidays with no associated rooms)
-        if (!course.start_at || !course.end_at || !course.id || !course.celcat_id || !course.rooms_for_blocks) continue;
+        if (
+            !course.start_at ||
+            !course.end_at ||
+            !course.id ||
+            !course.celcat_id ||
+            !course.rooms_for_blocks
+        )
+            continue;
 
         // Processing the course's rooms, teachers and modules to put them into our DB format
         let rooms = splitUnivDataBlocks(course.rooms_for_blocks);
-        rooms = await Promise.all(rooms.map(async (roomName) => (await processRoom(roomName))._id));
+        rooms = await Promise.all(
+            rooms.map(async (roomName) => (await processRoom(roomName))._id),
+        );
         const teachers = splitUnivDataBlocks(course.teachers_for_blocks);
         const modules = splitUnivDataBlocks(course.modules_for_blocks);
 
@@ -179,49 +205,58 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             univId: course.id.toString(),
             start: course.start_at,
             end: course.end_at,
-            category: course.categories || '',
-            notes: course.notes || '',
-            rooms: { 
+            category: course.categories || "",
+            notes: course.notes || "",
+            rooms: {
                 $all: rooms, // only checks that all the elements of rooms are present
-                $size: rooms.length // so we need to also check the array size
-                // if it contains exactly all the rooms it's the same array 
+                $size: rooms.length, // so we need to also check the array size
+                // if it contains exactly all the rooms it's the same array
             },
-            teachers: { // same here
+            teachers: {
+                // same here
                 $all: teachers,
-                $size: teachers.length
+                $size: teachers.length,
             },
-            modules: { // same here
+            modules: {
+                // same here
                 $all: modules,
-                $size: modules.length
+                $size: modules.length,
             },
         });
 
-        if (!existingCourse || existingCourse === null || existingCourse === undefined) {
+        if (
+            !existingCourse ||
+            existingCourse === null ||
+            existingCourse === undefined
+        ) {
             // If the course doesn't exists, create it in our DB
             const newCourse = new Course({
                 univId: course.id,
                 celcatId: course.celcat_id,
-                category: course.categories || '',
+                category: course.categories || "",
                 start: course.start_at,
                 end: course.end_at,
-                notes: course.notes || '',
-                color: closestPaletteColor(course.color) || '#FF7675',
+                notes: course.notes || "",
+                color: closestPaletteColor(course.color) || "#FF7675",
                 rooms: rooms,
                 teachers: teachers,
                 groups: [groupInfos._id],
-                modules: modules
+                modules: modules,
             });
             await newCourse.save();
             result.created += 1;
         } else {
             // If the course already exists, add the current processed group to its record
-            await Course.updateOne({ _id: existingCourse._id }, {
-                $push: { groups: groupInfos._id }
-            });
+            await Course.updateOne(
+                { _id: existingCourse._id },
+                {
+                    $push: { groups: groupInfos._id },
+                },
+            );
             result.updated += 1;
         }
     }
-    
+
     return result;
 }
 
@@ -235,7 +270,9 @@ async function fetchCourses(group) {
 
     // Logging if needed
     if (process.env.LOGS_RECUP_GPES == "true") {
-        console.log(`---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`);
+        console.log(
+            `---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`,
+        );
     }
 
     // Building request URL
@@ -249,9 +286,9 @@ async function fetchCourses(group) {
         // Getting some related data from our database
         const groupInfos = await Group.findOne({ name: group.name });
         const dbRecords = await Course.find({
-            start: { $gte: dates.start + 'T00:00:00+01:00' },
-            end: { $lte: dates.end + 'T23:59:59+01:00' },
-            groups: groupInfos._id
+            start: { $gte: dates.start + "T00:00:00+01:00" },
+            end: { $lte: dates.end + "T23:59:59+01:00" },
+            groups: groupInfos._id,
         });
 
         // Processing all the courses for this group
@@ -264,14 +301,21 @@ async function fetchCourses(group) {
 
         // Logging if needed
         if (process.env.LOGS_RECUP_GPES == "true") {
-            console.log(`Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`);
-            console.log(`Temps de traitement : ${parseFloat('' + (processingTime / 1000)).toFixed(2)}s | Temps de traitement moyen : ${parseFloat('' + ((averageProcessingTime.timeSum / averageProcessingTime.measuresNumber) / 1000)).toFixed(2)}s`)
+            console.log(
+                `Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`,
+            );
+            console.log(
+                `Temps de traitement : ${parseFloat("" + processingTime / 1000).toFixed(2)}s | Temps de traitement moyen : ${parseFloat("" + averageProcessingTime.timeSum / averageProcessingTime.measuresNumber / 1000).toFixed(2)}s`,
+            );
         }
 
         // Sending an update message to all clients
         wsManager.sendGroupsUpdate(group.name);
     } catch (error) {
-        console.error(`Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`, error);
+        console.error(
+            `Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`,
+            error,
+        );
     }
 }
 
@@ -311,7 +355,8 @@ async function getCourses() {
                     groupIndex++;
                     scheduleNextGroup();
                 }, intervalBetweenGroups);
-            } else { // all groups were processed
+            } else {
+                // all groups were processed
                 // Resetting the group index for the next cycle
                 groupIndex = 0;
                 setTimeout(() => {
@@ -322,14 +367,18 @@ async function getCourses() {
             }
         };
 
-        // Starting to update the first group 
+        // Starting to update the first group
         scheduleNextGroup();
-    };
+    }
 
     // Starting the update process
-    console.log('Démarrage du cycle de mise à jour...');
-    console.log(`${groupsNumber} groupes seront traités toutes les ${CYCLE_INTERVAL / 1000 / 60 / 60}h`);
-    console.log(`Intervalle entre chaque groupe : ${intervalBetweenGroups / 1000} secondes`);
+    console.log("Démarrage du cycle de mise à jour...");
+    console.log(
+        `${groupsNumber} groupes seront traités toutes les ${CYCLE_INTERVAL / 1000 / 60 / 60}h`,
+    );
+    console.log(
+        `Intervalle entre chaque groupe : ${intervalBetweenGroups / 1000} secondes`,
+    );
     startUpdateCycle();
 }
 

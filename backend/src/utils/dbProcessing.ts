@@ -1,9 +1,9 @@
-import Group from '../models/group.js';
+import Group from "../models/group.js";
 
 async function getGroupsFromCoursesList(courses) {
     const coursesGroups = [];
     courses.forEach((course) => {
-        course.groups.forEach(group => {
+        course.groups.forEach((group) => {
             if (!coursesGroups.includes(group)) {
                 coursesGroups.push(group);
             }
@@ -11,7 +11,7 @@ async function getGroupsFromCoursesList(courses) {
     });
 
     const dbGroups = await Group.find({
-        _id: { $in: coursesGroups }
+        _id: { $in: coursesGroups },
     });
 
     const parsedGroups = {};

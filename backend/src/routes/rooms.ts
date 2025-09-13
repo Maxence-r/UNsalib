@@ -1,23 +1,21 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
-import Room from '../models/room.js';
-import Course from '../models/course.js';
-import mongoose from 'mongoose';
+import Room from "../models/room.js";
+import Course from "../models/course.js";
+import mongoose from "mongoose";
 import {
     isValidDate,
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
-} from '../utils/date.js';
-import {
-    updateStats
-} from '../utils/stats.js';
-import { getGroupsFromCoursesList } from '../utils/dbProcessing.js';
+} from "../utils/date.js";
+import { updateStats } from "../utils/stats.js";
+import { getGroupsFromCoursesList } from "../utils/dbProcessing.js";
 
 const VACATIONS = [52, 1, 8, 16];
-const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };
+const CIE_CLOSING_DATE = { dayNumber: 1, startTime: "00:00", endTime: "12:15" };
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         // Getting all the rooms that are not banned
         let rooms = await Room.find({ banned: { $ne: true } });
@@ -25,7 +23,8 @@ router.get('/', async (req, res) => {
         // Finding out which rooms are currently available
         const now = new Date();
         now.setHours(now.getHours() + 1); // fix server time bug
-        const start = now.toISOString(), end = start;
+        const start = now.toISOString(),
+            end = start;
         let courses = await Course.find({
             $and: [{ start: { $lt: end } }, { end: { $gt: start } }],
         });
@@ -63,13 +62,15 @@ router.get('/', async (req, res) => {
 
         res.json(formattedResponse);
     } catch (error) {
-        res.status(500).json({ error: 'INTERNAL_ERROR' });
-        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+        res.status(500).json({ error: "INTERNAL_ERROR" });
+        updateStats("internal_errors", req.statsUUID, req.get("User-Agent"));
+        console.error(
+            `Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`,
+        );
     }
 });
 
-router.get('/available', async (req, res) => {
+router.get("/available", async (req, res) => {
     // Retrieving query parameters
     const start = req.query.start;
     const end = req.query.end;
@@ -78,23 +79,23 @@ router.get('/available', async (req, res) => {
     let blackBoards = req.query.blackboards ? req.query.blackboards : 0;
     let type = req.query.type;
     let features = req.query.features;
-    const noBadge = req.query.nobadge == 'true' ? true : false;
+    const noBadge = req.query.nobadge == "true" ? true : false;
 
     // Checking that all the required parameters are present
     if (!start || !end) {
-        return res.status(400).json({ error: 'MISSING_QUERIES' });
+        return res.status(400).json({ error: "MISSING_QUERIES" });
     }
     // Checking the validity of date parameters
     // Be careful to encode the '+' with '%2B' when querying
     if (!isValidDate(start) || !isValidDate(end)) {
-        return res.status(400).json({ error: 'INVALID_DATE_FORMAT' });
+        return res.status(400).json({ error: "INVALID_DATE_FORMAT" });
     }
     // Checking the validity of quantity parameters
     if (isNaN(whiteBoards) || isNaN(blackBoards)) {
-        return res.status(400).json({ error: 'INVALID_BOARDS_QUANTITY' });
+        return res.status(400).json({ error: "INVALID_BOARDS_QUANTITY" });
     }
     if (isNaN(seats)) {
-        return res.status(400).json({ error: 'INVALID_SEATS_QUANTITY' });
+        return res.status(400).json({ error: "INVALID_SEATS_QUANTITY" });
     }
 
     try {
@@ -119,29 +120,31 @@ router.get('/available', async (req, res) => {
         let courses = await Course.find({
             $and: [
                 { start: { $lt: end } }, // le cours commence avant la fin de la période demandée
-                { end: { $gt: start } } // le cours finit après le début de la période demandée
-            ]
+                { end: { $gt: start } }, // le cours finit après le début de la période demandée
+            ],
         });
 
         // Building the list of attributes requested for the db query
         const attributes = [];
         attributes.push({ seats: { $gte: seats } });
-        attributes.push({ 'boards.white': { $gte: whiteBoards } });
-        attributes.push({ 'boards.black': { $gte: blackBoards } });
+        attributes.push({ "boards.white": { $gte: whiteBoards } });
+        attributes.push({ "boards.black": { $gte: blackBoards } });
         if (features) {
-            features = features.split('-');
-            features.forEach((feature) => attributes.push({ features: feature }));
+            features = features.split("-");
+            features.forEach((feature) =>
+                attributes.push({ features: feature }),
+            );
         }
-        if (noBadge) attributes.push({ features: { $ne: 'badge' } });
+        if (noBadge) attributes.push({ features: { $ne: "badge" } });
         if (type) {
-            if (type === 'info') {
-                attributes.push({ type: 'INFO' });
-            } else if (type === 'td') {
-                attributes.push({ type: 'TD' });
-            } else if (type === 'tp') {
-                attributes.push({ type: 'TP' });
-            } else if (type === 'amphi') {
-                attributes.push({ type: 'AMPHI' });
+            if (type === "info") {
+                attributes.push({ type: "INFO" });
+            } else if (type === "td") {
+                attributes.push({ type: "TD" });
+            } else if (type === "tp") {
+                attributes.push({ type: "TP" });
+            } else if (type === "amphi") {
+                attributes.push({ type: "AMPHI" });
             }
         }
 
@@ -157,24 +160,35 @@ router.get('/available', async (req, res) => {
         let availableRooms = await Room.find({
             _id: { $nin: Object.keys(busyRoomsIds) }, // free rooms are those not being used for classes
             banned: { $ne: true },
-            $and: attributes
+            $and: attributes,
         });
 
         // Filtering info rooms when the CIE is closed
         const availableRoomsFiltered = [];
         availableRooms.map((room) => {
-            if (room.building.includes('C I E') && new Date(start).getDay() == CIE_CLOSING_DATE.dayNumber) {
+            if (
+                room.building.includes("C I E") &&
+                new Date(start).getDay() == CIE_CLOSING_DATE.dayNumber
+            ) {
                 const startTime = new Date(start).getTime() / 1000;
                 const endTime = new Date(end).getTime() / 1000;
                 let startClosingTime = new Date(start);
-                startClosingTime.setHours(CIE_CLOSING_DATE.startTime.split(':')[0]);
-                startClosingTime.setMinutes(CIE_CLOSING_DATE.startTime.split(':')[1]);
+                startClosingTime.setHours(
+                    CIE_CLOSING_DATE.startTime.split(":")[0],
+                );
+                startClosingTime.setMinutes(
+                    CIE_CLOSING_DATE.startTime.split(":")[1],
+                );
                 startClosingTime = startClosingTime.getTime() / 1000;
                 let endClosingTime = new Date(end);
-                endClosingTime.setHours(CIE_CLOSING_DATE.endTime.split(':')[0]);
-                endClosingTime.setMinutes(CIE_CLOSING_DATE.endTime.split(':')[1]);
+                endClosingTime.setHours(CIE_CLOSING_DATE.endTime.split(":")[0]);
+                endClosingTime.setMinutes(
+                    CIE_CLOSING_DATE.endTime.split(":")[1],
+                );
                 endClosingTime = endClosingTime.getTime() / 1000;
-                if (!(startClosingTime < endTime && endClosingTime > startTime)) {
+                if (
+                    !(startClosingTime < endTime && endClosingTime > startTime)
+                ) {
                     availableRoomsFiltered.push(room);
                 }
                 return;
@@ -194,33 +208,39 @@ router.get('/available', async (req, res) => {
 
         res.json(formattedResponse);
     } catch (error) {
-        res.status(500).json({ error: 'INTERNAL_ERROR' });
-        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+        res.status(500).json({ error: "INTERNAL_ERROR" });
+        updateStats("internal_errors", req.statsUUID, req.get("User-Agent"));
+        console.error(
+            `Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`,
+        );
     }
 });
 
-router.get('/timetable', async (req, res) => {
+router.get("/timetable", async (req, res) => {
     // Retrieving query parameters
     const id = req.query.id;
     const increment = req.query?.increment || 0; // increment = 0 if not specified
 
     // Checking that all the required parameters are present
     if (!id) {
-        return res.status(400).json({ error: 'MISSING_QUERIES' });
+        return res.status(400).json({ error: "MISSING_QUERIES" });
     }
     // Validating ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'INVALID_ID' });
+        return res.status(400).json({ error: "INVALID_ID" });
     }
     // Checking the validity of number parameters
     if (isNaN(increment)) {
-        return res.status(400).json({ error: 'INVALID_INCREMENT' });
+        return res.status(400).json({ error: "INVALID_INCREMENT" });
     }
     // Getting information about the requested week and checking its validity
     const requestedWeek = getWeekInfos(getWeeksNumber() + parseInt(increment));
-    if (requestedWeek.number < 0 || requestedWeek.number > 52 || increment > 18) {
-        return res.status(400).json({ error: 'INVALID_INCREMENT' });
+    if (
+        requestedWeek.number < 0 ||
+        requestedWeek.number > 52 ||
+        increment > 18
+    ) {
+        return res.status(400).json({ error: "INVALID_INCREMENT" });
     }
 
     try {
@@ -242,19 +262,22 @@ router.get('/timetable', async (req, res) => {
                     courseId: `vacances-${i}`,
                     start: start.toISOString(),
                     end: end.toISOString(),
-                    notes: '',
-                    category: '',
+                    notes: "",
+                    category: "",
                     duration: 900,
                     overflow: 0,
                     roomId: id,
-                    teachers: ['Monsieur Chill'],
-                    modules: ['Détente - Vacances'],
-                    groups: ['Tout le monde'],
-                    color: '#FF7675',
+                    teachers: ["Monsieur Chill"],
+                    modules: ["Détente - Vacances"],
+                    groups: ["Tout le monde"],
+                    color: "#FF7675",
                 });
             }
 
-            return res.send({ courses: vacationCourses, weekInfos: requestedWeek });
+            return res.send({
+                courses: vacationCourses,
+                weekInfos: requestedWeek,
+            });
         }
 
         // Getting courses based on room id and given period
@@ -272,7 +295,12 @@ router.get('/timetable', async (req, res) => {
         // Formatting the response
         const formattedResponse = courses.map((doc) => {
             // Getting duration in ms, convert to h and then to percentage
-            const duration = ((new Date(doc.end).valueOf() - new Date(doc.start).valueOf()) / 1000 / 60 / 60) * 100;
+            const duration =
+                ((new Date(doc.end).valueOf() - new Date(doc.start).valueOf()) /
+                    1000 /
+                    60 /
+                    60) *
+                100;
             // Getting the overflow as a percentage
             const overflow = getMinutesOverflow(new Date(doc.start));
             return {
@@ -287,15 +315,17 @@ router.get('/timetable', async (req, res) => {
                 teachers: doc.teachers,
                 modules: doc.modules,
                 groups: doc.groups.map((group) => parsedGroups[group]),
-                color: doc.color
+                color: doc.color,
             };
         });
 
         res.send({ courses: formattedResponse, weekInfos: requestedWeek });
     } catch (error) {
-        res.status(500).json({ error: 'INTERNAL_ERROR' });
-        updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
-        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+        res.status(500).json({ error: "INTERNAL_ERROR" });
+        updateStats("internal_errors", req.statsUUID, req.get("User-Agent"));
+        console.error(
+            `Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`,
+        );
     }
 });
 

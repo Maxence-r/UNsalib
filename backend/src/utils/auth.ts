@@ -1,7 +1,7 @@
-import pkg from 'jsonwebtoken';
+import pkg from "jsonwebtoken";
 const { verify } = pkg;
-import 'dotenv/config'
-import Account from '../models/account.js';
+import "dotenv/config";
+import Account from "../models/account.js";
 
 async function getAccountFromToken(token) {
     let userId = undefined;

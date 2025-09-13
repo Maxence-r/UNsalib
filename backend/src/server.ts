@@ -1,7 +1,7 @@
 import { createServer } from "http";
 
-import app from './app.js';
-import WebSocket from "./src/utils/socket.js";
+import app from "./app.js";
+import WebSocket from "./utils/socket.js";
 
 const server = createServer(app);
 
@@ -43,7 +43,8 @@ const errorHandler = (error) => {
 server.on("error", errorHandler);
 server.on("listening", () => {
     const address = server.address();
-    const bind = typeof address === "string" ? "pipe " + address : "port " + port;
+    const bind =
+        typeof address === "string" ? "pipe " + address : "port " + port;
     console.log("Listening on " + bind);
 });
 

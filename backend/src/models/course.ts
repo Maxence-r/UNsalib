@@ -1,22 +1,22 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 const CourseSchema = Schema({
     univId: {
         type: String,
-        required: true
+        required: true,
     },
     celcatId: {
         type: String,
-        required: true
+        required: true,
     },
     category: {
         type: String,
         required: false,
-        default: ''
+        default: "",
     },
     start: {
         type: String,
-        required: true
+        required: true,
     },
     end: {
         type: String,
@@ -25,34 +25,34 @@ const CourseSchema = Schema({
     notes: {
         type: String,
         required: false,
-        default: ''
+        default: "",
     },
     color: {
         type: String,
         required: false,
-        default: '#ff7675'
+        default: "#ff7675",
     },
     rooms: {
         type: [String],
         required: true,
-        default: []
+        default: [],
     },
     teachers: {
         type: [String],
         required: true,
-        default: []
+        default: [],
     },
     groups: {
         type: [String],
         required: true,
-        default: []
+        default: [],
     },
     modules: {
         type: [String],
         required: true,
-        default: []
-    }
+        default: [],
+    },
 });
 
-const Course = model('Course', CourseSchema);
+const Course = model("Course", CourseSchema);
 export default Course;

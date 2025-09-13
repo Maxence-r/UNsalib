@@ -5,9 +5,12 @@ class WebSocket {
     constructor(server) {
         this.io = new Server(server, {
             cors: {
-                origin: [process.env.PUBLIC_FRONTEND_URL, process.env.PRIVATE_FRONTEND_URL],
-                credentials: true
-            }
+                origin: [
+                    process.env.PUBLIC_FRONTEND_URL,
+                    process.env.PRIVATE_FRONTEND_URL,
+                ],
+                credentials: true,
+            },
         });
 
         this.io.use(async (socket, next) => {
@@ -17,10 +20,10 @@ class WebSocket {
 
             let token = undefined;
             try {
-                cookieHeader.split("; ").forEach(cookie => {
+                cookieHeader.split("; ").forEach((cookie) => {
                     const cookieParts = cookie.split("=");
                     if (cookieParts[0] === "token") {
-                        token = cookieParts[1]
+                        token = cookieParts[1];
                     }
                 });
             } catch {
@@ -38,7 +41,9 @@ class WebSocket {
     }
 
     sendGroupsUpdate(groupName) {
-        this.io.emit("main:groupUpdated", { message: `Groupe ${groupName} mis à jour` });
+        this.io.emit("main:groupUpdated", {
+            message: `Groupe ${groupName} mis à jour`,
+        });
     }
 
     sendStatsUpdate() {

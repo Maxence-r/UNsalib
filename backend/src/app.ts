@@ -4,22 +4,27 @@ import { set, connect } from "mongoose";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 
-import launch from "./src/background/main.js";
-import roomsRoutes from "./src/routes/rooms.js";
-import adminRoutes from "./src/routes/admin.js";
-import authRoutes from "./src/routes/auth.js";
-import authMiddleware from "./src/middlewares/auth.js";
-import statsMiddleware from "./src/middlewares/stats.js";
+import launch from "./background/main.js";
+import roomsRoutes from "./routes/rooms.js";
+import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
+import authMiddleware from "./middlewares/auth.js";
+import statsMiddleware from "./middlewares/stats.js";
 
 const app = express();
 
 // Server security
 app.disable("x-powered-by");
 // Default
-app.use(cors({
-    origin: [process.env.PUBLIC_FRONTEND_URL, process.env.PRIVATE_FRONTEND_URL],
-    credentials: true
-}));
+app.use(
+    cors({
+        origin: [
+            process.env.PUBLIC_FRONTEND_URL,
+            process.env.PRIVATE_FRONTEND_URL,
+        ],
+        credentials: true,
+    }),
+);
 app.use(cookieParser());
 app.use(json());
 app.use(urlencoded({ extended: true }));

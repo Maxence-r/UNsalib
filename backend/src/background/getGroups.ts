@@ -1,10 +1,11 @@
-import { parse } from 'node-html-parser';
+import { parse } from "node-html-parser";
 
-import Group from '../models/group.js';
+import Group from "../models/group.js";
 
 // CONSTANTS
 // The URL to get the timetable page
-const TIMETABLE_URL = 'https://edt-v2.univ-nantes.fr/sciences/educational_groups';
+const TIMETABLE_URL =
+    "https://edt-v2.univ-nantes.fr/sciences/educational_groups";
 
 // Gets the HTML from an URL
 async function getHTML(url) {
@@ -13,7 +14,12 @@ async function getHTML(url) {
         const html = await response.text(); // converting the response into plain text
         return html;
     } catch (error) {
-        console.error('Erreur lors de l\'obtention de la page ', url, ':', error)
+        console.error(
+            "Erreur lors de l'obtention de la page ",
+            url,
+            ":",
+            error,
+        );
         return -1;
     }
 }
@@ -29,25 +35,35 @@ async function getGroups() {
     if (page !== -1) {
         // Parsing the HTML to extract the groups checkboxes with their ids
         const docRoot = parse(page);
-        const groupsInputs = docRoot.querySelectorAll('#desktopGroupForm #educational_groups input');
+        const groupsInputs = docRoot.querySelectorAll(
+            "#desktopGroupForm #educational_groups input",
+        );
 
         for (const input of groupsInputs) {
             // Getting the id of each checkbox
-            const group = input.id.replace('desktop-timetable-', '');
+            const group = input.id.replace("desktop-timetable-", "");
             const exists = await Group.exists({ univId: group });
 
             // If the group is not in the database, store it
             if (!exists) {
                 const groupObj = new Group({
                     univId: group,
-                    name: input.nextElementSibling.textContent.trim()
+                    name: input.nextElementSibling.textContent.trim(),
                 });
                 await groupObj.save();
-                process.stdout.write(groupsInputs.indexOf(input) + 1 + '/' + groupsInputs.length + ' obtenus' + '\r');
+                process.stdout.write(
+                    groupsInputs.indexOf(input) +
+                        1 +
+                        "/" +
+                        groupsInputs.length +
+                        " obtenus" +
+                        "\r",
+                );
             }
         }
-    } else { // there is an error when fetching groups
-        console.error('Erreur lors de la récupération des groupes.');
+    } else {
+        // there is an error when fetching groups
+        console.error("Erreur lors de la récupération des groupes.");
     }
 }
 

@@ -26,7 +26,7 @@ const AccountSchema = Schema({
     },
     icon: {
         type: String,
-        default: ""
+        default: "",
     },
 });
 

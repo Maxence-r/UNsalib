@@ -85,10 +85,10 @@ function getDatesRange(start, end) {
     const range = [];
     let current = start;
     while (current < end) {
-        range.push(current.toISOString().split('T')[0]);
+        range.push(current.toISOString().split("T")[0]);
         current.setDate(current.getDate() + 1);
     }
-    range.push(current.toISOString().split('T')[0]);
+    range.push(current.toISOString().split("T")[0]);
     return range;
 }
 
@@ -98,5 +98,5 @@ export {
     getWeeksNumber,
     getMinutesOverflow,
     isSameDay,
-    getDatesRange
+    getDatesRange,
 };

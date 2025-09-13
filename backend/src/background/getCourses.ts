@@ -76,26 +76,26 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
         if (a == null || b == null) return false;
         if (a.length !== b.length) return false;
 
-        let a1 = a.sort();
-        let b1 = b.sort();
+        const a1 = a.sort();
+        const b1 = b.sort();
 
-        for (var i = 0; i < a1.length; ++i) {
+        for (let i = 0; i < a1.length; ++i) {
             if (a1[i] !== b1[i]) return false;
         }
         return true;
     }
 
     // Processing the dbCourse's rooms, teachers and modules to put them into a convenient format
-    let dbRooms = await Promise.all(
+    const dbRooms = await Promise.all(
         dbCourse.rooms.map(async (roomId) => {
-            let room = await Room.findOne({ _id: roomId });
+            const room = await Room.findOne({ _id: roomId });
             return room.name == room.building
                 ? `${room.name}`
                 : `${room.name} (${room.building})`;
         }),
     );
-    let dbModules = dbCourse.modules;
-    let dbTeachers = dbCourse.teachers;
+    const dbModules = dbCourse.modules;
+    const dbTeachers = dbCourse.teachers;
 
     // Checking if our DB course is present in the University data
     let univRooms, univTeachers, univModules;
@@ -292,7 +292,7 @@ async function fetchCourses(group) {
         });
 
         // Processing all the courses for this group
-        let result = await processGroupCourses(jsonData, dbRecords, groupInfos);
+        const result = await processGroupCourses(jsonData, dbRecords, groupInfos);
 
         // Calculating the new average processing time
         const processingTime = new Date() - startProcessingTime;

@@ -18,14 +18,14 @@ const CIE_CLOSING_DATE = { dayNumber: 1, startTime: "00:00", endTime: "12:15" };
 router.get("/", async (req, res) => {
     try {
         // Getting all the rooms that are not banned
-        let rooms = await Room.find({ banned: { $ne: true } });
+        const rooms = await Room.find({ banned: { $ne: true } });
 
         // Finding out which rooms are currently available
         const now = new Date();
         now.setHours(now.getHours() + 1); // fix server time bug
         const start = now.toISOString(),
             end = start;
-        let courses = await Course.find({
+        const courses = await Course.find({
             $and: [{ start: { $lt: end } }, { end: { $gt: start } }],
         });
         const busyRoomsIds = {};
@@ -75,9 +75,9 @@ router.get("/available", async (req, res) => {
     const start = req.query.start;
     const end = req.query.end;
     const seats = req.query.seats ? req.query.seats : 0;
-    let whiteBoards = req.query.whiteboards ? req.query.whiteboards : 0;
-    let blackBoards = req.query.blackboards ? req.query.blackboards : 0;
-    let type = req.query.type;
+    const whiteBoards = req.query.whiteboards ? req.query.whiteboards : 0;
+    const blackBoards = req.query.blackboards ? req.query.blackboards : 0;
+    const type = req.query.type;
     let features = req.query.features;
     const noBadge = req.query.nobadge == "true" ? true : false;
 
@@ -117,7 +117,7 @@ router.get("/available", async (req, res) => {
         // Cours           |-----------|
         // Demande     |-----------|
         //
-        let courses = await Course.find({
+        const courses = await Course.find({
             $and: [
                 { start: { $lt: end } }, // le cours commence avant la fin de la période demandée
                 { end: { $gt: start } }, // le cours finit après le début de la période demandée
@@ -157,7 +157,7 @@ router.get("/available", async (req, res) => {
         });
 
         // Getting available rooms according to the attributes requested by the user
-        let availableRooms = await Room.find({
+        const availableRooms = await Room.find({
             _id: { $nin: Object.keys(busyRoomsIds) }, // free rooms are those not being used for classes
             banned: { $ne: true },
             $and: attributes,
@@ -281,7 +281,7 @@ router.get("/timetable", async (req, res) => {
         }
 
         // Getting courses based on room id and given period
-        let courses = await Course.find({
+        const courses = await Course.find({
             rooms: id,
             $and: [
                 { start: { $gte: requestedWeek.start } },

@@ -73,7 +73,7 @@ router.get("/auth/status", async (req, res) => {
 router.get("/rooms", async (req, res) => {
     try {
         // Getting all the rooms
-        let rooms = await Room.find({});
+        const rooms = await Room.find({});
 
         // Formatting the response
         const formattedResponse = rooms.map((doc) => ({
@@ -203,7 +203,7 @@ router.post("/add-course", async (req, res) => {
 
     try {
         // Getting the room
-        let room = await Room.findOne({ _id: roomId });
+        const room = await Room.findOne({ _id: roomId });
 
         // The room doesn't exist
         if (!room) {
@@ -346,8 +346,8 @@ router.get("/stats/unique-visitors", async (req, res) => {
 
     // Checking the date parameters validity
     try {
-        let startDate = new Date(start).toISOString();
-        let endDate = new Date(end).toISOString();
+        const startDate = new Date(start).toISOString();
+        const endDate = new Date(end).toISOString();
         if (startDate > endDate) {
             throw new Error();
         }
@@ -365,7 +365,7 @@ router.get("/stats/unique-visitors", async (req, res) => {
         });
 
         // Creating an array containing all the dates between start and end
-        let days = getDatesRange(new Date(start), new Date(end));
+        const days = getDatesRange(new Date(start), new Date(end));
         // Counting unique visitors per day
         const uniqueVisitorsPerDay = {};
         days.forEach((day) => (uniqueVisitorsPerDay[day] = 0));
@@ -394,8 +394,8 @@ router.get("/stats/views", async (req, res) => {
 
     // Checking the date parameters validity
     try {
-        let startDate = new Date(start).toISOString();
-        let endDate = new Date(end).toISOString();
+        const startDate = new Date(start).toISOString();
+        const endDate = new Date(end).toISOString();
         if (startDate > endDate) {
             throw new Error();
         }
@@ -413,7 +413,7 @@ router.get("/stats/views", async (req, res) => {
         });
 
         // Creating an array containing all the dates between start and end
-        let days = getDatesRange(new Date(start), new Date(end));
+        const days = getDatesRange(new Date(start), new Date(end));
         // Counting views per day
         const viewsPerDay = {};
         days.forEach((day) => (viewsPerDay[day] = 0));
@@ -442,8 +442,8 @@ router.get("/stats/platforms", async (req, res) => {
 
     // Checking the date parameters validity
     try {
-        let startDate = new Date(start).toISOString();
-        let endDate = new Date(end).toISOString();
+        const startDate = new Date(start).toISOString();
+        const endDate = new Date(end).toISOString();
         if (startDate > endDate) {
             throw new Error();
         }
@@ -461,7 +461,7 @@ router.get("/stats/platforms", async (req, res) => {
         });
 
         // Creating an array containing all the dates between start and end
-        let days = getDatesRange(new Date(start), new Date(end));
+        const days = getDatesRange(new Date(start), new Date(end));
         // Counting platforms per day
         const platformsPerDay = {};
         days.forEach((day) => (platformsPerDay[day] = {}));

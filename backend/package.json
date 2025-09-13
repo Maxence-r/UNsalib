@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node ./dist/server.js",
     "lint": "eslint ./src",
+    "fix": "eslint ./src --fix",
     "format": "prettier --write src/**/*.ts"
   },
   "type": "module",

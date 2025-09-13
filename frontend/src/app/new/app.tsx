@@ -43,6 +43,16 @@ export default function App() {
                 <div className="content-container">
                     <h2 className="page-title">Journal des mises à jour</h2>
                     <ReleaseSection
+                        versionNumber="2.2"
+                        versionName="Barbara"
+                        date="09/2025"
+                        features={[
+                            { icon: "📅", description: "Le nom du mois est désormais affiché sur le calendrier, sous le numéro de semaine" },
+                            { icon: "📅", description: "Ajout d'un bouton pour revenir rapidement à la semaine actuelle" },
+                            { icon: "🛠️", description: "Amélioration de l'algorithme de récupération et de traitement des groupes" }
+                        ]}
+                    />
+                    <ReleaseSection
                         versionNumber="2.1"
                         versionName="Barbara"
                         date="04/2025"

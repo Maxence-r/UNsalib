@@ -10,7 +10,7 @@ import wsManager from "../server.js";
 // Groups update interval in milliseconds
 const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 // Number of days to fetch for each timetable
-const DAYS_TO_RETRIEVE = 125;
+const DAYS_TO_RETRIEVE = 120;
 // Storage of the average processing time for each group
 let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 
@@ -57,6 +57,34 @@ async function processRoom(roomName) {
     }
 
     return room;
+}
+
+// Returns all groups used for the current university year, dealing with duplicate IDs if necessary
+async function getAllGroups() {
+    // Get all groups from the database that are currently used by the University
+    const dbGroups = await Group.find({ current: true });
+
+    const processedGroups = [];
+    for (const group of dbGroups) {
+        if (group.univId.length > 1) {
+            // If the group is associated with more than one univId, we add the group multiple 
+            // times with each of the IDs
+            for (let i = 0; i < group.univId.length; i++) {
+                processedGroups.push({
+                    name: group.name,
+                    univId: group.univId[i]
+                });
+            }
+        } else {
+            // Otherwise, we add it only once
+            processedGroups.push({
+                name: group.name,
+                univId: group.univId
+            });
+        }
+    }
+
+    return processedGroups;
 }
 
 // Splits a string present in the data supplied by the University
@@ -176,7 +204,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         } else {
             // If there is only one group in the course record, delete it
             await Course.deleteOne({ _id: course._id });
-            result.deleted += 1;
+            result.removed += 1;
         }
     }
 
@@ -205,8 +233,8 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             univId: course.id.toString(),
             start: course.start_at,
             end: course.end_at,
-            category: course.categories || "",
-            notes: course.notes || "",
+            category: course.categories || '',
+            notes: course.notes || '',
             rooms: {
                 $all: rooms, // only checks that all the elements of rooms are present
                 $size: rooms.length, // so we need to also check the array size
@@ -321,22 +349,16 @@ async function fetchCourses(group) {
 
 // Processes a batch of groups
 async function processBatchGroups() {
-    const groups = await Group.find();
+    const groups = await getAllGroups();
+
     for (const group of groups) {
         await fetchCourses(group);
     }
 }
 
-// Process only one group
-async function processGroup(groupName) {
-    const group = await Group.findOne({ name: groupName });
-    // console.log(group)
-    await fetchCourses(group);
-}
-
 // Main
 async function getCourses() {
-    const groups = await Group.find();
+    const groups = await getAllGroups();
 
     // Calculating the interval between each group for a CYCLE_INTERVAL-hour distribution
     const groupsNumber = groups.length;
@@ -360,7 +382,7 @@ async function getCourses() {
                 // Resetting the group index for the next cycle
                 groupIndex = 0;
                 setTimeout(() => {
-                    // console.log('Démarrage d\'un nouveau cycle de 12h');
+                    console.log('Démarrage d\'un nouveau cycle...');
                     averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
                     scheduleNextGroup();
                 }, intervalBetweenGroups);
@@ -382,4 +404,4 @@ async function getCourses() {
     startUpdateCycle();
 }
 
-export { getCourses, processBatchGroups, processGroup };
+export { getCourses, processBatchGroups };

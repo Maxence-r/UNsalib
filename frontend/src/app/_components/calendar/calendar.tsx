@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronsLeft, ChevronsRight, ChevronUp } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronUp, CalendarClock } from "lucide-react";
 
 import { useSelectedRoomStore } from "../../_utils/store";
 import Button from "@/_components/button";
@@ -16,6 +16,21 @@ import CalendarContainer from "./container";
 import { showToast, setToastMessage } from "@/_components/toast";
 import { goBack } from "@/_utils/navigation-manager";
 import { ApiError, ApiTimetable } from "@/_utils/api-types";
+
+const months: { [key: string]: string } = {
+    0: "Janvier",
+    1: "Février",
+    2: "Mars",
+    3: "Avril",
+    4: "Mai",
+    5: "Juin",
+    6: "Juillet",
+    7: "Août",
+    8: "Septembre",
+    9: "Octobre",
+    10: "Novembre",
+    11: "Décembre"
+}
 
 export default function Calendar() {
     function computeHourIndicator() {
@@ -102,7 +117,15 @@ export default function Calendar() {
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment - 1) }}>
                         <ChevronsLeft size={20} />
                     </div>
-                    <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                    <div className="week-switcher-actions">
+                        <div className="week-infos">
+                            <p>SEMAINE <span className="week-number">{courses.weekInfos.number}</span></p>
+                            {courses.weekInfos.start !== "--" && <span className="week-month">{months[new Date(courses.weekInfos.start).getMonth().toString()]}</span>}
+                        </div>
+                        <div className="current-week-icon" onClick={() => { setIncrement(0) }}>
+                            <CalendarClock size={20} />
+                        </div>
+                    </div>
                     <div className="week-switcher-icon" onClick={() => { if (courses.weekInfos.number != "--") setIncrement(increment + 1) }}>
                         <ChevronsRight size={20} />
                     </div>

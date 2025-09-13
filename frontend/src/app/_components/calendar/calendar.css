@@ -48,7 +48,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 75px;
+    height: 90px;
 }
 
 .calendar-container {
@@ -247,7 +247,7 @@
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
-.week-switcher-icon {
+.week-switcher-icon, .current-week-icon {
     padding: 0px 24px;
     height: 100%;
     display: flex;
@@ -256,15 +256,36 @@
     cursor: pointer;
 }
 
-.week-switcher>p {
-    margin: 0;
+.week-switcher-actions {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.current-week-icon {
+    padding: 0;
+}
+
+.week-infos {
     color: var(--neutral-color-dark);
-    font-size: 14px;
     font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.week-infos p {
+    margin: 0;
 }
 
 .week-number {
     color: var(--on-surface-color);
+}
+
+.week-month {
+    font-size: 12px;
 }
 
 .availability-box {
@@ -274,7 +295,7 @@
     justify-content: center;
     gap: 16px;
     height: 100%;
-    padding: 0 20px;
+    padding: 0 24px;
     border: 2px solid var(--border-color);
     border-top: 0;
     border-right: 0;
@@ -296,11 +317,13 @@
     padding: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     z-index: 5;
+    gap: 10px;
 }
 
 .current-room {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .current-room>p {
@@ -315,6 +338,9 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--on-surface-color);
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    white-space: nowrap;
 }
 
 .course-box {

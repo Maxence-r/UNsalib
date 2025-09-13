@@ -322,9 +322,9 @@ router.get("/timetable", async (req, res) => {
         res.send({ courses: formattedResponse, weekInfos: requestedWeek });
     } catch (error) {
         res.status(500).json({ error: "INTERNAL_ERROR" });
-        updateStats("internal_errors", req.statsUUID, req.get("User-Agent"));
+        void updateStats("internal_errors", req.statsUUID, req.get("User-Agent"));
         console.error(
-            `Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`,
+            `Erreur pendant le traitement de la requête à '${req.url}' (${error as string})`,
         );
     }
 });

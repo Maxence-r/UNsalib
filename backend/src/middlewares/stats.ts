@@ -1,11 +1,12 @@
 import { updateStats } from "../utils/stats.js";
+import { Request, Response, NextFunction } from "express";
 
-async function statsMiddleware(req, res, next) {
+function statsMiddleware(req: Request, res: Response, next: NextFunction): void {
     req.statsUUID = req.cookies.clientUuid;
 
     // Updating stats
     if (req.path == "/rooms" || req.path == "/rooms/") {
-        updateStats(
+        void updateStats(
             "rooms_list_requests",
             req.statsUUID,
             req.get("User-Agent"),
@@ -14,19 +15,19 @@ async function statsMiddleware(req, res, next) {
         req.path == "/rooms/timetable" ||
         req.path == "/rooms/timetable/"
     ) {
-        updateStats("room_requests", req.statsUUID, req.get("User-Agent"));
+        void updateStats("room_requests", req.statsUUID, req.get("User-Agent"));
     } else if (
         req.path == "/rooms/available" ||
         req.path == "/rooms/available/"
     ) {
-        updateStats(
+        void updateStats(
             "available_rooms_requests",
             req.statsUUID,
             req.get("User-Agent"),
         );
     }
 
-    return next();
+    next();
 }
 
 export default statsMiddleware;

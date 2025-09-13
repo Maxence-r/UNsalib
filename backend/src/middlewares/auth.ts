@@ -1,6 +1,7 @@
 import { getAccountFromToken } from "../utils/auth.js";
+import { Request, Response, NextFunction } from "express";
 
-async function authMiddleware(req, res, next) {
+async function authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void | Response> {
     req.userId = undefined;
     req.connected = false;
     if (req.path.startsWith("/admin")) {
@@ -14,7 +15,7 @@ async function authMiddleware(req, res, next) {
         }
     }
 
-    return next();
+    next();
 }
 
 export default authMiddleware;

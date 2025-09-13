@@ -2,7 +2,8 @@ import { Server } from "socket.io";
 import { getAccountFromToken } from "./auth.js";
 
 class WebSocket {
-    constructor(server) {
+    io: Server;
+    constructor(server: Server) {
         this.io = new Server(server, {
             cors: {
                 origin: [
@@ -34,19 +35,19 @@ class WebSocket {
 
             const userId = await getAccountFromToken(token);
             if (userId) {
-                socket.join("admin");
+                void socket.join("admin");
             }
             next();
         });
     }
 
-    sendGroupsUpdate(groupName) {
+    sendGroupsUpdate(groupName: string): void {
         this.io.emit("main:groupUpdated", {
             message: `Groupe ${groupName} mis à jour`,
         });
     }
 
-    sendStatsUpdate() {
+    sendStatsUpdate(): void {
         this.io.to("admin").emit("dashboard:home:updated", { message: "" });
     }
 }

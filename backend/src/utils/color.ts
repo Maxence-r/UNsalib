@@ -1,3 +1,15 @@
+interface HslColor {
+    h: number;
+    s: number;
+    l: number;
+}
+
+interface RgbColor {
+    r: number;
+    g: number;
+    b: number;
+}
+
 // CONSTANTS
 const HSL_PALETTE = [
     { h: 168.8, s: 76.1, l: 50.0 }, // #1abc9c
@@ -46,7 +58,7 @@ const HEX_PALETTE = [
 ];
 
 // Finds the nearest color in the palette provided
-function closestPaletteColor(hexColor) {
+function closestPaletteColor(hexColor: string): string {
     const hslColor = rgbToHsl(hexToRgb(hexColor));
 
     let minDistance = Infinity;
@@ -63,8 +75,8 @@ function closestPaletteColor(hexColor) {
     return HEX_PALETTE[closestIndex];
 }
 
-// Calculates the distance between 2 colors
-function colorsDistance(c1, c2) {
+// Calculates the distance between 2 HSL colors
+function colorsDistance(c1: HslColor, c2: HslColor): number {
     const dh =
         Math.min(Math.abs(c1.h - c2.h), 360 - Math.abs(c1.h - c2.h)) / 180;
     const ds = (c1.s - c2.s) / 100;
@@ -73,7 +85,7 @@ function colorsDistance(c1, c2) {
 }
 
 // Converts a color in hexadecimal format to RGB
-function hexToRgb(hex) {
+function hexToRgb(hex: string): RgbColor {
     hex = hex.replace(/^#/, "");
     if (hex.length === 3) {
         hex = hex
@@ -90,28 +102,28 @@ function hexToRgb(hex) {
 }
 
 // Converts a color in RGB format to HSL
-function rgbToHsl({ r, g, b }) {
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    const max = Math.max(r, g, b),
-        min = Math.min(r, g, b);
+function rgbToHsl(c: RgbColor): HslColor {
+    c.r /= 255;
+    c.g /= 255;
+    c.b /= 255;
+    const max = Math.max(c.r, c.g, c.b),
+        min = Math.min(c.r, c.g, c.b);
     let h = 0,
-        s = 0,
-        l = (max + min) / 2;
+        s = 0;
+    const l = (max + min) / 2;
     const d = max - min;
 
     if (d !== 0) {
         s = d / (1 - Math.abs(2 * l - 1));
         switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);
+            case c.r:
+                h = (c.g - c.b) / d + (c.g < c.b ? 6 : 0);
                 break;
-            case g:
-                h = (b - r) / d + 2;
+            case c.g:
+                h = (c.b - c.r) / d + 2;
                 break;
-            case b:
-                h = (r - g) / d + 4;
+            case c.b:
+                h = (c.r - c.g) / d + 4;
                 break;
         }
         h *= 60;

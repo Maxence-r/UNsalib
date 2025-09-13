@@ -1,12 +1,18 @@
+interface WeekInfos {
+    start: string;
+    end: string;
+    number: number;
+}
+
 // Checks whether a date is in the format 'yyyy-MM-ddTHH:mm:ss+HH:mm'
-function isValidDate(date) {
+function isValidDate(date: string): boolean {
     const regex =
         /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
     return regex.test(date);
 }
 
 // Returns the start date, end date and number of a week
-function getWeekInfos(weekNumber) {
+function getWeekInfos(weekNumber: number): WeekInfos {
     let year = new Date().getFullYear();
     if (weekNumber > 52) {
         weekNumber -= 52;
@@ -27,7 +33,7 @@ function getWeekInfos(weekNumber) {
     dimanche.setDate(monday.getDate() + 6);
 
     // Formatting dates in YYYY-MM-DD format to avoid time zone problems
-    const formatDate = (date) => {
+    const formatDate = (date: Date): string => {
         const year = date.getFullYear();
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const day = ("0" + date.getDate()).slice(-2);
@@ -41,14 +47,16 @@ function getWeekInfos(weekNumber) {
 }
 
 // Returns the number of the current week
-function getWeeksNumber() {
+function getWeeksNumber(): number {
     const currentDate = new Date(); // current date
     const startDate = new Date(currentDate.getFullYear(), 0, 1); // start date of the year (1st January)
     const currentDay = currentDate.getDay(); // current day (0 for Sunday, ... , 6 for Saturday)
 
     // Algorithm from https://perso.univ-lemans.fr/~hainry/articles/semaine.html
     const J = startDate.getDay();
-    const N = Math.round((currentDate - startDate) / 1000 / 24 / 60 / 60);
+    const N = Math.round(
+        (currentDate.getTime() - startDate.getTime()) / 1000 / 24 / 60 / 60,
+    );
 
     let weekNumber;
     if (J <= 4) {
@@ -66,14 +74,14 @@ function getWeeksNumber() {
 }
 
 // Calculates the overflow in percentage of the course for display on the client
-function getMinutesOverflow(date) {
+function getMinutesOverflow(date: Date): number {
     const minutes = date.getMinutes();
     const overflowPercentage = (minutes / 60) * 100;
     return overflowPercentage;
 }
 
 // Checks if two dates are equal
-function isSameDay(d1, d2) {
+function isSameDay(d1: Date, d2: Date): boolean {
     return (
         d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
@@ -81,9 +89,9 @@ function isSameDay(d1, d2) {
     );
 }
 
-function getDatesRange(start, end) {
+function getDatesRange(start: Date, end: Date): string[] {
     const range = [];
-    let current = start;
+    const current = start;
     while (current < end) {
         range.push(current.toISOString().split("T")[0]);
         current.setDate(current.getDate() + 1);

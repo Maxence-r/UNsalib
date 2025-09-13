@@ -14,7 +14,7 @@ interface NodeSystemError extends Error {
 
 const server = createServer(app);
 
-const normalizePort = (val: string) => {
+const normalizePort = (val: string): string | number | false => {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
@@ -28,7 +28,7 @@ const normalizePort = (val: string) => {
 const port = normalizePort(process.env.PORT || "9000");
 app.set("port", port);
 
-const errorHandler = (error: NodeSystemError) => {
+const errorHandler = (error: NodeSystemError): never => {
     if (error.syscall !== "listen") {
         throw error;
     }

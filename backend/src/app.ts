@@ -44,7 +44,7 @@ app.use((req, res) => {
 
 // Database connection
 set("strictQuery", true);
-(async () => {
+void (async (): Promise<void> => {
     try {
         await connect(`${process.env.MONGODB_URI}`, {});
         console.log("Connexion à MongoDB réussie !");
@@ -55,7 +55,7 @@ set("strictQuery", true);
     } finally {
         // console.log("Jean-Michel", await hash("lesupermotdepasse", 10))
         // EXECUTION PERMANENTE
-        launch();
+        void launch();
     }
 })();
 

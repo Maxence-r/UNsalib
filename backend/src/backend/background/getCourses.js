@@ -185,7 +185,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         } else {
             // If there is only one group in the course record, delete it
             await Course.deleteOne({ _id: course._id });
-            result.deleted += 1;
+            result.removed += 1;
         }
     }
 

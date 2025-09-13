@@ -1,6 +1,6 @@
 import fixDb from "./fixDB.js";
 import getGroups from "./getGroups.js";
-import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
+import { getCourses, processBatchGroups } from './getCourses.js';
 import 'dotenv/config'
 
 async function launch() {
@@ -31,7 +31,6 @@ async function launch() {
         console.log('Correction des groupes incorrects DÉSACTIVÉE');
     }
     
-    // await processGroup('L1')
     console.log();
     getCourses();
 }

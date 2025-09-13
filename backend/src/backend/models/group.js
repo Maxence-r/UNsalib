@@ -2,12 +2,17 @@ import { Schema, model } from 'mongoose';
 
 const GroupSchema = Schema({
     univId: {
-        type: String,
-        required: true
+        type: [String],
+        required: true,
     },
     name: {
         type: String,
         required: true
+    },
+    current: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 

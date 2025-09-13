@@ -4,7 +4,7 @@
   "private": true,
   "main": "./dist/server.js",
   "scripts": {
-    "dev": "nodemon --watch ./src --exec ts-node ./src/server.ts",
+    "dev": "nodemon --watch ./src --exec tsx ./src/server.ts",
     "build": "tsc",
     "start": "node ./dist/server.js",
     "lint": "eslint --fix --quiet src/**/*.ts",
@@ -39,7 +39,7 @@
     "eslint-plugin-prettier": "^5.5.1",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.8.3"
   }
 }

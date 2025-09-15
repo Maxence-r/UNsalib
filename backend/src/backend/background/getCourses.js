@@ -94,43 +94,67 @@ function splitUnivDataBlocks(blocks) {
 }
 
 async function isDbCourseInUnivArray(dbCourse, univDataArray) {
-    // Checks if two arrays are the same
-    // Adapted from https://stackoverflow.com/a/16436975
+    // Normalize strings (accents, spaces, casing)
+    function normalize(str) {
+        if (typeof str !== "string") return str;
+        return str
+            .normalize("NFC")       // normalize accents
+            .trim()                 // remove leading/trailing spaces
+            .replace(/\s+/g, " ");  // collapse multiple spaces
+    }
+
+    // Checks if two arrays are the same (order-insensitive, normalization applied)
     function areArraysEqual(a, b) {
         if (a === b) return true;
         if (a == null || b == null) return false;
         if (a.length !== b.length) return false;
 
-        let a1 = a.sort();
-        let b1 = b.sort();
+        let a1 = a.map(normalize).sort();
+        let b1 = b.map(normalize).sort();
 
-        for (var i = 0; i < a1.length; ++i) {
-            if (a1[i] !== b1[i]) return false;
+        for (let i = 0; i < a1.length; ++i) {
+            if (a1[i] !== b1[i]) {
+                console.log("❌ Array mismatch:", a1[i], "vs", b1[i]);
+                return false;
+            }
         }
         return true;
     }
 
     // Processing the dbCourse's rooms, teachers and modules to put them into a convenient format
-    let dbRooms = await Promise.all(dbCourse.rooms.map(async (roomId) => {
-        let room = await Room.findOne({ _id: roomId });
-        return room.name == room.building ? `${room.name}` : `${room.name} (${room.building})`;
-    }));
+    let dbRooms = await Promise.all(
+        dbCourse.rooms.map(async (roomId) => {
+            let room = await Room.findOne({ _id: roomId });
+            return room.name == room.building
+                ? `${room.name}`
+                : `${room.name} (${room.building})`;
+        })
+    );
     let dbModules = dbCourse.modules;
     let dbTeachers = dbCourse.teachers;
 
     // Checking if our DB course is present in the University data
-    let univRooms, univTeachers, univModules;
     for (let i = 0; i < univDataArray.length; i++) {
         const univCourse = univDataArray[i];
 
-        // Processing the univCourse's rooms, teachers and modules to put them into the same format as above
-        univRooms = splitUnivDataBlocks(univCourse.rooms_for_blocks);
-        univTeachers = splitUnivDataBlocks(univCourse.teachers_for_blocks);
-        univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
+        // Processing the univCourse's rooms, teachers and modules
+        let univRooms = splitUnivDataBlocks(univCourse.rooms_for_blocks);
+        let univTeachers = splitUnivDataBlocks(univCourse.teachers_for_blocks);
+        let univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
 
-        // Eliminating the course by testing its characteristics from the most likely to differ to the least likely (saves time)
+        // Debug logs
+        console.log("🔎 Comparing course index", i);
+        console.log("DB Rooms:", dbRooms, "| Univ Rooms:", univRooms);
+        console.log("DB Teachers:", dbTeachers, "| Univ Teachers:", univTeachers);
+        console.log("DB Modules:", dbModules, "| Univ Modules:", univModules);
+
+        // Eliminating the course by testing characteristics
         if (univCourse.start_at === dbCourse.start && univCourse.end_at === dbCourse.end) {
-            if (univCourse.notes === dbCourse.notes || (univCourse.notes === null && dbCourse.notes === '') || (univCourse.notes === undefined && dbCourse.notes === '')) {
+            if (
+                univCourse.notes === dbCourse.notes ||
+                (univCourse.notes === null && dbCourse.notes === "") ||
+                (univCourse.notes === undefined && dbCourse.notes === "")
+            ) {
                 if (areArraysEqual(univRooms, dbRooms)) {
                     if (areArraysEqual(univTeachers, dbTeachers)) {
                         if (areArraysEqual(univModules, dbModules)) {
@@ -147,6 +171,7 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
 
     return { found: false };
 }
+
 
 // Processes all the courses in a given group to perform add/remove/update operations in our database
 async function processGroupCourses(univData, dbData, groupInfos) {

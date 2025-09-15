@@ -6,8 +6,12 @@ import Modal from "@/_components/modal";
 import Toast from "@/_components/toast";
 import { ApiRoomsList } from "@/_utils/api-types";
 import NavigationManager from "@/_utils/navigation-manager";
+import { redirect, RedirectType } from 'next/navigation'
 
 export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiRoomsList }) {
+    if (process.env.MAINTENANCE === "true") {
+        redirect('/maintenance', RedirectType.replace)
+    }
     return (
         <NavigationManager>
             <main tabIndex={-1} className="main">

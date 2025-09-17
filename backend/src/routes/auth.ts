@@ -35,26 +35,26 @@ router.post("/login", async (req, res) => {
         res.cookie("token", token, {
             domain: `.${process.env.PUBLIC_DOMAIN}`,
             maxAge: TOKEN_VALIDITY_DAYS * 24 * 60 * 60 * 1000,
-            sameSite: "Lax",
+            sameSite: "lax",
         })
             .status(200)
             .json({ message: "LOGIN_SUCCESSFUL" });
     } catch (error) {
         res.status(500).json({ error: "INTERNAL_ERROR" });
         console.error(
-            `Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`,
+            `Erreur pendant le traitement de la requête à '${req.url}' (${error as string})`,
         );
     }
 });
 
-router.get("/logout", async (req, res) => {
+router.get("/logout", (req, res) => {
     // Clearing the cookie
     res.clearCookie("token", { domain: `.${process.env.PUBLIC_DOMAIN}` }).json({
         message: "LOGOUT_SUCCESSFUL",
     });
 });
 
-router.get("/status", async (req, res) => {
+router.get("/status", (req, res) => {
     if (req.connected) {
         return res.json({ message: "LOGGED_IN" });
     }

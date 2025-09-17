@@ -14,8 +14,34 @@ const DAYS_TO_RETRIEVE = 120;
 // Storage of the average processing time for each group
 let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 
+// TYPES
+interface UnivApiCourse {
+    id: number;
+    celcat_id: string;
+    categories: string;
+    start_at: string;
+    end_at: string;
+    notes: string;
+    custom1: null;
+    custom2: null;
+    custom3: null;
+    color: string;
+    place_id: number;
+    rooms_for_blocks: string;
+    rooms_for_item_details: string;
+    teachers_for_blocks: string;
+    teachers_for_item_details: string;
+    educational_groups_for_blocks: string;
+    educational_groups_for_item_details: string;
+    modules_for_blocks: string;
+    modules_for_item_details: string;
+}
+
 // Gets the start and end dates for the request to the timetable website
-function getRequestDates(increment) {
+function getRequestDates(increment): {
+    start: string;
+    end: string;
+} {
     const startDate = new Date();
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + increment);
@@ -60,26 +86,34 @@ async function processRoom(roomName) {
 }
 
 // Returns all groups used for the current university year, dealing with duplicate IDs if necessary
-async function getAllGroups() {
+async function getAllGroups(): Promise<
+    {
+        id: string;
+        name: string;
+        univId: string;
+    }[]
+> {
     // Get all groups from the database that are currently used by the University
     const dbGroups = await Group.find({ current: true });
 
     const processedGroups = [];
     for (const group of dbGroups) {
         if (group.univId.length > 1) {
-            // If the group is associated with more than one univId, we add the group multiple 
+            // If the group is associated with more than one univId, we add the group multiple
             // times with each of the IDs
             for (let i = 0; i < group.univId.length; i++) {
                 processedGroups.push({
+                    id: group._id.toString(),
                     name: group.name,
-                    univId: group.univId[i]
+                    univId: group.univId[i],
                 });
             }
         } else {
             // Otherwise, we add it only once
             processedGroups.push({
+                id: group._id.toString(),
                 name: group.name,
-                univId: group.univId[0]
+                univId: group.univId[0],
             });
         }
     }
@@ -89,17 +123,20 @@ async function getAllGroups() {
 
 // Splits a string present in the data supplied by the University
 // (blocks separated by ‘;’) and returns an array of elements
-function splitUnivDataBlocks(blocks) {
+function splitUnivDataBlocks(blocks: string): string[] {
     if (blocks && blocks !== "") {
         return blocks.split(";").map((item) => item.trim());
     }
     return [];
 }
 
-async function isDbCourseInUnivArray(dbCourse, univDataArray) {
+async function isDbCourseInUnivArray(
+    dbCourse,
+    univDataArray,
+): Promise<null | number> {
     // Checks if two arrays are the same
     // Adapted from https://stackoverflow.com/a/16436975
-    function areArraysEqual(a, b) {
+    function areArraysEqual(a, b): boolean {
         if (a === b) return true;
         if (a == null || b == null) return false;
         if (a.length !== b.length) return false;
@@ -150,7 +187,7 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
                         if (areArraysEqual(univModules, dbModules)) {
                             if (univCourse.categories === dbCourse.category) {
                                 // This University course is the same as the DB course
-                                return { found: true, index: i };
+                                return index;
                             }
                         }
                     }
@@ -159,11 +196,19 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
         }
     }
 
-    return { found: false };
+    return null;
 }
 
 // Processes all the courses in a given group to perform add/remove/update operations in our database
-async function processGroupCourses(univData, dbData, groupInfos) {
+async function processGroupCourses(
+    univData: UnivApiCourse[],
+    dbData,
+    dbGroupId: string,
+): Promise<{
+    removed: number;
+    updated: number;
+    created: number;
+}> {
     // Creating a variable to store the operations that have been performed in our database
     const result = { removed: 0, updated: 0, created: 0 };
 
@@ -173,9 +218,9 @@ async function processGroupCourses(univData, dbData, groupInfos) {
     for (const course of dbData) {
         // Trying to find the course in the latest University data
         wantedCourse = await isDbCourseInUnivArray(course, univData);
-        if (wantedCourse.found) {
+        if (wantedCourse) {
             // if the course is found remove it from univData
-            univData.splice(wantedCourse.index, 1);
+            univData.splice(wantedCourse, 1);
         } else {
             // else flag it for deletion
             dbToRemove.push(course);
@@ -190,7 +235,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             // If there are several groups in the course record, modify it by just deleting the group
             const updatedGroups = [];
             course.groups.forEach((group) => {
-                if (group.toString() !== groupInfos._id.toString()) {
+                if (group.toString() !== dbGroupId) {
                     updatedGroups.push(group);
                 }
             });
@@ -229,38 +274,47 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         const modules = splitUnivDataBlocks(course.modules_for_blocks);
 
         // Building a minimal query
-        const dbQuery = {
+        const dbQuery: {
+            univId: string;
+            start: string;
+            end: string;
+            category: string;
+            notes: string;
+            rooms: { $all: string[]; $size: number }[];
+            teachers: { $all: string[]; $size: number }[];
+            modules: { $all: string[]; $size: number }[];
+        } = {
             univId: course.id.toString(),
             start: course.start_at,
             end: course.end_at,
-            category: course.categories || '',
-            notes: course.notes || '',
+            category: course.categories || "",
+            notes: course.notes || "",
             rooms: [], // empty by default
             teachers: [],
-            modules: []
-        }
+            modules: [],
+        };
         // If there are rooms, teachers or modules, add it to the query
         if (rooms.length > 0) {
             dbQuery.rooms = {
                 $all: rooms, // only checks that all the elements of rooms are present
-                $size: rooms.length // so we need to also check the array size
-                // if it contains exactly all the rooms it's the same array 
-            }
+                $size: rooms.length, // so we need to also check the array size
+                // if it contains exactly all the rooms it's the same array
+            };
         }
         if (teachers.length > 0) {
             dbQuery.teachers = {
                 $all: teachers,
-                $size: teachers.length
-            }
+                $size: teachers.length,
+            };
         }
         if (modules.length > 0) {
             dbQuery.modules = {
                 $all: modules,
-                $size: modules.length
-            }
+                $size: modules.length,
+            };
         }
         // Executing the query
-        const existingCourse = await Course.findOne(dbQuery)
+        const existingCourse = await Course.findOne(dbQuery);
 
         if (
             !existingCourse ||
@@ -278,7 +332,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
                 color: closestPaletteColor(course.color) || "#FF7675",
                 rooms: rooms,
                 teachers: teachers,
-                groups: [groupInfos._id],
+                groups: [dbGroupId],
                 modules: modules,
             });
             await newCourse.save();
@@ -288,7 +342,7 @@ async function processGroupCourses(univData, dbData, groupInfos) {
             await Course.updateOne(
                 { _id: existingCourse._id },
                 {
-                    $push: { groups: groupInfos._id },
+                    $push: { groups: dbGroupId },
                 },
             );
             result.updated += 1;
@@ -299,9 +353,13 @@ async function processGroupCourses(univData, dbData, groupInfos) {
 }
 
 // Retrieves courses for a group
-async function fetchCourses(group) {
+async function fetchCourses(group: {
+    id: string;
+    name: string;
+    univId: string;
+}): Promise<void> {
     // Saving the start time to make stats
-    const startProcessingTime = new Date();
+    const startProcessingTime = Date.now();
 
     // Getting dates for the specified amount of time
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
@@ -319,21 +377,20 @@ async function fetchCourses(group) {
     try {
         // Getting data from the Nantes Université timetable API
         const response = await fetch(requestUrl);
-        const jsonData = await response.json();
+        const jsonData = (await response.json()) as UnivApiCourse[];
 
         // Getting some related data from our database
-        const groupInfos = await Group.findOne({ name: group.name });
         const dbRecords = await Course.find({
             start: { $gte: dates.start + "T00:00:00+01:00" },
             end: { $lte: dates.end + "T23:59:59+01:00" },
-            groups: groupInfos._id,
+            groups: group.id,
         });
 
         // Processing all the courses for this group
-        const result = await processGroupCourses(jsonData, dbRecords, groupInfos);
+        const result = await processGroupCourses(jsonData, dbRecords, group.id);
 
         // Calculating the new average processing time
-        const processingTime = new Date() - startProcessingTime;
+        const processingTime = Date.now() - startProcessingTime;
         averageProcessingTime.timeSum += processingTime;
         averageProcessingTime.measuresNumber++;
 
@@ -358,19 +415,15 @@ async function fetchCourses(group) {
 }
 
 // Processes a group (dev only)
-async function processGroup(groupName) {
-    const group = (await getAllGroups()).filter((group) => group.name === groupName)[0];
-    await fetchCourses(group);
-}
-
-// Processes a group (dev only)
-async function processGroup(groupName) {
-    const group = (await getAllGroups()).filter((group) => group.name === groupName)[0];
+async function processGroup(groupName: string): Promise<void> {
+    const group = (await getAllGroups()).filter(
+        (group) => group.name === groupName,
+    )[0];
     await fetchCourses(group);
 }
 
 // Processes a batch of groups
-async function processBatchGroups() {
+async function processBatchGroups(): Promise<void> {
     const groups = await getAllGroups();
 
     for (const group of groups) {
@@ -379,7 +432,7 @@ async function processBatchGroups() {
 }
 
 // Main
-async function getCourses() {
+async function getCourses(): Promise<void> {
     const groups = await getAllGroups();
 
     // Calculating the interval between each group for a CYCLE_INTERVAL-hour distribution
@@ -387,11 +440,11 @@ async function getCourses() {
     const intervalBetweenGroups = Math.floor(CYCLE_INTERVAL / groupsNumber);
 
     // Function to start the update cycle
-    function startUpdateCycle() {
+    function startUpdateCycle(): void {
         let groupIndex = 0;
 
         // Function to schedule the next group to update
-        const scheduleNextGroup = () => {
+        const scheduleNextGroup = (): void => {
             if (groupIndex < groupsNumber) {
                 setTimeout(async () => {
                     const group = groups[groupIndex];
@@ -404,7 +457,7 @@ async function getCourses() {
                 // Resetting the group index for the next cycle
                 groupIndex = 0;
                 setTimeout(() => {
-                    console.log('Démarrage d\'un nouveau cycle...');
+                    console.log("Démarrage d'un nouveau cycle...");
                     averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
                     scheduleNextGroup();
                 }, intervalBetweenGroups);

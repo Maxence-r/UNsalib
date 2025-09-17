@@ -1,0 +1,28 @@
+.page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: var(--background-color);
+    color: var(--on-background-color);
+    transition: background-color var(--animation-duration);
+}
+
+.infos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.icon {
+    color: var(--accent-color);
+}
+
+h1 {
+    margin-block: 0;
+}

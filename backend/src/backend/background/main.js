@@ -1,6 +1,6 @@
 import fixDb from "./fixDB.js";
 import getGroups from "./getGroups.js";
-import { getCourses, processBatchGroups } from './getCourses.js';
+import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
 import 'dotenv/config'
 
 async function launch() {
@@ -33,6 +33,7 @@ async function launch() {
     
     console.log();
     getCourses();
+    // processGroup("387");
 }
 
 export default launch;

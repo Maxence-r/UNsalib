@@ -76,7 +76,7 @@ async function getAllGroups() {
             // Otherwise, we add it only once
             processedGroups.push({
                 name: group.name,
-                univId: group.univId
+                univId: group.univId[0]
             });
         }
     }
@@ -200,27 +200,39 @@ async function processGroupCourses(univData, dbData, groupInfos) {
         const teachers = splitUnivDataBlocks(course.teachers_for_blocks);
         const modules = splitUnivDataBlocks(course.modules_for_blocks);
 
-        // Checking if the course already exists in our DB
-        const existingCourse = await Course.findOne({
+        // Building a minimal query
+        const dbQuery = {
             univId: course.id.toString(),
             start: course.start_at,
             end: course.end_at,
             category: course.categories || '',
             notes: course.notes || '',
-            rooms: {
+            rooms: [], // empty by default
+            teachers: [],
+            modules: []
+        }
+        // If there are rooms, teachers or modules, add it to the query
+        if (rooms.length > 0) {
+            dbQuery.rooms = {
                 $all: rooms, // only checks that all the elements of rooms are present
                 $size: rooms.length // so we need to also check the array size
                 // if it contains exactly all the rooms it's the same array 
-            },
-            teachers: { // same here
+            }
+        }
+        if (teachers.length > 0) {
+            dbQuery.teachers = {
                 $all: teachers,
                 $size: teachers.length
-            },
-            modules: { // same here
+            }
+        }
+        if (modules.length > 0) {
+            dbQuery.modules = {
                 $all: modules,
                 $size: modules.length
-            },
-        });
+            }
+        }
+        // Executing the query
+        const existingCourse = await Course.findOne(dbQuery)
 
         if (!existingCourse || existingCourse === null || existingCourse === undefined) {
             // If the course doesn't exists, create it in our DB
@@ -301,6 +313,12 @@ async function fetchCourses(group) {
     }
 }
 
+// Processes a group (dev only)
+async function processGroup(groupName) {
+    const group = (await getAllGroups()).filter((group) => group.name === groupName)[0];
+    await fetchCourses(group);
+}
+
 // Processes a batch of groups
 async function processBatchGroups() {
     const groups = await getAllGroups();
@@ -353,4 +371,4 @@ async function getCourses() {
     startUpdateCycle();
 }
 
-export { getCourses, processBatchGroups };
+export { getCourses, processBatchGroups, processGroup };

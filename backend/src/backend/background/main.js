@@ -30,9 +30,16 @@ async function launch() {
     } else {
         console.log('Correction des groupes incorrects DÉSACTIVÉE');
     }
-    
+
+    // If 'SYNC_TIMETABLES' is activated, launch a loop executing the sync algorithm
     console.log();
-    getCourses();
+    if (process.env.SYNC_TIMETABLES === 'true') {
+        console.log('Synchronisation des emplois du temps ACTIVÉE - Démarrage du processus...');
+        getCourses();
+    } else {
+        console.log('Synchronisation des emplois du temps DÉSACTIVÉE');
+    }
+
     // processGroup("387");
 }
 

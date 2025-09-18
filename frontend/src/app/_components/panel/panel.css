@@ -436,6 +436,7 @@ input[type=number] {
     border-radius: 4px;
     font-size: 12px;
     color: var(--on-accent-color);
+    cursor: pointer;
 }
 
 .slidecontainer {

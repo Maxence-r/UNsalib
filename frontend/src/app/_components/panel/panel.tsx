@@ -239,7 +239,7 @@ function AboutModalContent() {
     return (
         <div className="about">
             <div className="modal-section">
-                <h4 className="title"><BookOpen size={20} />À PROPOS<span id="version">v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
+                <h4 className="title"><BookOpen size={20} />À PROPOS<span id="version" onClick={() => window.open("/new", "_blank")}>v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
                 <div className="content">
                     <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>

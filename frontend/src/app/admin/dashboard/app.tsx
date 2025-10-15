@@ -7,8 +7,6 @@ import { ApiUserAccount } from "./_utils/types";
 import Sidebar from "./_components/sidebar/sidebar";
 import Navbar from "./_components/navbar/navbar";
 import HomePage from "./_components/home/home";
-import StatsPage from "./_components/stats/stats";
-import ManagePage from "./_components/manage/manage";
 
 export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
     const tabs = [
@@ -36,8 +34,6 @@ export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
                 tabsList={tabs}
             />
             {selectedTab === "home" && <HomePage />}
-            {selectedTab === "manage" && <ManagePage />}
-            {selectedTab === "stats" && <StatsPage />}
         </div>
     );
 }

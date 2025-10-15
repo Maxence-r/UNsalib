@@ -3,12 +3,20 @@
 import { useEffect, useState } from "react";
 import { Activity, Database, Clock, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 
-import Button from "@/_components/button";
-import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
+import { Card, CardContent, CardHeader } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart, LineChart } from "@/_components/chart";
 import "./home.css";
 import { getDayPlatforms, getDayUniqueVisitors, getDayViews, getSystemHealth, getAnalytics } from "../../_utils/client-actions";
+
+interface SystemHealth {
+    status: string;
+    uptime: number;
+    database: { connected: boolean };
+    memory: { used: number; total: number };
+    cpu: { usage: number };
+    lastCheck: string;
+}
 
 export default function HomePage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
@@ -17,7 +25,7 @@ export default function HomePage() {
         empty: false,
         data: []
     });
-    const [systemHealth, setSystemHealth] = useState<any>(null);
+    const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
     const [weekTrend, setWeekTrend] = useState<{ date: string, value: number }[]>([]);
 
     useEffect(() => {

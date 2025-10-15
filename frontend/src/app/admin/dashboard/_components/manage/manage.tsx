@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Edit, Trash2, Save, X, Plus } from "lucide-react";
+import { Edit, Trash2, Save, X } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/_components/card";
 import DataTable, { Column } from "@/_components/datatable";
@@ -12,32 +12,28 @@ import { getRooms, getCourses, updateRoom, bulkUpdateRooms, bulkDeleteCourses } 
 import "./manage.css";
 
 type ManagementTab = 'rooms' | 'courses';
+type SelectedItem = ApiRoom | ApiCourse;
 
 export default function ManagePage() {
     const [activeTab, setActiveTab] = useState<ManagementTab>('rooms');
     const [rooms, setRooms] = useState<ApiRoom[]>([]);
     const [courses, setCourses] = useState<ApiCourse[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [selectedItems, setSelectedItems] = useState<any[]>([]);
+    const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
     const [editingRoom, setEditingRoom] = useState<ApiRoom | null>(null);
     const [showModal, setShowModal] = useState(false);
 
     const fetchRooms = async () => {
-        setLoading(true);
         const result = await getRooms();
         if (result.success) {
             setRooms(result.data);
         }
-        setLoading(false);
     };
 
     const fetchCourses = async () => {
-        setLoading(true);
         const result = await getCourses();
         if (result.success) {
             setCourses(result.data);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -49,7 +45,7 @@ export default function ManagePage() {
     }, [activeTab]);
 
     const handleBulkBan = async (banned: boolean) => {
-        const roomIds = selectedItems.map(room => room.id);
+        const roomIds = selectedItems.map((room: SelectedItem) => (room as ApiRoom).id);
         const result = await bulkUpdateRooms(roomIds, { banned });
         if (result.success) {
             fetchRooms();
@@ -61,7 +57,7 @@ export default function ManagePage() {
         if (!confirm(`Êtes-vous sûr de vouloir supprimer ${selectedItems.length} cours ?`)) {
             return;
         }
-        const courseIds = selectedItems.map(course => course.id);
+        const courseIds = selectedItems.map((course: SelectedItem) => (course as ApiCourse).id);
         const result = await bulkDeleteCourses(courseIds);
         if (result.success) {
             fetchCourses();
@@ -122,32 +118,44 @@ export default function ManagePage() {
         { 
             key: 'modules', 
             label: 'Module',
-            render: (value) => value?.[0] || 'N/A'
+            render: (value) => {
+                const modules = value as string[] | undefined;
+                return modules?.[0] || 'N/A';
+            }
         },
         { 
             key: 'start', 
             label: 'Début',
-            render: (value) => new Date(value).toLocaleString('fr-FR')
+            render: (value) => new Date(value as string).toLocaleString('fr-FR')
         },
         { 
             key: 'end', 
             label: 'Fin',
-            render: (value) => new Date(value).toLocaleString('fr-FR')
+            render: (value) => new Date(value as string).toLocaleString('fr-FR')
         },
         { 
             key: 'rooms', 
             label: 'Salles',
-            render: (value) => value?.length || 0
+            render: (value) => {
+                const rooms = value as string[] | undefined;
+                return rooms?.length || 0;
+            }
         },
         { 
             key: 'teachers', 
             label: 'Enseignants',
-            render: (value) => value?.length || 0
+            render: (value) => {
+                const teachers = value as string[] | undefined;
+                return teachers?.length || 0;
+            }
         },
         { 
             key: 'groups', 
             label: 'Groupes',
-            render: (value) => value?.length || 0
+            render: (value) => {
+                const groups = value as string[] | undefined;
+                return groups?.length || 0;
+            }
         }
     ];
 

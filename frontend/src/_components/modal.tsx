@@ -40,7 +40,7 @@ export function setModalContent(newContent: ReactNode) {
     });
 }
 
-export default function Modal() {
+export function Modal() {
     const isModalOpen = useModalStore(state => state.isOpen);
     const modalContent = useModalStore(state => state.content);
 
@@ -61,3 +61,5 @@ export default function Modal() {
         </div>
     );
 }
+
+export default Modal;

@@ -10,6 +10,12 @@ import Button from "@/_components/button";
 import { getAnalytics, exportData } from "../../_utils/client-actions";
 import "./stats.css";
 
+interface AnalyticsData {
+    data?: Record<string, number>;
+    trend?: { date: string; value: number }[];
+    total?: number;
+}
+
 export default function StatsPage() {
     const [dateRange, setDateRange] = useState<DateRange>({
         start: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -17,11 +23,11 @@ export default function StatsPage() {
     });
     
     const [loading, setLoading] = useState(false);
-    const [viewsData, setViewsData] = useState<any>({});
-    const [visitorsData, setVisitorsData] = useState<any>({});
-    const [browsersData, setBrowsersData] = useState<any>({});
-    const [devicesData, setDevicesData] = useState<any>({});
-    const [platformsData, setPlatformsData] = useState<any>({});
+    const [viewsData, setViewsData] = useState<AnalyticsData>({});
+    const [visitorsData, setVisitorsData] = useState<AnalyticsData>({});
+    const [browsersData, setBrowsersData] = useState<AnalyticsData>({});
+    const [devicesData, setDevicesData] = useState<AnalyticsData>({});
+    const [platformsData, setPlatformsData] = useState<AnalyticsData>({});
 
     const fetchData = async () => {
         setLoading(true);
@@ -55,21 +61,22 @@ export default function StatsPage() {
     };
 
     // Process data for charts
-    const viewsTrend = Object.keys(viewsData).map(date => ({
+    const viewsTrend = Object.keys(viewsData.data || {}).map(date => ({
         date,
-        value: viewsData[date]
+        value: (viewsData.data as Record<string, number>)[date]
     }));
 
-    const visitorsTrend = Object.keys(visitorsData).map(date => ({
+    const visitorsTrend = Object.keys(visitorsData.data || {}).map(date => ({
         date,
-        value: visitorsData[date]
+        value: (visitorsData.data as Record<string, number>)[date]
     }));
 
     // Aggregate browsers data across all dates
     const browsersAgg: { [key: string]: number } = {};
-    Object.values(browsersData).forEach((day: any) => {
-        Object.keys(day).forEach(browser => {
-            browsersAgg[browser] = (browsersAgg[browser] || 0) + day[browser];
+    Object.values(browsersData.data || {}).forEach((day: unknown) => {
+        const dayData = day as Record<string, number>;
+        Object.keys(dayData).forEach(browser => {
+            browsersAgg[browser] = (browsersAgg[browser] || 0) + dayData[browser];
         });
     });
     const browsersPie = Object.keys(browsersAgg).map(browser => ({
@@ -79,9 +86,10 @@ export default function StatsPage() {
 
     // Aggregate devices data across all dates
     const devicesAgg: { [key: string]: number } = {};
-    Object.values(devicesData).forEach((day: any) => {
-        Object.keys(day).forEach(device => {
-            devicesAgg[device] = (devicesAgg[device] || 0) + day[device];
+    Object.values(devicesData.data || {}).forEach((day: unknown) => {
+        const dayData = day as Record<string, number>;
+        Object.keys(dayData).forEach(device => {
+            devicesAgg[device] = (devicesAgg[device] || 0) + dayData[device];
         });
     });
     const devicesPie = Object.keys(devicesAgg).map(device => ({
@@ -91,9 +99,10 @@ export default function StatsPage() {
 
     // Aggregate platforms data across all dates
     const platformsAgg: { [key: string]: number } = {};
-    Object.values(platformsData).forEach((day: any) => {
-        Object.keys(day).forEach(platform => {
-            platformsAgg[platform] = (platformsAgg[platform] || 0) + day[platform];
+    Object.values(platformsData.data || {}).forEach((day: unknown) => {
+        const dayData = day as Record<string, number>;
+        Object.keys(dayData).forEach(platform => {
+            platformsAgg[platform] = (platformsAgg[platform] || 0) + dayData[platform];
         });
     });
     const platformsBar = Object.keys(platformsAgg).map(platform => ({
@@ -102,9 +111,9 @@ export default function StatsPage() {
     }));
 
     // Calculate totals
-    const totalViews = Object.values(viewsData).reduce((sum: number, val: any) => sum + val, 0);
-    const totalVisitors = Object.values(visitorsData).reduce((sum: number, val: any) => sum + val, 0);
-    const avgViewsPerDay = totalViews / Object.keys(viewsData).length || 0;
+    const totalViews = Object.values(viewsData.data || {}).reduce((sum: number, val: unknown) => sum + (val as number), 0);
+    const totalVisitors = Object.values(visitorsData.data || {}).reduce((sum: number, val: unknown) => sum + (val as number), 0);
+    const avgViewsPerDay = totalViews / Object.keys(viewsData.data || {}).length || 0;
     const avgVisitorsPerDay = totalVisitors / Object.keys(visitorsData).length || 0;
 
     return (

@@ -1,5 +1,4 @@
 import { ApiPlatforms, ApiUniqueVisitors, ApiViews } from "@/_utils/api-types";
-import { ApiRoom, ApiCourse } from "./types";
 
 interface LogoutResult {
     success: boolean, 
@@ -197,7 +196,7 @@ export async function getCourses(start?: string, end?: string, limit?: number) {
     }
 }
 
-export async function bulkUpdateRooms(roomIds: string[], updates: Partial<ApiRoom>) {
+export async function bulkUpdateRooms(roomIds: string[], updates: any) {
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/admin/bulk-update-rooms`,
@@ -239,7 +238,7 @@ export async function bulkDeleteCourses(courseIds: string[]) {
     }
 }
 
-export async function updateRoom(roomId: string, data: Partial<ApiRoom>) {
+export async function updateRoom(roomId: string, data: any) {
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/admin/update-room`,
@@ -262,7 +261,7 @@ export async function updateRoom(roomId: string, data: Partial<ApiRoom>) {
 
 export async function exportData(type: 'rooms' | 'courses' | 'stats', format: 'json' | 'csv', dateRange?: { start: string, end: string }) {
     try {
-        let data: ApiRoom[] | ApiCourse[] | Record<string, number> | null = null;
+        let data: any = null;
         
         if (type === 'rooms') {
             const result = await getRooms();
@@ -272,7 +271,7 @@ export async function exportData(type: 'rooms' | 'courses' | 'stats', format: 'j
             data = result.data;
         } else if (type === 'stats' && dateRange) {
             const result = await getAnalytics(dateRange.start, dateRange.end, 'unique-visitors');
-            data = result.data as Record<string, number>;
+            data = result.data;
         }
 
         if (!data) {
@@ -289,8 +288,7 @@ export async function exportData(type: 'rooms' | 'courses' | 'stats', format: 'j
             URL.revokeObjectURL(url);
         } else if (format === 'csv') {
             // Convert to CSV
-            const arrayData = Array.isArray(data) ? data : Object.entries(data).map(([key, value]) => ({ key, value }));
-            const csvData = convertToCSV(arrayData);
+            const csvData = convertToCSV(data);
             const blob = new Blob([csvData], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -306,7 +304,6 @@ export async function exportData(type: 'rooms' | 'courses' | 'stats', format: 'j
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function convertToCSV(data: any[]): string {
     if (!data || data.length === 0) return '';
     

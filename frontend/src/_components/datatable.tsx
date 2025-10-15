@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, ReactNode } from "react";
+import { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown, Search } from "lucide-react";
 import "./datatable.css";
 
@@ -8,7 +8,7 @@ export type Column<T> = {
     key: string,
     label: string,
     sortable?: boolean,
-    render?: (value: unknown, row: T) => ReactNode
+    render?: (value: any, row: T) => React.ReactNode
 };
 
 type SortConfig = {
@@ -16,7 +16,7 @@ type SortConfig = {
     direction: 'asc' | 'desc'
 } | null;
 
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends Record<string, any>>({
     data,
     columns,
     pageSize = 10,

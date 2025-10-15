@@ -60,7 +60,7 @@ export interface ApiAnalyticsDevices {
     }
 }
 
-export type ApiAnalyticsTrend = {
+export interface ApiAnalyticsTrend {
     date: string,
     value: number
 }[]

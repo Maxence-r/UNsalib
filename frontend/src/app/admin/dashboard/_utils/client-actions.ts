@@ -52,6 +52,37 @@ export async function getDayUniqueVisitors(): Promise<GetDayUniqueVisitorsResult
     }
 }
 
+interface GetDayUniqueHumanVisitorsResult {
+    success: boolean,
+    data: ApiUniqueVisitors,
+    message: string
+}
+
+export async function getDayUniqueHumanVisitors(): Promise<GetDayUniqueHumanVisitorsResult> {
+    try {
+        const today = new Date().toISOString().split("T")[0];
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/stats/unique-human-visitors?start=${today}&end=${today}`,
+            { credentials: "include" }
+        );
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        const dayUniqueHumanVisitors = await response.json();
+        return {
+            success: true,
+            data: dayUniqueHumanVisitors,
+            message: ""
+        };
+    } catch (error) {
+        return {
+            success: false,
+            data: {},
+            message: error as string
+        };
+    }
+}
+
 interface GetDayViewsResult {
     success: boolean,
     data: ApiViews,

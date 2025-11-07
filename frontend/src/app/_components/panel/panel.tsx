@@ -331,6 +331,14 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
         pushToHistory("panel", openPanel)
         closePanel();
         setSelectedRoom(room.id, room.alias != "" ? `${room.alias.toUpperCase()}` : `${room.name.toUpperCase()}`);
+
+        const container = document.querySelector(".calendar-columns");
+        const target = document.querySelector('.selected');
+
+        container.scrollTo({
+            left: target.offsetLeft - container.offsetLeft,
+            behavior: "smooth"
+        });
     }
 
     return (

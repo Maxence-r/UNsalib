@@ -47,6 +47,12 @@ export interface ApiUniqueVisitors {
     [key: string]: number
 }
 
+// Endpoint: /admin/stats/unique-human-visitors
+
+export interface ApiUniqueHumanVisitors { 
+    [key: string]: number
+}
+
 // Endpoint: /admin/stats/views
 
 export interface ApiViews { 

@@ -7,6 +7,7 @@ import { ApiUserAccount } from "./_utils/types";
 import Sidebar from "./_components/sidebar/sidebar";
 import Navbar from "./_components/navbar/navbar";
 import HomePage from "./_components/home/home";
+import StatsPage from "./_components/stats/stats";
 import { socket } from "@/_utils/socket";
 import { publish } from "./_utils/events";
 
@@ -70,6 +71,7 @@ export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
                 tabsList={tabs}
             />
             {selectedTab === "home" && <HomePage />}
+            {selectedTab === "stats" && <StatsPage />}
         </div>
     );
 }

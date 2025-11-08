@@ -1,0 +1,76 @@
+.main.dashboard-stats {
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.view {
+    max-width: 1440px;
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow: auto;
+}
+
+.view-title {
+    display: flex;
+    align-items: center;
+    margin-block: 0px;
+    min-height: 48px;
+}
+
+.view-content {
+    flex-grow: 1;
+}
+
+.view-content,
+.view-content .section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.view-content .section-title {
+    color: var(--neutral-color-dark);
+    margin-block: 0px;
+}
+
+.view-content .section-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.view-content .section-content>div {
+    flex-grow: 1;
+}
+
+.view-content .section-content .column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: calc(50% - 24px);
+}
+
+.column.stats-overview h1 {
+    margin-block: 0px;
+}
+
+.column.stats-overview>div {
+    flex-grow: 1;
+}
+
+@media screen and (max-width: 425px) {
+    .view-content .section-content .column {
+        max-width: 100%;
+    }
+
+    .view-title {
+        display: none;
+    }
+}

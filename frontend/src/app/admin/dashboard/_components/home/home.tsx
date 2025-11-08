@@ -8,34 +8,57 @@ import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
 import "./home.css";
-import { getDayPlatforms, getDayUniqueVisitors, getDayViews } from "../../_utils/client-actions";
-import { subscribe, unsubscribe } from "../../_utils/events";
+import {
+    getDayPlatforms,
+    getDayUniqueVisitors,
+    getDayViews,
+} from "../../_utils/client-actions";
 
 export default function HomePage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
     const [dayViews, setDayViews] = useState<string>("-");
-    const [dayPlatforms, setDayPlatforms] = useState<{ empty: boolean, data: { legend: string, value: number }[] }>({
+    const [dayPlatforms, setDayPlatforms] = useState<{
+        empty: boolean;
+        data: { legend: string; value: number }[];
+    }>({
         empty: false,
-        data: []
+        data: [],
     });
     const [statsSectionUpdate, setStatsSectionUpdate] = useState<string>(new Date().toTimeString().substring(0,5));
 
     const updateHome = async () => {
         const today = new Date().toISOString().split("T")[0];
-
-        setDayUniqueVisitors((await getDayUniqueVisitors()).data[today].toString());
-
-        setDayViews((await getDayViews()).data[today].toString());
-
-        const rawPlatforms = await getDayPlatforms();
-        const parsedPlatforms = Object.keys(rawPlatforms.data[today]).map(platform => ({
-            legend: platform,
-            value: rawPlatforms.data[today][platform]
-        }));
-        setDayPlatforms({ empty: parsedPlatforms.length === 0, data: parsedPlatforms });
-
-        setStatsSectionUpdate(new Date().toTimeString().substring(0,5));
-    }
+        const fetchDayUniqueVisitors = async () => {
+            try {
+                setDayUniqueVisitors((await getDayUniqueVisitors()).toString());
+            } catch (e) {
+                console.error(e as string);
+            }
+        };
+        const fetchDayViews = async () => {
+            try {
+                setDayViews((await getDayViews()).toString());
+            } catch (e) {
+                console.error(e as string);
+            }
+        };
+        const fetchDayPlatforms = async () => {
+            try {
+                const raw = await getDayPlatforms();
+                const parsedPlatforms = Object.keys(raw[today]).map(
+                    (platform) => ({
+                        legend: platform,
+                        value: raw[today][platform],
+                    }),
+                );
+                setDayPlatforms({
+                    empty: parsedPlatforms.length === 0,
+                    data: parsedPlatforms,
+                });
+            } catch (e) {
+                console.error(e as string);
+            }
+        };
 
     useEffect(() => {
         updateHome();
@@ -59,7 +82,13 @@ export default function HomePage() {
                             <Card>
                                 <CardHeader>Mode maintenance</CardHeader>
                                 <CardContent>
-                                    <SwitchView title="Activé" onCheck={() => console.log("enabled")} onUncheck={() => console.log("disabled")}></SwitchView>
+                                    <SwitchView
+                                        title="Activé"
+                                        onCheck={() => console.log("enabled")}
+                                        onUncheck={() =>
+                                            console.log("disabled")
+                                        }
+                                    ></SwitchView>
                                 </CardContent>
                             </Card>
                             <Card highlighted>
@@ -67,13 +96,13 @@ export default function HomePage() {
                                 <CardContent>
                                     Aucune nouvelle salle.
                                 </CardContent>
-                                <CardActions><Button>Test</Button></CardActions>
+                                <CardActions>
+                                    <Button>Test</Button>
+                                </CardActions>
                             </Card>
                             <Card>
                                 <CardHeader>Santé</CardHeader>
-                                <CardContent>
-                                    OK
-                                </CardContent>
+                                <CardContent>OK</CardContent>
                             </Card>
                         </div>
                     </div>
@@ -86,22 +115,41 @@ export default function HomePage() {
                         </div>
                         <div className="section-content">
                             <div className="column stats-overview">
-                                <Card isLoading={dayUniqueVisitors === "-" ? true : false}>
-                                    <CardHeader>Visiteurs uniques</CardHeader>
+                                <Card
+                                    isLoading={
+                                        dayUniqueVisitors === "-" ? true : false
+                                    }
+                                >
+                                    <CardHeader>
+                                        Visiteurs uniques aujourd&apos;hui
+                                    </CardHeader>
                                     <CardContent>
                                         <h1>{dayUniqueVisitors}</h1>
                                     </CardContent>
                                 </Card>
-                                <Card isLoading={dayViews === "-" ? true : false}>
-                                    <CardHeader>Vues</CardHeader>
+                                <Card
+                                    isLoading={dayViews === "-" ? true : false}
+                                >
+                                    <CardHeader>
+                                        Vues aujourd&apos;hui
+                                    </CardHeader>
                                     <CardContent>
                                         <h1>{dayViews}</h1>
                                     </CardContent>
                                 </Card>
                             </div>
                             <div className="column">
-                                <Card isLoading={dayPlatforms.data.length === 0 && !dayPlatforms.empty ? true : false}>
-                                    <CardHeader>Plateformes</CardHeader>
+                                <Card
+                                    isLoading={
+                                        dayPlatforms.data.length === 0 &&
+                                        !dayPlatforms.empty
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    <CardHeader>
+                                        Plateformes aujourd&apos;hui
+                                    </CardHeader>
                                     <CardContent>
                                         <PieChart
                                             dataset={dayPlatforms.data}

@@ -241,7 +241,7 @@ function AboutModalContent() {
             <div className="modal-section">
                 <h4 className="title"><BookOpen size={20} />À PROPOS<span id="version" onClick={() => window.open("/new", "_blank")}>v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;</span></h4>
                 <div className="content">
-                    <p><strong>UNsalib</strong> est un site web qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
+                    <p><strong>UNsalib</strong> est un site web open source qui permet aux étudiants et professeurs de Nantes Université de <strong>trouver les salles libres</strong> du campus et d&apos;afficher leurs <strong>emplois du temps</strong>.</p>
                 </div>
             </div>
             <div className="modal-section">
@@ -252,7 +252,7 @@ function AboutModalContent() {
                         <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">
                                 <h2>Maxence</h2>
-                                <p>Développeur</p>
+                                <p>Développeur & UX/UI designer</p>
                             </div>
                             <Image src="/maxence.png" width={36} height={36} alt=""></Image>
                         </div>
@@ -276,7 +276,7 @@ function AboutModalContent() {
                 <h4 className="title"><Smile size={20} />REMERCIEMENTS</h4>
                 <div className="content">
                     <p>Merci à <strong>Christophe Lino</strong> pour sa confiance et son implication dans le projet, et par ailleurs pour avoir été le premier professeur à utiliser UNsalib.</p>
-                    <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure, en particulier Mewenn pour nous avoir fait part de l&apos;insalubrité de notre application...</p>
+                    <p>Merci aussi à <strong>tous ceux qui nous ont encouragés</strong> et qui nous soutiennent dans cette aventure.</p>
                     <p>Merci enfin à <strong>Nantes Université</strong> d&apos;avoir publié les emplois du temps des différentes formations en libre accès.</p>
                 </div>
             </div>
@@ -331,6 +331,14 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
         pushToHistory("panel", openPanel)
         closePanel();
         setSelectedRoom(room.id, room.alias != "" ? `${room.alias.toUpperCase()}` : `${room.name.toUpperCase()}`);
+
+        const container = document.querySelector(".calendar-columns");
+        const target = document.querySelector('.selected');
+
+        container.scrollTo({
+            left: target.offsetLeft - container.offsetLeft,
+            behavior: "smooth"
+        });
     }
 
     return (

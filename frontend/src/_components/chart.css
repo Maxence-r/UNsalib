@@ -65,6 +65,7 @@
     justify-content: space-between;
     position: relative;
     overflow-x: auto;
+    scrollbar-width: none;
 }
 
 .chart.bar .group-container,
@@ -95,6 +96,10 @@
 .chart.bar .y-axis,
 .chart.bar .grid {
     font-size: 14px;
+}
+
+.chart.bar .x-axis {
+    background-color: var(--surface-color);
 }
 
 .chart.bar .y-axis .labels {
@@ -129,7 +134,6 @@
     position: absolute;
     max-width: unset;
     z-index: 0;
-    overflow-x: scroll;
 }
 
 .chart.bar .grid .lines {

@@ -23,20 +23,37 @@ export default function StatsPage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
 
     useEffect(() => {
-        const today = new Date().toISOString().split("T")[0];
         const fetchDayUniqueHumanVisitors = async () => {
-            const raw = await getDayUniqueHumanVisitors();
-            setDayUniqueHumanVisitors(raw.data[today].toString());
+            try {
+                setDayUniqueHumanVisitors(
+                    (await getDayUniqueHumanVisitors()).toString(),
+                );
+            } catch (e) {
+                console.error(e as string);
+            }
         };
         const fetchDayUniqueVisitors = async () => {
-            const raw = await getDayUniqueVisitors();
-            setDayUniqueVisitors(raw.data[today].toString());
+            try {
+                setDayUniqueVisitors((await getDayUniqueVisitors()).toString());
+            } catch (e) {
+                console.error(e as string);
+            }
         };
         const fetchMonthUniqueHumanVisitors = async () => {
-            setMonthUniqueHumanVisitors(await getMonthUniqueHumanVisitors());
+            try {
+                setMonthUniqueHumanVisitors(
+                    await getMonthUniqueHumanVisitors(),
+                );
+            } catch (e) {
+                console.error(e as string);
+            }
         };
         const fetchMonthUniqueVisitors = async () => {
-            setMonthUniqueVisitors(await getMonthUniqueVisitors());
+            try {
+                setMonthUniqueVisitors(await getMonthUniqueVisitors());
+            } catch (e) {
+                console.error(e as string);
+            }
         };
 
         fetchDayUniqueHumanVisitors();
@@ -87,8 +104,15 @@ export default function StatsPage() {
                         <h4 className="section-title">Ce mois-ci</h4>
                         <div className="section-content">
                             <div style={{ maxWidth: "100%" }}>
-                                <Card>
-                                    <CardHeader>Visites</CardHeader>
+                                <Card
+                                    isLoading={
+                                        Object.keys(monthUniqueHumanVisitors)
+                                            .length === 0 &&
+                                        Object.keys(monthUniqueVisitors)
+                                            .length === 0
+                                    }
+                                >
+                                    <CardHeader>Visiteurs</CardHeader>
                                     <CardContent>
                                         <BarChart
                                             style={{ height: 200 }}
@@ -114,7 +138,7 @@ export default function StatsPage() {
                                                     },
                                                 ],
                                             }))}
-                                            chartId="platforms"
+                                            chartId="month-unique-human-unique"
                                         />
                                     </CardContent>
                                 </Card>

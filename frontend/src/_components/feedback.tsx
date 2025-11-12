@@ -5,7 +5,6 @@ import { Star, MessageSquare, Send } from "lucide-react";
 import Button from "@/_components/button";
 import { closeDrawer } from "@/_components/drawer";
 import { showToast, setToastMessage } from "@/_components/toast";
-// @ts-expect-error: CSS module side-effect import
 import "./feedback.css";
 
 export default function FeedbackDrawerContent() {

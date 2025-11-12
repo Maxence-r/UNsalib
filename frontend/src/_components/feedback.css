@@ -151,41 +151,7 @@
 }
 
 .feedback-actions .button {
-
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    font-weight: 500;
-    border-radius: 24px;
-    transition: all 0.2s ease-in-out;
-}
-
-.feedback-actions .button.secondary {
-    background-color: var(--surface-variant-color);
-    color: var(--on-surface-color);
-    border: 1px solid var(--outline-color);
-}
-
-.feedback-actions .button.secondary:hover {
-    background-color: var(--surface-color);
-}
-
-.feedback-actions .button.primary {
-    background-color: var(--primary-color);
-    color: var(--on-primary-color);
-    border: none;
-}
-
-.feedback-actions .button.primary:hover {
-    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
-}
-
-.feedback-actions .button.button--loading {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 /* Mobile adjustments */

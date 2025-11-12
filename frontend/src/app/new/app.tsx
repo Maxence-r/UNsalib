@@ -43,6 +43,16 @@ export default function App() {
                 <div className="content-container">
                     <h2 className="page-title">Journal des mises à jour</h2>
                     <ReleaseSection
+                        versionNumber="2.3"
+                        versionName="Barbara"
+                        date="11/2025"
+                        features={[
+                            { icon: "🛠️", description: "Mise a jours des systèmes suite à la modifications des systèmes de nantes université" },
+                            { icon: "🛠️", description: "Mode maintenance en cas de problèmes avec détails précis" },
+                            { icon: "🛠️", description: "Amélioration de l'algorithme de récupération et de traitement des groupes" }
+                        ]}
+                    />
+                    <ReleaseSection
                         versionNumber="2.2"
                         versionName="Barbara"
                         date="09/2025"

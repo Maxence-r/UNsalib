@@ -3,7 +3,6 @@
 import { ReactNode } from "react";
 import { create } from "zustand";
 
-import "@/_utils/theme.css";
 import "./drawer.css";
 import { pushToHistory, goBack } from "@/_utils/navigation-manager";
 

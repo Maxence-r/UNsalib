@@ -314,17 +314,22 @@ function AboutModalContent() {
                     </div>
                 </div>
             </div>
-             <Button
-                    className="feedback-button"
-                    onClick={() => {
-                        closeModal();
+            <Button
+                className="feedback-button"
+                onClick={() => {
+                    closeModal();
+                    // Use setTimeout to ensure modal closes first
+                    setTimeout(() => {
                         import("@/_utils/feedback-tracker").then(({ openFeedbackDrawer }) => {
                             openFeedbackDrawer();
+                        }).catch((error) => {
+                            console.error("Error opening feedback drawer:", error);
                         });
-                    }}
-                >
-                    Donner mon avis
-                </Button>
+                    }, 100);
+                }}
+            >
+                Donner mon avis
+            </Button>
         </div>
     );
 }

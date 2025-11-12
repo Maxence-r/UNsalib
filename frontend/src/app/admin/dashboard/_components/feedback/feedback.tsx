@@ -5,7 +5,6 @@ import { Star, MessageSquare, TrendingUp, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/_components/card";
 import { PieChart } from "@/_components/chart";
-// @ts-expect-error: CSS module side-effect import
 import "./feedback.css";
 import {
     getFeedbackStats,

@@ -1,9 +1,8 @@
 .feedback-drawer {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    padding-inline: 20px;
-    width: calc(100%- 40px);
+    gap: 20px;
+    width: 100%;
     animation: fade-in 0.3s ease-in-out;
 }
 

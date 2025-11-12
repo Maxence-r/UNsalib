@@ -439,6 +439,39 @@ input[type=number] {
     cursor: pointer;
 }
 
+.about .feedback-section {
+    margin-bottom: 0;
+    border-top: 2px solid var(--border-color);
+    padding-top: 24px;
+}
+
+.about .feedback-section .feedback-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: var(--on-primary-color);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.about .feedback-section .feedback-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.about .feedback-section .feedback-button:active {
+    transform: translateY(0);
+}
+
 .slidecontainer {
     width: 100%;
 }

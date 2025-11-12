@@ -1,0 +1,236 @@
+.dashboard-feedback {
+    width: 100%;
+}
+
+.feedback-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.rating-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.rating-display h1 {
+    font-size: 48px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--on-surface-color);
+}
+
+.rating-display .stars {
+    display: flex;
+    gap: 4px;
+}
+
+.stat-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.stat-display svg {
+    color: var(--primary-color);
+}
+
+.stat-display h1 {
+    font-size: 48px;
+    margin: 0;
+    font-weight: 700;
+    color: var(--on-surface-color);
+}
+
+.distribution-chart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+}
+
+.distribution-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bar-label {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 30px;
+    color: var(--on-surface-color);
+}
+
+.bar-container {
+    flex: 1;
+    height: 24px;
+    background-color: var(--surface-variant-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFB800, #FFA000);
+    transition: width 0.3s ease;
+    border-radius: 12px;
+}
+
+.bar-count {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: right;
+    color: var(--on-surface-variant-color);
+}
+
+.platform-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.platform-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--surface-variant-color);
+    border-radius: 8px;
+}
+
+.platform-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.platform-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--on-surface-color);
+}
+
+.platform-count {
+    font-size: 12px;
+    color: var(--on-surface-variant-color);
+}
+
+.platform-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.platform-rating span {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--on-surface-color);
+}
+
+.trends-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.trend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.trend-date {
+    font-size: 12px;
+    min-width: 60px;
+    color: var(--on-surface-variant-color);
+}
+
+.trend-bar {
+    flex: 1;
+    height: 20px;
+    background-color: var(--surface-variant-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.trend-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    transition: width 0.3s ease;
+}
+
+.trend-value {
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 80px;
+    text-align: right;
+    color: var(--on-surface-color);
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comment-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-rating {
+    display: flex;
+    gap: 4px;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: var(--on-surface-variant-color);
+}
+
+.comment-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--on-surface-color);
+    padding: 12px;
+    background-color: var(--surface-variant-color);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .distribution-chart {
+        grid-template-columns: 1fr;
+    }
+
+    .feedback-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .rating-display h1,
+    .stat-display h1 {
+        font-size: 36px;
+    }
+}

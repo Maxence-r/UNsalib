@@ -314,6 +314,20 @@ function AboutModalContent() {
                     </div>
                 </div>
             </div>
+            <div className="modal-section feedback-section">
+                <Button
+                    className="feedback-button"
+                    onClick={() => {
+                        closeModal();
+                        import("@/_utils/feedback-tracker").then(({ openFeedbackDrawer }) => {
+                            openFeedbackDrawer();
+                        });
+                    }}
+                >
+                    <Smile size={20} />
+                    Donner mon avis
+                </Button>
+            </div>
         </div>
     );
 }

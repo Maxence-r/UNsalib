@@ -115,3 +115,42 @@ export async function getDayPlatforms(): Promise<ApiPlatforms> {
     const response = await getStats("platforms", new Date(), new Date());
     return await response.json();
 }
+
+interface FeedbackStats {
+    totalFeedbacks: number;
+    averageRating: number;
+    distribution: { [key: number]: number };
+    trends: {
+        [date: string]: {
+            count: number;
+            totalRating: number;
+            average: string;
+        };
+    };
+    platforms: {
+        [platform: string]: {
+            count: number;
+            totalRating: number;
+            average: string;
+        };
+    };
+}
+
+interface Feedback {
+    id: string;
+    rating: number;
+    comment: string;
+    userId: string;
+    userAgent: string;
+    createdAt: string;
+}
+
+export async function getFeedbackStats(): Promise<FeedbackStats> {
+    const response = await get("/feedback/stats");
+    return await response.json();
+}
+
+export async function getAllFeedbacks(): Promise<Feedback[]> {
+    const response = await get("/feedback/all");
+    return await response.json();
+}

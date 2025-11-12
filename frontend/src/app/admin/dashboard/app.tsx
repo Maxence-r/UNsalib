@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { ChartPie, House, Pen } from "lucide-react";
+import { ChartPie, House, Pen, MessageSquare } from "lucide-react";
 
 import { ApiUserAccount } from "./_utils/types";
 import Sidebar from "./_components/sidebar/sidebar";
 import Navbar from "./_components/navbar/navbar";
 import HomePage from "./_components/home/home";
 import StatsPage from "./_components/stats/stats";
+import FeedbackPage from "./_components/feedback/feedback";
 
 export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
     const tabs = [
         { id: "home", name: "Accueil", icon: <House /> },
         { id: "manage", name: "Gestion", icon: <Pen /> },
-        { id: "stats", name: "Statistiques", icon: <ChartPie /> }
+        { id: "stats", name: "Statistiques", icon: <ChartPie /> },
+        { id: "feedback", name: "Retours", icon: <MessageSquare /> }
     ]
     const [selectedTab, setSelectedTab] = useState("home");
 
@@ -36,6 +38,7 @@ export default function App({ userAccount }: { userAccount: ApiUserAccount }) {
             />
             {selectedTab === "home" && <HomePage />}
             {selectedTab === "stats" && <StatsPage />}
+            {selectedTab === "feedback" && <FeedbackPage />}
         </div>
     );
 }

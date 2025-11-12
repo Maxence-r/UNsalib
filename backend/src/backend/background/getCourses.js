@@ -124,7 +124,7 @@ async function isDbCourseInUnivArray(dbCourse, univDataArray) {
         const univCourse = univDataArray[i];
 
         // Processing the univCourse's rooms, teachers and modules to put them into the same format as above
-        univRooms = splitUnivDataBlocks(univCourse.rooms_for_blocks);
+        univRooms = splitUnivDataBlocks(univCourse.rooms_for_item_details);
         univTeachers = splitUnivDataBlocks(univCourse.teachers_for_blocks);
         univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
 
@@ -192,10 +192,10 @@ async function processGroupCourses(univData, dbData, groupInfos) {
     // Browsing courses that remain in univData (new to our database)
     for (const course of univData) {
         // Checking if data is valid (e.g: excludes holidays with no associated rooms)
-        if (!course.start_at || !course.end_at || !course.id || !course.celcat_id || !course.rooms_for_blocks) continue;
+        if (!course.start_at || !course.end_at || !course.id || !course.celcat_id || !course.rooms_for_item_details) continue;
 
         // Processing the course's rooms, teachers and modules to put them into our DB format
-        let rooms = splitUnivDataBlocks(course.rooms_for_blocks);
+        let rooms = splitUnivDataBlocks(course.rooms_for_item_details);
         rooms = await Promise.all(rooms.map(async (roomName) => (await processRoom(roomName))._id));
         const teachers = splitUnivDataBlocks(course.teachers_for_blocks);
         const modules = splitUnivDataBlocks(course.modules_for_blocks);

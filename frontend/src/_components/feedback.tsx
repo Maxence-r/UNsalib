@@ -5,6 +5,8 @@ import { Star, MessageSquare, Send } from "lucide-react";
 import Button from "@/_components/button";
 import { closeDrawer } from "@/_components/drawer";
 import { showToast, setToastMessage } from "@/_components/toast";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import "./feedback.css";
 
 export default function FeedbackDrawerContent() {

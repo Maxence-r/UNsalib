@@ -346,13 +346,15 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
         closePanel();
         setSelectedRoom(room.id, room.alias != "" ? `${room.alias.toUpperCase()}` : `${room.name.toUpperCase()}`);
 
-        const container = document.querySelector(".calendar-columns");
-        const target = document.querySelector('.selected');
+        const container = document.querySelector(".calendar-columns") as HTMLElement | null;
+        const target = document.querySelector('.selected') as HTMLElement | null;
 
-        container.scrollTo({
-            left: target.offsetLeft - container.offsetLeft,
-            behavior: "smooth"
-        });
+        if (container && target) {
+            container.scrollTo({
+                left: target.offsetLeft - container.offsetLeft,
+                behavior: "smooth"
+            });
+        }
     }
 
     return (

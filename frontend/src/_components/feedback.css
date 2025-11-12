@@ -124,9 +124,7 @@
     font-size: 14px;
     color: var(--on-surface-color);
     background-color: var(--surface-variant-color);
-    resize: none;
-    min-height: 80px;
-    max-height: 120px;
+    resize: vertical;
     transition: all 0.2s ease-in-out;
     box-sizing: border-box;
 }

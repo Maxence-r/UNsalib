@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Toast from "@/_components/toast";
 
 export const metadata: Metadata = {
     title: "UNsalib - Tableau de bord",
@@ -6,5 +7,10 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-    return children
+    return (
+        <>
+            {children}
+            <Toast />
+        </>
+    );
 };

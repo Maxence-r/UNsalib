@@ -1,0 +1,316 @@
+.main.dashboard-manage {
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.view {
+    max-width: 1440px;
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow: auto;
+}
+
+.view-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 0px;
+    min-height: 48px;
+}
+
+.view-content {
+    flex-grow: 1;
+    display: flex;
+    gap: 24px;
+    overflow: hidden;
+}
+
+.rooms-panel,
+.editor-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+}
+
+.rooms-panel {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.editor-panel {
+    flex: 2;
+    min-width: 400px;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.filter-option input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.rooms-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 4px;
+}
+
+.no-result {
+    text-align: center;
+    color: var(--neutral-color-dark);
+    padding: 24px;
+}
+
+.room-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--neutral-color-light);
+    border-radius: var(--border-radius-sharp);
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: var(--surface-color);
+}
+
+.room-item:hover {
+    background-color: var(--neutral-color-light);
+}
+
+.room-item.selected {
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
+    border-color: var(--accent-color);
+    font-weight: 600;
+}
+
+.room-item.hidden {
+    display: none;
+}
+
+.room-checkbox {
+    accent-color: var(--accent-color);
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.room-item.selected .room-checkbox {
+    accent-color: white;
+}
+
+.room-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.room-name {
+    font-weight: 500;
+}
+
+.room-building {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.room-badges {
+    display: flex;
+    gap: 4px;
+}
+
+.room-badge {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--neutral-color);
+    color: var(--on-neutral-color);
+}
+
+.room-item.selected .room-badge {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: var(--on-accent-color);
+}
+
+.editor-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px;
+}
+
+.editor-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.editor-section h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--neutral-color-dark);
+}
+
+.editor-section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.editor-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.editor-field label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.editor-field input,
+.editor-field select {
+    padding: 12px;
+    border: 1px solid var(--neutral-color-light);
+    border-radius: var(--border-radius-sharp);
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.editor-field input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+.boards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.board-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.board-field label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.board-field input {
+    padding: 8px;
+}
+
+.features-input {
+    display: flex;
+    gap: 8px;
+}
+
+.features-input input {
+    flex-grow: 1;
+}
+
+.chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    background-color: var(--neutral-color);
+    border-radius: 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chip:hover {
+    background-color: var(--neutral-color-dark);
+    color: var(--on-neutral-color-dark);
+}
+
+.chip-remove {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--neutral-color-light);
+}
+
+.batch-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.selected-count {
+    padding: 8px 16px;
+    background-color: var(--neutral-color);
+    border-radius: var(--border-radius-sharp);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@media screen and (max-width: 768px) {
+    .view-content {
+        flex-direction: column;
+    }
+
+    .rooms-panel,
+    .editor-panel {
+        max-width: 100%;
+        min-width: 100%;
+    }
+
+    .view-title {
+        display: none;
+    }
+
+    .boards-grid {
+        grid-template-columns: 1fr;
+    }
+}

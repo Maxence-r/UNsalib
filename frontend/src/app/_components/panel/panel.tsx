@@ -314,8 +314,7 @@ function AboutModalContent() {
                     </div>
                 </div>
             </div>
-            <div className="modal-section feedback-section">
-                <Button
+             <Button
                     className="feedback-button"
                     onClick={() => {
                         closeModal();
@@ -324,10 +323,8 @@ function AboutModalContent() {
                         });
                     }}
                 >
-                    <Smile size={20} />
                     Donner mon avis
                 </Button>
-            </div>
         </div>
     );
 }

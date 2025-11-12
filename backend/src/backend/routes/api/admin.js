@@ -274,13 +274,27 @@ router.get('/stats', async (req, res) => {
         processedStats.sort(compareStatsObjs);
 
         // Processing user-agent stats to produce objects with the number of each device
+        // Use fingerprints to count unique devices accurately
         const OS = {};
         const browsers = {};
+        const uniqueFingerprints = new Set();
+        
         stats.forEach((userStats) => {
+            // Only count each fingerprint once for device stats
+            const identifier = userStats.fingerprint || userStats.userId;
+            if (!identifier || uniqueFingerprints.has(identifier)) {
+                return;
+            }
+            uniqueFingerprints.add(identifier);
+            
             const parsedUserAgent = new UAParser({ Bots });
             parsedUserAgent.setUA(userStats.userAgent);
             let osName, browserName;
-            if (!isBot(parsedUserAgent.getResult())) {
+            
+            // Use the stored isBot field if available, otherwise detect
+            const isBotUser = userStats.isBot !== undefined ? userStats.isBot : isBot(parsedUserAgent.getResult());
+            
+            if (!isBotUser) {
                 osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
                 browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
             } else {
@@ -323,7 +337,7 @@ router.get('/stats/unique-visitors', async (req, res) => {
     }
 
     try {
-        // Getting statistics for the requested days range
+        // Getting statistics for the requested days range (includes bots)
         const stats = await Stat.find({
             date: {
                 $gte: start,
@@ -333,11 +347,23 @@ router.get('/stats/unique-visitors', async (req, res) => {
 
         // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
-        // Counting unique visitors per day
+        
+        // Counting unique visitors per day using fingerprints
+        // This counts ALL visitors including bots but eliminates duplicates better
         const uniqueVisitorsPerDay = {};
         days.forEach((day) => uniqueVisitorsPerDay[day] = 0);
+        
+        // Use a Set to track unique fingerprints per day
+        const fingerprintsPerDay = {};
+        days.forEach((day) => fingerprintsPerDay[day] = new Set());
+        
         stats.forEach((stat) => {
-            uniqueVisitorsPerDay[stat.date] += 1;
+            // Use fingerprint if available, fallback to userId for backward compatibility
+            const identifier = stat.fingerprint || stat.userId;
+            if (identifier && !fingerprintsPerDay[stat.date].has(identifier)) {
+                fingerprintsPerDay[stat.date].add(identifier);
+                uniqueVisitorsPerDay[stat.date] += 1;
+            }
         });
 
         res.status(200).json(uniqueVisitorsPerDay);
@@ -481,24 +507,42 @@ router.get('/stats/unique-human-visitors', async (req, res) => {
 
     try {
         // Getting statistics for the requested days range
+        // Enhanced filtering: exclude bots AND require actual activity
+        // This follows industry standards for unique human visitor counting
         const stats = await Stat.find({
             date: {
                 $gte: start,
                 $lte: end
             },
+            // Filter out bots using the new isBot field
+            isBot: { $ne: true },
+            // Require actual engagement (at least one meaningful action)
             $or: [
                 { availableRoomsRequests: { $gt: 0 } },
-                { roomRequests: { $gt: 0 } }
+                { roomRequests: { $gt: 0 } },
+                { roomsListRequests: { $gt: 0 } }
             ]
         });
 
         // Creating an array containing all the dates between start and end
         let days = getDatesRange(new Date(start), new Date(end));
-        // Counting unique visitors per day
+        
+        // Counting unique human visitors per day using fingerprints
+        // This prevents counting the same user multiple times even if they clear cookies
         const uniqueVisitorsPerDay = {};
         days.forEach((day) => uniqueVisitorsPerDay[day] = 0);
+        
+        // Use a Set to track unique fingerprints per day
+        const fingerprintsPerDay = {};
+        days.forEach((day) => fingerprintsPerDay[day] = new Set());
+        
         stats.forEach((stat) => {
-            uniqueVisitorsPerDay[stat.date] += 1;
+            // Use fingerprint if available, fallback to userId for backward compatibility
+            const identifier = stat.fingerprint || stat.userId;
+            if (identifier && !fingerprintsPerDay[stat.date].has(identifier)) {
+                fingerprintsPerDay[stat.date].add(identifier);
+                uniqueVisitorsPerDay[stat.date] += 1;
+            }
         });
 
         res.status(200).json(uniqueVisitorsPerDay);

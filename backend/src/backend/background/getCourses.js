@@ -32,26 +32,12 @@ async function processRoom(roomName) {
     if (!roomName) return;
 
     // Formatting the room and building names
-    // New format: "sa TD 215 (Bât 26- 1er ét.) - Bât 26- 1er ét."
-    // Old format: "TD 215 (Bât 26)"
-    const formattedRoom = roomName.includes('(')
-        ? roomName.split('(')[0].trim()
-        : roomName.trim();
-    
-    let formattedBuilding;
-    if (roomName.includes('(') && roomName.includes(')')) {
-        // Check if there's a " - " after the closing parenthesis (new format)
-        const afterParenthesis = roomName.split(')')[1];
-        if (afterParenthesis && afterParenthesis.includes(' - ')) {
-            // New format: extract building after ") - "
-            formattedBuilding = afterParenthesis.split(' - ')[1].trim();
-        } else {
-            // Old format: extract building from within parentheses
-            formattedBuilding = roomName.split('(')[1].split(')')[0];
-        }
-    } else {
-        formattedBuilding = roomName;
-    }
+    // New format: I005 - Bât 15-C I E
+    // Old format: Amphi 111- Maria SKLODOWSKA-CURIE Vidéo (Bât 26- RdC) - Bât 26- RdC
+
+    // New and old format compatible
+    let formattedBuilding = roomName.match(/(?<= - ).*$/)[0];
+    let formattedRoom = roomName.match(/^.*(?= \()|^.*(?= - )/)[0];
 
     // Trying to find the room in the database
     let room = await Room.findOne({ name: formattedRoom });

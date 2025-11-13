@@ -1,6 +1,8 @@
-import { verify, JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import pkg from "jsonwebtoken";
 import "dotenv/config";
 import Account from "../models/account.js";
+const { verify } = pkg;
 
 async function getAccountFromToken(token: string): Promise<null | string> {
     let userId: null | string = null;

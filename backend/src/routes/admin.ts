@@ -502,8 +502,8 @@ router.get("/stats/unique-human-visitors", async (req, res) => {
 
     // Checking the date parameters validity
     try {
-        let startDate = new Date(start).toISOString();
-        let endDate = new Date(end).toISOString();
+        const startDate = new Date(start).toISOString();
+        const endDate = new Date(end).toISOString();
         if (startDate > endDate) {
             throw new Error();
         }
@@ -525,7 +525,7 @@ router.get("/stats/unique-human-visitors", async (req, res) => {
         });
 
         // Creating an array containing all the dates between start and end
-        let days = getDatesRange(new Date(start), new Date(end));
+        const days = getDatesRange(new Date(start), new Date(end));
         // Counting unique visitors per day
         const uniqueVisitorsPerDay = {};
         days.forEach((day) => (uniqueVisitorsPerDay[day] = 0));

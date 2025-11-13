@@ -5,6 +5,7 @@ import Course from "../models/course.js";
 import Room from "../models/room.js";
 import { closestPaletteColor } from "../utils/color.js";
 import wsManager from "../server.js";
+import { CONFIG } from "../config.js";
 
 // CONSTANTS
 // Groups update interval in milliseconds
@@ -365,7 +366,7 @@ async function fetchCourses(group: {
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
     // Logging if needed
-    if (process.env.LOGS_RECUP_GPES == "true") {
+    if (CONFIG.LOGS_RECUP_GPES) {
         console.log(
             `---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`,
         );
@@ -395,7 +396,7 @@ async function fetchCourses(group: {
         averageProcessingTime.measuresNumber++;
 
         // Logging if needed
-        if (process.env.LOGS_RECUP_GPES == "true") {
+        if (CONFIG.LOGS_RECUP_GPES) {
             console.log(
                 `Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`,
             );

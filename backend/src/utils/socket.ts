@@ -1,5 +1,7 @@
 import { Server } from "socket.io";
+
 import { getAccountFromToken } from "./auth.js";
+import { CONFIG } from "../config.js";
 
 class WebSocket {
     io: Server;
@@ -7,8 +9,8 @@ class WebSocket {
         this.io = new Server(server, {
             cors: {
                 origin: [
-                    process.env.PUBLIC_FRONTEND_URL,
-                    process.env.PRIVATE_FRONTEND_URL,
+                    CONFIG.PUBLIC_FRONTEND_URL,
+                    CONFIG.PRIVATE_FRONTEND_URL,
                 ],
                 credentials: true,
             },

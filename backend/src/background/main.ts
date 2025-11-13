@@ -3,10 +3,12 @@ import getGroups from "./getGroups.js";
 import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
 import 'dotenv/config'
 
+import { CONFIG } from "../config.js";
+
 async function launch(): Promise<void> {
     // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately
     console.log();
-    if (process.env.FORCER_RECUP_GPES === 'true') {
+    if (CONFIG.FORCER_RECUP_GPES) {
         console.log('Récupération des groupes ACTIVÉE - Démarrage du processus...');
         await getGroups();
     } else {
@@ -15,7 +17,7 @@ async function launch(): Promise<void> {
 
     // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
     console.log();
-    if (process.env.FORCER_TRAITEMENT_GPES === 'true' || process.env.CORRIGER_GPES_INCORRECTS === 'true') {
+    if (CONFIG.FORCER_TRAITEMENT_GPES || CONFIG.CORRIGER_GPES_INCORRECTS) {
         console.log('Traitement de tous les groupes ACTIVÉ - Démarrage du processus...');
         await processBatchGroups();
     } else {
@@ -24,7 +26,7 @@ async function launch(): Promise<void> {
     
     // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
     console.log();
-    if (process.env.CORRIGER_GPES_INCORRECTS === 'true') {
+    if (CONFIG.CORRIGER_GPES_INCORRECTS) {
         console.log('Correction des groupes incorrects ACTIVÉE - Démarrage du processus...');
         await fixDb();
     } else {
@@ -33,7 +35,7 @@ async function launch(): Promise<void> {
 
     // If 'SYNC_TIMETABLES' is activated, launch a loop executing the sync algorithm
     console.log();
-    if (process.env.SYNC_TIMETABLES === 'true') {
+    if (CONFIG.SYNC_TIMETABLES) {
         console.log('Synchronisation des emplois du temps ACTIVÉE - Démarrage du processus...');
         void getCourses();
     } else {

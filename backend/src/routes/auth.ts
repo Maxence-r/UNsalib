@@ -2,6 +2,7 @@ import express from "express";
 import Account from "../models/account.js";
 import pkg from "jsonwebtoken";
 import { compare } from "bcrypt";
+import { CONFIG } from "../config.js";
 const router = express.Router();
 const { sign } = pkg;
 
@@ -27,13 +28,13 @@ router.post("/login", async (req, res) => {
                 userId: user._id,
                 username: user.username,
             },
-            process.env.TOKEN.toString(),
+            CONFIG.TOKEN,
             {
                 expiresIn: `${TOKEN_VALIDITY_DAYS}d`,
             },
         );
         res.cookie("token", token, {
-            domain: `.${process.env.PUBLIC_DOMAIN}`,
+            domain: `.${CONFIG.PUBLIC_DOMAIN}`,
             maxAge: TOKEN_VALIDITY_DAYS * 24 * 60 * 60 * 1000,
             sameSite: "lax",
         })
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/logout", (req, res) => {
     // Clearing the cookie
-    res.clearCookie("token", { domain: `.${process.env.PUBLIC_DOMAIN}` }).json({
+    res.clearCookie("token", { domain: `.${CONFIG.PUBLIC_DOMAIN}` }).json({
         message: "LOGOUT_SUCCESSFUL",
     });
 });

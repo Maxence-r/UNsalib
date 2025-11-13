@@ -2,6 +2,7 @@ import { createServer } from "http";
 
 import app from "./app.js";
 import WebSocket from "./utils/socket.js";
+import { CONFIG } from "./config.js";
 
 interface NodeSystemError extends Error {
     code?: string;
@@ -25,7 +26,7 @@ const normalizePort = (val: string): string | number | false => {
     }
     return false;
 };
-const port = normalizePort(process.env.PORT || "9000");
+const port = normalizePort(CONFIG.PORT);
 app.set("port", port);
 
 const errorHandler = (error: NodeSystemError): never => {

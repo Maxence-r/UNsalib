@@ -11,6 +11,7 @@ import { Bots } from "ua-parser-js/extensions";
 import { isBot } from "ua-parser-js/helpers";
 import { isValidDate, isSameDay, getDatesRange } from "../utils/date.js";
 import { compareStatsObjs } from "../utils/stats.js";
+import { CONFIG } from "../config.js";
 const router = express.Router();
 const { sign } = pkg;
 
@@ -36,15 +37,15 @@ router.post("/auth/login", async (req, res) => {
                 userId: user._id,
                 username: user.username,
             },
-            process.env.TOKEN.toString(),
+            CONFIG.TOKEN,
             {
                 expiresIn: `${TOKEN_VALIDITY_DAYS}d`,
             },
         );
         res.cookie("token", token, {
-            domain: `.${process.env.PUBLIC_DOMAIN}`,
+            domain: `.${CONFIG.PUBLIC_DOMAIN}`,
             maxAge: TOKEN_VALIDITY_DAYS * 24 * 60 * 60 * 1000,
-            sameSite: "Lax",
+            sameSite: "lax",
         })
             .status(200)
             .json({ message: "LOGIN_SUCCESSFUL" });
@@ -56,14 +57,14 @@ router.post("/auth/login", async (req, res) => {
     }
 });
 
-router.get("/auth/logout", async (req, res) => {
+router.get("/auth/logout", (req, res) => {
     // Clearing the cookie
-    res.clearCookie("token", { domain: `.${process.env.PUBLIC_DOMAIN}` }).json({
+    res.clearCookie("token", { domain: `.${CONFIG.PUBLIC_DOMAIN}` }).json({
         message: "LOGOUT_SUCCESSFUL",
     });
 });
 
-router.get("/auth/status", async (req, res) => {
+router.get("/auth/status", (req, res) => {
     if (req.connected) {
         return res.json({ message: "LOGGED_IN" });
     }

@@ -10,6 +10,7 @@ import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import authMiddleware from "./middlewares/auth.js";
 import statsMiddleware from "./middlewares/stats.js";
+import { CONFIG } from "./config.js";
 
 const app = express();
 
@@ -18,10 +19,7 @@ app.disable("x-powered-by");
 // Default
 app.use(
     cors({
-        origin: [
-            process.env.PUBLIC_FRONTEND_URL || "http://localhost:3000",
-            process.env.PRIVATE_FRONTEND_URL || "http://localhost:3000",
-        ],
+        origin: [CONFIG.PUBLIC_FRONTEND_URL, CONFIG.PRIVATE_FRONTEND_URL],
         credentials: true,
     }),
 );
@@ -46,7 +44,7 @@ app.use((req, res) => {
 set("strictQuery", true);
 void (async (): Promise<void> => {
     try {
-        await connect(`${process.env.MONGODB_URI}`, {});
+        await connect(CONFIG.MONGODB_URI, {});
         console.log("Connexion à MongoDB réussie !");
     } catch (err) {
         console.log("Connexion à MongoDB échouée !");

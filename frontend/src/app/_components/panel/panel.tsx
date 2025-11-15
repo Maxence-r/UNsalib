@@ -249,19 +249,20 @@ function AboutModalContent() {
                 <div className="content">
                     <p>Nous sommes trois étudiants motivés pour améliorer le quotidien de tous au sein de l&apos;Université.</p>
                     <div className="grid" id="team">
-                        <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
-                            <div className="infos">
-                                <h2>Maxence</h2>
-                                <p>Développeur & UX/UI designer</p>
-                            </div>
-                            <Image src="/maxence.png" width={36} height={36} alt=""></Image>
-                        </div>
+                        
                         <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">
                                 <h2>Maël</h2>
                                 <p>Développeur</p>
                             </div>
                             <Image src="/mael.png" width={64} height={64} alt=""></Image>
+                        </div>
+<div className="item" onDoubleClick={() => window.location.href = "/admin"}>
+                            <div className="infos">
+                                <h2>Maxence</h2>
+                                <p>UX/UI designer</p>
+                            </div>
+                            <Image src="/maxence.png" width={36} height={36} alt=""></Image>
                         </div>
                         <div className="item" onDoubleClick={() => window.location.href = "/admin"}>
                             <div className="infos">

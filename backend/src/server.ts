@@ -1,65 +1,74 @@
-import { createServer } from "http";
+import "dotenv/config";
+import { connect } from "mongoose";
 
-import app from "./app.js";
-import WebSocket from "./utils/socket.js";
-import { CONFIG } from "./config.js";
+import { app } from "./app.js";
+import { logger } from "utils/logger.js";
+import { config } from "configs/app.config.js";
 
-interface NodeSystemError extends Error {
-    code?: string;
-    errno?: number;
-    syscall?: string;
-    path?: string;
-    address?: string;
-    port?: number;
+async function connectToDb(): Promise<void> {
+    try {
+        const conn = await connect(config.mongodb.uri);
+        logger.info("MongoDB connection successful");
+        logger.info(`Host: ${conn.connection.host}`);
+        logger.info(`Database: ${conn.connection.name}`);
+
+        // Handle connection events
+        conn.connection.on("error", (err) => {
+            logger.error("MongoDB connection error:", err);
+        });
+
+        conn.connection.on("disconnected", () => {
+            logger.warn("MongoDB disconnected");
+        });
+
+        conn.connection.on("reconnected", () => {
+            logger.info("MongoDB reconnected");
+        });
+    } catch (error) {
+        logger.error("Error connecting to MongoDB:", error as string);
+        process.exit(1);
+    }
 }
 
-const server = createServer(app);
+// Start server function
+async function startServer(): Promise<void> {
+    try {
+        // Connect to database
+        void (await connectToDb());
 
-const normalizePort = (val: string): string | number | false => {
-    const port = parseInt(val, 10);
+        // Start server
+        const server = app.listen(config.server.port, () => {
+            logger.info(
+                `Server running on port ${config.server.port}`,
+            );
+        });
 
-    if (isNaN(port)) {
-        return val;
-    }
-    if (port >= 0) {
-        return port;
-    }
-    return false;
-};
-const port = normalizePort(CONFIG.PORT);
-app.set("port", port);
+        // Handle unhandled promise rejections
+        process.on("unhandledRejection", (err) => {
+            logger.error("Unhandled Rejection:", err);
+            server.close(() => {
+                process.exit(1);
+            });
+        });
 
-const errorHandler = (error: NodeSystemError): never => {
-    if (error.syscall !== "listen") {
-        throw error;
+        // Handle SIGTERM
+        process.on("SIGTERM", () => {
+            logger.info("SIGTERM received. Closing server gracefully...");
+            server.close(() => {
+                logger.info("Process terminated");
+            });
+        });
+    } catch (error) {
+        logger.error("Failed to start server:", error);
+        process.exit(1);
     }
-    const address = server.address();
-    const bind =
-        typeof address === "string" ? "pipe " + address : "port: " + port;
-    switch (error.code) {
-        case "EACCES":
-            console.error(bind + " requires elevated privileges.");
-            process.exit(1);
-            break;
-        case "EADDRINUSE":
-            console.error(bind + " is already in use.");
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
-};
+}
 
-server.on("error", errorHandler);
-server.on("listening", () => {
-    const address = server.address();
-    const bind =
-        typeof address === "string" ? "pipe " + address : "port " + port;
-    console.log("Listening on " + bind);
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+    logger.error("Uncaught Exception:", err);
+    process.exit(1);
 });
 
-server.listen(port);
-
-const wsManager = new WebSocket(server);
-
-export default wsManager;
+// Start the server
+void startServer();

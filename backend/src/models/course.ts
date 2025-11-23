@@ -55,4 +55,4 @@ const CourseSchema = new Schema({
 });
 
 const Course = model("Course", CourseSchema);
-export default Course;
+export { Course };

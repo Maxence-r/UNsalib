@@ -2,7 +2,7 @@ import { JwtPayload } from "jsonwebtoken";
 import pkg from "jsonwebtoken";
 import "dotenv/config";
 import Account from "../models/account.js";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 const { verify } = pkg;
 
 async function getAccountFromToken(token: string): Promise<null | string> {

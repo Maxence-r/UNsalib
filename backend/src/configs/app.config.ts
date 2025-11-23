@@ -1,4 +1,4 @@
-export const config = {
+const config = {
     cors: {
         origin: process.env.FRONTEND_URL || "http://localhost:3000",
     },
@@ -17,3 +17,5 @@ export const config = {
         port: process.env.PORT || 9000,
     },
 };
+
+export { config };

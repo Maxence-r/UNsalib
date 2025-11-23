@@ -107,16 +107,16 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Rate limiting
-app.use(
-    "/",
-    rateLimit({
-        windowMs: config.rateLimit.windowMs,
-        max: config.rateLimit.max,
-        message: "Too many requests from this IP, please try again later.",
-        standardHeaders: true,
-        legacyHeaders: false,
-    }),
-);
+// app.use(
+//     "/",
+//     rateLimit({
+//         windowMs: config.rateLimit.windowMs,
+//         max: config.rateLimit.max,
+//         message: "Too many requests from this IP, please try again later.",
+//         standardHeaders: true,
+//         legacyHeaders: false,
+//     }),
+// );
 
 // API routes
 app.use("/", routes);

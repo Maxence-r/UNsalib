@@ -1,74 +1,74 @@
 // Endpoint: /rooms
 
 export interface ApiRoom {
-    id: string,
-    name: string,
-    alias: string,
-    building: string,
-    available: boolean,
-    features: ("visio" | "badge" | "video" | "ilot")[]
-};
+    id: string;
+    name: string;
+    alias: string;
+    building: string;
+    available: boolean;
+    features: ("visio" | "badge" | "video" | "ilot")[];
+}
 
-export type ApiRoomsList = ApiRoom[];
+export type ApiRoomsList = { success: boolean; data: ApiRoom[] };
 
 // Endpoint: /rooms/timetable
 
 export interface ApiCourse {
-    category: string,
-    color: string,
-    courseId: string,
-    duration: number,
-    end: string,
-    groups: string[],
-    modules: string[],
-    notes: string,
-    overflow: number,
-    roomId: string[],
-    start: string,
-    teachers: string[]
-};
+    category: string;
+    color: string;
+    courseId: string;
+    duration: number;
+    end: string;
+    groups: string[];
+    modules: string[];
+    notes: string;
+    overflow: number;
+    roomId: string[];
+    start: string;
+    teachers: string[];
+}
 
 export type ApiCourses = ApiCourse[];
 
 export interface ApiWeekInfos {
-    end: string,
-    number: string,
-    start: string
-};
+    end: string;
+    number: string;
+    start: string;
+}
 
 export interface ApiTimetable {
-    courses: ApiCourses,
-    weekInfos: ApiWeekInfos
-};
+    courses: ApiCourses;
+    weekInfos: ApiWeekInfos;
+}
 
 // Endpoint: /admin/stats/unique-visitors
 
-export interface ApiUniqueVisitors { 
-    [key: string]: number
+export interface ApiUniqueVisitors {
+    [key: string]: number;
 }
 
 // Endpoint: /admin/stats/unique-human-visitors
 
-export interface ApiUniqueHumanVisitors { 
-    [key: string]: number
+export interface ApiUniqueHumanVisitors {
+    [key: string]: number;
 }
 
 // Endpoint: /admin/stats/views
 
-export interface ApiViews { 
-    [key: string]: number
+export interface ApiViews {
+    [key: string]: number;
 }
 
 // Endpoint: /admin/stats/platforms
 
-export interface ApiPlatforms { 
+export interface ApiPlatforms {
     [key: string]: {
-        [key: string]: number
-    }
+        [key: string]: number;
+    };
 }
 
 // API error
 
 export interface ApiError {
-    error: string
-};
+    error: string;
+}

@@ -1,11 +1,10 @@
 import express from "express";
 const router = express.Router();
 
-// Import route modules
-// const authRoutes = require("./auth.routes");
+import { router as roomsRoute } from "./rooms.route.js";
 
 // Mount routes
-// router.use("/auth", authRoutes);
+router.use("/rooms", roomsRoute);
 
 // Health check endpoint
 router.get("/health", (req, res) => {

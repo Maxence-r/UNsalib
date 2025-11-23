@@ -3,7 +3,7 @@ import getGroups from "./getGroups.js";
 import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
 import 'dotenv/config'
 
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 
 async function launch(): Promise<void> {
     // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately

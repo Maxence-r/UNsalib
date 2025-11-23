@@ -12,13 +12,16 @@ async function fetchRooms(): Promise<ApiRoomsList> {
     const clientId = cookieStore.get("clientUuid")?.value;
     const clientUserAgent = clientHeaders.get("user-agent");
 
-    const rooms = await getRoomsList(clientId ? clientId : "", clientUserAgent ? clientUserAgent : "");
+    const rooms = await getRoomsList(
+        clientId ? clientId : "",
+        clientUserAgent ? clientUserAgent : "",
+    );
 
     if (rooms.success) {
         return rooms.data;
     } else {
         console.error("Impossible de récupérer la liste des salles !");
-        return [];
+        return { success: false, data: [] };
     }
 }
 

@@ -11,7 +11,7 @@ import { Bots } from "ua-parser-js/extensions";
 import { isBot } from "ua-parser-js/helpers";
 import { isValidDate, isSameDay, getDatesRange } from "../utils/date.js";
 import { compareStatsObjs } from "../utils/stats.js";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 const router = express.Router();
 const { sign } = pkg;
 

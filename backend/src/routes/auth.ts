@@ -2,7 +2,7 @@ import express from "express";
 import Account from "../models/account.js";
 import pkg from "jsonwebtoken";
 import { compare } from "bcrypt";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 const router = express.Router();
 const { sign } = pkg;
 

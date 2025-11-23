@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
-import { ApiRoom, ApiRoomsList } from "@/_utils/api-types";
+import { ApiRoom } from "@/_utils/api-types";
 import "./roomsList.css";
 import "@/_utils/theme.css";
 
@@ -37,8 +37,8 @@ function Badges({ features, available, id }: { features: ("visio" | "badge" | "v
     );
 }
 
-export default function RoomsList({ containerClassName, onRoomClick, roomsList, filter }: { containerClassName: string, onRoomClick: (room: ApiRoom) => void, roomsList: ApiRoomsList, filter: string }) {
-    const [filteredRoomsList, setFilteredRoomsList] = useState(roomsList);
+export default function RoomsList({ containerClassName, onRoomClick, roomsList, filter }: { containerClassName: string, onRoomClick: (room: ApiRoom) => void, roomsList: ApiRoom[], filter: string }) {
+    const [filteredRoomsList, setFilteredRoomsList] = useState<ApiRoom[]>(roomsList);
 
     useEffect(() => {
         if (roomsList) {

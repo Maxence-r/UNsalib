@@ -5,7 +5,7 @@ import Course from "../models/course.js";
 import Room from "../models/room.js";
 import { closestPaletteColor } from "../utils/color.js";
 import wsManager from "../server.js";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 
 // CONSTANTS
 // Groups update interval in milliseconds

@@ -81,7 +81,6 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             const debut = `${dateString}T${startTime}`;
             const fin = `${dateString}T${endTime}`;
 
-            const nobadgeUrl = nobadgeFeature ? "true" : "";
             let featuresUrl = "";
             if (visioFeature) {
                 featuresUrl += "visio";
@@ -91,17 +90,19 @@ function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoom
             }
 
             try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL
+                let urlString = `${process.env.NEXT_PUBLIC_API_URL
                     }/rooms/available?start=${encodeURIComponent(debut)
                     }&end=${encodeURIComponent(fin)
-                    }&type=${type
-                    }&features=${featuresUrl
-                    }&nobadge=${nobadgeUrl
                     }&seats=${seats.toString()
                     }&whiteboards=${whiteBoards.toString()
                     }&blackboards=${blackBoards.toString()
-                    }`,
+                    }`
+                if (type) urlString += `&type=${type}`;
+                if (nobadgeFeature) urlString += `&nobadge=true`;
+                if (featuresUrl) urlString += `&features=${featuresUrl}`;
+
+                const response = await fetch(
+                    urlString,
                     { credentials: "include" }
                 );
                 const availableRooms: ApiRoomsList = await response.json();
@@ -322,7 +323,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
-    const [availableRoomsList, setAvailableRoomsList] = useState<ApiRoomsList>([]);
+    const [availableRoomsList, setAvailableRoomsList] = useState<ApiRoomsList>({success: false, data: []});
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
@@ -331,14 +332,6 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
         pushToHistory("panel", openPanel)
         closePanel();
         setSelectedRoom(room.id, room.alias != "" ? `${room.alias.toUpperCase()}` : `${room.name.toUpperCase()}`);
-
-        const container = document.querySelector(".calendar-columns");
-        const target = document.querySelector('.selected');
-
-        container.scrollTo({
-            left: target.offsetLeft - container.offsetLeft,
-            behavior: "smooth"
-        });
     }
 
     return (
@@ -374,7 +367,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-                    <RoomsList containerClassName="edt" roomsList={roomsList} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                    <RoomsList containerClassName="edt" roomsList={roomsList.data} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
                 </div>
 
                 <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
@@ -408,7 +401,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-                    <RoomsList containerClassName="available" roomsList={availableRoomsList} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                    <RoomsList containerClassName="available" roomsList={availableRoomsList.data} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
                 </div>
             </div>
         </>

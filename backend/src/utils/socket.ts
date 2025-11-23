@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 
 import { getAccountFromToken } from "./auth.js";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "../configs/app.config.js";
 
 class WebSocket {
     io: Server;

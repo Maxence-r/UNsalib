@@ -4,6 +4,38 @@ import { matchedData } from "express-validator";
 
 class RoomsController {
     /**
+     * @route   GET /
+     * @desc    Return all rooms with their availability status
+     * @access  Public
+     */
+    async getAll(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            const result = await roomsService.findAll();
+
+            // Formatting the response
+            const formattedResponse = result.map((doc) => ({
+                id: doc._id,
+                name: doc.name,
+                alias: doc.alias,
+                building: doc.building,
+                available: doc.available,
+                features: doc.features,
+            }));
+
+            res.status(200).json({
+                success: true,
+                data: formattedResponse,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
      * @route   GET /available
      * @desc    Return available rooms
      * @access  Public
@@ -14,6 +46,7 @@ class RoomsController {
         next: NextFunction,
     ): Promise<void> {
         try {
+            // Getting validated queries
             const data: {
                 start: string;
                 end: string;
@@ -24,8 +57,6 @@ class RoomsController {
                 type?: "info" | "tp" | "td" | "amphi" | null;
                 features?: ("visio" | "ilot")[];
             } = matchedData(req);
-
-            console.log(JSON.stringify(data));
 
             const result = await roomsService.findAvailable(
                 data.start,
@@ -38,6 +69,7 @@ class RoomsController {
                 data.features ?? [],
             );
 
+            // Formatting the response
             const formattedResponse = result.map((doc) => ({
                 id: doc._id,
                 name: doc.name,

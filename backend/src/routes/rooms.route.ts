@@ -7,6 +7,9 @@ import { roomsController } from "controllers/rooms.controller.js";
 const router = express.Router();
 
 // Public routes
+router.get("/", (req: Request, res: Response, next: NextFunction) =>
+    roomsController.getAll(req, res, next),
+);
 router.get(
     "/available",
     availableValidation,

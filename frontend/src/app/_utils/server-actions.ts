@@ -1,8 +1,8 @@
-import { ApiRoomsList } from "@/_utils/api-types";
+import { ApiRoom } from "@/_utils/api-types";
 
 interface GetRoomsListResult {
     success: boolean,
-    data: ApiRoomsList,
+    data: ApiRoom[],
     message: string
 }
 
@@ -22,7 +22,7 @@ export async function getRoomsList(uuid: string, userAgent: string): Promise<Get
         const rooms = await response.json();
         return {
             success: true,
-            data: rooms,
+            data: rooms.data,
             message: ""
         };
     } catch (error) {

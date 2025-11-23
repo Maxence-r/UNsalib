@@ -18,7 +18,7 @@ async function fetchRooms(): Promise<ApiRoomsList> {
     );
 
     if (rooms.success) {
-        return rooms.data;
+        return rooms;
     } else {
         console.error("Impossible de récupérer la liste des salles !");
         return { success: false, data: [] };

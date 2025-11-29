@@ -1,7 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
-yarn.lock
 
 # Environment variables
 .env
@@ -38,7 +36,10 @@ Thumbs.db
 
 # Build
 dist/
+dist-ssr
+*.local
 build/
 
 # Custom
-/frontend/src/app/premium
+frontend/src/app/premium
+frontend-old/

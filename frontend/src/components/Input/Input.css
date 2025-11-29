@@ -10,6 +10,6 @@
     color: var(--on-neutral-color-light);
 }
 
-input:not(input[type="checkbox"])::placeholder {
+.input::placeholder {
     color: var(--neutral-color-dark);
 }

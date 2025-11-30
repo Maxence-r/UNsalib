@@ -1,3 +1,12 @@
+import { logger } from "utils/logger.js";
+
+if (!process.env.TOKEN) {
+    logger.error(
+        "No 'TOKEN' environment variable found. Please set a token to use UNsalib.",
+    );
+    process.exit(1);
+}
+
 const config = {
     cors: {
         origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -15,6 +24,9 @@ const config = {
     },
     server: {
         port: process.env.PORT || 9000,
+    },
+    security: {
+        token: process.env.TOKEN,
     },
 };
 

@@ -2,7 +2,7 @@ import { JwtPayload } from "jsonwebtoken";
 import pkg from "jsonwebtoken";
 import "dotenv/config";
 import Account from "../models/account.js";
-import { CONFIG } from "../configs/app.config.js";
+import { config } from "../configs/app.config.js";
 const { verify } = pkg;
 
 async function getAccountFromToken(token: string): Promise<null | string> {
@@ -10,7 +10,7 @@ async function getAccountFromToken(token: string): Promise<null | string> {
     try {
         const decodedToken: string | JwtPayload = verify(
             token,
-            CONFIG.TOKEN,
+            config.security.token,
         );
         if (
             typeof decodedToken !== "string" &&

@@ -1,22 +1,13 @@
 import { Server } from "socket.io";
 
 import { getAccountFromToken } from "./auth.js";
-import { CONFIG } from "../configs/app.config.js";
 
-class WebSocket {
-    io: Server;
-    constructor(server: Server) {
-        this.io = new Server(server, {
-            cors: {
-                origin: [
-                    CONFIG.PUBLIC_FRONTEND_URL,
-                    CONFIG.PRIVATE_FRONTEND_URL,
-                ],
-                credentials: true,
-            },
-        });
+class Socket {
+    private io: Server;
 
-        this.io.use(async (socket, next) => {
+    public constructor(io: Server) {
+        this.io = io;
+        this.io.use((socket, next) => {
             const cookieHeader = socket.handshake.headers.cookie;
 
             if (!cookieHeader) return next();
@@ -35,11 +26,14 @@ class WebSocket {
 
             if (!token) return next();
 
-            const userId = await getAccountFromToken(token);
-            if (userId) {
-                void socket.join("admin");
-            }
-            next();
+            getAccountFromToken(token).then((userId) => {
+                if (userId) {
+                    void socket.join("admin");
+                }
+                next();
+            }).catch(() => {
+                next();
+            });
         });
     }
 
@@ -54,4 +48,4 @@ class WebSocket {
     }
 }
 
-export default WebSocket;
+export { Socket };

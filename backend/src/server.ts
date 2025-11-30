@@ -1,9 +1,11 @@
 import "dotenv/config";
 import { connect } from "mongoose";
+import { Server } from "socket.io";
 
 import { app } from "./app.js";
 import { logger } from "utils/logger.js";
 import { config } from "configs/app.config.js";
+import { Socket } from "utils/socket.js";
 
 async function connectToDb(): Promise<void> {
     try {
@@ -31,16 +33,14 @@ async function connectToDb(): Promise<void> {
 }
 
 // Start server function
-async function startServer(): Promise<void> {
+async function startServer(): Promise<Socket> {
     try {
         // Connect to database
         void (await connectToDb());
 
         // Start server
         const server = app.listen(config.server.port, () => {
-            logger.info(
-                `Server running on port ${config.server.port}`,
-            );
+            logger.info(`Server running on port ${config.server.port}`);
         });
 
         // Handle unhandled promise rejections
@@ -58,6 +58,17 @@ async function startServer(): Promise<void> {
                 logger.info("Process terminated");
             });
         });
+
+        // Initialize a new Socket.IO server
+        const socketServer = new Server(server, {
+            cors: {
+                origin: config.cors.origin,
+                credentials: true,
+            },
+        });
+
+        // Returns the resulting socket
+        return new Socket(socketServer);
     } catch (error) {
         logger.error("Failed to start server:", error);
         process.exit(1);
@@ -70,5 +81,7 @@ process.on("uncaughtException", (err) => {
     process.exit(1);
 });
 
-// Start the server
-void startServer();
+// Start the server and store the built socket
+const socket = startServer();
+
+export { socket };

@@ -68,9 +68,6 @@ async function startServer(): Promise<Socket> {
             },
         });
 
-        // Launch background tasks
-        void launchBackgroundTasks();
-
         // Return the socket
         return new Socket(socketServer);
     } catch (error) {
@@ -86,6 +83,9 @@ process.on("uncaughtException", (err) => {
 });
 
 // Start the server and store the built socket
-const socket = startServer();
+const socket = await startServer();
+
+// Launch background tasks
+void launchBackgroundTasks();
 
 export { socket };

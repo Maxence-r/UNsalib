@@ -29,9 +29,9 @@ const config = {
         token: process.env.TOKEN,
     },
     tasks: {
-        syncTimetables: process.env.SYNC_TIMETABLES || true,
-        forceGroupsFetch: process.env.FORCE_GROUPS_FETCH || false,
-        forceTimetablesFetch: process.env.FORCE_TIMETABLES_FETCH || false,
+        syncTimetables: process.env.SYNC_TIMETABLES === "true" || true,
+        forceGroupsFetch: process.env.FORCE_GROUPS_FETCH === "true" || false,
+        forceTimetablesFetch: process.env.FORCE_TIMETABLES_FETCH === "true" || false,
     },
 };
 

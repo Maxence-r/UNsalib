@@ -2,8 +2,8 @@ import "../../utils/theme.css";
 import "./Input.css";
 
 function Input({
-    className = "",
-    id = "",
+    className,
+    id,
     type = "text",
     placeholder = "",
     value = "",
@@ -24,6 +24,7 @@ function Input({
             className={className ? `input ${className}` : "input"}
             type={type}
             placeholder={placeholder}
+            name={placeholder}
             value={value}
             onInput={onInput}
             onKeyDown={onKeyDown}

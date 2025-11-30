@@ -1,6 +1,7 @@
 .input {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 600;
+    font-size: 14px;
     min-height: 50px;
     border-radius: var(--border-radius);
     padding: 0px 16px;
@@ -12,4 +13,5 @@
 
 .input::placeholder {
     color: var(--neutral-color-dark);
+    font-size: 14px;
 }

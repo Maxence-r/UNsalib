@@ -28,6 +28,11 @@ const config = {
     security: {
         token: process.env.TOKEN,
     },
+    tasks: {
+        syncTimetables: process.env.SYNC_TIMETABLES || true,
+        forceGroupsFetch: process.env.FORCE_GROUPS_FETCH || false,
+        forceTimetablesFetch: process.env.FORCE_TIMETABLES_FETCH || false,
+    },
 };
 
 export { config };

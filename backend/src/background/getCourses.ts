@@ -1,11 +1,10 @@
 import "dotenv/config";
 
-import Group from "../models/group.js";
-import Course from "../models/course.js";
-import Room from "../models/room.js";
+import { Group } from "../models/group.js";
+import { Course } from "../models/course.js";
+import { Room } from "../models/room.js";
 import { closestPaletteColor } from "../utils/color.js";
-import wsManager from "../server.js";
-import { CONFIG } from "../configs/app.config.js";
+import { socket } from "../server.js";
 
 // CONSTANTS
 // Groups update interval in milliseconds
@@ -366,11 +365,9 @@ async function fetchCourses(group: {
     const dates = getRequestDates(DAYS_TO_RETRIEVE);
 
     // Logging if needed
-    if (CONFIG.LOGS_RECUP_GPES) {
-        console.log(
-            `---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`,
-        );
-    }
+    console.log(
+        `---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`,
+    );
 
     // Building request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
@@ -396,17 +393,15 @@ async function fetchCourses(group: {
         averageProcessingTime.measuresNumber++;
 
         // Logging if needed
-        if (CONFIG.LOGS_RECUP_GPES) {
-            console.log(
-                `Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`,
-            );
-            console.log(
-                `Temps de traitement : ${parseFloat("" + processingTime / 1000).toFixed(2)}s | Temps de traitement moyen : ${parseFloat("" + averageProcessingTime.timeSum / averageProcessingTime.measuresNumber / 1000).toFixed(2)}s`,
-            );
-        }
+        console.log(
+            `Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`,
+        );
+        console.log(
+            `Temps de traitement : ${parseFloat("" + processingTime / 1000).toFixed(2)}s | Temps de traitement moyen : ${parseFloat("" + averageProcessingTime.timeSum / averageProcessingTime.measuresNumber / 1000).toFixed(2)}s`,
+        );
 
         // Sending an update message to all clients
-        wsManager.sendGroupsUpdate(group.name);
+        socket.sendGroupsUpdate(group.name);
     } catch (error) {
         console.error(
             `Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`,

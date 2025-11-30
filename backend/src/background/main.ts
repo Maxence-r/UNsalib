@@ -1,48 +1,27 @@
-import fixDb from "./fixDB.js";
+import "dotenv/config";
+
 import getGroups from "./getGroups.js";
-import { getCourses, processBatchGroups, processGroup } from './getCourses.js';
-import 'dotenv/config'
+import { getCourses, processBatchGroups } from "./getCourses.js";
+import { config } from "../configs/app.config.js";
+import { logger } from "utils/logger.js";
 
-import { CONFIG } from "../configs/app.config.js";
-
-async function launch(): Promise<void> {
-    // If 'FORCER_RECUP_GPES' is activated, fetch all groups immediately
-    console.log();
-    if (CONFIG.FORCER_RECUP_GPES) {
-        console.log('Récupération des groupes ACTIVÉE - Démarrage du processus...');
+async function launchBackgroundTasks(): Promise<void> {
+    if (config.tasks.forceGroupsFetch) {
+        logger.info("Starting groups force fetch");
         await getGroups();
-    } else {
-        console.log('Récupération des groupes DÉSACTIVÉE');
     }
 
-    // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
-    console.log();
-    if (CONFIG.FORCER_TRAITEMENT_GPES || CONFIG.CORRIGER_GPES_INCORRECTS) {
-        console.log('Traitement de tous les groupes ACTIVÉ - Démarrage du processus...');
+    if (config.tasks.forceTimetablesFetch) {
+        logger.info("Starting timetables force fetch");
         await processBatchGroups();
-    } else {
-        console.log('Traitement de tous les groupes DÉSACTIVÉ');
-    }
-    
-    // If 'FORCER_TRAITEMENT_GPES' is activated, process all groups immediately
-    console.log();
-    if (CONFIG.CORRIGER_GPES_INCORRECTS) {
-        console.log('Correction des groupes incorrects ACTIVÉE - Démarrage du processus...');
-        await fixDb();
-    } else {
-        console.log('Correction des groupes incorrects DÉSACTIVÉE');
     }
 
-    // If 'SYNC_TIMETABLES' is activated, launch a loop executing the sync algorithm
-    console.log();
-    if (CONFIG.SYNC_TIMETABLES) {
-        console.log('Synchronisation des emplois du temps ACTIVÉE - Démarrage du processus...');
+    if (config.tasks.syncTimetables) {
+        logger.info("Starting timetables sync");
         void getCourses();
-    } else {
-        console.log('Synchronisation des emplois du temps DÉSACTIVÉE');
     }
 
     // processGroup("387");
 }
 
-export default launch;
+export { launchBackgroundTasks };

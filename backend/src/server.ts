@@ -6,6 +6,7 @@ import { app } from "./app.js";
 import { logger } from "utils/logger.js";
 import { config } from "configs/app.config.js";
 import { Socket } from "utils/socket.js";
+import { launchBackgroundTasks } from "background/main.js";
 
 async function connectToDb(): Promise<void> {
     try {
@@ -67,7 +68,10 @@ async function startServer(): Promise<Socket> {
             },
         });
 
-        // Returns the resulting socket
+        // Launch background tasks
+        void launchBackgroundTasks();
+
+        // Return the socket
         return new Socket(socketServer);
     } catch (error) {
         logger.error("Failed to start server:", error);

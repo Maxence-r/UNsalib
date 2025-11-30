@@ -7,7 +7,7 @@ import "@fontsource/space-grotesk/600.css";
 import "@fontsource/space-grotesk/700.css";
 
 import "../utils/theme.css";
-import { App } from "./app/App";
+import { App } from "./app/App.js";
 import "./main.css";
 
 createRoot(document.getElementById("root")!).render(

@@ -1,16 +1,13 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import {
     Info,
-    BookOpen,
     Users,
-    Smile,
-    Link2,
-    ArrowUpRight,
     Monitor,
     Eye,
     Lock,
 } from "lucide-react";
 
+import { Header } from "./header/Header.js";
 import { TextButton } from "../../../components/button/Button.js";
 import { Input } from "../../../components/input/Input.js";
 import type { ApiRoom, ApiRoomsList } from "../../../utils/api-types.js";
@@ -20,9 +17,7 @@ import {
 } from "../../../stores/app.store.js";
 import RoomsList from "./roomsList";
 import { socket } from "../../../utils/socket.js";
-import PWAInstallButton from "./installButton";
 import "./panel.css";
-import { VERSION_NAME, VERSION_NUMBER } from "../../../utils/constants.js";
 import {
     closeModal,
     openModal,
@@ -432,166 +427,6 @@ function SearchAvailableModalContent({
     );
 }
 
-function AboutModalContent() {
-    return (
-        <div className="about">
-            <div className="modal-section">
-                <h4 className="title">
-                    <BookOpen size={20} />À PROPOS
-                    <span
-                        id="version"
-                        onClick={() => window.open("/new", "_blank")}
-                    >
-                        v{VERSION_NUMBER} &quot;{VERSION_NAME}&quot;
-                    </span>
-                </h4>
-                <div className="content">
-                    <p>
-                        <strong>UNsalib</strong> est un site web open source qui
-                        permet aux étudiants et professeurs de Nantes Université
-                        de <strong>trouver les salles libres</strong> du campus
-                        et d&apos;afficher leurs{" "}
-                        <strong>emplois du temps</strong>.
-                    </p>
-                </div>
-            </div>
-            <div className="modal-section">
-                <h4 className="title">
-                    <Users size={20} />
-                    L&apos;ÉQUIPE
-                </h4>
-                <div className="content">
-                    <p>
-                        Nous sommes trois étudiants motivés pour améliorer le
-                        quotidien de tous au sein de l&apos;Université.
-                    </p>
-                    <div className="grid" id="team">
-                        <div
-                            className="item"
-                            onDoubleClick={() =>
-                                (window.location.href = "/admin")
-                            }
-                        >
-                            <div className="infos">
-                                <h2>Maxence</h2>
-                                <p>Développeur & UX/UI designer</p>
-                            </div>
-                            <img
-                                src="/maxence.png"
-                                width={36}
-                                height={36}
-                                alt=""
-                            ></img>
-                        </div>
-                        <div
-                            className="item"
-                            onDoubleClick={() =>
-                                (window.location.href = "/admin")
-                            }
-                        >
-                            <div className="infos">
-                                <h2>Maël</h2>
-                                <p>Développeur</p>
-                            </div>
-                            <img
-                                src="/mael.png"
-                                width={64}
-                                height={64}
-                                alt=""
-                            ></img>
-                        </div>
-                        <div
-                            className="item"
-                            onDoubleClick={() =>
-                                (window.location.href = "/admin")
-                            }
-                        >
-                            <div className="infos">
-                                <h2>Ethann</h2>
-                                <p>Admin DB & testeur</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="modal-section">
-                <h4 className="title">
-                    <Smile size={20} />
-                    REMERCIEMENTS
-                </h4>
-                <div className="content">
-                    <p>
-                        Merci à <strong>Christophe Lino</strong> pour sa
-                        confiance et son implication dans le projet, et par
-                        ailleurs pour avoir été le premier professeur à utiliser
-                        UNsalib.
-                    </p>
-                    <p>
-                        Merci aussi à{" "}
-                        <strong>tous ceux qui nous ont encouragés</strong> et
-                        qui nous soutiennent dans cette aventure.
-                    </p>
-                    <p>
-                        Merci enfin à <strong>Nantes Université</strong>{" "}
-                        d&apos;avoir publié les emplois du temps des différentes
-                        formations en libre accès.
-                    </p>
-                </div>
-            </div>
-            <div className="modal-section">
-                <h4 className="title">
-                    <Link2 size={20} />
-                    LIENS
-                </h4>
-                <div className="content">
-                    <div className="grid">
-                        <div className="item">
-                            <div className="infos">
-                                <h2>White Paper</h2>
-                                <p>Infos de conception</p>
-                            </div>
-                            <button
-                                onClick={() =>
-                                    window.open("/white-paper.pdf", "_blank")
-                                }
-                            >
-                                <ArrowUpRight size={20} />
-                            </button>
-                        </div>
-                        <div className="item">
-                            <div className="infos">
-                                <h2>Github</h2>
-                                <p>Code source</p>
-                            </div>
-                            <button
-                                onClick={() =>
-                                    window.open(
-                                        "https://github.com/Maxence-r/UNsalib_Modern-Timetable-Viewer",
-                                        "_blank",
-                                    )
-                                }
-                            >
-                                <ArrowUpRight size={20} />
-                            </button>
-                        </div>
-                        <div className="item">
-                            <div className="infos">
-                                <h2>Nouveautés</h2>
-                                <p>Historique des versions</p>
-                            </div>
-                            <button
-                                onClick={() => window.open("/new", "_blank")}
-                            >
-                                <ArrowUpRight size={20} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
 function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const [activeTab, setActiveTab] = useState("edt-finder");
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
@@ -809,46 +644,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
 
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
-            <div className="campus">
-                <div className="header">
-                    <div className="campus_selector">
-                        <img
-                            src="/logo96.png"
-                            height={96}
-                            width={96}
-                            alt="Logo"
-                        ></img>
-                        <p>SCIENCES ET TECHNIQUES</p>
-                    </div>
-                    <div
-                        className="version"
-                        onClick={() => {
-                            setModalContent(
-                                <AboutModalContent></AboutModalContent>,
-                            );
-                            openModal();
-                        }}
-                    >
-                        <Info size={16} />
-                    </div>
-                    <PWAInstallButton></PWAInstallButton>
-                </div>
-                <div className="campus_feed">
-                    <img
-                        src="/campus_st.jpg"
-                        width={680}
-                        height={346}
-                        alt=""
-                    ></img>
-
-                    <div className="overlay"></div>
-                    <div className="campus_feed_content">
-                        {updatedGroupsList.map((groupMsg) => {
-                            return <p key={groupMsg}>{groupMsg}</p>;
-                        })}
-                    </div>
-                </div>
-            </div>
+            <Header />
             <TabView roomsList={roomsList}></TabView>
         </div>
     );

@@ -1,6 +1,6 @@
 const config = {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        origin: process.env.FRONTEND_URL || "http://localhost:5173",
     },
     mongodb: {
         uri: process.env.MONGODB_URI || "mongodb://localhost:27017/unsalib",

@@ -2,6 +2,13 @@ import { roomsService } from "services/rooms.service.js";
 import { Request, Response, NextFunction } from "express";
 import { matchedData } from "express-validator";
 
+import {
+    getWeekInfos,
+    getWeeksNumber,
+    getMinutesOverflow,
+} from "utils/date.js";
+import { getGroupsFromCoursesList } from "utils/dbProcessing.js";
+
 class RoomsController {
     /**
      * @route   GET /
@@ -82,6 +89,76 @@ class RoomsController {
             res.status(200).json({
                 success: true,
                 data: formattedResponse,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     * @route   GET /timetable
+     * @desc    Return a room's timetable
+     * @access  Public
+     */
+    async getTimetable(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            // Getting validated queries
+            const data: {
+                id: string;
+                increment?: {
+                    start: string;
+                    end: string;
+                    number: number;
+                };
+            } = matchedData(req);
+
+            let increment = getWeekInfos(getWeeksNumber());
+            if (data.increment) increment = data.increment;
+
+            const result = await roomsService.getTimetable(
+                data.id,
+                increment.start,
+                increment.end,
+            );
+
+            // Getting all groups found in courses as a dictionnary
+            const parsedGroups = await getGroupsFromCoursesList(result);
+
+            // Formatting the response
+            const formattedResponse = result.map((doc) => {
+                // Getting duration in ms, convert to h and then to percentage
+                const duration =
+                    ((new Date(doc.end).valueOf() -
+                        new Date(doc.start).valueOf()) /
+                        1000 /
+                        60 /
+                        60) *
+                    100;
+                // Getting the overflow as a percentage
+                const overflow = getMinutesOverflow(new Date(doc.start));
+                return {
+                    courseId: doc._id,
+                    start: doc.start,
+                    end: doc.end,
+                    notes: doc.notes,
+                    category: doc.category,
+                    duration: duration,
+                    overflow: overflow,
+                    roomId: doc.rooms,
+                    teachers: doc.teachers,
+                    modules: doc.modules,
+                    groups: doc.groups.map((group) => parsedGroups[group]),
+                    color: doc.color,
+                };
+            });
+
+            res.status(200).json({
+                success: true,
+                data: { courses: formattedResponse, weekInfos: increment },
             });
         } catch (error) {
             next(error);

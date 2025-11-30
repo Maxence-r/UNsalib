@@ -13,7 +13,12 @@ import {
 import CalendarContainer from "./container.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { goBack } from "../../../utils/navigation-manager.js";
-import type { ApiError, ApiTimetable } from "../../../utils/api-types.js";
+import type {
+    ApiCourses,
+    ApiError,
+    ApiTimetable,
+    ApiWeekInfos,
+} from "../../../utils/api-types.js";
 import { ActionBar } from "./action-bar/ActionBar.js";
 
 export default function Calendar() {
@@ -46,12 +51,15 @@ export default function Calendar() {
         }
     }
 
-    const [courses, setCourses] = useState<ApiTimetable>({
+    const [courses, setCourses] = useState<{
+        courses: ApiCourses;
+        weekInfos: ApiWeekInfos;
+    }>({
         courses: [],
         weekInfos: {
             start: "--",
             end: "--",
-            number: "--",
+            number: -1,
         },
     });
     const [increment, setIncrement] = useState(0);
@@ -82,7 +90,7 @@ export default function Calendar() {
             setTimetableLoadState(true);
             try {
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/rooms/timetable/?id=${selectedRoom.id}&increment=${increment}`,
+                    `http://localhost:9000/rooms/timetable?id=${selectedRoom.id}&increment=${increment}`,
                     { credentials: "include" },
                 );
                 const coursesData: ApiTimetable | ApiError =
@@ -93,7 +101,7 @@ export default function Calendar() {
                         coursesData.error as ErrorOptions,
                     );
                 } else {
-                    setCourses(coursesData);
+                    setCourses(coursesData.data);
                     setPreviousIncrement(increment);
                 }
             } catch {
@@ -127,8 +135,8 @@ export default function Calendar() {
                 setIncrement={setIncrement}
                 currentRoom={selectedRoom.id ? selectedRoom.name : null}
                 weekNumber={
-                    courses.weekInfos.number != "--"
-                        ? parseInt(courses.weekInfos.number)
+                    courses.weekInfos.number != -1
+                        ? courses.weekInfos.number
                         : null
                 }
                 weekStartDate={

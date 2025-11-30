@@ -32,13 +32,16 @@ export type ApiCourses = ApiCourse[];
 
 export interface ApiWeekInfos {
     end: string;
-    number: string;
+    number: number;
     start: string;
 }
 
 export interface ApiTimetable {
-    courses: ApiCourses;
-    weekInfos: ApiWeekInfos;
+    success: boolean;
+    data: {
+        courses: ApiCourses;
+        weekInfos: ApiWeekInfos;
+    };
 }
 
 // Endpoint: /admin/stats/unique-visitors

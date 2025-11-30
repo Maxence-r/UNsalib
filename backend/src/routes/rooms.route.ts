@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 
-import { availableValidation } from "validators/rooms.validator.js";
+import {
+    availableValidation,
+    timetableValidation,
+} from "validators/rooms.validator.js";
 import { validationHandler } from "middlewares/validation.middleware.js";
 import { roomsController } from "controllers/rooms.controller.js";
 
@@ -16,6 +19,13 @@ router.get(
     validationHandler,
     (req: Request, res: Response, next: NextFunction) =>
         roomsController.getAvailable(req, res, next),
+);
+router.get(
+    "/timetable",
+    timetableValidation,
+    validationHandler,
+    (req: Request, res: Response, next: NextFunction) =>
+        roomsController.getTimetable(req, res, next),
 );
 
 export { router };

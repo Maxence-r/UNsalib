@@ -1,6 +1,7 @@
 import { query } from "express-validator";
+import mongoose from "mongoose";
 
-import { isValidDate } from "utils/date.js";
+import { isValidDate, getWeekInfos, getWeeksNumber } from "utils/date.js";
 
 const availableValidation = [
     query("start")
@@ -83,4 +84,32 @@ const availableValidation = [
         .customSanitizer((value: string) => value.split("-")),
 ];
 
-export { availableValidation };
+const timetableValidation = [
+    query("id")
+        .notEmpty()
+        .withMessage("Missing value")
+        .trim()
+        .custom((id: string) => mongoose.Types.ObjectId.isValid(id))
+        .withMessage("Invalid format"),
+    query("increment")
+        .optional()
+        .notEmpty()
+        .withMessage("Missing value")
+        .trim()
+        .isNumeric()
+        .withMessage("Value must be a number")
+        .toInt()
+        .customSanitizer((increment: number) => {
+            const weekInfos = getWeekInfos(getWeeksNumber() + increment);
+            if (
+                weekInfos.number < 0 ||
+                weekInfos.number > 52 ||
+                increment > 18
+            ) {
+                throw new Error("Invalid increment");
+            }
+            return weekInfos;
+        }),
+];
+
+export { availableValidation, timetableValidation };

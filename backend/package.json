@@ -1,6 +1,6 @@
 {
   "name": "unsalib-backend",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "main": "./dist/server.js",
   "scripts": {

@@ -24,7 +24,7 @@ class RoomsService {
             room._id.toString(),
         );
 
-        // Getting all the rooms that are not banned and adding an 'available' 
+        // Getting all the rooms that are not banned and adding an 'available'
         // key with the availability status of each room
         const rooms = (await Room.find({ banned: { $ne: true } }).lean()).map(
             (room) => {
@@ -36,6 +36,17 @@ class RoomsService {
         );
 
         return rooms;
+    }
+
+    /**
+     * Return the timetable of a specific room
+     */
+    async getTimetable(roomId: string, start: string, end: string) {
+        // Getting courses based on room id and given period
+        return await Course.find({
+            rooms: roomId, // the room is included in the course rooms array
+            $and: [{ start: { $gte: start } }, { end: { $lte: end } }],
+        });
     }
 
     /**

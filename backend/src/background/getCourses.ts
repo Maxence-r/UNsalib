@@ -59,11 +59,15 @@ async function processRoom(roomName) {
     if (!roomName) return;
 
     // Formatting the room and building names
-    const formattedRoom = roomName.includes("(")
-        ? roomName.split("(")[0].trim()
-        : roomName.trim();
-    const formattedBuilding = roomName.includes("(")
-        ? roomName.split("(")[1].split(")")[0]
+    // New format: I005 - Bât 15-C I E
+    // Old format: Amphi 111- Maria SKLODOWSKA-CURIE Vidéo (Bât 26- RdC) - Bât 26- RdC
+
+    // New and old format compatible
+    let formattedBuilding = roomName.match(/(?<= - )(?!.* - ).+$/)
+        ? roomName.match(/(?<= - )(?!.* - ).+$/)[0]
+        : roomName;
+    let formattedRoom = roomName.match(/^.*(?= \()|^.*(?= - )/)
+        ? roomName.match(/^.*(?= \()|^.*(?= - )/)[0]
         : roomName;
 
     // Trying to find the room in the database
@@ -168,7 +172,7 @@ async function isDbCourseInUnivArray(
         const univCourse = univDataArray[i];
 
         // Processing the univCourse's rooms, teachers and modules to put them into the same format as above
-        univRooms = splitUnivDataBlocks(univCourse.rooms_for_blocks);
+        univRooms = splitUnivDataBlocks(univCourse.rooms_for_item_details);
         univTeachers = splitUnivDataBlocks(univCourse.teachers_for_blocks);
         univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
 
@@ -261,12 +265,12 @@ async function processGroupCourses(
             !course.end_at ||
             !course.id ||
             !course.celcat_id ||
-            !course.rooms_for_blocks
+            !course.rooms_for_item_details
         )
             continue;
 
         // Processing the course's rooms, teachers and modules to put them into our DB format
-        let rooms = splitUnivDataBlocks(course.rooms_for_blocks);
+        let rooms = splitUnivDataBlocks(course.rooms_for_item_details);
         rooms = await Promise.all(
             rooms.map(async (roomName) => (await processRoom(roomName))._id),
         );

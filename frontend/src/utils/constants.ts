@@ -2,7 +2,7 @@ export const START_DAY_HOUR = 8;
 export const END_DAY_HOUR = 19;
 export const DAY_DURATION = END_DAY_HOUR - START_DAY_HOUR;
 export const WEEK_DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-export const VERSION_NUMBER = "2.2";
+export const VERSION_NUMBER = "2.3";
 export const VERSION_NAME = "Barbara";
 export const PALETTE_HEX = [
     '#1abc9c',

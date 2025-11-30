@@ -5,13 +5,28 @@ import Toast from "../../components/toast/Toast.js";
 import type { ApiRoomsList } from "../../utils/api-types.js";
 import NavigationManager from "../../utils/navigation-manager.js";
 import "./App.css";
-// import { redirect, RedirectType } from 'next/navigation'
+import { getRoomsList } from "../../utils/server-actions.js";
+import { useEffect, useState } from "react";
 
 function App() {
     // if (process.env.MAINTENANCE === "true") {
     //     redirect('/maintenance', RedirectType.replace)
     // }
-    const prefetchedRoomsList: ApiRoomsList = { success: false, data: [] };
+
+    // QUICK PATCH
+    const [roomsList, setRoomsList] = useState<ApiRoomsList>({
+        success: false,
+        data: [],
+    });
+
+    useEffect(() => {
+        const fetch = async () => {
+            setRoomsList(await getRoomsList("", ""));
+        };
+        fetch();
+    }, []);
+    // QUICK PATCH
+
     return (
         <NavigationManager>
             <main tabIndex={-1} className="main">
@@ -21,7 +36,7 @@ function App() {
                         petit.
                     </p>
                 </section>
-                <Panel roomsList={prefetchedRoomsList} />
+                <Panel roomsList={roomsList} />
                 <Calendar />
                 <Modal />
                 <Toast />

@@ -1,13 +1,13 @@
-import { roomsService } from "services/rooms.service.js";
 import { Request, Response, NextFunction } from "express";
 import { matchedData } from "express-validator";
 
+import { roomsService } from "services/rooms.service.js";
+import { groupsService } from "services/groups.service.js";
 import {
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
 } from "utils/date.js";
-import { getGroupsFromCoursesList } from "utils/dbProcessing.js";
 
 class RoomsController {
     /**
@@ -126,7 +126,7 @@ class RoomsController {
             );
 
             // Getting all groups found in courses as a dictionnary
-            const parsedGroups = await getGroupsFromCoursesList(result);
+            const parsedGroups = await groupsService.getFromCourses(result);
 
             // Formatting the response
             const formattedResponse = result.map((doc) => {

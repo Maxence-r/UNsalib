@@ -39,7 +39,7 @@ class RoomsService {
     }
 
     /**
-     * Return the timetable of a specific room
+     * Return the timetable for a specific room
      */
     async getTimetable(roomId: string, start: string, end: string) {
         // Getting courses based on room id and given period

@@ -12,6 +12,8 @@
     "format": "prettier --write src/**/*.ts"
   },
   "dependencies": {
+    "@fontsource/space-grotesk": "^5.2.10",
+    "lucide-react": "^0.555.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "victory": "^37.3.6",

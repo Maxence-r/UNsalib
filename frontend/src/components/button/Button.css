@@ -1,67 +1,39 @@
+/* Global rules */
+
 .button {
     position: relative;
     height: 40px;
     border-radius: var(--border-radius);
-    background-color: var(--accent-color);
-    color: var(--on-accent-color);
     cursor: pointer;
     border: none;
     padding: 0px 18px;
     flex-shrink: 0;
-}
-
-.button.secondary {
-    background-color: transparent;
-    color: var(--on-surface-color);
-}
-
-.button:disabled {
-    background-color: var(--neutral-color-light);
-    color: var(--neutral-color-dark);
-    cursor: not-allowed;
-}
-
-.button:has(svg) {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding-left: 14px;
-}
-
-.button:has(:only-child) {
-    padding: 0px 12px;
-}
-
-.button span {
-    color: var(--on-accent-color);
     font-size: 14px;
     font-weight: 600;
     font-family: "Space Grotesk", sans-serif;
 }
 
-.button:disabled span {
-    color: var(--neutral-color-dark);
+.button:disabled {
+    cursor: not-allowed;
 }
 
-.button:disabled:hover {
-    background-color: var(--neutral-color-light);
+.button:has(svg) {
+    padding-left: 14px;
 }
 
-.button:hover {
-    background-color: var(--accent-color-dark);
+.button.icon-button {
+    padding: 0px 12px;
 }
 
-.button.secondary:hover {
-    background-color: var(--neutral-color);
-}
-
-.button--loading span {
+.button.loading>* {
     visibility: hidden;
-    opacity: 0;
 }
 
-.button--loading::after {
+.button.loading::after {
     content: "";
     position: absolute;
     width: 12px;
@@ -72,12 +44,11 @@
     bottom: 0;
     margin: auto;
     border: 2px solid transparent;
-    border-top-color: var(--on-accent-color);
     border-radius: 50%;
-    animation: spinner-loading 1s ease infinite;
+    animation: spinner 1s ease infinite;
 }
 
-@keyframes spinner-loading {
+@keyframes spinner {
     from {
         transform: rotate(0turn);
     }
@@ -85,4 +56,46 @@
     to {
         transform: rotate(1turn);
     }
+}
+
+/* Primary */
+
+.button.primary {
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
+}
+
+.button.primary:hover {
+    background-color: var(--accent-color-dark);
+}
+
+.button.primary:disabled {
+    background-color: var(--neutral-color-light);
+    color: var(--neutral-color-dark);
+}
+
+.button.primary.loading::after {
+    background-color: var(--neutral-color-light);
+    border-top-color: var(--neutral-color-dark);
+}
+
+/* Secondary */
+
+.button.secondary {
+    background-color: transparent;
+    color: var(--on-surface-color);
+}
+
+.button.secondary:hover {
+    background-color: var(--neutral-color);
+}
+
+.button.secondary:disabled {
+    color: var(--neutral-color-dark);
+    background-color: transparent;
+}
+
+.button.secondary.loading::after {
+    background-color: transparent;
+    border-top-color: var(--neutral-color-dark);
 }

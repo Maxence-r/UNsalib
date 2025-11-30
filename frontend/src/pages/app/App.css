@@ -5,6 +5,7 @@ main.main {
     background-color: var(--surface-color);
     transition: background-color var(--animation-duration);
     color: var(--on-surface-color);
+    height: 100%;
 }
 
 @keyframes fadeOut {

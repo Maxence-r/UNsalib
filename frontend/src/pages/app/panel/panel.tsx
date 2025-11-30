@@ -17,7 +17,7 @@ import type { ApiRoom, ApiRoomsList } from "../../../utils/api-types.js";
 import {
     usePanelStore,
     useSelectedRoomStore,
-} from "../../../../../frontend-old/src/app/_utils/store";
+} from "../../../stores/app.store.js";
 import RoomsList from "./roomsList";
 import { socket } from "../../../utils/socket.js";
 import PWAInstallButton from "./installButton";

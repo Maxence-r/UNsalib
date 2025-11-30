@@ -2,6 +2,6 @@
 
 import { io } from "socket.io-client";
 
-export const socket = io(process.env.NEXT_PUBLIC_SOKETIO_URL, {
+export const socket = io(import.meta.env.NEXT_PUBLIC_SOKETIO_URL, {
     withCredentials: true
 });

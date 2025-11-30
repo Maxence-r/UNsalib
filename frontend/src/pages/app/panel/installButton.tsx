@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
-import { useInstallationStore } from "../../../../../frontend-old/src/app/_utils/store";
+import { useInstallationStore } from "../../../stores/app.store.js";
 import { TextButton } from "../../../components/button/Button.js";
 import {
     closeModal,

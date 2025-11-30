@@ -6,8 +6,8 @@ import {
     CalendarClock,
 } from "lucide-react";
 
-import { useSelectedRoomStore } from "../../../../../frontend-old/src/app/_utils/store";
-import { Button } from "../../../components/button/Button.js";
+import { useSelectedRoomStore } from "../../../stores/app.store.js";
+import { TextButton } from "../../../components/button/Button.js";
 import "./calendar.css";
 import {
     START_DAY_HOUR,
@@ -214,15 +214,13 @@ export default function Calendar() {
                         {selectedRoom.id == "" ? "--" : selectedRoom.name}
                     </h2>
                 </div>
-                <Button
-                    withIcon
-                    icon={<ChevronUp size={20} />}
+                <TextButton
+                    icon={<ChevronUp />}
                     onClick={() => {
                         goBack();
                     }}
-                >
-                    Menu
-                </Button>
+                    text="Menu"
+                />
             </div>
         </div>
     );

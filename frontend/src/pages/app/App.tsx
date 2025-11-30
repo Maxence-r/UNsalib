@@ -4,6 +4,7 @@ import Modal from "../../components/modal/Modal.js";
 import Toast from "../../components/toast/Toast.js";
 import type { ApiRoomsList } from "../../utils/api-types.js";
 import NavigationManager from "../../utils/navigation-manager.js";
+import "./App.css";
 // import { redirect, RedirectType } from 'next/navigation'
 
 function App() {

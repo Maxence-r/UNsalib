@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-    ChevronsLeft,
-    ChevronsRight,
-    ChevronUp,
-    CalendarClock,
-} from "lucide-react";
+import { ChevronUp } from "lucide-react";
 
 import { useSelectedRoomStore } from "../../../stores/app.store.js";
 import { TextButton } from "../../../components/button/Button.js";
@@ -19,21 +14,7 @@ import CalendarContainer from "./container.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { goBack } from "../../../utils/navigation-manager.js";
 import type { ApiError, ApiTimetable } from "../../../utils/api-types.js";
-
-const months: { [key: string]: string } = {
-    0: "Janvier",
-    1: "Février",
-    2: "Mars",
-    3: "Avril",
-    4: "Mai",
-    5: "Juin",
-    6: "Juillet",
-    7: "Août",
-    8: "Septembre",
-    9: "Octobre",
-    10: "Novembre",
-    11: "Décembre",
-};
+import { ActionBar } from "./action-bar/ActionBar.js";
 
 export default function Calendar() {
     function computeHourIndicator() {
@@ -141,66 +122,21 @@ export default function Calendar() {
                 <span className="spin"></span>
                 <p>Chargement de l&apos;EDT...</p>
             </div>
-            <div className="calendar-header">
-                <div className="week-switcher">
-                    <div
-                        className="week-switcher-icon"
-                        onClick={() => {
-                            if (courses.weekInfos.number != "--")
-                                setIncrement(increment - 1);
-                        }}
-                    >
-                        <ChevronsLeft size={20} />
-                    </div>
-                    <div className="week-switcher-actions">
-                        <div className="week-infos">
-                            <p>
-                                SEMAINE{" "}
-                                <span className="week-number">
-                                    {courses.weekInfos.number}
-                                </span>
-                            </p>
-                            {courses.weekInfos.start !== "--" && (
-                                <span className="week-month">
-                                    {
-                                        months[
-                                            new Date(courses.weekInfos.start)
-                                                .getMonth()
-                                                .toString()
-                                        ]
-                                    }
-                                </span>
-                            )}
-                        </div>
-                        <div
-                            className="current-week-icon"
-                            onClick={() => {
-                                setIncrement(0);
-                            }}
-                        >
-                            <CalendarClock size={20} />
-                        </div>
-                    </div>
-                    <div
-                        className="week-switcher-icon"
-                        onClick={() => {
-                            if (courses.weekInfos.number != "--")
-                                setIncrement(increment + 1);
-                        }}
-                    >
-                        <ChevronsRight size={20} />
-                    </div>
-                </div>
-                <div className="availability">
-                    <div className="availability-box">
-                        <p>
-                            {selectedRoom.id == ""
-                                ? "SÉLECTIONNEZ UNE SALLE"
-                                : selectedRoom.name}
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <ActionBar
+                increment={increment}
+                setIncrement={setIncrement}
+                currentRoom={selectedRoom.id ? selectedRoom.name : null}
+                weekNumber={
+                    courses.weekInfos.number != "--"
+                        ? parseInt(courses.weekInfos.number)
+                        : null
+                }
+                weekStartDate={
+                    courses.weekInfos.start != "--"
+                        ? new Date(courses.weekInfos.start)
+                        : null
+                }
+            />
             <CalendarContainer
                 courses={courses}
                 hourIndicatorValue={hourIndicatorValue}

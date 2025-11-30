@@ -1,0 +1,77 @@
+/* Global action bar rules */
+
+.calendar .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    min-height: 40px;
+    margin-right: 24px;
+}
+
+/* Week switcher rules */
+
+.calendar .action-bar>.week-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0px;
+}
+
+.calendar .action-bar>.week-switcher>.infos {
+    color: var(--neutral-color-dark);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 170px;
+}
+
+.calendar .action-bar>.week-switcher>.infos .month {
+    color: var(--on-surface-color);
+}
+
+/* Current room box rules */
+
+.calendar .action-bar>.current-room {
+    color: var(--on-surface-color);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+/* TODO */
+
+@media screen and (max-width: 1024px) {
+    .calendar {
+        width: 100%;
+        border: none;
+        gap: 0;
+    }
+
+    .calendar-container {
+        border-radius: 0;
+        border-top: 2px solid var(--border-color);
+        border-bottom: none;
+        border-right: none;
+        border-left: none;
+    }
+
+    .availability-box {
+        display: none;
+    }
+
+    .week-switcher {
+        width: 100%;
+        border: none;
+        justify-content: space-between;
+        border-radius: 0px;
+    }
+
+    .menu-mobile {
+        display: flex;
+    }
+}

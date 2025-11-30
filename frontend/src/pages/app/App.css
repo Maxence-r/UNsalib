@@ -1,7 +1,7 @@
 main.main {
     display: flex;
     flex-direction: row;
-    gap: 34px;
+    /* gap: 34px; */
     background-color: var(--surface-color);
     transition: background-color var(--animation-duration);
     color: var(--on-surface-color);

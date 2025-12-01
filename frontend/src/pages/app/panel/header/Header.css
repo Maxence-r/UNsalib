@@ -62,8 +62,6 @@
 
 .panel .header .branding>img {
     height: 30px;
-    padding: 2px;
-    background-color: var(--accent-color);
     width: auto;
     border-radius: 10px;
 }

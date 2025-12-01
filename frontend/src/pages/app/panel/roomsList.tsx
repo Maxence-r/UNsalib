@@ -11,17 +11,17 @@ function normalizeString(value: string) {
         .replace(/[\u0300-\u036f\s]/g, "");
 }
 
-function Ping({ error }: { error: boolean }) {
-    return <div className={`ping ${error ? "red" : "blue"}`}></div>;
-}
+// function Ping({ error }: { error: boolean }) {
+//     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
+// }
 
 function Badges({
     features,
-    available,
+    // available,
     id,
 }: {
     features: ("visio" | "badge" | "video" | "ilot")[];
-    available: boolean;
+    // available: boolean;
     id: string;
 }) {
     return (
@@ -60,7 +60,7 @@ function Result({
                 try {
                     window.navigator.vibrate(10);
                 } finally {
-                    onRoomClick(room);
+                    if (room) onRoomClick(room);
                 }
             }}
         >
@@ -126,7 +126,7 @@ export default function RoomsList({
             ) : filter ? (
                 <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             ) : (
-                [...Array(100)].map((value: number) => (
+                [...Array(100)].map(() => (
                     <Result onRoomClick={onRoomClick} room={null} />
                 ))
             )}

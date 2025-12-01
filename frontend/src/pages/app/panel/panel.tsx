@@ -145,7 +145,7 @@ function SearchAvailableModalContent({
 
             try {
                 let urlString = `${
-                    process.env.NEXT_PUBLIC_API_URL
+                    import.meta.env.VITE_BACKEND_URL
                 }/rooms/available?start=${encodeURIComponent(
                     debut,
                 )}&end=${encodeURIComponent(
@@ -593,9 +593,9 @@ function AboutPictosModalContent() {
 
 export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
-    const [updatedGroupsList, setUpdatedGroupsList] = useState([
-        "ICI S'AFFICHERA LA MISE À JOUR DES GROUPES",
-    ]);
+    // const [updatedGroupsList, setUpdatedGroupsList] = useState([
+    //     "ICI S'AFFICHERA LA MISE À JOUR DES GROUPES",
+    // ]);
 
     useEffect(() => {
         if (socket.connected) {
@@ -610,20 +610,20 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
             console.log("Disconnected from Socket.IO server");
         }
 
-        function onGroupUpdated(value: { message: string }) {
-            setUpdatedGroupsList((previous) => {
-                if (previous.length < 3) {
-                    return [...previous, value.message];
-                } else {
-                    const newArray = previous.slice(
-                        previous.length - 3,
-                        previous.length,
-                    );
-                    newArray.push(value.message);
-                    return newArray;
-                }
-            });
-        }
+        // function onGroupUpdated(value: { message: string }) {
+        //     setUpdatedGroupsList((previous) => {
+        //         if (previous.length < 3) {
+        //             return [...previous, value.message];
+        //         } else {
+        //             const newArray = previous.slice(
+        //                 previous.length - 3,
+        //                 previous.length,
+        //             );
+        //             newArray.push(value.message);
+        //             return newArray;
+        //         }
+        //     });
+        // }
 
         function onError(error: string) {
             console.error("Socket.IO error:", error);
@@ -631,14 +631,14 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
 
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
-        socket.on("main:groupUpdated", onGroupUpdated);
+        // socket.on("main:groupUpdated", onGroupUpdated);
         socket.on("app:main:available", (data) => console.log(data.rooms));
         socket.on("error", onError);
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
-            socket.off("main:groupUpdated", onGroupUpdated);
+            // socket.off("main:groupUpdated", onGroupUpdated);
             socket.off("error", onError);
         };
     }, []);

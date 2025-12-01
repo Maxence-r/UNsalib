@@ -75,7 +75,7 @@ function Result({
                     <Badges
                         features={room.features}
                         id={room.name}
-                        available={room.available}
+                        // available={room.available}
                     />
                 </>
             ) : (

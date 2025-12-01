@@ -1,17 +1,16 @@
 module.exports = {
     apps: [
         {
-            name: "unsalib-frontend",
+            name: "unsalib-frontend-louisa",
             script: "serve",
             env: {
                 PM2_SERVE_PATH: "./frontend/dist/",
                 PM2_SERVE_PORT: 3000,
                 PM2_SERVE_SPA: "true",
-                PM2_SERVE_HOMEPAGE: "./frontend/dist/index.html",
             },
         },
         {
-            name: "unsalib-backend",
+            name: "unsalib-backend-louisa",
             script: "./backend/dist/server.js",
         },
     ],

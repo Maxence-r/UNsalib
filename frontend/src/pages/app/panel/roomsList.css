@@ -21,7 +21,8 @@
     justify-content: space-between;
     padding: 18px 20px;
     border: 1px solid var(--neutral-color);
-    border-radius: var(--border-radius);;
+    border-radius: var(--border-radius);
+    ;
     cursor: pointer;
 }
 
@@ -74,4 +75,18 @@ p.no-results {
     text-align: center;
     font-size: 14px;
     font-weight: 600;
+}
+
+.results .placeholder {
+    flex-grow: 1;
+    height: 18px;
+    border-radius: 100px;
+    background-color: var(--neutral-color-light);
+}
+
+.results .placeholder.actions {
+    flex-grow: 0;
+    width: 80px;
+    min-width: 80px ;
+    margin-left: 40px;
 }

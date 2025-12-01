@@ -321,14 +321,12 @@
         width: 100%;
         border: none;
         gap: 0;
+        margin-top: 0;
     }
 
     .calendar-container {
         border-radius: 0;
-        border-top: 2px solid var(--border-color);
-        border-bottom: none;
-        border-right: none;
-        border-left: none;
+        padding: 0;
     }
 
     .menu-mobile {

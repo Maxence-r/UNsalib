@@ -1,4 +1,4 @@
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Calendar1 } from "lucide-react";
 
 import "./ActionBar.css";
 import { TextButton, IconButton } from "../../../../components/button/Button";
@@ -47,10 +47,19 @@ function ActionBar({
         <div className="action-bar">
             <div className="week-switcher">
                 <TextButton
+                    className="today"
                     text="Ajourd'hui"
                     secondary
                     onClick={handleTodayButtonClick}
                     disabled={!weekStartDate || !weekNumber}
+                    icon={<Calendar1 />}
+                />
+                <IconButton
+                    className="today mobile"
+                    secondary
+                    onClick={handleTodayButtonClick}
+                    disabled={!weekStartDate || !weekNumber}
+                    icon={<Calendar1 />}
                 />
                 <IconButton
                     icon={<ChevronsLeft />}
@@ -61,7 +70,7 @@ function ActionBar({
                 <div className="infos">
                     {weekStartDate && weekNumber ? (
                         <>
-                            <span className="month">
+                            <span>
                                 {weekStartDate
                                     ? months[
                                           weekStartDate.getMonth().toString()
@@ -69,7 +78,8 @@ function ActionBar({
                                     : "--"}
                             </span>
                             <span>•</span>
-                            <span>{`Semaine ${weekNumber ?? "--"}`}</span>
+                            <span className="week">{`Semaine ${weekNumber ?? "--"}`}</span>
+                            <span className="week mobile">{`Sem. ${weekNumber ?? "--"}`}</span>
                         </>
                     ) : (
                         <span>--</span>

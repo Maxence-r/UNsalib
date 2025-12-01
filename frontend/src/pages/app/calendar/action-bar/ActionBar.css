@@ -9,6 +9,14 @@
     margin-right: 24px;
 }
 
+@media screen and (max-width: 1024px) {
+    .calendar .action-bar {
+        margin-right: 0;
+        height: auto;
+        padding: 12px;
+    }
+}
+
 /* Week switcher rules */
 
 .calendar .action-bar>.week-switcher {
@@ -19,8 +27,12 @@
     padding: 0px;
 }
 
+.calendar .action-bar>.week-switcher>.today.mobile {
+    display: none;
+}
+
 .calendar .action-bar>.week-switcher>.infos {
-    color: var(--neutral-color-dark);
+    color: var(--on-surface-color);
     font-weight: 600;
     font-size: 14px;
     display: flex;
@@ -30,8 +42,34 @@
     width: 170px;
 }
 
-.calendar .action-bar>.week-switcher>.infos .month {
-    color: var(--on-surface-color);
+.calendar .action-bar>.week-switcher>.infos .week {
+    color: var(--neutral-color-dark);
+}
+
+.calendar .action-bar>.week-switcher>.infos .week.mobile {
+    display: none;
+}
+
+@media screen and (max-width: 1024px) {
+    .calendar .action-bar>.week-switcher>.infos .week.mobile {
+        display: block;
+    }
+
+    .calendar .action-bar>.week-switcher>.infos .week {
+        display: none;
+    }
+
+    .calendar .action-bar>.week-switcher>.today.mobile {
+        display: block;
+    }
+
+    .calendar .action-bar>.week-switcher>.today {
+        display: none;
+    }
+
+    .calendar .action-bar>.week-switcher>.infos {
+        width: 150px;
+    }
 }
 
 /* Current room box rules */
@@ -43,27 +81,15 @@
     text-transform: uppercase;
 }
 
+@media screen and (max-width: 1024px) {
+    .calendar .action-bar>.current-room {
+        display: none;
+    }
+}
+
 /* TODO */
 
 @media screen and (max-width: 1024px) {
-    .calendar {
-        width: 100%;
-        border: none;
-        gap: 0;
-    }
-
-    .calendar-container {
-        border-radius: 0;
-        border-top: 2px solid var(--border-color);
-        border-bottom: none;
-        border-right: none;
-        border-left: none;
-    }
-
-    .availability-box {
-        display: none;
-    }
-
     .week-switcher {
         width: 100%;
         border: none;

@@ -26,20 +26,29 @@ class Socket {
 
             if (!token) return next();
 
-            getAccountFromToken(token).then((userId) => {
-                if (userId) {
-                    void socket.join("admin");
-                }
-                next();
-            }).catch(() => {
-                next();
-            });
+            getAccountFromToken(token)
+                .then((userId) => {
+                    if (userId) {
+                        void socket.join("admin");
+                    }
+                    next();
+                })
+                .catch(() => {
+                    next();
+                });
         });
     }
 
     sendGroupsUpdate(groupName: string): void {
         this.io.emit("main:groupUpdated", {
             message: `Groupe ${groupName} mis à jour`,
+        });
+    }
+
+    sendRoomsUpdate(rooms: { id: string; available: boolean }[]): void {
+        this.io.emit("app:main:available", {
+            ts: Date.now(),
+            rooms: rooms
         });
     }
 

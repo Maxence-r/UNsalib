@@ -632,6 +632,7 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
         socket.on("main:groupUpdated", onGroupUpdated);
+        socket.on("app:main:available", (data) => console.log(data.rooms));
         socket.on("error", onError);
 
         return () => {

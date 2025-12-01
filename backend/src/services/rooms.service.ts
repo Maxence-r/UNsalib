@@ -8,34 +8,8 @@ class RoomsService {
      * Find all rooms
      */
     async findAll() {
-        const availableRooms = await this.findAvailable(
-            new Date().toISOString(),
-            new Date().toISOString(),
-            0,
-            0,
-            0,
-            false,
-            null,
-            [],
-        );
-
-        // Creating an array with the ids of all available rooms
-        const availableRoomsIds = availableRooms.map((room) =>
-            room._id.toString(),
-        );
-
-        // Getting all the rooms that are not banned and adding an 'available'
-        // key with the availability status of each room
-        const rooms = (await Room.find({ banned: { $ne: true } }).lean()).map(
-            (room) => {
-                if (availableRoomsIds.includes(room._id.toString())) {
-                    return { ...room, available: true };
-                }
-                return { ...room, available: false };
-            },
-        );
-
-        return rooms;
+        // Getting all the rooms that are not banned
+        return await Room.find({ banned: { $ne: true } });
     }
 
     /**

@@ -1,6 +1,6 @@
 import Panel from "./panel/panel.js";
 import Calendar from "./calendar/calendar.js";
-import Modal from "../../components/modal/Modal.js";
+// import Modal from "../../components/modal/Modal.js";
 import Toast from "../../components/toast/Toast.js";
 import type { ApiRoomsList } from "../../utils/api-types.js";
 import NavigationManager from "../../utils/navigation-manager.js";
@@ -38,7 +38,7 @@ function App() {
                 </section>
                 <Panel roomsList={roomsList} />
                 <Calendar />
-                <Modal />
+                {/* <Modal /> */}
                 <Toast />
             </main>
         </NavigationManager>

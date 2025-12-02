@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
 import type { ApiRoom } from "../../../../utils/api-types.js";
@@ -54,7 +53,6 @@ function Result({
 }) {
     return (
         <div
-            key={room ? room.id : Date.now()}
             className="result"
             onClick={() => {
                 try {
@@ -97,35 +95,31 @@ export default function RoomsList({
     roomsList: ApiRoom[];
     filter: string;
 }) {
-    const [filteredRoomsList, setFilteredRoomsList] =
-        useState<ApiRoom[]>(roomsList);
-
-    useEffect(() => {
-        if (roomsList) {
-            const filtered = roomsList.filter(
-                (room) =>
-                    normalizeString(room.name).includes(
-                        normalizeString(filter),
-                    ) ||
-                    normalizeString(room.building).includes(
-                        normalizeString(filter),
-                    ),
-            );
-            setFilteredRoomsList(filtered);
-        }
-    }, [filter, roomsList]);
+    const filteredRoomsList = roomsList.filter(
+        (room) =>
+            normalizeString(room.name).includes(normalizeString(filter)) ||
+            normalizeString(room.building).includes(normalizeString(filter)),
+    );
 
     return (
         <div className={`results ${containerClassName}`}>
             {filteredRoomsList.length > 0 ? (
-                filteredRoomsList.map((room: ApiRoom) => (
-                    <Result onRoomClick={onRoomClick} room={room} />
+                filteredRoomsList.map((room) => (
+                    <Result
+                        key={containerClassName + room.id}
+                        onRoomClick={onRoomClick}
+                        room={room}
+                    />
                 ))
             ) : filter ? (
                 <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             ) : (
-                [...Array(100)].map(() => (
-                    <Result onRoomClick={onRoomClick} room={null} />
+                [...Array(100)].map((val, i) => (
+                    <Result
+                        key={containerClassName + i}
+                        onRoomClick={onRoomClick}
+                        room={null}
+                    />
                 ))
             )}
         </div>

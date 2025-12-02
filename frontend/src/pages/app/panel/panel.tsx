@@ -1,11 +1,5 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
-import {
-    Info,
-    Users,
-    Monitor,
-    Eye,
-    Lock,
-} from "lucide-react";
+import { Info } from "lucide-react";
 
 import { Header } from "./header/Header.js";
 import { TextButton } from "../../../components/button/Button.js";
@@ -18,13 +12,15 @@ import {
 import RoomsList from "./rooms-list/RoomsList.js";
 import { socket } from "../../../utils/socket.js";
 import "./panel.css";
-import {
-    closeModal,
-    openModal,
-    setModalContent,
-} from "../../../components/modal/Modal.js";
+// import {
+//     closeModal,
+//     openModal,
+//     setModalContent,
+// } from "../../../components/modal/Modal.js";
 import { pushToHistory } from "../../../utils/navigation-manager.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
+import { createPortal } from "react-dom";
+import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 
 function SearchAvailableModalContent({
     availableRoomsListHook,
@@ -172,7 +168,7 @@ function SearchAvailableModalContent({
                 showToast();
             } finally {
                 launchSearch(false);
-                closeModal();
+                // closeModal();
             }
         }
 
@@ -439,15 +435,14 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
+    // TODO: improve this
+    const [isAboutPictosModal1Open, setIsAboutPictosModal1Open] = useState<boolean>(false);
+    const [isAboutPictosModal2Open, setIsAboutPictosModal2Open] = useState<boolean>(false);
+
     function loadTimetable(room: ApiRoom) {
         pushToHistory("panel", openPanel);
         closePanel();
-        setSelectedRoom(
-            room.id,
-            room.alias != ""
-                ? `${room.alias.toUpperCase()}`
-                : `${room.name.toUpperCase()}`,
-        );
+        setSelectedRoom(room.id, room.name.toUpperCase());
     }
 
     return (
@@ -484,22 +479,28 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                                 ).value.toString(),
                             )
                         }
-                    ></Input>
+                        value={timetableTabSearch}
+                    />
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div
                             className="indicator"
                             onClick={() => {
-                                setModalContent(
-                                    <AboutPictosModalContent></AboutPictosModalContent>,
-                                );
-                                openModal();
+                                setIsAboutPictosModal1Open(true)
                             }}
                         >
+                            {createPortal(
+                                <AboutPictosModal
+                                    isOpen={isAboutPictosModal1Open}
+                                    setIsOpen={setIsAboutPictosModal1Open}
+                                />,
+                                document.body,
+                            )}
                             <Info size={16} />
                             <p>Pictos</p>
                         </div>
                     </div>
+                    {/* TODO: fix slow search */}
                     <RoomsList
                         containerClassName="edt"
                         roomsList={roomsList.data}
@@ -514,16 +515,16 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                     <div className="advanced-search">
                         <TextButton
                             className="filter-button"
-                            onClick={() => {
-                                setModalContent(
-                                    <SearchAvailableModalContent
-                                        availableRoomsListHook={
-                                            setAvailableRoomsList
-                                        }
-                                    ></SearchAvailableModalContent>,
-                                );
-                                openModal();
-                            }}
+                            // onClick={() => {
+                            //     setModalContent(
+                            //         <SearchAvailableModalContent
+                            //             availableRoomsListHook={
+                            //                 setAvailableRoomsList
+                            //             }
+                            //         ></SearchAvailableModalContent>,
+                            //     );
+                            //     openModal();
+                            // }}
                             text="Chercher une salle libre"
                         />
                     </div>
@@ -538,17 +539,18 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                                 ).value.toString(),
                             )
                         }
+                        value={availableTabSearch}
                     ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
                         <div
                             className="indicator"
-                            onClick={() => {
-                                setModalContent(
-                                    <AboutPictosModalContent></AboutPictosModalContent>,
-                                );
-                                openModal();
-                            }}
+                            // onClick={() => {
+                            //     setModalContent(
+                            //         <AboutPictosModalContent></AboutPictosModalContent>,
+                            //     );
+                            //     openModal();
+                            // }}
                         >
                             <Info size={16} />
                             <p>Pictos</p>
@@ -563,31 +565,6 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                 </div>
             </div>
         </>
-    );
-}
-
-function AboutPictosModalContent() {
-    return (
-        <div className="pictos">
-            <div className="option">
-                <p>Salle info/vidéo</p>
-                <Monitor size={20} />
-            </div>
-            <div className="option">
-                <p>Salle de visioconférence</p>
-                <Eye size={20} />
-            </div>
-            <div className="option">
-                <p>Salle en ilot</p>
-                <Users size={20} />
-            </div>
-            <div className="option">
-                <p>Salle à badge</p>
-                <Lock size={20} />
-            </div>
-
-            <TextButton onClick={() => closeModal()} text="Compris !" />
-        </div>
     );
 }
 

@@ -1,26 +1,19 @@
-import { openModal, setModalContent } from "../../../components/modal/Modal.js";
-import type { ApiCourses } from "../../../utils/api-types.js";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 
-function joinArrayElements(
-    array: string[],
-    separator: string,
-    splitter: string,
-    chooseBeforeSplit = false,
-) {
-    let string = "";
-    array.forEach((element) => {
-        if (splitter) {
-            string +=
-                element.split(splitter)[chooseBeforeSplit ? 0 : 1] +
-                " " +
-                separator +
-                " ";
-        } else {
-            string += element + separator + " ";
-        }
-    });
-    string = string.substring(0, string.length - separator.length - 1);
-    return string;
+import type { ApiCourses } from "../../../utils/api-types.js";
+import { CourseModal } from "./modals/CourseModal.js";
+
+function buildModuleNamesString(modules: string[], category: string): string {
+    const moduleNames = modules.map((module) => module.split(" - ")[1]);
+
+    if (moduleNames.length > 0) {
+        return moduleNames.join(" ; ");
+    } else if (category) {
+        return category;
+    } else {
+        return "Non renseigné";
+    }
 }
 
 export default function CalendarBox({
@@ -28,38 +21,15 @@ export default function CalendarBox({
 }: {
     hourCourses: ApiCourses;
 }) {
+    const [isCourseModalOpen, setIsCourseModalOpen] = useState<boolean>(false);
+
     return (
         <div className="content-box">
             {hourCourses.map((course) => {
-                let courseModule: string;
-                if (course.modules.length > 0) {
-                    courseModule =
-                        joinArrayElements(course.modules, ";", " - ") == ""
-                            ? "Cours inconnu"
-                            : joinArrayElements(course.modules, ";", " - ");
-                } else if (course.category) {
-                    courseModule = course.category;
-                } else {
-                    courseModule = "Cours inconnu";
-                }
-                const teacher =
-                    course.teachers.length > 0
-                        ? course.teachers.join(" ; ")
-                        : "";
-                const startDate: Date = new Date(course.start);
-                const endDate: Date = new Date(course.end);
-                const durationHours =
-                    endDate.getHours() - startDate.getHours() > 0
-                        ? endDate.getHours() - startDate.getHours() + "h"
-                        : "";
-                let durationMinutes =
-                    endDate.getMinutes() - startDate.getMinutes() > 0
-                        ? endDate.getMinutes() - startDate.getMinutes() + "min"
-                        : "";
-                durationMinutes =
-                    durationHours == "" && durationMinutes == ""
-                        ? "0min"
-                        : durationMinutes;
+                const moduleNames = buildModuleNamesString(
+                    course.modules,
+                    course.category,
+                );
 
                 return (
                     <div
@@ -75,79 +45,29 @@ export default function CalendarBox({
                         }}
                         className="course"
                         onClick={() => {
-                            setModalContent(
-                                <div className="course-details">
-                                    <div className="course-box">
-                                        <p className="course-start">
-                                            {startDate.getHours() +
-                                                ":" +
-                                                (startDate
-                                                    .getMinutes()
-                                                    .toString().length == 2
-                                                    ? startDate.getMinutes()
-                                                    : "0" +
-                                                      startDate.getMinutes())}
-                                        </p>
-                                        <div
-                                            className="course-container"
-                                            style={{
-                                                backgroundColor: course.color,
-                                            }}
-                                        >
-                                            <p>{courseModule}</p>
-                                        </div>
-                                        <p className="course-end">
-                                            {endDate.getHours() +
-                                                ":" +
-                                                (endDate.getMinutes().toString()
-                                                    .length == 2
-                                                    ? endDate.getMinutes()
-                                                    : "0" +
-                                                      endDate.getMinutes())}
-                                        </p>
-                                    </div>
-                                    <div className="detail">
-                                        <h2>Enseignant(e)(s) :</h2>
-                                        <p id="teacher-name">
-                                            {teacher == ""
-                                                ? "Non renseigné"
-                                                : teacher}
-                                        </p>
-                                    </div>
-                                    <div className="detail">
-                                        <h2>Module :</h2>
-                                        <p id="module">
-                                            {course.modules.length > 0
-                                                ? joinArrayElements(
-                                                      course.modules,
-                                                      ";",
-                                                      " - ",
-                                                      true,
-                                                  )
-                                                : "Inconnu"}
-                                        </p>
-                                    </div>
-                                    <div className="detail">
-                                        <h2>Durée :</h2>
-                                        <p id="duration">
-                                            {durationHours + durationMinutes}
-                                        </p>
-                                    </div>
-                                    <div className="detail">
-                                        <h2>Groupe(s) :</h2>
-                                        <p id="groupes">
-                                            {course.groups.join(" ; ") == ""
-                                                ? "Non renseigné"
-                                                : course.groups.join(" ; ")}
-                                        </p>
-                                    </div>
-                                </div>,
-                            );
-                            openModal();
+                            setIsCourseModalOpen(true);
                         }}
                     >
-                        <h2>{courseModule}</h2>
-                        <p>{teacher}</p>
+                        {createPortal(
+                            <CourseModal
+                                isOpen={isCourseModalOpen}
+                                setIsOpen={setIsCourseModalOpen}
+                                startDate={course.start}
+                                endDate={course.end}
+                                color={course.color}
+                                groups={course.groups}
+                                moduleNamesString={moduleNames}
+                                modules={course.modules}
+                                teachers={course.teachers}
+                            />,
+                            document.body,
+                        )}
+                        <h2>{moduleNames}</h2>
+                        <p>
+                            {course.teachers.length > 0
+                                ? course.teachers.join(" ; ")
+                                : ""}
+                        </p>
                     </div>
                 );
             })}

@@ -1,61 +1,32 @@
 import type { ReactNode } from "react";
-import { create } from "zustand";
 
-import "../../utils/theme.css";;
+import "../../utils/theme.css";
 import "./Modal.css";
-import { pushToHistory, goBack } from "../../utils/navigation-manager.js";
 
-interface ModalState {
-    isOpen: boolean,
-    content: ReactNode
-};
-
-const useModalStore = create<ModalState>()(() => ({
-    isOpen: false,
-    content: <></>
-}));
-
-export function openModal() {
-    pushToHistory("modal", onlyCloseModal);
-    useModalStore.setState(() => {
-        return { isOpen: true };
-    });
-}
-
-function onlyCloseModal() {
-    useModalStore.setState(() => {
-        return { isOpen: false };
-    });
-}
-
-export function closeModal() {
-    goBack();
-}
-
-export function setModalContent(newContent: ReactNode) {
-    useModalStore.setState(() => {
-        return { content: newContent };
-    });
-}
-
-export default function Modal() {
-    const isModalOpen = useModalStore(state => state.isOpen);
-    const modalContent = useModalStore(state => state.content);
-
+function Modal({
+    isOpen,
+    setIsOpen,
+    children,
+}: {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    children: ReactNode;
+}) {
     return (
-        <div
-            tabIndex={-1}
-            className={`modal ${isModalOpen ? "active" : ""}`}
-            onClick={(event) => {
-                const target = event.target as HTMLInputElement;
-                if (target.classList.contains("modal")) {
-                    closeModal();
-                }
-            }}
-        >
-            <div className="modal-content">
-                {modalContent}
-            </div>
+        <div tabIndex={-1} className={`modal ${isOpen ? "open" : ""}`}>
+            <div
+                className="scrim"
+                onClick={(event) => {
+                    event.stopPropagation();
+                    const target = event.target as HTMLInputElement;
+                    if (target.classList.contains("scrim")) {
+                        setIsOpen(false);
+                    }
+                }}
+            />
+            <div className="window">{children}</div>
         </div>
     );
 }
+
+export { Modal };

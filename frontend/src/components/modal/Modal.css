@@ -1,79 +1,70 @@
+/* Modal scrim rules */
+
 .modal {
     position: fixed;
-    display: none;
-    align-items: end;
-    opacity: 0;
-    gap: 16px;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     z-index: 1000;
-    background-color: var(--scrim-color);
-    transition: all var(--animation-duration) ease-in-out;
+    pointer-events: none;
 }
 
-.modal.active {
-    display: flex;
-    animation: scrim-open var(--animation-duration) ease-in-out forwards;
+.modal.open {
+    pointer-events: auto;
 }
 
-@keyframes scrim-open {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.modal.active>.modal-content {
-    animation: modal-open var(--animation-duration) ease-in-out forwards;
-}
-
-@keyframes modal-open {
-    from {
-        transform: translateX(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-.modal-content {
+.modal>.scrim {
     position: absolute;
-    display: flex;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity calc(var(--animation-duration) - .1s);
+    background-color: var(--scrim-color);
+    width: 100%;
+    height: 100%;
+}
+
+.modal.open>.scrim {
+    opacity: 1;
+    transition: opacity var(--animation-duration);
+}
+
+/* Modal window rules */
+
+.modal>.window {
+    position: absolute;
+    display: block;
     height: calc(100% - 48px);
     width: 400px;
     padding: 24px;
     background-color: var(--surface-color);
     color: var(--on-surface-color);
     right: 0;
-    transition: background-color var(--animation-duration);
-    overflow: auto;
+    top: 0;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: background-color var(--animation-duration), transform calc(var(--animation-duration) - .1s);
+    z-index: 1;
 }
 
-.modal-content>div {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: fit-content;
+.modal.open>.window {
+    transform: translateX(0);
+    transition: background-color var(--animation-duration), transform var(--animation-duration);
 }
 
 @media screen and (max-width: 1024px) {
-    .modal-content {
+    .modal>.window {
         width: calc(100% - 48px);
-        height: fit-content;
+        height: 100%;
         max-height: 75%;
+        bottom: 0;
+        top: auto;
+        transform: translateY(100%);
     }
 
-    @keyframes modal-open {
-        from {
-            transform: translateY(100%);
-        }
-
-        to {
-            transform: translateY(0);
-        }
+    .modal.open>.window {
+        transform: translateY(0);
     }
 }

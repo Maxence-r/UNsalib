@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
-import type { ApiRoom } from "../../../utils/api-types.js";
-import "./roomsList.css";
+import type { ApiRoom } from "../../../../utils/api-types.js";
+import "./RoomsList.css";
 
 function normalizeString(value: string) {
     return value
@@ -67,9 +67,7 @@ function Result({
             {room ? (
                 <>
                     <p>
-                        {room.alias != ""
-                            ? `${room.alias.toUpperCase()} `
-                            : `${room.name.toUpperCase()} `}
+                        {`${room.name.toUpperCase()} `}
                         <span className="bat">{room.building}</span>
                     </p>
                     <Badges

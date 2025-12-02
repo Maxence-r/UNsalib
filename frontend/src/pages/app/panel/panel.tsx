@@ -15,7 +15,7 @@ import {
     usePanelStore,
     useSelectedRoomStore,
 } from "../../../stores/app.store.js";
-import RoomsList from "./roomsList";
+import RoomsList from "./rooms-list/RoomsList.js";
 import { socket } from "../../../utils/socket.js";
 import "./panel.css";
 import {

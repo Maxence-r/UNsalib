@@ -1,7 +1,7 @@
 import type { Types } from "mongoose";
 
-import { Course } from "../models/course.js";
 import { Room, RoomSchemaProperties } from "../models/room.js";
+import { coursesService } from "./courses.service.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -35,34 +35,11 @@ class RoomsService {
     ): Promise<
         (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
     > {
-        // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
-        //
-        // CAS 1 : Le cours englobe complètement la période
-        // Cours       |--------------------|
-        // Demande         |-----------|
-        //
-        // CAS 2 : Le cours est englobé par la période
-        // Cours           |-----------|
-        // Demande     |--------------------|
-        //
-        // CAS 3 : Le cours chevauche le début de la période
-        // Cours       |-----------|
-        // Demande         |-----------|
-        //
-        // CAS 4 : Le cours chevauche la fin de la période
-        // Cours           |-----------|
-        // Demande     |-----------|
-        //
-        const courses = await Course.find({
-            $and: [
-                { start: { $lt: end } }, // le cours commence avant la fin de la période demandée
-                { end: { $gt: start } }, // le cours finit après le début de la période demandée
-            ],
-        });
+        const overlappingCourses = await coursesService.getOverlappingCourses(start, end);
 
         // Getting all busy rooms ids from the courses array
         const busyRoomsIds: string[] = [];
-        courses.forEach((course) => {
+        overlappingCourses.forEach((course) => {
             course.rooms.forEach((room) => {
                 if (!busyRoomsIds.includes(room)) busyRoomsIds.push(room);
             });

@@ -19,6 +19,41 @@ class CoursesService {
             $and: [{ start: { $gte: start } }, { end: { $lte: end } }],
         }).lean();
     }
+
+    /**
+     * Find overlapping courses for a specific time range
+     */
+    async getOverlappingCourses(
+        start: string,
+        end: string,
+    ): Promise<
+        (CourseSchemaProperties & { _id: Types.ObjectId; __v: number })[]
+    > {
+        // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
+        //
+        // CAS 1 : Le cours englobe complètement la période
+        // Cours       |--------------------|
+        // Demande         |-----------|
+        //
+        // CAS 2 : Le cours est englobé par la période
+        // Cours           |-----------|
+        // Demande     |--------------------|
+        //
+        // CAS 3 : Le cours chevauche le début de la période
+        // Cours       |-----------|
+        // Demande         |-----------|
+        //
+        // CAS 4 : Le cours chevauche la fin de la période
+        // Cours           |-----------|
+        // Demande     |-----------|
+        //
+        return await Course.find({
+            $and: [
+                { start: { $lt: end } }, // le cours commence avant la fin de la période demandée
+                { end: { $gt: start } }, // le cours finit après le début de la période demandée
+            ],
+        }).lean();
+    }
 }
 
 const coursesService = new CoursesService();

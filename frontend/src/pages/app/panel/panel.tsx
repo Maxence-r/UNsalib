@@ -436,8 +436,9 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
     // TODO: improve this
-    const [isAboutPictosModal1Open, setIsAboutPictosModal1Open] = useState<boolean>(false);
-    const [isAboutPictosModal2Open, setIsAboutPictosModal2Open] = useState<boolean>(false);
+    const [isAboutPictosModal1Open, setIsAboutPictosModal1Open] =
+        useState<boolean>(false);
+    // const [isAboutPictosModal2Open, setIsAboutPictosModal2Open] = useState<boolean>(false);
 
     function loadTimetable(room: ApiRoom) {
         pushToHistory("panel", openPanel);
@@ -486,7 +487,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         <div
                             className="indicator"
                             onClick={() => {
-                                setIsAboutPictosModal1Open(true)
+                                setIsAboutPictosModal1Open(true);
                             }}
                         >
                             {createPortal(
@@ -513,6 +514,11 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                     className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}
                 >
                     <div className="advanced-search">
+                        <div style={{ display: "none" }}>
+                            <SearchAvailableModalContent
+                                availableRoomsListHook={setAvailableRoomsList}
+                            />
+                        </div>
                         <TextButton
                             className="filter-button"
                             // onClick={() => {

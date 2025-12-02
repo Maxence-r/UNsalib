@@ -114,7 +114,7 @@ export default function RoomsList({
             ) : filter ? (
                 <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             ) : (
-                [...Array(100)].map((val, i) => (
+                [...Array(100)].map((_val, i) => (
                     <Result
                         key={containerClassName + i}
                         onRoomClick={onRoomClick}

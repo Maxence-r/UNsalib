@@ -1,7 +1,7 @@
 import { query } from "express-validator";
 import mongoose from "mongoose";
 
-import { isValidDate, getWeekInfos, getWeeksNumber } from "utils/date.js";
+import { isValidDate, getWeekInfos, getWeeksNumber } from "../utils/date.js";
 
 const availableValidation = [
     query("start")

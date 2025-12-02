@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { matchedData } from "express-validator";
 
-import { roomsService } from "services/rooms.service.js";
-import { groupsService } from "services/groups.service.js";
+import { roomsService } from "../services/rooms.service.js";
+import { groupsService } from "../services/groups.service.js";
+import { coursesService } from "../services/courses.service.js";
 import {
     getWeekInfos,
     getWeeksNumber,
     getMinutesOverflow,
-} from "utils/date.js";
+} from "../utils/date.js";
 
 class RoomsController {
     /**
@@ -117,7 +118,7 @@ class RoomsController {
             let increment = getWeekInfos(getWeeksNumber());
             if (data.increment) increment = data.increment;
 
-            const result = await roomsService.getTimetable(
+            const result = await coursesService.getTimetable(
                 data.id,
                 increment.start,
                 increment.end,

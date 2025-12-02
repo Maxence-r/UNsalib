@@ -1,5 +1,5 @@
-import { roomsService } from "services/rooms.service.js";
-import { socket } from "server.js";
+import { roomsService } from "../services/rooms.service.js";
+import { socket } from "../server.js";
 import { logger } from "../utils/logger.js";
 
 async function buildRoomsStatusArray(): Promise<

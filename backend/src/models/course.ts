@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
+
+type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 
 const CourseSchema = new Schema({
     univId: {
@@ -55,4 +57,5 @@ const CourseSchema = new Schema({
 });
 
 const Course = model("Course", CourseSchema);
-export { Course };
+
+export { Course, type CourseSchemaProperties };

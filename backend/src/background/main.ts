@@ -3,7 +3,7 @@ import "dotenv/config";
 import getGroups from "./getGroups.js";
 import { getCourses, processBatchGroups } from "./getCourses.js";
 import { config } from "../configs/app.config.js";
-import { logger } from "utils/logger.js";
+import { logger } from "../utils/logger.js";
 import { publishAvailableRooms } from "./refresh-available.js";
 
 async function launchBackgroundTasks(): Promise<void> {

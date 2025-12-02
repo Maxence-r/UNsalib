@@ -3,9 +3,9 @@ import express, { Request, Response, NextFunction } from "express";
 import {
     availableValidation,
     timetableValidation,
-} from "validators/rooms.validator.js";
-import { validationHandler } from "middlewares/validation.middleware.js";
-import { roomsController } from "controllers/rooms.controller.js";
+} from "../validators/rooms.validator.js";
+import { validationHandler } from "../middlewares/validation.middleware.js";
+import { roomsController } from "../controllers/rooms.controller.js";
 
 const router = express.Router();
 

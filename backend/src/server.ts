@@ -3,10 +3,10 @@ import { connect } from "mongoose";
 import { Server } from "socket.io";
 
 import { app } from "./app.js";
-import { logger } from "utils/logger.js";
-import { config } from "configs/app.config.js";
-import { Socket } from "utils/socket.js";
-import { launchBackgroundTasks } from "background/main.js";
+import { logger } from "./utils/logger.js";
+import { config } from "./configs/app.config.js";
+import { Socket } from "./utils/socket.js";
+import { launchBackgroundTasks } from "./background/main.js";
 
 async function connectToDb(): Promise<void> {
     try {

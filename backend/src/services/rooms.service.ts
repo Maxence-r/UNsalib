@@ -1,7 +1,7 @@
-import type { Document } from "mongoose";
+import type { Types } from "mongoose";
 
-import { Course } from "models/course.js";
-import { Room, RoomSchemaProperties } from "models/room.js";
+import { Course } from "../models/course.js";
+import { Room, RoomSchemaProperties } from "../models/room.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -13,24 +13,11 @@ class RoomsService {
     /**
      * Find all rooms
      */
-    async findAll(): Promise<(RoomSchemaProperties & Document)[]> {
+    async findAll(): Promise<
+        (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
+    > {
         // Getting all the rooms that are not banned
-        return await Room.find({ banned: { $ne: true } });
-    }
-
-    /**
-     * Return the timetable for a specific room
-     */
-    async getTimetable(
-        roomId: string,
-        start: string,
-        end: string,
-    ): Promise<(RoomSchemaProperties & Document)[]> {
-        // Getting courses based on room id and given period
-        return await Course.find({
-            rooms: roomId, // the room is included in the course rooms array
-            $and: [{ start: { $gte: start } }, { end: { $lte: end } }],
-        });
+        return await Room.find({ banned: { $ne: true } }).lean();
     }
 
     /**
@@ -45,7 +32,9 @@ class RoomsService {
         noBadge: boolean,
         type: "info" | "tp" | "td" | "amphi" | null,
         features: ("visio" | "ilot")[],
-    ): Promise<(RoomSchemaProperties & Document)[]> {
+    ): Promise<
+        (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
+    > {
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -91,14 +80,17 @@ class RoomsService {
             ...features.map((feature) => {
                 return { features: feature };
             }),
-        });
-        
+        }).lean();
+
         // Exclude IT rooms during closing hours of CIE buildings
         const startTs = new Date(start).getTime();
         const endTs = new Date(end).getTime();
 
         const availableRoomsFiltered = availableRooms.filter((room) => {
-            if (room.building.includes("C I E") && new Date(start).getDay() === CIE_CLOSING_DATES.dayNumber) {
+            if (
+                room.building.includes("C I E") &&
+                new Date(start).getDay() === CIE_CLOSING_DATES.dayNumber
+            ) {
                 // Build closing interval for the requested day
                 const closingStart = new Date(start);
                 const [sh, sm] = CIE_CLOSING_DATES.startTime.split(":");
@@ -112,7 +104,8 @@ class RoomsService {
                 const closingEndTs = closingEnd.getTime();
 
                 // Exclude if requested interval overlaps closing hours
-                if (startTs < closingEndTs && endTs > closingStartTs) return false;
+                if (startTs < closingEndTs && endTs > closingStartTs)
+                    return false;
             }
 
             return true;

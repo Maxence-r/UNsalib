@@ -26,10 +26,8 @@ class RoomsController {
             // Formatting the response
             const formattedResponse = result.map((doc) => ({
                 id: doc._id,
-                name: doc.name,
-                alias: doc.alias,
+                name: doc.alias ? doc.alias : doc.name, // replace name with alias if present
                 building: doc.building,
-                available: doc.available,
                 features: doc.features,
             }));
 

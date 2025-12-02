@@ -1,13 +1,19 @@
-import { Course } from "models/course.js";
-import { Room } from "models/room.js";
+import type { Document } from "mongoose";
 
-const CIE_CLOSING_DATE = { dayNumber: 1, startTime: "00:00", endTime: "12:15" };
+import { Course } from "models/course.js";
+import { Room, RoomSchemaProperties } from "models/room.js";
+
+const CIE_CLOSING_DATES = {
+    dayNumber: 1,
+    startTime: "00:00",
+    endTime: "12:15",
+};
 
 class RoomsService {
     /**
      * Find all rooms
      */
-    async findAll() {
+    async findAll(): Promise<(RoomSchemaProperties & Document)[]> {
         // Getting all the rooms that are not banned
         return await Room.find({ banned: { $ne: true } });
     }
@@ -15,7 +21,11 @@ class RoomsService {
     /**
      * Return the timetable for a specific room
      */
-    async getTimetable(roomId: string, start: string, end: string) {
+    async getTimetable(
+        roomId: string,
+        start: string,
+        end: string,
+    ): Promise<(RoomSchemaProperties & Document)[]> {
         // Getting courses based on room id and given period
         return await Course.find({
             rooms: roomId, // the room is included in the course rooms array
@@ -35,7 +45,7 @@ class RoomsService {
         noBadge: boolean,
         type: "info" | "tp" | "td" | "amphi" | null,
         features: ("visio" | "ilot")[],
-    ) {
+    ): Promise<(RoomSchemaProperties & Document)[]> {
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -82,41 +92,33 @@ class RoomsService {
                 return { features: feature };
             }),
         });
+        
+        // Exclude IT rooms during closing hours of CIE buildings
+        const startTs = new Date(start).getTime();
+        const endTs = new Date(end).getTime();
 
-        // // Filtering info rooms when the CIE is closed
-        // const availableRoomsFiltered = [];
-        // availableRooms.map((room) => {
-        //     if (
-        //         room.building.includes("C I E") &&
-        //         new Date(start).getDay() == CIE_CLOSING_DATE.dayNumber
-        //     ) {
-        //         const startTime = new Date(start).getTime() / 1000;
-        //         const endTime = new Date(end).getTime() / 1000;
-        //         let startClosingTime = new Date(start);
-        //         startClosingTime.setHours(
-        //             CIE_CLOSING_DATE.startTime.split(":")[0],
-        //         );
-        //         startClosingTime.setMinutes(
-        //             CIE_CLOSING_DATE.startTime.split(":")[1],
-        //         );
-        //         startClosingTime = startClosingTime.getTime() / 1000;
-        //         let endClosingTime = new Date(end);
-        //         endClosingTime.setHours(CIE_CLOSING_DATE.endTime.split(":")[0]);
-        //         endClosingTime.setMinutes(
-        //             CIE_CLOSING_DATE.endTime.split(":")[1],
-        //         );
-        //         endClosingTime = endClosingTime.getTime() / 1000;
-        //         if (
-        //             !(startClosingTime < endTime && endClosingTime > startTime)
-        //         ) {
-        //             availableRoomsFiltered.push(room);
-        //         }
-        //         return;
-        //     }
-        //     availableRoomsFiltered.push(room);
-        // });
+        const availableRoomsFiltered = availableRooms.filter((room) => {
+            if (room.building.includes("C I E") && new Date(start).getDay() === CIE_CLOSING_DATES.dayNumber) {
+                // Build closing interval for the requested day
+                const closingStart = new Date(start);
+                const [sh, sm] = CIE_CLOSING_DATES.startTime.split(":");
+                closingStart.setHours(Number(sh), Number(sm), 0, 0);
 
-        return availableRooms;
+                const closingEnd = new Date(start);
+                const [eh, em] = CIE_CLOSING_DATES.endTime.split(":");
+                closingEnd.setHours(Number(eh), Number(em), 0, 0);
+
+                const closingStartTs = closingStart.getTime();
+                const closingEndTs = closingEnd.getTime();
+
+                // Exclude if requested interval overlaps closing hours
+                if (startTs < closingEndTs && endTs > closingStartTs) return false;
+            }
+
+            return true;
+        });
+
+        return availableRoomsFiltered;
     }
 }
 

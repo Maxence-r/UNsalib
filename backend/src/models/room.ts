@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
+
+type RoomSchemaProperties = InferSchemaType<typeof RoomSchema>;
 
 const RoomSchema = new Schema({
     name: {
@@ -52,4 +54,5 @@ const RoomSchema = new Schema({
 });
 
 const Room = model("Room", RoomSchema);
-export { Room };
+
+export { Room, type RoomSchemaProperties };

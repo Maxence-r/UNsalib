@@ -6,6 +6,7 @@ import {
     showToast,
     setToastMessage,
 } from "../../../../components/toast/Toast.js";
+import { Modal } from "../../../../components/modal/Modal.js";
 
 function SearchModal({
     availableRoomsListHook,
@@ -167,248 +168,260 @@ function SearchModal({
     }, [searchLaunched]);
 
     return (
-        <div className="filter-rooms">
-            <div className="option">
-                <div className="setDate">
-                    <div className="picker-container">
-                        <p>Chercher de :</p>
-                        <div className="time-picker">
-                            <input
-                                type="number"
-                                max="24"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={startHour}
-                                onChange={(event) =>
-                                    setStartHour(event.target.value)
-                                }
-                            />
-                            <p>:</p>
-                            <input
-                                type="number"
-                                max="59"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={startMinute}
-                                onChange={(event) =>
-                                    setStartMinute(event.target.value)
-                                }
-                            />
-                            <p style={{ margin: "0 4px" }}>à</p>
-                            <input
-                                type="number"
-                                max="24"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={endHour}
-                                onChange={(event) =>
-                                    setEndHour(event.target.value)
-                                }
-                            />
-                            <p>:</p>
-                            <input
-                                type="number"
-                                max="59"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={endMinute}
-                                onChange={(event) =>
-                                    setEndMinute(event.target.value)
-                                }
-                            />
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+            <div className="filter-rooms">
+                <div className="option">
+                    <div className="setDate">
+                        <div className="picker-container">
+                            <p>Chercher de :</p>
+                            <div className="time-picker">
+                                <input
+                                    type="number"
+                                    max="24"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={startHour}
+                                    onChange={(event) =>
+                                        setStartHour(event.target.value)
+                                    }
+                                />
+                                <p>:</p>
+                                <input
+                                    type="number"
+                                    max="59"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={startMinute}
+                                    onChange={(event) =>
+                                        setStartMinute(event.target.value)
+                                    }
+                                />
+                                <p style={{ margin: "0 4px" }}>à</p>
+                                <input
+                                    type="number"
+                                    max="24"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={endHour}
+                                    onChange={(event) =>
+                                        setEndHour(event.target.value)
+                                    }
+                                />
+                                <p>:</p>
+                                <input
+                                    type="number"
+                                    max="59"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={endMinute}
+                                    onChange={(event) =>
+                                        setEndMinute(event.target.value)
+                                    }
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="picker-container">
-                        <p>Le :</p>
-                        <div className="time-picker">
-                            <input
-                                type="number"
-                                max="31"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={day}
-                                onChange={(event) => setDay(event.target.value)}
-                            />
-                            <p>/</p>
-                            <input
-                                type="number"
-                                max="12"
-                                maxLength={2}
-                                className="time"
-                                placeholder="--"
-                                value={month}
-                                onChange={(event) =>
-                                    setMonth(event.target.value)
-                                }
-                            />
+                        <div className="picker-container">
+                            <p>Le :</p>
+                            <div className="time-picker">
+                                <input
+                                    type="number"
+                                    max="31"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={day}
+                                    onChange={(event) =>
+                                        setDay(event.target.value)
+                                    }
+                                />
+                                <p>/</p>
+                                <input
+                                    type="number"
+                                    max="12"
+                                    maxLength={2}
+                                    className="time"
+                                    placeholder="--"
+                                    value={month}
+                                    onChange={(event) =>
+                                        setMonth(event.target.value)
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="option">
-                <p>
-                    Avec au moins{" "}
-                    <span className="numb" data-ref="placesAssises" id="places">
-                        {seats}
-                    </span>{" "}
-                    places assises
-                </p>
-                <div className="slidecontainer">
-                    <input
-                        type="range"
-                        min="2"
-                        max="100"
-                        value={seats}
-                        className="slider"
-                        id="placesAssises"
-                        onChange={(event) =>
-                            setSeats(parseFloat(event.target.value))
-                        }
-                    />
+                <div className="option">
+                    <p>
+                        Avec au moins{" "}
+                        <span
+                            className="numb"
+                            data-ref="placesAssises"
+                            id="places"
+                        >
+                            {seats}
+                        </span>{" "}
+                        places assises
+                    </p>
+                    <div className="slidecontainer">
+                        <input
+                            type="range"
+                            min="2"
+                            max="100"
+                            value={seats}
+                            className="slider"
+                            id="placesAssises"
+                            onChange={(event) =>
+                                setSeats(parseFloat(event.target.value))
+                            }
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div className="option">
-                <p>Avec au moins :</p>
-                <div className="sliders">
-                    <div className="slide-selector">
-                        <p>
-                            <span className="numb" data-ref="blanc">
-                                {whiteBoards}
-                            </span>{" "}
-                            {whiteBoards > 1
-                                ? "tableaux blancs"
-                                : "tableau blanc"}
-                        </p>
-                        <div className="slidecontainer">
-                            <input
-                                type="range"
-                                min="0"
-                                max="4"
-                                value={whiteBoards}
-                                className="slider"
-                                id="blanc"
-                                onChange={(event) =>
-                                    setWhiteBoards(
-                                        parseFloat(event.target.value),
-                                    )
-                                }
-                            />
+                <div className="option">
+                    <p>Avec au moins :</p>
+                    <div className="sliders">
+                        <div className="slide-selector">
+                            <p>
+                                <span className="numb" data-ref="blanc">
+                                    {whiteBoards}
+                                </span>{" "}
+                                {whiteBoards > 1
+                                    ? "tableaux blancs"
+                                    : "tableau blanc"}
+                            </p>
+                            <div className="slidecontainer">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    value={whiteBoards}
+                                    className="slider"
+                                    id="blanc"
+                                    onChange={(event) =>
+                                        setWhiteBoards(
+                                            parseFloat(event.target.value),
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div className="slide-selector">
+                            <p>
+                                <span
+                                    className="numb"
+                                    id="places"
+                                    data-ref="noir"
+                                >
+                                    {blackBoards}
+                                </span>{" "}
+                                {blackBoards > 1
+                                    ? "tableaux noirs"
+                                    : "tableau noir"}
+                            </p>
+                            <div className="slidecontainer">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="4"
+                                    value={blackBoards}
+                                    className="slider"
+                                    id="noir"
+                                    onChange={(event) =>
+                                        setBlackBoards(
+                                            parseFloat(event.target.value),
+                                        )
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="slide-selector">
-                        <p>
-                            <span className="numb" id="places" data-ref="noir">
-                                {blackBoards}
-                            </span>{" "}
-                            {blackBoards > 1
-                                ? "tableaux noirs"
-                                : "tableau noir"}
-                        </p>
-                        <div className="slidecontainer">
-                            <input
-                                type="range"
-                                min="0"
-                                max="4"
-                                value={blackBoards}
-                                className="slider"
-                                id="noir"
-                                onChange={(event) =>
-                                    setBlackBoards(
-                                        parseFloat(event.target.value),
-                                    )
-                                }
-                            />
+                </div>
+                <div className="option">
+                    <p>Caractéristiques :</p>
+                    <div className="tags" id="caracteristiques">
+                        <div
+                            className={`tag ${visioFeature ? "selected" : ""}`}
+                            onClick={() => {
+                                if (visioFeature) setVisioFeature(false);
+                                else setVisioFeature(true);
+                            }}
+                        >
+                            <p>VISIOCONFÉRENCE</p>
+                        </div>
+                        <div
+                            className={`tag ${ilotFeature ? "selected" : ""}`}
+                            onClick={() => {
+                                if (ilotFeature) setIlotFeature(false);
+                                else setIlotFeature(true);
+                            }}
+                        >
+                            <p>ILOT</p>
+                        </div>
+                        <div
+                            className={`tag ${nobadgeFeature ? "selected" : ""}`}
+                            onClick={() => {
+                                if (nobadgeFeature) setNobadgeFeature(false);
+                                else setNobadgeFeature(true);
+                            }}
+                        >
+                            <p>ACCÈS SANS BADGE</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="option">
-                <p>Caractéristiques :</p>
-                <div className="tags" id="caracteristiques">
-                    <div
-                        className={`tag ${visioFeature ? "selected" : ""}`}
-                        onClick={() => {
-                            if (visioFeature) setVisioFeature(false);
-                            else setVisioFeature(true);
-                        }}
-                    >
-                        <p>VISIOCONFÉRENCE</p>
-                    </div>
-                    <div
-                        className={`tag ${ilotFeature ? "selected" : ""}`}
-                        onClick={() => {
-                            if (ilotFeature) setIlotFeature(false);
-                            else setIlotFeature(true);
-                        }}
-                    >
-                        <p>ILOT</p>
-                    </div>
-                    <div
-                        className={`tag ${nobadgeFeature ? "selected" : ""}`}
-                        onClick={() => {
-                            if (nobadgeFeature) setNobadgeFeature(false);
-                            else setNobadgeFeature(true);
-                        }}
-                    >
-                        <p>ACCÈS SANS BADGE</p>
-                    </div>
-                </div>
-            </div>
-            <div className="option">
-                <p>Type :</p>
-                <div className="tags" id="type">
-                    <div
-                        className={`tag ${type == "info" ? "selected" : ""}`}
-                        onClick={() => {
-                            if (type == "info") setType("");
-                            else setType("info");
-                        }}
-                    >
-                        <p>INFORMATIQUE</p>
-                    </div>
-                    <div
-                        className={`tag ${type == "tp" ? "selected" : ""}`}
-                        onClick={() => {
-                            if (type == "tp") setType("");
-                            else setType("tp");
-                        }}
-                    >
-                        <p>TP</p>
-                    </div>
-                    <div
-                        className={`tag ${type == "td" ? "selected" : ""}`}
-                        onClick={() => {
-                            if (type == "td") setType("");
-                            else setType("td");
-                        }}
-                    >
-                        <p>TD</p>
-                    </div>
-                    <div
-                        className={`tag ${type == "amphi" ? "selected" : ""}`}
-                        onClick={() => {
-                            if (type == "amphi") setType("");
-                            else setType("amphi");
-                        }}
-                    >
-                        <p>AMPHITHÉÂTRE</p>
+                <div className="option">
+                    <p>Type :</p>
+                    <div className="tags" id="type">
+                        <div
+                            className={`tag ${type == "info" ? "selected" : ""}`}
+                            onClick={() => {
+                                if (type == "info") setType("");
+                                else setType("info");
+                            }}
+                        >
+                            <p>INFORMATIQUE</p>
+                        </div>
+                        <div
+                            className={`tag ${type == "tp" ? "selected" : ""}`}
+                            onClick={() => {
+                                if (type == "tp") setType("");
+                                else setType("tp");
+                            }}
+                        >
+                            <p>TP</p>
+                        </div>
+                        <div
+                            className={`tag ${type == "td" ? "selected" : ""}`}
+                            onClick={() => {
+                                if (type == "td") setType("");
+                                else setType("td");
+                            }}
+                        >
+                            <p>TD</p>
+                        </div>
+                        <div
+                            className={`tag ${type == "amphi" ? "selected" : ""}`}
+                            onClick={() => {
+                                if (type == "amphi") setType("");
+                                else setType("amphi");
+                            }}
+                        >
+                            <p>AMPHITHÉÂTRE</p>
+                        </div>
                     </div>
                 </div>
+                <TextButton
+                    className="search-button"
+                    onClick={() => launchSearch(true)}
+                    isLoading={searchLaunched}
+                    text="Rechercher"
+                />
             </div>
-            <TextButton
-                className="search-button"
-                onClick={() => launchSearch(true)}
-                isLoading={searchLaunched}
-                text="Rechercher"
-            />
-        </div>
+        </Modal>
     );
 }
 

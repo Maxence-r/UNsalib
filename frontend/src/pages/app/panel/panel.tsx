@@ -87,7 +87,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         <div
                             style={{
                                 display: "flex",
-                                gap: 12,
+                                gap: 0,
                                 alignItems: "center",
                                 flexGrow: 1,
                                 justifyContent: "end",

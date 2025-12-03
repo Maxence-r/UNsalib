@@ -1,7 +1,7 @@
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 import { cloneElement } from "react";
 
-import type { ApiRoom } from "../../../../utils/api-types.js";
+import type { ApiRoom } from "../../../../utils/types/api.type.js";
 import "./RoomsList.css";
 
 // function Ping({ error }: { error: boolean }) {
@@ -73,16 +73,22 @@ function RoomsList({
     onRoomClick,
     rooms,
     filter,
+    isLoading,
 }: {
     onRoomClick: (room: ApiRoom) => void;
     rooms: ApiRoom[];
     filter: string[];
+    isLoading: boolean;
 }) {
     const filteredRoomsList = rooms.filter((room) => filter.includes(room.id));
 
     return (
         <div className="results">
-            {filteredRoomsList.length > 0 ? (
+            {isLoading ? (
+                [...Array(100)].map((_val, i) => (
+                    <Result key={i} onRoomClick={onRoomClick} room={null} />
+                ))
+            ) : filteredRoomsList.length > 0 ? (
                 filteredRoomsList.map((room) => (
                     <Result
                         key={room.id}
@@ -90,12 +96,8 @@ function RoomsList({
                         room={room}
                     />
                 ))
-            ) : filter.length != rooms.length ? (
-                <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             ) : (
-                [...Array(100)].map((_val, i) => (
-                    <Result key={i} onRoomClick={onRoomClick} room={null} />
-                ))
+                <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             )}
         </div>
     );

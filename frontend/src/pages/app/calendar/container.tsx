@@ -4,7 +4,7 @@ import {
     DAY_DURATION,
     WEEK_DAYS,
 } from "../../../utils/constants.js";
-import type { ApiCourses, ApiWeekInfos } from "../../../utils/api-types";
+import type { ApiCourses, ApiWeekInfos } from "../../../utils/types/api.type.js";
 import CalendarBox from "./box";
 
 function CalendarColumn({

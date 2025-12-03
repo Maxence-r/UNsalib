@@ -1,15 +1,16 @@
-// Endpoint: /rooms
-
-export interface ApiRoom {
-    id: string;
-    name: string;
-    alias: string;
-    building: string;
-    available: boolean;
-    features: ("visio" | "badge" | "video" | "ilot")[];
+interface Api {
+    success: boolean;
+    data: unknown;
 }
 
-export type ApiRoomsList = { success: boolean; data: ApiRoom[] };
+// Endpoint: /rooms
+
+interface ApiRoom {
+    id: string;
+    name: string;
+    building: string;
+    features: ("visio" | "badge" | "video" | "ilot")[];
+};
 
 // Endpoint: /rooms/timetable
 
@@ -75,3 +76,5 @@ export interface ApiPlatforms {
 export interface ApiError {
     error: string;
 }
+
+export type { Api, ApiRoom };

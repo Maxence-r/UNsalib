@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-import type { ApiCourses } from "../../../utils/api-types.js";
+import type { ApiCourses } from "../../../utils/types/api.type.js";
 import { CourseModal } from "./modals/CourseModal.js";
 
 function buildModuleNamesString(modules: string[], category: string): string {

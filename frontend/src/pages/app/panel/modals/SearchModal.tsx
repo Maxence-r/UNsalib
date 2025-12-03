@@ -1,7 +1,7 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 
 import { TextButton } from "../../../../components/button/Button.js";
-import type { ApiRoomsList } from "../../../../utils/api-types.js";
+import type { ApiRoomsList } from "../../../../utils/types/api.type.js";
 import {
     showToast,
     setToastMessage,

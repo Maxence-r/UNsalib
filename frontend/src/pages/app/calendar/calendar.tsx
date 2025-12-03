@@ -18,7 +18,7 @@ import type {
     ApiError,
     ApiTimetable,
     ApiWeekInfos,
-} from "../../../utils/api-types.js";
+} from "../../../utils/types/api.type.js";
 import { ActionBar } from "./action-bar/ActionBar.js";
 
 export default function Calendar() {

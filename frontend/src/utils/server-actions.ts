@@ -1,4 +1,4 @@
-import type { ApiRoom } from "./api-types.js";
+import type { ApiRoom } from "./types/api.type.js";
 
 interface GetRoomsListResult {
     success: boolean,

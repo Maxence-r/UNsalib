@@ -427,3 +427,17 @@ input[type=number] {
         transform: translateY(100%);
     }
 }
+
+/* NEW */
+
+.search-button {
+    flex-grow: 1;
+}
+
+.badge {
+    padding: 4px 8px;
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
+    border-radius: 6px;
+    font-size: 12px;
+}

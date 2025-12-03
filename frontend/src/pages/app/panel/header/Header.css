@@ -3,7 +3,7 @@
 .panel .header {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 /* Top bar rules */

@@ -1,8 +1,8 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
-import { Info } from "lucide-react";
+import { Info, Search, FunnelX } from "lucide-react";
 
 import { Header } from "./header/Header.js";
-import { TextButton } from "../../../components/button/Button.js";
+import { IconButton, TextButton } from "../../../components/button/Button.js";
 import { Input } from "../../../components/input/Input.js";
 import type { ApiRoom, ApiRoomsList } from "../../../utils/api-types.js";
 import {
@@ -436,7 +436,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
 
     // TODO: improve this
-    const [isAboutPictosModal1Open, setIsAboutPictosModal1Open] =
+    const [isAboutPictosModalOpen, setIsAboutPictosModalOpen] =
         useState<boolean>(false);
     // const [isAboutPictosModal2Open, setIsAboutPictosModal2Open] = useState<boolean>(false);
 
@@ -448,7 +448,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
 
     return (
         <>
-            <div className="actions_selector">
+            {/* <div className="actions_selector">
                 <div
                     onClick={() => setActiveTab("edt-finder")}
                     data-ref="edt-finder"
@@ -463,7 +463,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                 >
                     Trouver une salle
                 </div>
-            </div>
+            </div> */}
 
             <div className="actions_container">
                 <div
@@ -483,22 +483,41 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         value={timetableTabSearch}
                     />
                     <div className="results-head">
-                        <p>Résultats de recherche</p>
                         <div
-                            className="indicator"
-                            onClick={() => {
-                                setIsAboutPictosModal1Open(true);
+                            style={{
+                                display: "flex",
+                                gap: 12,
+                                alignItems: "center",
+                                flexGrow: 1
                             }}
                         >
-                            {createPortal(
-                                <AboutPictosModal
-                                    isOpen={isAboutPictosModal1Open}
-                                    setIsOpen={setIsAboutPictosModal1Open}
-                                />,
-                                document.body,
-                            )}
-                            <Info size={16} />
-                            <p>Pictos</p>
+                            <p style={{ marginBlock: 0 }}>Salles du campus</p>
+                            <div className="badge">Toutes</div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: 12,
+                                    alignItems: "center",
+                                    flexGrow: 1,
+                                    justifyContent: "end"
+                                }}
+                            >
+                                <IconButton icon={<FunnelX />} secondary />
+                                {createPortal(
+                                    <AboutPictosModal
+                                        isOpen={isAboutPictosModalOpen}
+                                        setIsOpen={setIsAboutPictosModalOpen}
+                                    />,
+                                    document.body,
+                                )}
+                                <IconButton
+                                    icon={<Info />}
+                                    onClick={() => {
+                                        setIsAboutPictosModalOpen(true);
+                                    }}
+                                    secondary
+                                />
+                            </div>
                         </div>
                     </div>
                     {/* TODO: fix slow search */}
@@ -510,7 +529,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                     ></RoomsList>
                 </div>
 
-                <div
+                {/* <div
                     className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}
                 >
                     <div className="advanced-search">
@@ -568,7 +587,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         filter={availableTabSearch}
                         onRoomClick={loadTimetable}
                     ></RoomsList>
-                </div>
+                </div> */}
             </div>
         </>
     );
@@ -630,6 +649,13 @@ export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
             <Header />
             <TabView roomsList={roomsList}></TabView>
+            <div style={{ display: "flex", gap: 12 }}>
+                <TextButton
+                    className="search-button"
+                    text="Chercher une salle"
+                    icon={<Search />}
+                />
+            </div>
         </div>
     );
 }

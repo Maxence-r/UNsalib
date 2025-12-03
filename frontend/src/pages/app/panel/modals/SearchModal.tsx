@@ -1,7 +1,7 @@
-import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
+import { useState, useEffect } from "react";
 
 import { TextButton } from "../../../../components/button/Button.js";
-import type { ApiRoomsList } from "../../../../utils/types/api.type.js";
+import type { ApiRoom } from "../../../../utils/types/api.type.js";
 import {
     showToast,
     setToastMessage,
@@ -10,11 +10,11 @@ import { Modal } from "../../../../components/modal/Modal.js";
 import "./SearchModal.css";
 
 function SearchModal({
-    availableRoomsListHook,
+    // availableRoomsListHook,
     isOpen,
     setIsOpen,
 }: {
-    availableRoomsListHook: Dispatch<SetStateAction<string[]>>;
+    // availableRoomsListHook: Dispatch<SetStateAction<string[]>>;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -145,10 +145,10 @@ function SearchModal({
                 const response = await fetch(urlString, {
                     credentials: "include",
                 });
-                const availableRooms: ApiRoomsList = await response.json();
+                const availableRooms: ApiRoom[] = await response.json();
 
                 if (availableRooms) {
-                    availableRoomsListHook(availableRooms);
+                    // availableRoomsListHook(availableRooms);
                 }
             } catch (e) {
                 console.error(e);

@@ -109,7 +109,7 @@ function ActionsContainer() {
                         <SearchModal
                             isOpen={isAboutPictosModalOpen}
                             setIsOpen={setIsAboutPictosModalOpen}
-                            availableRoomsListHook={filteredRooms}
+                            // availableRoomsListHook={filteredRooms}
                         />,
                         document.body,
                     )}

@@ -3,13 +3,6 @@ import { Lock, Users, Monitor, Eye } from "lucide-react";
 import type { ApiRoom } from "../../../../utils/api-types.js";
 import "./RoomsList.css";
 
-function normalizeString(value: string) {
-    return value
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f\s]/g, "");
-}
-
 // function Ping({ error }: { error: boolean }) {
 //     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
 // }
@@ -85,28 +78,26 @@ function Result({
 }
 
 export default function RoomsList({
-    containerClassName,
     onRoomClick,
-    roomsList,
+    rooms,
     filter,
 }: {
-    containerClassName: string;
     onRoomClick: (room: ApiRoom) => void;
-    roomsList: ApiRoom[];
-    filter: string;
+    rooms: ApiRoom[];
+    filter: string[];
 }) {
-    const filteredRoomsList = roomsList.filter(
-        (room) =>
-            normalizeString(room.name).includes(normalizeString(filter)) ||
-            normalizeString(room.building).includes(normalizeString(filter)),
-    );
+    const filteredRoomsList = rooms.filter((room) => {
+        return filter.includes(room.id);
+        // normalizeString(room.name).includes(normalizeString(filter)) ||
+        //     normalizeString(room.building).includes(normalizeString(filter));
+    });
 
     return (
-        <div className={`results ${containerClassName}`}>
+        <div className={`results`}>
             {filteredRoomsList.length > 0 ? (
                 filteredRoomsList.map((room) => (
                     <Result
-                        key={containerClassName + room.id}
+                        key={room.id}
                         onRoomClick={onRoomClick}
                         room={room}
                     />
@@ -116,7 +107,7 @@ export default function RoomsList({
             ) : (
                 [...Array(100)].map((_val, i) => (
                     <Result
-                        key={containerClassName + i}
+                        key={i}
                         onRoomClick={onRoomClick}
                         room={null}
                     />
@@ -125,12 +116,3 @@ export default function RoomsList({
         </div>
     );
 }
-
-RoomsList.defaultProps = {
-    containerClassName: "",
-    onClick: (room: ApiRoom) => {
-        return room;
-    },
-    roomsList: [],
-    filter: "",
-};

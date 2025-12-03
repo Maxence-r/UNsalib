@@ -9,7 +9,7 @@ import {
     usePanelStore,
     useSelectedRoomStore,
 } from "../../../stores/app.store.js";
-import RoomsList from "./rooms-list/RoomsList.js";
+import { RoomsList } from "./rooms-list/RoomsList.js";
 import "./Panel.css";
 import { pushToHistory } from "../../../utils/navigation-manager.js";
 import { createPortal } from "react-dom";
@@ -107,7 +107,7 @@ function ActionsContainer({ roomsList }: { roomsList: ApiRoomsList }) {
 }
 
 export default function Panel({ roomsList }: { roomsList: ApiRoomsList }) {
-    const isPanelOpened = usePanelStore((state) => state.isOpened);  
+    const isPanelOpened = usePanelStore((state) => state.isOpened);
 
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>

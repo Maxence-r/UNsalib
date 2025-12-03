@@ -1,4 +1,5 @@
 import { Lock, Users, Monitor, Eye } from "lucide-react";
+import { cloneElement } from "react";
 
 import type { ApiRoom } from "../../../../utils/api-types.js";
 import "./RoomsList.css";
@@ -7,7 +8,14 @@ import "./RoomsList.css";
 //     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
 // }
 
-function Badges({
+const FEATURES_ICONS = {
+    visio: <Eye />,
+    badge: <Lock />,
+    video: <Monitor />,
+    ilot: <Users />,
+};
+
+function Features({
     features,
     // available,
     id,
@@ -17,21 +25,14 @@ function Badges({
     id: string;
 }) {
     return (
-        <div className="badges">
-            {features.map((feature) => {
-                switch (feature) {
-                    case "visio":
-                        return <Eye size={14} key={`feature visio ${id}`} />;
-                    case "badge":
-                        return <Lock size={14} key={`feature badge ${id}`} />;
-                    case "video":
-                        return (
-                            <Monitor size={14} key={`feature video ${id}`} />
-                        );
-                    case "ilot":
-                        return <Users size={14} key={`feature ilot ${id}`} />;
-                }
-            })}
+        <div className="features">
+            {features.map((feature) =>
+                cloneElement(FEATURES_ICONS[feature], {
+                    size: 14,
+                    strokeWidth: 2.25,
+                    key: feature + id,
+                }),
+            )}
             {/* <Ping error={available ? false : true}></Ping> */}
         </div>
     );
@@ -44,40 +45,31 @@ function Result({
     room: ApiRoom | null;
     onRoomClick: (room: ApiRoom) => void;
 }) {
-    return (
-        <div
-            className="result"
-            onClick={() => {
-                try {
-                    window.navigator.vibrate(10);
-                } finally {
-                    if (room) onRoomClick(room);
-                }
-            }}
-        >
-            {room ? (
-                <>
-                    <p>
-                        {`${room.name.toUpperCase()} `}
-                        <span className="bat">{room.building}</span>
-                    </p>
-                    <Badges
-                        features={room.features}
-                        id={room.name}
-                        // available={room.available}
-                    />
-                </>
-            ) : (
-                <>
-                    <span className="placeholder" />
-                    <span className="placeholder actions" />
-                </>
-            )}
+    const handleRoomClick = () => {
+        if (room) onRoomClick(room);
+    };
+
+    return room ? (
+        <div className="result" onClick={handleRoomClick}>
+            <p>
+                {room.name.toUpperCase()}
+                <span className="building">{room.building}</span>
+            </p>
+            <Features
+                features={room.features}
+                id={room.id}
+                // available={room.available}
+            />
+        </div>
+    ) : (
+        <div className="result loading">
+            <span className="placeholder" />
+            <span className="placeholder actions" />
         </div>
     );
 }
 
-export default function RoomsList({
+function RoomsList({
     onRoomClick,
     rooms,
     filter,
@@ -86,14 +78,10 @@ export default function RoomsList({
     rooms: ApiRoom[];
     filter: string[];
 }) {
-    const filteredRoomsList = rooms.filter((room) => {
-        return filter.includes(room.id);
-        // normalizeString(room.name).includes(normalizeString(filter)) ||
-        //     normalizeString(room.building).includes(normalizeString(filter));
-    });
+    const filteredRoomsList = rooms.filter((room) => filter.includes(room.id));
 
     return (
-        <div className={`results`}>
+        <div className="results">
             {filteredRoomsList.length > 0 ? (
                 filteredRoomsList.map((room) => (
                     <Result
@@ -102,17 +90,15 @@ export default function RoomsList({
                         room={room}
                     />
                 ))
-            ) : filter ? (
+            ) : filter.length != rooms.length ? (
                 <p className="no-results">Aucune salle n&apos;a été trouvée.</p>
             ) : (
                 [...Array(100)].map((_val, i) => (
-                    <Result
-                        key={i}
-                        onRoomClick={onRoomClick}
-                        room={null}
-                    />
+                    <Result key={i} onRoomClick={onRoomClick} room={null} />
                 ))
             )}
         </div>
     );
 }
+
+export { RoomsList };

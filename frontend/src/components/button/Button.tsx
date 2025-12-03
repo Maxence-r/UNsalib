@@ -36,7 +36,7 @@ function Button({
             className={classes}
             onClick={onClick}
         >
-            {icon ? cloneElement(icon, { size: 16 }) : null}
+            {icon ? cloneElement(icon, { size: 16, strokeWidth: 2.25 }) : null}
             {text && <span>{text}</span>}
         </button>
     );

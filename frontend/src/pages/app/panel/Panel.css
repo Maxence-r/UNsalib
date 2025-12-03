@@ -1,0 +1,75 @@
+/* Panel rules */
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 24px;
+    width: 22%;
+    height: calc(100% - 48px);
+    min-width: 350px;
+    gap: 20px;
+    overflow: hidden;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    z-index: 10;
+    border-radius: 0;
+    transition: background-color var(--animation-duration);
+}
+
+@media screen and (max-width: 1024px) {
+    .panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(100% - 40px);
+        height: calc(100% - 40px);
+        border: none;
+        min-width: auto;
+        transition: transform var(--animation-duration), background-color var(--animation-duration);
+        transform: translateY(0);
+        padding: 20px 20px 0px 20px;
+    }
+
+    .panel.hidden {
+        transform: translateY(100%);
+    }
+}
+
+/* Bottom actions container rules */
+
+.actions-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.search-button {
+    flex-grow: 1;
+}
+
+/* Container head rules */
+
+.actions-container>.head {
+    display: flex;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 12px;
+    align-items: center;
+}
+
+.actions-container>.head p {
+    margin: 0;
+}
+
+/* Container head actions rules */
+
+.actions-container>.head .actions {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: end;
+}

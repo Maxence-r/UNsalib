@@ -2,6 +2,7 @@ import { Users, BookOpen, Smile, Link2, ArrowUpRight } from "lucide-react";
 
 import { VERSION_NAME, VERSION_NUMBER } from "../../../../utils/constants.js";
 import { Modal } from "../../../../components/modal/Modal.js";
+import "./AboutModal.css";
 
 function AboutModal({
     isOpen,

@@ -7,6 +7,7 @@ import {
     setToastMessage,
 } from "../../../../components/toast/Toast.js";
 import { Modal } from "../../../../components/modal/Modal.js";
+import "./SearchModal.css";
 
 function SearchModal({
     availableRoomsListHook,

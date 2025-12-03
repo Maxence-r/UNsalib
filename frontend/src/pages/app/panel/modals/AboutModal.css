@@ -1,0 +1,130 @@
+.about .modal-section .title {
+    display: flex;
+    gap: 12px;
+    margin-block: 0px;
+    align-items: center;
+}
+
+.about .modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+}
+
+.about .modal-section:last-child {
+    margin-bottom: 0px;
+}
+
+.about .modal-section .content p {
+    margin-block: 0px;
+    font-size: 15px;
+}
+
+.about .grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.grid#team {
+    margin-top: 12px;
+}
+
+.about .grid .item {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 8px;
+    padding: 8px;
+    border: 2px solid var(--neutral-color);
+    gap: 12px;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.about .grid#team .item:last-child {
+    flex-grow: 0;
+}
+
+.about .grid .item .infos {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.about .grid .item .infos>p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-color-dark);
+    ;
+}
+
+.about .grid .item .infos>h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--on-surface-color);
+    margin-block-end: 2px;
+}
+
+.about .grid .item>img {
+    height: 36px;
+    border-radius: 4px;
+    width: auto;
+}
+
+.about .grid .item>button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background-color: var(--accent-color);
+    border: none;
+    cursor: pointer;
+    color: var(--on-accent-color);
+}
+
+#version {
+    background-color: var(--accent-color);
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--on-accent-color);
+    cursor: pointer;
+}
+
+.about .feedback-section {
+    margin-bottom: 0;
+    border-top: 2px solid var(--border-color);
+    padding-top: 24px;
+}
+
+.about .feedback-section .feedback-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: var(--on-primary-color);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.about .feedback-section .feedback-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.about .feedback-section .feedback-button:active {
+    transform: translateY(0);
+}

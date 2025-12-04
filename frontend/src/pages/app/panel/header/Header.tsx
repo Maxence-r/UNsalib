@@ -6,19 +6,24 @@ import { IconButton } from "../../../../components/button/Button.js";
 // import PWAInstallButton from "../installButton.js";
 import CampusBannerUrl from "../../../../assets/imgs/campus/sciences-et-techniques.jpg";
 import { AboutModal } from "../modals/AboutModal.js";
+import { InstallButton } from "./installButton.js";
 
 function Header() {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
 
     return (
         <header className="header">
-            <AboutModal isOpen={isAboutModalOpen} setIsOpen={setIsAboutModalOpen} />
+            <AboutModal
+                isOpen={isAboutModalOpen}
+                setIsOpen={setIsAboutModalOpen}
+            />
             <div className="top-bar">
                 <div className="branding">
                     <img src="/logo96.png" alt="UNsalib logo" />
                     <h1>UNsalib</h1>
                 </div>
                 <div className="actions">
+                    <InstallButton />
                     <IconButton
                         onClick={() => {
                             setIsAboutModalOpen(true);
@@ -26,7 +31,6 @@ function Header() {
                         icon={<Info />}
                         secondary
                     />
-                    {/* <PWAInstallButton></PWAInstallButton> */}
                 </div>
             </div>
             <div className="campus">

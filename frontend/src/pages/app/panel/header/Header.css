@@ -20,31 +20,10 @@
 
 /* Actions bar rules */
 
-.panel .top-bar>.install {
-    border-radius: var(--border-radius);
-    cursor: pointer;
+.panel .top-bar>.actions {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--border-color);
-    height: 45px;
-    box-sizing: border-box;
-    width: 45px;
-}
-
-.panel .top-bar>.install:hover {
-    background-color: var(--neutral-color-light);
-}
-
-.panel .top-bar>.install .badge {
-    position: absolute;
-    height: 8px;
-    width: 8px;
-    background-color: var(--accent-color);
-    border-radius: 20px;
-    margin-left: 12px;
-    margin-top: 12px;
-    display: none;
 }
 
 /* Branding rules */

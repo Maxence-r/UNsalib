@@ -8,6 +8,10 @@ function SafariInstallModal({
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+    const handleCloseButtonClick = () => {
+        setIsOpen(false);
+    };
+
     return (
         <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
             <div className="safariInstall">
@@ -22,7 +26,7 @@ function SafariInstallModal({
                     </p>
                     <img src="/add.svg" alt="" width={21} height={22}></img>
                 </div>
-                <TextButton onClick={() => closeModal()} text="Compris !" />
+                <TextButton onClick={handleCloseButtonClick} text="Compris !" />
             </div>
         </Modal>
     );

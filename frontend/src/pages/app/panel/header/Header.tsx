@@ -6,7 +6,7 @@ import { IconButton } from "../../../../components/button/Button.js";
 // import PWAInstallButton from "../installButton.js";
 import CampusBannerUrl from "../../../../assets/imgs/campus/sciences-et-techniques.jpg";
 import { AboutModal } from "../modals/AboutModal.js";
-import { InstallButton } from "./installButton.js";
+import { InstallButton } from "./InstallButton.js";
 
 function Header() {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);

@@ -1,7 +1,75 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+    plugins: [
+        react(),
+        VitePWA({
+            includeAssets: ["favicon.ico", "logo192.png"],
+            manifest: {
+                short_name: "UNsalib",
+                name: "UNsalib",
+                categories: ["productivity", "utilities", "social"],
+                description:
+                    "UNsalib permet aux étudiants/professeurs de Nantes Université de trouver les salles libres du campus et d'afficher leurs emplois du temps",
+                icons: [
+                    {
+                        src: "/logo96.png",
+                        sizes: "96x96",
+                        type: "image/png",
+                    },
+                    {
+                        src: "/logo144.png",
+                        sizes: "144x144",
+                        type: "image/png",
+                    },
+                    {
+                        src: "/logo192.png",
+                        sizes: "192x192",
+                        type: "image/png",
+                    },
+                    {
+                        src: "/logo512.png",
+                        sizes: "512x512",
+                        type: "image/png",
+                    },
+                ],
+                start_url: "../?utm_source=PWA",
+                display: "standalone",
+                orientation: "portrait",
+                theme_color: "#3452FF",
+                background_color: "#3452FF",
+                screenshots: [
+                    {
+                        src: "/preview1-light.png",
+                        sizes: "1920x911",
+                        type: "image/png",
+                        form_factor: "wide",
+                        label: "Aperçu sur ordinateur (thème clair)",
+                    },
+                    {
+                        src: "/preview1-dark.png",
+                        sizes: "1920x911",
+                        type: "image/png",
+                        form_factor: "wide",
+                        label: "Aperçu sur ordinateur (thème sombre)",
+                    },
+                    {
+                        src: "/preview2-light.png",
+                        sizes: "1440x2960",
+                        type: "image/png",
+                        label: "Aperçu sur mobile (thème clair)",
+                    },
+                    {
+                        src: "/preview2-dark.png",
+                        sizes: "1440x2960",
+                        type: "image/png",
+                        label: "Aperçu sur mobile (thème sombre)",
+                    },
+                ],
+            },
+        }),
+    ],
+});

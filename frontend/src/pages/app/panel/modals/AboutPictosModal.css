@@ -1,0 +1,31 @@
+/* Global modal content */
+
+.modal .about-pictos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Pictos grid rules  */
+
+.modal .about-pictos .pictos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+}
+
+.modal .about-pictos .pictos>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    background-color: var(--neutral-color-light);
+    border-radius: var(--border-radius);
+    padding: 20px;
+}

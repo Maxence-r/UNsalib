@@ -107,7 +107,7 @@ function ActionsContainer() {
                     />
                     {createPortal(
                         <SearchModal
-                            isOpen={isAboutPictosModalOpen}
+                            isOpen={false}
                             setIsOpen={setIsAboutPictosModalOpen}
                             // availableRoomsListHook={filteredRooms}
                         />,

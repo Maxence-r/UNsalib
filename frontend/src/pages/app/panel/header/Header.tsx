@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import "./Header.css";
 import { IconButton } from "../../../../components/button/Button.js";
-// import PWAInstallButton from "../installButton.js";
 import CampusBannerUrl from "../../../../assets/imgs/campus/sciences-et-techniques.jpg";
 import { AboutModal } from "../modals/AboutModal.js";
 import { InstallButton } from "./InstallButton.js";

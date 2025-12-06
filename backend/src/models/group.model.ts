@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
+
+type GroupSchemaProperties = InferSchemaType<typeof GroupSchema>;
 
 const GroupSchema = new Schema({
     univId: {
@@ -17,4 +19,5 @@ const GroupSchema = new Schema({
 });
 
 const Group = model("Group", GroupSchema);
-export { Group };
+
+export { Group, type GroupSchemaProperties };

@@ -1,6 +1,6 @@
 import { parse } from "node-html-parser";
 
-import { Group } from "../models/group.js";
+import { Group } from "../models/group.model.js";
 import { logger } from "../utils/logger.js";
 
 // CONSTANTS

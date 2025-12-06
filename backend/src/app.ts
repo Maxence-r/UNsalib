@@ -1,17 +1,11 @@
-// import express, { json, urlencoded } from "express";
-// import cookieParser from "cookie-parser";
-
-// app.use(cookieParser());
-// app.use(json());
-// app.use(urlencoded({ extended: true }));
-
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
-import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+// import rateLimit from "express-rate-limit";
 
 import { config } from "./configs/app.config.js";
 import { logger } from "./utils/logger.js";
@@ -38,6 +32,7 @@ app.use(cors(corsOptions));
 // Body parser middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "80mb" }));
+app.use(cookieParser());
 
 // Compression middleware
 app.use(compression());

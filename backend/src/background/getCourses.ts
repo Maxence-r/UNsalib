@@ -1,8 +1,8 @@
 import "dotenv/config";
 
-import { Group } from "../models/group.js";
-import { Course } from "../models/course.js";
-import { Room } from "../models/room.js";
+import { Group } from "../models/group.model.js";
+import { Course } from "../models/course.model.js";
+import { Room } from "../models/room.model.js";
 import { closestPaletteColor } from "../utils/color.js";
 import { socket } from "../server.js";
 

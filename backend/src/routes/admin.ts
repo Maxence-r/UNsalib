@@ -1,8 +1,8 @@
 import express from "express";
-import Room from "../models/room.js";
+import Room from "../models/room.model.js";
 import Account from "../models/account.js";
-import Course from "../models/course.js";
-import Stat from "../models/stat.js";
+import Course from "../models/course.model.js";
+import Stat from "../models/stat.model.js";
 import mongoose from "mongoose";
 import pkg from "jsonwebtoken";
 import { compare } from "bcrypt";

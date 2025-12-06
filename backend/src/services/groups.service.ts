@@ -1,4 +1,4 @@
-import { Group } from "../models/group.js";
+import { Group } from "../models/group.model.js";
 
 class GroupsService {
     /**

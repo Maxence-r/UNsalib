@@ -1,6 +1,6 @@
 import type { Types } from "mongoose";
 
-import { Room, RoomSchemaProperties } from "../models/room.js";
+import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
 
 const CIE_CLOSING_DATES = {

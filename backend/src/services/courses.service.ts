@@ -1,6 +1,6 @@
 import type { Types } from "mongoose";
 
-import { Course, CourseSchemaProperties } from "../models/course.js";
+import { Course, CourseSchemaProperties } from "../models/course.model.js";
 
 class CoursesService {
     /**

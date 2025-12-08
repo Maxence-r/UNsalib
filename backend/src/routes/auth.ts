@@ -1,5 +1,5 @@
 import express from "express";
-import Account from "../models/account.js";
+import Account from "../models/account.model.js";
 import pkg from "jsonwebtoken";
 import { compare } from "bcrypt";
 import { CONFIG } from "../configs/app.config.js";

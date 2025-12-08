@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
+
+type AccountSchemaProperties = InferSchemaType<typeof AccountSchema>;
 
 const AccountSchema = new Schema({
     name: {
@@ -23,6 +25,7 @@ const AccountSchema = new Schema({
         type: String,
         required: true,
         minLength: 6,
+        select: false, // Don't return password by default
     },
     icon: {
         type: String,
@@ -31,4 +34,5 @@ const AccountSchema = new Schema({
 });
 
 const Account = model("Account", AccountSchema);
-export default Account;
+
+export { Account, type AccountSchemaProperties };

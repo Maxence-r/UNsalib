@@ -1,6 +1,6 @@
 import express from "express";
 import Room from "../models/room.model.js";
-import Account from "../models/account.js";
+import Account from "../models/account.model.js";
 import Course from "../models/course.model.js";
 import Stat from "../models/stat.model.js";
 import mongoose from "mongoose";

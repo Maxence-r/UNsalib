@@ -155,6 +155,40 @@ class RoomsController {
                 };
             });
 
+            // TODO: Vacations
+            // if (VACATIONS.includes(requestedWeek.number)) {
+            //     const vacationCourses = [];
+            //     const startDate = new Date(requestedWeek.start);
+
+            //     for (let i = 0; i < 5; i++) {
+            //         const start = new Date(startDate);
+            //         start.setDate(start.getDate() + i);
+            //         start.setHours(8, 0, 0, 0);
+            //         const end = new Date(start);
+            //         end.setHours(17, 0, 0, 0);
+
+            //         vacationCourses.push({
+            //             courseId: `vacances-${i}`,
+            //             start: start.toISOString(),
+            //             end: end.toISOString(),
+            //             notes: "",
+            //             category: "",
+            //             duration: 900,
+            //             overflow: 0,
+            //             roomId: id,
+            //             teachers: ["Monsieur Chill"],
+            //             modules: ["Détente - Vacances"],
+            //             groups: ["Tout le monde"],
+            //             color: "#FF7675",
+            //         });
+            //     }
+
+            //     return res.send({
+            //         courses: vacationCourses,
+            //         weekInfos: requestedWeek,
+            //     });
+            // }
+
             res.status(200).json({
                 success: true,
                 data: { courses: formattedResponse, weekInfos: increment },

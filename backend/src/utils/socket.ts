@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-import { getAccountFromToken } from "./auth.js";
+import { accountsService } from "services/accounts.service.js";
 
 class Socket {
     private io: Server;
@@ -26,7 +26,7 @@ class Socket {
 
             if (!token) return next();
 
-            getAccountFromToken(token)
+            accountsService.getFromToken(token)
                 .then((userId) => {
                     if (userId) {
                         void socket.join("admin");

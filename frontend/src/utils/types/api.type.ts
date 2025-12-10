@@ -17,6 +17,7 @@ interface ApiRoom {
 export interface ApiCourse {
     category: string;
     color: string;
+    onColor: string;
     courseId: string;
     duration: number;
     end: string;

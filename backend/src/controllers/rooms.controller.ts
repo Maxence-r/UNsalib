@@ -4,11 +4,8 @@ import { matchedData } from "express-validator";
 import { roomsService } from "../services/rooms.service.js";
 import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
-import {
-    getWeekInfos,
-    getWeeksNumber,
-    getMinutesOverflow,
-} from "../utils/date.js";
+import { getWeekInfos, getWeeksNumber } from "../utils/date.js";
+import { hexToRgb, isLightColor, rgbToHex, blend } from "utils/color.js";
 
 class RoomsController {
     /**
@@ -129,29 +126,31 @@ class RoomsController {
 
             // Formatting the response
             const formattedResponse = result.map((doc) => {
-                // Getting duration in ms, convert to h and then to percentage
-                const duration =
-                    ((new Date(doc.end).valueOf() -
-                        new Date(doc.start).valueOf()) /
-                        1000 /
-                        60 /
-                        60) *
-                    100;
-                // Getting the overflow as a percentage
-                const overflow = getMinutesOverflow(new Date(doc.start));
+                let onColor = "#ffffff";
+                if (doc.color) {
+                    const bgColor = hexToRgb(doc.color);
+                    const blackMask = { r: 0, g: 0, b: 0 };
+                    const whiteMask = { r: 255, g: 255, b: 255 };
+
+                    if (isLightColor(bgColor)) {
+                        onColor = rgbToHex(blend(bgColor, blackMask, 0.1));
+                    } else {
+                        onColor = rgbToHex(blend(bgColor, whiteMask, 0.1));
+                    }
+                }
+
                 return {
                     courseId: doc._id,
                     start: doc.start,
                     end: doc.end,
                     notes: doc.notes,
                     category: doc.category,
-                    duration: duration,
-                    overflow: overflow,
                     roomId: doc.rooms,
                     teachers: doc.teachers,
                     modules: doc.modules,
                     groups: doc.groups.map((group) => parsedGroups[group]),
                     color: doc.color,
+                    onColor: onColor,
                 };
             });
 

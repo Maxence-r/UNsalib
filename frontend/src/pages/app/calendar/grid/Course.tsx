@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 
 import type { ApiCourse } from "../../../../utils/types/api.type.js";
 import { CourseModal } from "../modals/CourseModal.js";
-import { isLightColor, hexToRgb } from "../../../../utils/color.js";
 import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
 
@@ -17,10 +16,6 @@ function buildModuleNamesString(modules: string[], category: string): string {
     } else {
         return "Non renseigné";
     }
-}
-
-function hoursToMinutes(date: Date) {
-    let minutes = date.get;
 }
 
 function getCourseDurationMinutes(start: string, end: string): number {
@@ -56,9 +51,6 @@ function Course({ course }: { course: ApiCourse }) {
     const [isCourseModalOpen, setIsCourseModalOpen] = useState<boolean>(false);
 
     const moduleNames = buildModuleNamesString(course.modules, course.category);
-    const onColor = isLightColor(hexToRgb(course.color))
-        ? "#000000"
-        : "#ffffff";
     const courseDurationMinutes = getCourseDurationMinutes(
         course.start,
         course.end,
@@ -69,7 +61,7 @@ function Course({ course }: { course: ApiCourse }) {
             style={{
                 top: `${getCourseAbsoluteTopPercent(DAY_DURATION * 60, new Date(course.start), START_DAY_HOUR * 60)}%`,
                 backgroundColor: course.color,
-                color: onColor,
+                color: course.onColor,
                 height: `${getCourseHeightPercent(DAY_DURATION * 60, courseDurationMinutes)}%`,
                 // width: `${100 / course.length}%`
                 // width: "100%",

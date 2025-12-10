@@ -15,24 +15,21 @@
     margin: 0 1px;
 }
 
-.course>h2 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
+.course>h2,
+.course>p {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-weight: 600;
+    margin: 0;
+}
+
+.course>h2 {
+    font-size: 14px;
 }
 
 .course>p {
-    margin: 0;
     font-size: 12px;
-    font-weight: 600;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 @media screen and (max-height: 700px) {

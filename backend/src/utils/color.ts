@@ -132,4 +132,49 @@ function rgbToHsl(c: RgbColor): HslColor {
     return { h, s: s * 100, l: l * 100 };
 }
 
-export { closestPaletteColor };
+// Adapted from https://stackoverflow.com/a/9664560
+// Posted by Alex Marchant, modified by community
+function isLightColor({ r, g, b }: RgbColor): boolean {
+    let brightness = r * 299 + g * 587 + b * 114;
+    brightness = brightness / 255000;
+
+    // Values range from 0 to 1
+    // Anything greater than 0.5 should be bright enough for dark text
+    if (brightness >= 0.5) {
+        return true;
+    }
+    return false;
+}
+
+// Adapted from https://stackoverflow.com/a/5624139
+// Posted by Tim Down, modified by community.
+function rgbToHex(color: RgbColor): string {
+    const channelToHex = (c: number): string => {
+        const hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    };
+
+    return (
+        "#" +
+        channelToHex(color.r) +
+        channelToHex(color.g) +
+        channelToHex(color.b)
+    );
+}
+
+// Adapted from https://stackoverflow.com/a/32171077
+// Posted by Aaron Harris
+function blend(color1: RgbColor, color2: RgbColor, amount: number): RgbColor {
+    const blendColor: RgbColor = { r: 0, g: 0, b: 0 };
+
+    Object.keys(blendColor).forEach((channel) => {
+        const rgbChannel = channel as "r" | "g" | "b";
+        blendColor[rgbChannel] = Math.round(
+            color1[rgbChannel] * amount + color2[rgbChannel] * (1 - amount),
+        );
+    });
+
+    return blendColor;
+}
+
+export { closestPaletteColor, isLightColor, hexToRgb, blend, rgbToHex };

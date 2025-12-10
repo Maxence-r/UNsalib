@@ -2,3 +2,5 @@ node_modules
 .env
 /frontend/src/app/premium
 dist/
+/frontend-old
+logs

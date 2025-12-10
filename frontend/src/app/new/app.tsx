@@ -47,9 +47,7 @@ export default function App() {
                         versionName="Barbara"
                         date="11/2025"
                         features={[
-                            { icon: "🛠️", description: "Mise a jours des systèmes suite à la modifications des systèmes de nantes université" },
-                            { icon: "🛠️", description: "Mode maintenance en cas de problèmes avec détails précis" },
-                            { icon: "🛠️", description: "Amélioration de l'algorithme de récupération et de traitement des groupes" }
+                            { icon: "🛠️", description: "Mise à jour du système de synchronisation des emplois du temps suite à la modification de noms de salles par Nantes Université" }
                         ]}
                     />
                     <ReleaseSection

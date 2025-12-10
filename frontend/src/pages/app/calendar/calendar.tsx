@@ -154,8 +154,8 @@ function Calendar() {
             ></CalendarContainer> */}
             <Grid
                 courses={courses.courses}
-                weekStartDate={new Date(courses.weekInfos.start).getDate()}
-                weekEndDate={new Date(courses.weekInfos.end).getDate()}
+                weekStart={new Date(courses.weekInfos.start)}
+                weekEnd={new Date(courses.weekInfos.end)}
             />
             <div className="menu-mobile">
                 <div className="current-room">

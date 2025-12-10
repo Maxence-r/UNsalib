@@ -1,4 +1,4 @@
-main.main {
+#root {
     display: flex;
     flex-direction: row;
     /* gap: 34px; */

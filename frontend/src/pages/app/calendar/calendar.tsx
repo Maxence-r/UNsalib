@@ -10,18 +10,19 @@ import {
     DAY_DURATION,
     WEEK_DAYS,
 } from "../../../utils/constants.js";
-import CalendarContainer from "./container.js";
+// import CalendarContainer from "./grid/container.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { goBack } from "../../../utils/navigation-manager.js";
 import type {
-    ApiCourses,
+    ApiCourse,
     ApiError,
     ApiTimetable,
     ApiWeekInfos,
 } from "../../../utils/types/api.type.js";
 import { ActionBar } from "./action-bar/ActionBar.js";
+import { Grid } from "./grid/Grid.js";
 
-export default function Calendar() {
+function Calendar() {
     function computeHourIndicator() {
         const dateActuelle = new Date();
         const jourActuel = dateActuelle.getDay();
@@ -52,7 +53,7 @@ export default function Calendar() {
     }
 
     const [courses, setCourses] = useState<{
-        courses: ApiCourses;
+        courses: ApiCourse[];
         weekInfos: ApiWeekInfos;
     }>({
         courses: [],
@@ -122,7 +123,7 @@ export default function Calendar() {
     }, [selectedRoom, increment]);
 
     return (
-        <div className="calendar">
+        <div className="main">
             <div
                 className="loader-indicator"
                 style={{ display: isTimetableLoading ? "flex" : "none" }}
@@ -145,12 +146,17 @@ export default function Calendar() {
                         : null
                 }
             />
-            <CalendarContainer
+            {/* <CalendarContainer
                 courses={courses}
                 hourIndicatorValue={hourIndicatorValue}
                 hourIndicatorTop={hourIndicatorTop}
                 displayHourIndicator={displayHourIndicator}
-            ></CalendarContainer>
+            ></CalendarContainer> */}
+            <Grid
+                courses={courses.courses}
+                weekStartDate={new Date(courses.weekInfos.start).getDate()}
+                weekEndDate={new Date(courses.weekInfos.end).getDate()}
+            />
             <div className="menu-mobile">
                 <div className="current-room">
                     <p>Salle actuelle :</p>
@@ -169,3 +175,5 @@ export default function Calendar() {
         </div>
     );
 }
+
+export { Calendar };

@@ -1,0 +1,42 @@
+/* Global course rules */
+
+.course {
+    display: flex;
+    z-index: 1;
+    cursor: pointer;
+    position: absolute;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Fallback color */
+    background-color: #e17055;
+    padding: 8px;
+    border-radius: 2px;
+    width: calc(100% - 2px);
+    margin: 0 1px;
+}
+
+.course>h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.course>p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media screen and (max-height: 700px) {
+    .course>p {
+        display: none;
+    }
+}

@@ -19,7 +19,13 @@ import { Badge } from "../../../components/badge/Badge.js";
 import { useFetch } from "../../../utils/hooks/fetch.hook.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 
-function ActionsContainer() {
+function ActionsContainer({
+    isSearchModalOpen,
+    setIsSearchModalOpen,
+}: {
+    isSearchModalOpen: boolean;
+    setIsSearchModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
@@ -107,8 +113,8 @@ function ActionsContainer() {
                     />
                     {createPortal(
                         <SearchModal
-                            isOpen={false}
-                            setIsOpen={setIsAboutPictosModalOpen}
+                            isOpen={isSearchModalOpen}
+                            setIsOpen={setIsSearchModalOpen}
                             // availableRoomsListHook={filteredRooms}
                         />,
                         document.body,
@@ -127,15 +133,24 @@ function ActionsContainer() {
 
 export default function Panel() {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+
+    const handleSearchButtonClick = () => {
+        setIsSearchModalOpen(true);
+    };
 
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
             <Header />
-            <ActionsContainer />
+            <ActionsContainer
+                isSearchModalOpen={isSearchModalOpen}
+                setIsSearchModalOpen={setIsSearchModalOpen}
+            />
             <TextButton
                 className="search-button"
                 text="Chercher une salle"
                 icon={<Search />}
+                onClick={handleSearchButtonClick}
             />
         </div>
     );

@@ -28,4 +28,5 @@
     background-color: var(--neutral-color-light);
     border-radius: var(--border-radius);
     padding: 20px;
+    margin: 0;
 }

@@ -1,4 +1,4 @@
-import { Stat } from "models/stat.model.js";
+import { Stat } from "../models/stat.model.js";
 
 class StatsService {
     /**

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-import { accountsService } from "services/accounts.service.js";
+import { accountsService } from "../services/accounts.service.js";
 
 class Socket {
     private io: Server;

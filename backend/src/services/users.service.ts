@@ -2,7 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { isBot, isAIBot } from "ua-parser-js/helpers";
 import { isValidObjectId } from "mongoose";
 
-import { User } from "models/user.model.js";
+import { User } from "../models/user.model.js";
 
 class UsersService {
     /**

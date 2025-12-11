@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { usersService } from "services/users.service.js";
-import { statsService } from "services/stats.service.js";
+import { usersService } from "../services/users.service.js";
+import { statsService } from "../services/stats.service.js";
 
 async function statHandler(
     req: Request,

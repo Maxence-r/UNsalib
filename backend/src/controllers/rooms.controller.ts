@@ -5,7 +5,7 @@ import { roomsService } from "../services/rooms.service.js";
 import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos, getWeeksNumber } from "../utils/date.js";
-import { hexToRgb, isLightColor, rgbToHex, blend } from "utils/color.js";
+import { hexToRgb, isLightColor, rgbToHex, blend } from "../utils/color.js";
 
 class RoomsController {
     /**

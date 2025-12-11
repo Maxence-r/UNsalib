@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { Account } from "../models/account.model.js";
-import { config } from "configs/app.config.js";
+import { config } from "../configs/app.config.js";
 
 class AccountsService {
     async getFromToken(token: string): Promise<null | string> {

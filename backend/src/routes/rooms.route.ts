@@ -4,8 +4,8 @@ import {
     availableValidation,
     timetableValidation,
 } from "../validators/rooms.validator.js";
-import { statHandler } from "middlewares/stats.middleware.js";
-import { errorHandler } from "middlewares/error.middleware.js";
+import { statHandler } from "../middlewares/stats.middleware.js";
+import { errorHandler } from "../middlewares/error.middleware.js";
 import { validationHandler } from "../middlewares/validation.middleware.js";
 import { roomsController } from "../controllers/rooms.controller.js";
 

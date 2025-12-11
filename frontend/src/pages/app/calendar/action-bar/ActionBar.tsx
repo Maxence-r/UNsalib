@@ -20,27 +20,27 @@ const months: { [key: string]: string } = {
 
 function ActionBar({
     currentRoom,
-    increment,
-    setIncrement,
+    incrementDispatch,
     weekNumber,
     weekStartDate,
 }: {
     currentRoom: string | null;
-    increment: number;
-    setIncrement: React.Dispatch<React.SetStateAction<number>>;
+    incrementDispatch: (
+        action: "increase" | "decrease" | "reset-previous" | "reset",
+    ) => void;
     weekNumber: number | null;
     weekStartDate: Date | null;
 }) {
     const handleNextWeekButtonClick = () => {
-        if (weekNumber) setIncrement(increment + 1);
+        if (weekNumber) incrementDispatch("increase");
     };
 
     const handlePreviousWeekButtonClick = () => {
-        if (weekNumber) setIncrement(increment - 1);
+        if (weekNumber) incrementDispatch("decrease");
     };
 
     const handleTodayButtonClick = () => {
-        setIncrement(0);
+        incrementDispatch("reset");
     };
 
     return (

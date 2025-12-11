@@ -1,10 +1,7 @@
 import "./Grid.css";
 
-import {
-    DAY_DURATION,
-    START_DAY_HOUR,
-} from "../../../../utils/constants";
-import type { ApiCourse } from "../../../../utils/types/api.type";
+import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants";
+import type { ApiDataCourse } from "../../../../utils/types/api.type";
 import { Column, ColumnHeader } from "./Column";
 
 const DAY_NAMES = [
@@ -379,14 +376,14 @@ function getDifferenceInDays(d1: Date, d2: Date): number {
 }
 
 function orderCoursesByDay(
-    courses: ApiCourse[],
+    courses: ApiDataCourse[],
     weekStart: Date,
     weekEnd: Date,
-): ApiCourse[][] {
+): ApiDataCourse[][] {
     // Start and end day included
     const nbDays = getDifferenceInDays(weekEnd, weekStart) + 1;
 
-    const coursesByDay: ApiCourse[][] = [];
+    const coursesByDay: ApiDataCourse[][] = [];
 
     for (let i = 0; i < nbDays; i++) coursesByDay.push([]);
 
@@ -404,15 +401,16 @@ function Grid({
     weekStart,
     weekEnd,
 }: {
-    courses: ApiCourse[];
-    weekStart: Date;
-    weekEnd: Date;
+    courses: ApiDataCourse[] | null;
+    weekStart: Date | null;
+    weekEnd: Date | null;
 }) {
-    const orderedCourses: ApiCourse[][] = orderCoursesByDay(
-        courses,
-        weekStart,
-        weekEnd,
-    ).filter((_val, i) => i < VISIBLE_DAYS);
+    const orderedCourses: ApiDataCourse[][] =
+        courses && weekStart && weekEnd
+            ? orderCoursesByDay(courses, weekStart, weekEnd).filter(
+                  (_val, i) => i < VISIBLE_DAYS,
+              )
+            : [];
 
     return (
         <div className="calendar">
@@ -440,7 +438,7 @@ function Grid({
                         gridTemplateColumns: `repeat(${VISIBLE_DAYS}, 1fr)`,
                     }}
                 >
-                    {orderedCourses.length > 0
+                    {orderedCourses.length > 0 && weekStart && weekEnd
                         ? orderedCourses.map((_val, i) => (
                               <ColumnHeader
                                   dayDate={weekStart.getDate() + i}

@@ -1,4 +1,10 @@
-import { useState, useEffect } from "react";
+import {
+    useState,
+    useEffect,
+    useReducer,
+    type ActionDispatch,
+    useMemo,
+} from "react";
 import { ChevronUp } from "lucide-react";
 
 import { useSelectedRoomStore } from "../../../stores/app.store.js";
@@ -14,13 +20,49 @@ import "./calendar.css";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { goBack } from "../../../utils/navigation-manager.js";
 import type {
-    ApiCourse,
-    ApiError,
-    ApiTimetable,
-    ApiWeekInfos,
+    ApiDataCourse,
+    ApiDataTimetable,
 } from "../../../utils/types/api.type.js";
 import { ActionBar } from "./action-bar/ActionBar.js";
 import { Grid } from "./grid/Grid.js";
+import { useFetch } from "../../../utils/hooks/fetch.hook.js";
+
+function incrementReducer(
+    state: { value: number; previous: number },
+    action: "increase" | "decrease" | "reset-previous" | "reset",
+) {
+    switch (action) {
+        case "increase":
+            return {
+                previous: state.value,
+                value: state.value + 1,
+            };
+
+        case "decrease":
+            return {
+                previous: state.value,
+                value: state.value - 1,
+            };
+
+        case "reset-previous":
+            return {
+                previous: state.previous,
+                value: state.previous,
+            };
+
+        case "reset":
+            return {
+                previous: 0,
+                value: 0,
+            };
+
+        default:
+            return {
+                previous: state.previous,
+                value: state.value,
+            };
+    }
+}
 
 function Calendar() {
     // function computeHourIndicator() {
@@ -52,21 +94,17 @@ function Calendar() {
     //     }
     // }
 
-    const [courses, setCourses] = useState<{
-        courses: ApiCourse[];
-        weekInfos: ApiWeekInfos;
-    }>({
-        courses: [],
-        weekInfos: {
-            start: "--",
-            end: "--",
-            number: -1,
-        },
-    });
-    const [increment, setIncrement] = useState(0);
-    const [previousIncrement, setPreviousIncrement] = useState(0);
+    // const [courses, setCourses] = useState<ApiDataTimetable | null>(null);
+    // const [increment, setIncrement] = useState(0);
+    // const [previousIncrement, setPreviousIncrement] = useState(0);
+    // const [timetableUrl, setTimetableUrl] = useState<string>("");
     const selectedRoom = useSelectedRoomStore((state) => state.room);
-    const [isTimetableLoading, setTimetableLoadState] = useState(false);
+
+    const [increment, incrementDispatch] = useReducer(incrementReducer, {
+        value: 0,
+        previous: 0,
+    });
+    // const [isTimetableLoading, setTimetableLoadState] = useState(false);
     // const [hourIndicatorValue, setHourIndicatorValue] = useState(
     //     computeHourIndicator().value,
     // );
@@ -85,77 +123,47 @@ function Calendar() {
 
     //     return () => clearInterval(interval);
     // }, [hourIndicatorValue]);
-
-    useEffect(() => {
-        async function render() {
-            setTimetableLoadState(true);
-            try {
-                const response = await fetch(
-                    `http://localhost:9000/rooms/timetable?id=${selectedRoom.id}&increment=${increment}`,
-                    { credentials: "include" },
-                );
-                const coursesData: ApiTimetable | ApiError =
-                    await response.json();
-                if ("error" in coursesData) {
-                    throw new Error(
-                        "Error fetching the timetable:",
-                        coursesData.error as ErrorOptions,
-                    );
-                } else {
-                    setCourses(coursesData.data);
-                    setPreviousIncrement(increment);
-                }
-            } catch {
-                setToastMessage(
-                    "Impossible de récupérer les données pour cette salle.",
-                    true,
-                );
-                showToast();
-                setIncrement(previousIncrement);
-            } finally {
-                setTimetableLoadState(false);
-            }
-        }
-
+    const timetableUrl = useMemo(() => {
         if (selectedRoom.id != "") {
-            render();
+            return `${import.meta.env.VITE_BACKEND_URL}/rooms/timetable?id=${selectedRoom.id}&increment=${increment.value}`;
         }
     }, [selectedRoom, increment]);
 
+    const { isLoading, data, error } = useFetch(timetableUrl ?? "");
+
+    const courses = useMemo(() => {
+        if (error) {
+            // setToastMessage(
+            //     "Impossible de récupérer les données pour cette salle.",
+            //     true,
+            // );
+            // showToast();
+            incrementDispatch("reset-previous");
+        } else if (!isLoading && data) {
+            return data as ApiDataTimetable;
+        }
+    }, [data, error, isLoading]);
+
     return (
         <div className="main">
-            <div
-                className="loader-indicator"
-                style={{ display: isTimetableLoading ? "flex" : "none" }}
-            >
-                <span className="spin"></span>
-                <p>Chargement de l&apos;EDT...</p>
-            </div>
+            {isLoading && timetableUrl && (
+                <div className="loader-indicator">
+                    <span className="spin"></span>
+                    <p>Chargement de l&apos;EDT...</p>
+                </div>
+            )}
             <ActionBar
-                increment={increment}
-                setIncrement={setIncrement}
+                incrementDispatch={incrementDispatch}
                 currentRoom={selectedRoom.id ? selectedRoom.name : null}
-                weekNumber={
-                    courses.weekInfos.number != -1
-                        ? courses.weekInfos.number
-                        : null
-                }
+                weekNumber={courses ? courses.weekInfos.number : null}
                 weekStartDate={
-                    courses.weekInfos.start != "--"
-                        ? new Date(courses.weekInfos.start)
-                        : null
+                    courses ? new Date(courses.weekInfos.number) : null
                 }
             />
-            {/* <CalendarContainer
-                courses={courses}
-                hourIndicatorValue={hourIndicatorValue}
-                hourIndicatorTop={hourIndicatorTop}
-                displayHourIndicator={displayHourIndicator}
-            ></CalendarContainer> */}
             <Grid
-                courses={courses.courses}
-                weekStart={new Date(courses.weekInfos.start)}
-                weekEnd={new Date(courses.weekInfos.end)}
+                courses={courses ? courses.courses : []}
+                weekStart={courses ? new Date(courses.weekInfos.start) : null}
+                weekEnd={courses ? new Date(courses.weekInfos.end) : null}
             />
             <div className="menu-mobile">
                 <div className="current-room">

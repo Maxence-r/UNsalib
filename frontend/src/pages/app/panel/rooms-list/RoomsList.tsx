@@ -1,7 +1,7 @@
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 import { cloneElement } from "react";
 
-import type { ApiRoom } from "../../../../utils/types/api.type.js";
+import type { ApiDataRoom } from "../../../../utils/types/api.type.js";
 import "./RoomsList.css";
 
 // function Ping({ error }: { error: boolean }) {
@@ -42,8 +42,8 @@ function Result({
     room,
     onRoomClick,
 }: {
-    room: ApiRoom | null;
-    onRoomClick: (room: ApiRoom) => void;
+    room: ApiDataRoom | null;
+    onRoomClick: (room: ApiDataRoom) => void;
 }) {
     const handleRoomClick = () => {
         if (room) onRoomClick(room);
@@ -75,8 +75,8 @@ function RoomsList({
     filter,
     isLoading,
 }: {
-    onRoomClick: (room: ApiRoom) => void;
-    rooms: ApiRoom[];
+    onRoomClick: (room: ApiDataRoom) => void;
+    rooms: ApiDataRoom[];
     filter: string[];
     isLoading: boolean;
 }) {

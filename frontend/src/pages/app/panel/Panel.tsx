@@ -4,7 +4,7 @@ import { Info, Search, FunnelX } from "lucide-react";
 import { IconButton, TextButton } from "../../../components/button/Button.js";
 import { Input } from "../../../components/input/Input.js";
 import { Header } from "./header/Header.js";
-import type { ApiRoom } from "../../../utils/types/api.type.js";
+import type { ApiDataRoom } from "../../../utils/types/api.type.js";
 import {
     usePanelStore,
     useSelectedRoomStore,
@@ -36,7 +36,7 @@ function ActionsContainer({
         `${import.meta.env.VITE_BACKEND_URL}/rooms`,
     );
 
-    const loadTimetable = (room: ApiRoom) => {
+    const loadTimetable = (room: ApiDataRoom) => {
         pushToHistory("panel", openPanel);
         closePanel();
         setSelectedRoom(room.id, room.name.toUpperCase());
@@ -51,7 +51,7 @@ function ActionsContainer({
 
     const filteredRooms = useMemo(() => {
         if (!isLoading && !error) {
-            return (data as ApiRoom[])
+            return (data as ApiDataRoom[])
                 .map((room) => {
                     if (
                         normalizeString(room.name).includes(
@@ -122,7 +122,7 @@ function ActionsContainer({
                 </div>
             </div>
             <RoomsList
-                rooms={!isLoading && !error ? (data as ApiRoom[]) : []}
+                rooms={!isLoading && !error ? (data as ApiDataRoom[]) : []}
                 filter={filteredRooms}
                 onRoomClick={loadTimetable}
                 isLoading={isLoading || error}

@@ -32,7 +32,6 @@ function InstallButton() {
 
     useEffect(() => {
         const promptEventHandler = (e: Event) => {
-            console.log("coucou");
             e.preventDefault();
             setDeferredPrompt(e as BeforeInstallPromptEvent);
         };

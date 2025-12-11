@@ -1,20 +1,27 @@
 interface Api {
     success: boolean;
+}
+
+interface ApiSuccess extends Api {
     data: unknown;
+}
+
+interface ApiError extends Api {
+    message: string;
 }
 
 // Endpoint: /rooms
 
-interface ApiRoom {
+interface ApiDataRoom {
     id: string;
     name: string;
     building: string;
     features: ("visio" | "badge" | "video" | "ilot")[];
-};
+}
 
 // Endpoint: /rooms/timetable
 
-export interface ApiCourse {
+interface ApiDataCourse {
     category: string;
     color: string;
     onColor: string;
@@ -30,19 +37,12 @@ export interface ApiCourse {
     teachers: string[];
 }
 
-export type ApiCourses = ApiCourse[];
-
-export interface ApiWeekInfos {
-    end: string;
-    number: number;
-    start: string;
-}
-
-export interface ApiTimetable {
-    success: boolean;
-    data: {
-        courses: ApiCourses;
-        weekInfos: ApiWeekInfos;
+interface ApiDataTimetable {
+    courses: ApiDataCourse[];
+    weekInfos: {
+        end: string;
+        number: number;
+        start: string;
     };
 }
 
@@ -74,8 +74,15 @@ export interface ApiPlatforms {
 
 // API error
 
-export interface ApiError {
-    error: string;
-}
+// export interface ApiError {
+//     error: string;
+// }
 
-export type { Api, ApiRoom };
+export type {
+    Api,
+    ApiDataRoom,
+    ApiError,
+    ApiSuccess,
+    ApiDataTimetable,
+    ApiDataCourse,
+};

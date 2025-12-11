@@ -10,7 +10,7 @@
 
 .loader-indicator {
     position: absolute;
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 4px;
     align-items: center;
@@ -44,6 +44,8 @@
         transform: rotate(360deg);
     }
 }
+
+/* TODO */
 
 .calendar-container {
     padding: 24px 0px 0px 24px;

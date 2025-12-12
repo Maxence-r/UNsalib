@@ -11,7 +11,7 @@ import "../utils/theme.css";
 import { App } from "./app/App.js";
 import "./main.css";
 import { AuthRouter } from "./auth/AuthRouter.js";
-import { DashboardRouter } from "./dashboard/AdminRouter.js";
+import { DashboardRouter } from "./dashboard/DashboardRouter.js";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>

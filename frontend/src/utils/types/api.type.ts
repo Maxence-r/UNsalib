@@ -72,6 +72,13 @@ export interface ApiPlatforms {
     };
 }
 
+interface ApiDataAccount {
+    icon: string;
+    lastname: string;
+    name: string;
+    username: string;
+}
+
 // API error
 
 // export interface ApiError {
@@ -85,4 +92,5 @@ export type {
     ApiSuccess,
     ApiDataTimetable,
     ApiDataCourse,
+    ApiDataAccount,
 };

@@ -27,13 +27,7 @@ function validationHandler(
             };
         });
 
-        return next(
-            new ApiError(
-                400,
-                "Validation failed",
-                JSON.stringify(errorMessages),
-            ),
-        );
+        return next(new ApiError(400, "Validation failed", errorMessages));
     }
 
     next();

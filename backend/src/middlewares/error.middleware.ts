@@ -6,17 +6,18 @@ import { Request, Response, NextFunction } from "express";
  */
 class ApiError extends Error {
     statusCode: number;
+    validationStack?: { field: string; message: string }[];
 
     constructor(
         statusCode: number,
         message: string,
-        stack = "",
+        validationStack?: { field: string; message: string }[],
     ) {
         super(message);
         this.statusCode = statusCode;
 
-        if (stack) {
-            this.stack = stack;
+        if (validationStack) {
+            this.validationStack = validationStack;
         } else {
             Error.captureStackTrace(this, this.constructor);
         }
@@ -35,21 +36,22 @@ function errorHandler(
 ): void {
     // Set default status code
     let statusCode = 500;
-    let stack = "";
+    const stack = err.stack ?? "";
     let message = err.message;
 
     if (err instanceof ApiError) {
         statusCode = err.statusCode;
-        stack = err.stack ?? "";
-    }
-
-    // Handle specific error types
-    if (message.includes("alidation")) {
-        message +=
-            ": " +
-            (JSON.parse(stack) as { field: string; message: string }[])
-                .map((obj) => `${obj.message} for '${obj.field}' field`)
-                .join(", ");
+        if (err.validationStack) {
+            // Handle validation errors
+            message +=
+                ": " +
+                err.validationStack
+                    .map((obj) => `${obj.message} for '${obj.field}' field`)
+                    .join(", ");
+        }
+    } else if (process.env.NODE_ENV !== "development") {
+        // Do not leak unexpected error messages in production
+        message = "";
     }
 
     // Log error
@@ -66,7 +68,7 @@ function errorHandler(
         success: false,
         message: message || "Internal server error",
         ...(process.env.NODE_ENV === "development" && {
-            stack: err.stack,
+            stack: stack,
         }),
     });
 }

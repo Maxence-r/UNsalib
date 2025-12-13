@@ -1,39 +1,49 @@
 import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
 import { ApiError } from "./error.middleware.js";
-import { accountsService } from "services/accounts.service.js";
+import { config } from "../configs/app.config.js";
 
-async function authHandler(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-): Promise<void | Response> {
+interface AccessTokenPayload extends JwtPayload {
+    sub: string;
+}
+
+/**
+ * Athentication middleware for private routes
+ */
+function authHandler(req: Request, res: Response, next: NextFunction): void {
     try {
-        let token;
-
         // Check for token in headers
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer")
-        ) {
-            token = req.headers.authorization.split(" ")[1];
+        const authHeader = req.headers.authorization;
+        if (!authHeader?.startsWith("Bearer ")) {
+            throw new ApiError(401, "Missing or invalid Authorization header");
         }
 
-        // Check if token exists
-        if (!token) {
-            throw new ApiError(401, "Not authorized to access this route");
-        }
+        // Get the token
+        const accessToken = authHeader.split(" ")[1];
 
+        // Check if the token is valid
+        let payload: AccessTokenPayload;
         try {
-            req.userId = await accountsService.getFromToken(token);
-
-            if (!req.userId) {
-                throw new ApiError(401, "User not found");
+            payload = jwt.verify(
+                accessToken,
+                config.jwt.accessSecret,
+            ) as AccessTokenPayload;
+        } catch (err: unknown) {
+            if ((err as Error).name === "TokenExpiredError") {
+                throw new ApiError(401, "Access token expired");
             }
-
-            next();
-        } catch {
-            throw new ApiError(401, "Not authorized to access this route");
+            throw new ApiError(401, "Invalid access token");
         }
+
+        // Check if the token includes an account id
+        if (!payload.sub) {
+            throw new ApiError(401, "Invalid access token payload");
+        }
+
+        // All checks passed: add an account id for further processing
+        req.accountId = payload.sub;
+        next();
     } catch (error) {
         next(error);
     }

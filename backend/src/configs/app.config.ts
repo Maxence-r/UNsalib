@@ -1,8 +1,8 @@
 import { logger } from "../utils/logger.js";
 
-if (!process.env.TOKEN) {
+if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
     logger.error(
-        "No 'TOKEN' environment variable found. Please set a token to use UNsalib.",
+        "JWT secrets are missing from the environment file. Please set 'JWT_SECRET' and 'JWT_REFRESH_SECRET' to use UNsalib securely.",
     );
     process.exit(1);
 }
@@ -25,13 +25,21 @@ const config = {
     server: {
         port: process.env.PORT || 9000,
     },
-    security: {
-        token: process.env.TOKEN,
+    jwt: {
+        accessSecret: process.env.JWT_ACCESS_SECRET,
+        accessExpire: process.env.JWT_ACCESS_EXPIRE_SECONDS
+            ? parseInt(process.env.JWT_ACCESS_EXPIRE_SECONDS)
+            : 60 * 60, // 1 hour
+        refreshSecret: process.env.JWT_REFRESH_SECRET,
+        refreshExpire: process.env.JWT_REFRESH_EXPIRE_SECONDS
+            ? parseInt(process.env.JWT_REFRESH_EXPIRE_SECONDS)
+            : 60 * 60 * 24 * 30, // 30 days,
     },
     tasks: {
         syncTimetables: process.env.SYNC_TIMETABLES === "true" || true,
         forceGroupsFetch: process.env.FORCE_GROUPS_FETCH === "true" || false,
-        forceTimetablesFetch: process.env.FORCE_TIMETABLES_FETCH === "true" || false,
+        forceTimetablesFetch:
+            process.env.FORCE_TIMETABLES_FETCH === "true" || false,
     },
 };
 

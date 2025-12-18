@@ -68,3 +68,21 @@
         transform: translateY(0);
     }
 }
+
+
+
+@media screen and (max-width: 1024px) {
+    .modal>.window {
+        touch-action: none;
+        will-change: transform;
+        transform: translateZ(0);
+    }
+
+    .modal>.window .handle {
+        width: 40px;
+        height: 4px;
+        background: #ccc;
+        border-radius: 2px;
+        margin: 0 auto 16px;
+    }
+}

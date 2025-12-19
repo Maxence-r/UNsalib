@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { TextButton } from "../../../../components/button/Button.js";
-import type { ApiRoom } from "../../../../utils/types/api.type.js";
+import type { ApiDataRoom } from "../../../../utils/types/api.type.js";
 import {
     showToast,
     setToastMessage,
@@ -145,7 +145,7 @@ function SearchModal({
                 const response = await fetch(urlString, {
                     credentials: "include",
                 });
-                const availableRooms: ApiRoom[] = await response.json();
+                const availableRooms: ApiDataRoom[] = await response.json();
 
                 if (availableRooms) {
                     // availableRoomsListHook(availableRooms);
@@ -169,7 +169,7 @@ function SearchModal({
     }, [searchLaunched]);
 
     return (
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
             <div className="filter-rooms">
                 <div className="option">
                     <div className="setDate">

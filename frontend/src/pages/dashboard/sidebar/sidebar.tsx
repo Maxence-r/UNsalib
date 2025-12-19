@@ -5,12 +5,16 @@ import {
     cloneElement,
     type ReactElement,
 } from "react";
-import { LogOut } from "lucide-react";
+// import { LogOut } from "lucide-react";
 
 // import { logout } from "../../_utils/client-actions";
 import type { ApiDataAccount } from "../../../utils/types/api.type";
 import "./sidebar.css";
-import { NavLink, useLocation, useNavigate } from "react-router";
+import { 
+    NavLink, 
+    // useLocation,
+    // useNavigate 
+} from "react-router";
 
 interface Action {
     name: string;
@@ -81,13 +85,13 @@ function useOutsideClickHandler(
 
 export default function Sidebar({
     userAccount,
-    currentViewId,
+    // currentViewId,
     embedded,
     className,
     tabsList,
 }: {
     userAccount: ApiDataAccount;
-    currentViewId: string;
+    // currentViewId: string;
     embedded: boolean;
     className: string;
     tabsList: {
@@ -99,17 +103,17 @@ export default function Sidebar({
     const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
     const accountMenuRef = useRef<HTMLDivElement | null>(null);
     useOutsideClickHandler(accountMenuRef, openUserMenu, setOpenUserMenu);
-    const navigate = useNavigate();
-    const location = useLocation().pathname;
+    // const navigate = useNavigate();
+    // const location = useLocation().pathname;
 
-    const handleLogout = async () => {
+    // const handleLogout = async () => {
         // const result = await logout();
         // if (result.success) {
         //     window.location.href = "/admin/auth";
         // } else {
         //     console.error(result.error);
         // }
-    };
+    // };
 
     return (
         <div className={`sidebar ${className}${embedded ? "" : " shrinkable"}`}>

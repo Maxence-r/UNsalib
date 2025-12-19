@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 
-import type { ApiCourse } from "../../../../utils/types/api.type.js";
+import type { ApiDataCourse } from "../../../../utils/types/api.type.js";
 import { CourseModal } from "../modals/CourseModal.js";
 import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
@@ -47,7 +47,7 @@ function getCourseHeightPercent(
     return (courseDurationMinutes * 100) / dayDurationMinutes;
 }
 
-function Course({ course }: { course: ApiCourse }) {
+function Course({ course }: { course: ApiDataCourse }) {
     const [isCourseModalOpen, setIsCourseModalOpen] = useState<boolean>(false);
 
     const moduleNames = buildModuleNamesString(course.modules, course.category);

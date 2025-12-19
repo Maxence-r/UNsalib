@@ -356,6 +356,11 @@ async function processGroupCourses(
     return result;
 }
 
+// Removes character sequences from a raw JSON string
+function sanitizeJsonString(str: string): string {
+    return str.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "");
+}
+
 // Retrieves courses for a group
 async function fetchCourses(group: {
     id: string;
@@ -379,7 +384,9 @@ async function fetchCourses(group: {
     try {
         // Getting data from the Nantes Université timetable API
         const response = await fetch(requestUrl);
-        const jsonData = (await response.json()) as UnivApiCourse[];
+        const jsonData = JSON.parse(
+            sanitizeJsonString(await response.text()),
+        ) as UnivApiCourse[];
 
         // Getting some related data from our database
         const dbRecords = await Course.find({

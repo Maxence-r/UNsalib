@@ -22,7 +22,7 @@ router.get(
 );
 
 // Private routes
-router.get(
+router.post(
     "/logout",
     authHandler,
     (req: Request, res: Response, next: NextFunction) =>

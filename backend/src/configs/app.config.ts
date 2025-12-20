@@ -2,7 +2,7 @@ import { logger } from "../utils/logger.js";
 
 if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
     logger.error(
-        "JWT secrets are missing from the environment file. Please set 'JWT_SECRET' and 'JWT_REFRESH_SECRET' to use UNsalib securely.",
+        "JWT secrets are missing from the environment file. Please set 'JWT_ACCESS_SECRET' and 'JWT_REFRESH_SECRET' to use UNsalib securely.",
     );
     process.exit(1);
 }

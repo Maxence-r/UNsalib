@@ -10,17 +10,20 @@ function App() {
     // }
 
     return (
-        <NavigationManager>
-            <section className="no-compatible">
-                <p>
-                    Votre écran est orienté dans le mauvais sens ou trop petit.
-                </p>
-            </section>
-            <Panel />
-            <Calendar />
-            {/* <Modal /> */}
-            <Toast />
-        </NavigationManager>
+        <main id="app">
+            <NavigationManager>
+                <section className="no-compatible">
+                    <p>
+                        Votre écran est orienté dans le mauvais sens ou trop
+                        petit.
+                    </p>
+                </section>
+                <Panel />
+                <Calendar />
+                {/* <Modal /> */}
+                <Toast />
+            </NavigationManager>
+        </main>
     );
 }
 

@@ -6,4 +6,4 @@ const VIEWS = [
     { id: "stats", name: "Statistiques", icon: <ChartPie />, component: <></> },
 ];
 
-export {VIEWS}
+export { VIEWS };

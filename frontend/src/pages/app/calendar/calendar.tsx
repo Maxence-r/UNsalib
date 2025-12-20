@@ -1,10 +1,4 @@
-import {
-    useState,
-    useEffect,
-    useReducer,
-    type ActionDispatch,
-    useMemo,
-} from "react";
+import { useReducer } from "react";
 import { ChevronUp } from "lucide-react";
 
 import { useSelectedRoomStore } from "../../../stores/app.store.js";
@@ -19,13 +13,14 @@ import "./calendar.css";
 // import CalendarContainer from "./grid/container.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { goBack } from "../../../utils/navigation-manager.js";
-import type {
-    ApiDataCourse,
-    ApiDataTimetable,
-} from "../../../utils/types/api.type.js";
+// import type {
+//     ApiDataCourse,
+//     ApiDataTimetable,
+// } from "../../../utils/types/api.type.js";
 import { ActionBar } from "./action-bar/ActionBar.js";
 import { Grid } from "./grid/Grid.js";
-import { useFetch } from "../../../utils/hooks/fetch.hook.js";
+import { useApi } from "../../../utils/hooks/api.hook.js";
+import { getRoomTimetable } from "../../../api/timetables.api.js";
 
 function incrementReducer(
     state: { value: number; previous: number },
@@ -123,30 +118,45 @@ function Calendar() {
 
     //     return () => clearInterval(interval);
     // }, [hourIndicatorValue]);
-    const timetableUrl = useMemo(() => {
-        if (selectedRoom.id != "") {
-            return `${import.meta.env.VITE_BACKEND_URL}/rooms/timetable?id=${selectedRoom.id}&increment=${increment.value}`;
-        }
-    }, [selectedRoom, increment]);
+    // const timetableUrl = useMemo(() => {
+    //     if (selectedRoom.id != "") {
+    //         return `${import.meta.env.VITE_BACKEND_URL}/rooms/timetable?id=${selectedRoom.id}&increment=${increment.value}`;
+    //     }
+    // }, [selectedRoom, increment]);
 
-    const { isLoading, data, error } = useFetch(timetableUrl ?? "");
+    const {
+        isLoading,
+        data: courses,
+        error,
+    } = useApi(
+        () => getRoomTimetable(selectedRoom.id, increment.value),
+        [selectedRoom, increment],
+    );
 
-    const courses = useMemo(() => {
-        if (error) {
-            // setToastMessage(
-            //     "Impossible de récupérer les données pour cette salle.",
-            //     true,
-            // );
-            // showToast();
-            incrementDispatch("reset-previous");
-        } else if (!isLoading && data) {
-            return data as ApiDataTimetable;
-        }
-    }, [data, error, isLoading]);
+    if (error) {
+        setToastMessage(
+            "Impossible de récupérer les données pour cette salle.",
+            true,
+        );
+        showToast();
+    }
+
+    // const courses = useMemo(() => {
+    //     if (error) {
+    //         // setToastMessage(
+    //         //     "Impossible de récupérer les données pour cette salle.",
+    //         //     true,
+    //         // );
+    //         // showToast();
+    //         incrementDispatch("reset-previous");
+    //     } else if (!isLoading && data) {
+    //         return data as ApiDataTimetable;
+    //     }
+    // }, [data, error, isLoading]);
 
     return (
         <div className="main">
-            {isLoading && timetableUrl && (
+            {isLoading && !selectedRoom.id && (
                 <div className="loader-indicator">
                     <span className="spin"></span>
                     <p>Chargement de l&apos;EDT...</p>

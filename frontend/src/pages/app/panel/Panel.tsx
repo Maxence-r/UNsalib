@@ -16,8 +16,9 @@ import { createPortal } from "react-dom";
 import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 import { SearchModal } from "./modals/SearchModal.js";
 import { Badge } from "../../../components/badge/Badge.js";
-import { useFetch } from "../../../utils/hooks/fetch.hook.js";
+import { useApi } from "../../../utils/hooks/api.hook.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
+import { getRoomsList } from "../../../api/rooms.api.js";
 
 function ActionsContainer({
     isSearchModalOpen,
@@ -32,9 +33,7 @@ function ActionsContainer({
     const [isAboutPictosModalOpen, setIsAboutPictosModalOpen] =
         useState<boolean>(false);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
-    const { isLoading, data, error } = useFetch(
-        `${import.meta.env.VITE_BACKEND_URL}/rooms`,
-    );
+    const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);
 
     const loadTimetable = (room: ApiDataRoom) => {
         pushToHistory("panel", openPanel);
@@ -50,8 +49,8 @@ function ActionsContainer({
     };
 
     const filteredRooms = useMemo(() => {
-        if (!isLoading && !error) {
-            return (data as ApiDataRoom[])
+        if (roomsList && !isLoading && !error) {
+            return roomsList
                 .map((room) => {
                     if (
                         normalizeString(room.name).includes(
@@ -68,7 +67,7 @@ function ActionsContainer({
                 .filter((id) => id != null);
         }
         return [];
-    }, [roomsSearch, data, error, isLoading]);
+    }, [roomsSearch, roomsList, error, isLoading]);
 
     useEffect(() => {
         if (error) {
@@ -122,10 +121,10 @@ function ActionsContainer({
                 </div>
             </div>
             <RoomsList
-                rooms={!isLoading && !error ? (data as ApiDataRoom[]) : []}
+                rooms={!isLoading && !error && roomsList ? roomsList : []}
                 filter={filteredRooms}
                 onRoomClick={loadTimetable}
-                isLoading={isLoading || error}
+                isLoading={isLoading || !!error}
             />
         </div>
     );

@@ -29,4 +29,4 @@ function DashboardRouter() {
     );
 }
 
-export { DashboardRouter, VIEWS };
+export { DashboardRouter };

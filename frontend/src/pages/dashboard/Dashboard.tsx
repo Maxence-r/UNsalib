@@ -7,8 +7,10 @@ import Sidebar from "./sidebar/sidebar";
 // import HomePage from "./_components/home/home";
 // import StatsPage from "./_components/stats/stats";
 import { VIEWS } from "./constants";
+import { useAuthInit } from "../../utils/hooks/auth.hook";
 
 function Dashboard() {
+    useAuthInit();
     const location = useLocation().pathname;
 
     const currentViewId = location.split("/")[1];

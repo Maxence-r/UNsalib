@@ -5,7 +5,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
     {
-        files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+        files: ["**/*.ts"],
         plugins: { js },
         extends: ["js/recommended"],
         languageOptions: { globals: globals.node },
@@ -15,12 +15,11 @@ export default defineConfig([
     {
         languageOptions: {
             parserOptions: {
-                projectService: true,
+                projectService: {
+                    allowDefaultProject: ["eslint.config.js"],
+                },
                 tsconfigRootDir: import.meta.dirname,
             },
-        },
-        rules: {
-            "@typescript-eslint/explicit-function-return-type": "error",
         },
     },
 ]);

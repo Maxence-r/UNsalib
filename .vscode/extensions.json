@@ -1,6 +1,6 @@
 {
     "recommendations": [
-        "csstools.postcss",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "vunguyentuan.vscode-postcss"
     ]
 }

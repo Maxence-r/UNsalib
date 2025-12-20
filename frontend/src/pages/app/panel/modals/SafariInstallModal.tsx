@@ -13,7 +13,7 @@ function SafariInstallModal({
     };
 
     return (
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
             <div className="safariInstall">
                 <div className="option">
                     <p>1. Cliquez sur le bouton &quot;Partager&quot;</p>

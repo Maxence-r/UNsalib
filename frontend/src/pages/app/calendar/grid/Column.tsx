@@ -1,6 +1,6 @@
 import "./Column.css";
 import { Course } from "./Course";
-import type { ApiCourse } from "../../../../utils/types/api.type";
+import type { ApiDataCourse } from "../../../../utils/types/api.type";
 
 function ColumnHeader({
     dayDate,
@@ -17,7 +17,7 @@ function ColumnHeader({
     );
 }
 
-function Column({ dayCourses }: { dayCourses: ApiCourse[] }) {
+function Column({ dayCourses }: { dayCourses: ApiDataCourse[] }) {
     return (
         <div className="column">
             {dayCourses.map((course, i) => (

@@ -1,5 +1,5 @@
 // import { useState, useEffect } from "react";
-import { useLocation } from "react-router";
+// import { useLocation } from "react-router";
 
 // import { ApiUserAccount } from "./_utils/types";
 import Sidebar from "./sidebar/sidebar";
@@ -11,9 +11,9 @@ import { useAuthInit } from "../../utils/hooks/auth.hook";
 
 function Dashboard() {
     useAuthInit();
-    const location = useLocation().pathname;
+    // const location = useLocation().pathname;
 
-    const currentViewId = location.split("/")[1];
+    // const currentViewId = location.split("/")[1];
     // const tabs = [
     //     { id: "home", name: "Accueil", icon: <House /> },
     //     { id: "manage", name: "Gestion", icon: <Pen /> },
@@ -37,7 +37,7 @@ function Dashboard() {
                     name: "UNsalib",
                     username: "unsalib",
                 }}
-                currentViewId={currentViewId}
+                // currentViewId={currentViewId}
                 // setSelectedTabId={setSelectedTab}
                 embedded={false}
                 className="large-screen-nav"

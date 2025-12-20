@@ -12,7 +12,7 @@ function AboutModal({
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     return (
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
             <div className="about">
                 <div className="modal-section">
                     <h4 className="title">

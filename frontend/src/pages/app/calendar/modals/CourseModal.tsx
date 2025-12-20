@@ -35,7 +35,7 @@ function CourseModal({
         durationHours == "" && durationMinutes == "" ? "0min" : durationMinutes;
 
     return (
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
             <div className="course-details">
                 <div className="course-box">
                     <p className="course-start">

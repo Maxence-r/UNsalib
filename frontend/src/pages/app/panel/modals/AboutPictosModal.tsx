@@ -23,7 +23,7 @@ function AboutPictosModal({
     };
 
     return (
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
             <div className="about-pictos">
                 <div className="pictos">
                     {PICTOS.map((picto) => (

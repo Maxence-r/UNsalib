@@ -42,7 +42,7 @@ async function refreshToken(errorCallback?: (error: unknown) => void) {
         authStore.removeAccessToken();
         accountStore.remove();
         if (errorCallback) errorCallback(e);
-        // window.location.href = "/auth/login";
+        window.location.href = "/auth/login";
     }
 }
 

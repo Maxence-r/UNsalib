@@ -3,11 +3,23 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 import { VIEWS } from "./constants";
 import { Dashboard } from "./Dashboard";
 import { useAuthStore } from "../../stores/auth.store";
+import { refreshToken } from "../../api/axios";
+import { useEffect, useRef } from "react";
 
 function ProtectedRoute() {
-    const isLoggedIn = useAuthStore((s) => s.accessToken);
+    const isLoggedIn = useAuthStore<boolean>((s) => !!s.accessToken);
+    const isRefreshing = useRef<boolean>(false);
 
-    return isLoggedIn ? <Outlet /> : <Navigate to="/auth/login" replace />;
+    useEffect(() => {
+        if (!isLoggedIn && !isRefreshing.current) {
+            isRefreshing.current = true;
+            refreshToken().finally(() => {
+                isRefreshing.current = false;
+            });
+        }
+    }, [isLoggedIn]);
+
+    return <Outlet />;
 }
 
 function DashboardRouter() {

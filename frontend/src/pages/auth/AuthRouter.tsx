@@ -2,28 +2,27 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 
 import { VIEWS } from "./constants";
 import { Auth } from "./Auth";
+import { useAccountStore } from "../../stores/account.store";
 
-function ProtectedRoute() {
-    const isLoggedIn = true; // TODO
+function AuthRoute() {
+    const isLoggedIn = useAccountStore<boolean>((s) => !!s.id);
 
-    return isLoggedIn ? <Outlet /> : <Navigate to="/auth/login" replace />;
+    return isLoggedIn ? <Navigate to="/dashboard" replace /> : <Outlet />;
 }
 
 function AuthRouter() {
     return (
         <Routes>
-            {/* <Route element={<ProtectedRoute />}> */}
+            <Route element={<AuthRoute />}>
                 <Route
                     index
-                    element={
-                        <Navigate to={`/auth/${VIEWS[0].id}`} replace />
-                    }
+                    element={<Navigate to={`/auth/${VIEWS[0].id}`} replace />}
                 />
                 <Route element={<Auth />}>
                     {VIEWS.map((view) => (
                         <Route path={view.id} element={view.component} />
                     ))}
-                {/* </Route> */}
+                </Route>
             </Route>
         </Routes>
     );

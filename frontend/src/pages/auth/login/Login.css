@@ -1,0 +1,43 @@
+#auth #login {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    & .error {
+        background: var(--error-color);
+        border-radius: var(--border-radius);
+        padding: 16px;
+        color: var(--on-error-color);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    & .form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    & .input-container {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        & > input {
+            flex-grow: 1;
+        }
+    }
+
+    & .actions {
+        display: flex;
+        justify-content: center;
+
+        @media screen and (max-width: 498px) {
+            & > button {
+                width: 100%;
+            }
+        }
+    }
+}

@@ -1,5 +1,15 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+
 import { useAuthStore } from "../stores/auth.store";
+import type { Api, ApiError, ApiSuccess } from "../utils/types/api.type";
+import { requestNewAccessToken } from "./auth.api";
+import { useAccountStore } from "../stores/account.store";
+
+class ResponseError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -7,10 +17,10 @@ const api = axios.create({
 });
 
 let isRefreshing = false;
-let failedQueue: Array<{
+let failedQueue: {
     resolve: (token: string) => void;
     reject: (err: unknown) => void;
-}> = [];
+}[] = [];
 
 function processQueue(error: unknown, token: string | null) {
     failedQueue.forEach((p) => {
@@ -18,6 +28,22 @@ function processQueue(error: unknown, token: string | null) {
         else p.reject(error);
     });
     failedQueue = [];
+}
+
+async function refreshToken(errorCallback?: (error: unknown) => void) {
+    const authStore = useAuthStore.getState();
+    const accountStore = useAccountStore.getState();
+
+    try {
+        const newAccessToken = (await requestNewAccessToken()).accessToken;
+        authStore.setAccessToken(newAccessToken);
+        return newAccessToken;
+    } catch (e) {
+        authStore.removeAccessToken();
+        accountStore.remove();
+        if (errorCallback) errorCallback(e);
+        // window.location.href = "/auth/login";
+    }
 }
 
 api.interceptors.request.use((config) => {
@@ -31,16 +57,40 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+    (response) => {
+        const responseData = response.data as Api;
+        if (!responseData.success) {
+            throw new AxiosError(
+                undefined,
+                undefined,
+                response.config,
+                response.request,
+                response,
+            );
+        }
+        response.data = (responseData as ApiSuccess).data;
+        return response;
+    },
+    async (error: AxiosError & { _retry?: boolean }) => {
         const originalRequest = error.config;
-        const store = useAuthStore.getState();
+        if (!originalRequest) throw new ResponseError("Unexpected error");
 
-        if (error.response?.status !== 401 || originalRequest._retry) {
-            return Promise.reject(error);
+        if (
+            error.response?.status !== 401 ||
+            error._retry ||
+            originalRequest.url?.includes("login") ||
+            originalRequest.url?.includes("refresh-token")
+        ) {
+            return Promise.reject(
+                new ResponseError(
+                    error.response
+                        ? (error.response.data as ApiError).message
+                        : error.message,
+                ),
+            );
         }
 
-        originalRequest._retry = true;
+        error._retry = true;
 
         if (isRefreshing) {
             return new Promise((resolve, reject) => {
@@ -56,23 +106,20 @@ api.interceptors.response.use(
 
         isRefreshing = true;
 
-        try {
-            const res = await api.post("/auth/refresh-token");
-            const newAccessToken = res.data.accessToken;
-
-            store.setAccessToken(newAccessToken);
-            processQueue(null, newAccessToken);
-
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-            return api(originalRequest);
-        } catch (err) {
-            processQueue(err, null);
-            store.logout();
-            return Promise.reject(err);
-        } finally {
+        const newAccessToken = await refreshToken((error) => {
+            const responseError = new ResponseError((error as Error).message);
+            processQueue(responseError, null);
+            Promise.reject(responseError);
             isRefreshing = false;
+        });
+
+        if (newAccessToken) {
+            processQueue(null, newAccessToken);
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            isRefreshing = false;
+            return api(originalRequest);
         }
     },
 );
 
-export { api };
+export { api, refreshToken, ResponseError };

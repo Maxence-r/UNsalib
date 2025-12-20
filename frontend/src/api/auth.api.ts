@@ -1,10 +1,25 @@
 import { api } from "./axios";
 
-export async function login(email: string, password: string) {
-    const res = await api.post("/auth/login", { email, password });
-    return res.data;
+import type {
+    ApiDataLogin,
+    ApiDataRefreshToken,
+} from "../utils/types/api.type";
+
+async function login(username: string, password: string) {
+    const res = await api.post("/auth/login", {
+        username: username,
+        password: password,
+    });
+    return res.data as ApiDataLogin;
 }
 
-export async function logout() {
+async function logout() {
     await api.post("/auth/logout");
 }
+
+async function requestNewAccessToken() {
+    const res = (await api.get("/auth/refresh-token"))
+    return res.data as ApiDataRefreshToken;
+}
+
+export { login, logout, requestNewAccessToken };

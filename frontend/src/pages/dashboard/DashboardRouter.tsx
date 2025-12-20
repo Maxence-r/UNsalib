@@ -2,9 +2,10 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 
 import { VIEWS } from "./constants";
 import { Dashboard } from "./Dashboard";
+import { useAuthStore } from "../../stores/auth.store";
 
 function ProtectedRoute() {
-    const isLoggedIn = true; // TODO
+    const isLoggedIn = useAuthStore((s) => s.accessToken);
 
     return isLoggedIn ? <Outlet /> : <Navigate to="/auth/login" replace />;
 }

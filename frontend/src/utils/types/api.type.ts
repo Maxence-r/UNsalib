@@ -46,6 +46,19 @@ interface ApiDataTimetable {
     };
 }
 
+// Endpoint: /auth/login
+
+interface ApiDataLogin {
+    accessToken: string;
+    account: { id: string; lastname: string; name: string; username: string };
+}
+
+// Endpoint: /auth/refresh-token
+
+interface ApiDataRefreshToken {
+    accessToken: string;
+}
+
 // Endpoint: /admin/stats/unique-visitors
 
 export interface ApiUniqueVisitors {
@@ -72,19 +85,6 @@ export interface ApiPlatforms {
     };
 }
 
-interface ApiDataAccount {
-    icon: string;
-    lastname: string;
-    name: string;
-    username: string;
-}
-
-// API error
-
-// export interface ApiError {
-//     error: string;
-// }
-
 export type {
     Api,
     ApiDataRoom,
@@ -92,5 +92,6 @@ export type {
     ApiSuccess,
     ApiDataTimetable,
     ApiDataCourse,
-    ApiDataAccount,
+    ApiDataLogin,
+    ApiDataRefreshToken
 };

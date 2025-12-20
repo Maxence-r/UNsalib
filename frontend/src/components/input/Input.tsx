@@ -7,6 +7,7 @@ function Input({
     type = "text",
     placeholder = "",
     value = "",
+    name = null,
     onInput = () => {},
     onKeyDown = () => {},
 }: {
@@ -15,6 +16,7 @@ function Input({
     type?: string;
     placeholder?: string;
     value?: string;
+    name?: string | null;
     onInput?: React.KeyboardEventHandler<HTMLInputElement>;
     onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }) {
@@ -24,7 +26,7 @@ function Input({
             className={className ? `input ${className}` : "input"}
             type={type}
             placeholder={placeholder}
-            name={placeholder}
+            name={name ?? placeholder}
             value={value}
             onInput={onInput}
             onKeyDown={onKeyDown}

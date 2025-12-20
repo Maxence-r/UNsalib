@@ -1,18 +1,16 @@
 import { create } from "zustand";
 
-interface AuthState {
+interface AuthStore {
     accessToken: string | null;
     setAccessToken: (token: string | null) => void;
-    logout: () => void;
+    removeAccessToken: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthStore>((set) => ({
     accessToken: null,
 
     setAccessToken: (token) => set({ accessToken: token }),
-
-    logout: () => {
-        set({ accessToken: null });
-        window.location.href = "/login";
-    },
+    removeAccessToken: () => set({ accessToken: null }),
 }));
+
+export { useAuthStore };

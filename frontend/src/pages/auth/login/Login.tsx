@@ -1,79 +1,84 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
+import { useNavigate } from "react-router";
 
 import { TextButton, IconButton } from "../../../components/button/Button";
 import { Input } from "../../../components/input/Input";
+import "./Login.css";
+import { login } from "../../../api/auth.api";
+import { useAuthStore } from "../../../stores/auth.store";
+import { useAccountStore } from "../../../stores/account.store";
+import { ResponseError } from "../../../api/axios";
 
 function Login() {
-    const [displayError, setDisplayError] = useState("");
+    const [error, setError] = useState<null | string>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const setAccessToken = useAuthStore((s) => s.setAccessToken);
+    const setAccount = useAccountStore((s) => s.save);
+    const navigate = useNavigate();
 
-    const login = async () => {
-        try {
-            const response = await fetch(
-                `${import.meta.env.NEXT_PUBLIC_API_URL}/auth/login`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password,
-                    }),
-                },
-            );
-            const loginState = await response.json();
-            if (loginState.error) {
-                if (loginState.error == "BAD_CREDENTIALS") {
-                    throw new Error(
-                        "Nom d'utilisateur ou mot de passe incorrect",
-                    );
-                } else if (loginState.error == "INTERNAL_ERROR") {
-                    throw new Error("Erreur interne du serveur");
+    const handleSubmit = async () => {
+        if (username.length > 0 && password.length > 0) {
+            setIsLoading(true);
+            try {
+                const loginInfos = await login(username, password);
+                setAccessToken(loginInfos.accessToken);
+                setAccount(loginInfos.account);
+                navigate("/dashboard");
+            } catch (e) {
+                if (e instanceof ResponseError) {
+                    switch (e.message) {
+                        case "Network Error":
+                            setError("Serveur injoignable");
+                            break;
+                        case "Invalid credentials":
+                            setError(
+                                "Nom d'utilisateur ou mot de passe incorrect",
+                            );
+                            break;
+                        case "Internal server error":
+                            setError("Erreur interne du serveur");
+                            break;
+                        default:
+                            setError("Erreur inconnue");
+                    }
+                } else {
+                    setError("Erreur inconnue");
                 }
-                throw new Error();
-            }
-            window.location.href = "/admin/dashboard";
-        } catch (e) {
-            if (e instanceof Error) {
-                setDisplayError(e.toString().replace("Error: ", ""));
-            } else {
-                setDisplayError("Erreur inconnue");
+            } finally {
+                setIsLoading(false);
             }
         }
     };
 
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") handleSubmit();
+    };
+
+    const handleShowPasswordButtonClick = () => setShowPassword(!showPassword);
+
     return (
-        <>
-            {displayError != "" ? (
-                <div id="error-display">
+        <div id="login">
+            {error && (
+                <div className="error">
                     <CircleAlert size={20} />
-                    {displayError}
+                    {error}
                 </div>
-            ) : (
-                <></>
             )}
-            <div className="inputs-group">
+            <div className="form">
                 <div id="username" className="input-container">
                     <Input
                         type="text"
                         placeholder="Nom d'utilisateur"
                         value={username}
+                        name="username"
                         onInput={(e) =>
                             setUsername((e.target as HTMLInputElement).value)
                         }
-                        onKeyDown={(e) => {
-                            if (
-                                e.key === "Enter" &&
-                                username.length > 0 &&
-                                password.length > 0
-                            )
-                                login();
-                        }}
+                        onKeyDown={handleKeyPress}
                     />
                 </div>
                 <div id="password" className="input-container">
@@ -81,28 +86,16 @@ function Login() {
                         type={showPassword ? "text" : "password"}
                         placeholder="Mot de passe"
                         value={password}
+                        name="password"
                         onInput={(e) =>
                             setPassword((e.target as HTMLInputElement).value)
                         }
-                        onKeyDown={(e) => {
-                            if (
-                                e.key === "Enter" &&
-                                username.length > 0 &&
-                                password.length > 0
-                            )
-                                login();
-                        }}
+                        onKeyDown={handleKeyPress}
                     />
                     <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={handleShowPasswordButtonClick}
                         secondary
-                        icon={
-                            showPassword ? (
-                                <EyeOff size={20} />
-                            ) : (
-                                <Eye size={20} />
-                            )
-                        }
+                        icon={showPassword ? <EyeOff /> : <Eye />}
                     />
                 </div>
             </div>
@@ -110,12 +103,13 @@ function Login() {
                 <TextButton
                     disabled={username.length < 1 || password.length < 1}
                     id="submit-button"
-                    onClick={login}
+                    onClick={handleSubmit}
                     icon={<KeyRound size={20} />}
                     text="Se connecter"
+                    isLoading={isLoading}
                 />
             </div>
-        </>
+        </div>
     );
 }
 

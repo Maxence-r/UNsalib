@@ -68,15 +68,10 @@ class AccountsService {
         // Check JWT signature
         jwt.verify(oldToken, config.jwt.refreshSecret);
 
-        // Search our DB for the stored refresh token and its corresponding account
+        // Search our DB for the stored refresh token
         const savedToken = await Token.findOne({ token: oldToken });
         if (!savedToken || savedToken.revoked) {
             throw new ApiError(401, "Invalid or revoked refresh token");
-        }
-
-        const account = await Account.findOne({ _id: savedToken.accountId });
-        if (!account) {
-            throw new ApiError(401, "No account found for this refresh token");
         }
 
         // If the token was already used, it may be a replay attack
@@ -93,7 +88,13 @@ class AccountsService {
         savedToken.used = true;
         await savedToken.save();
 
-        // We generate a new refresh and access token
+        // Try to find the linked account
+        const account = await Account.findOne({ _id: savedToken.accountId });
+        if (!account) {
+            throw new ApiError(401, "No account found for this refresh token");
+        }
+
+        // Generate a new refresh and access token
         const accessToken = account.generateAccessToken();
         const refreshToken = account.generateRefreshToken();
 

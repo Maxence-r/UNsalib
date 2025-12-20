@@ -1,20 +1,16 @@
 import { useEffect } from "react";
-import { api } from "../../api/axios";
+
 import { useAuthStore } from "../../stores/auth.store";
+import { refreshToken } from "../../api/axios";
 
 function useAuthInit() {
-    const setAccessToken = useAuthStore((s) => s.setAccessToken);
-
     useEffect(() => {
         (async () => {
-            try {
-                const res = await api.post("/auth/refresh-token");
-                setAccessToken(res.data.accessToken);
-            } catch {
-                setAccessToken(null);
+            if (!useAuthStore.getState().accessToken) {
+                await refreshToken();
             }
         })();
-    }, [setAccessToken]);
+    }, []);
 }
 
 export { useAuthInit };

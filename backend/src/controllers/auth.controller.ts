@@ -35,8 +35,11 @@ class AuthController {
             });
 
             res.status(200).json({
-                account: account,
-                accessToken: accessToken,
+                success: true,
+                data: {
+                    account: account,
+                    accessToken: accessToken,
+                },
             });
         } catch (error) {
             next(error);
@@ -73,7 +76,9 @@ class AuthController {
 
             res.status(200).json({
                 success: true,
-                accessToken: accessToken,
+                data: {
+                    accessToken: accessToken,
+                },
             });
         } catch (error) {
             // If rotation fails, token is invalid or reused so we invalidate session
@@ -106,7 +111,9 @@ class AuthController {
 
             res.status(200).json({
                 success: true,
-                message: "Logout successful",
+                data: {
+                    message: "Logout successful",
+                },
             });
         } catch (error) {
             next(error);

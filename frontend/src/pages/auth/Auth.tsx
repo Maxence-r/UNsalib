@@ -3,16 +3,23 @@ import "./Auth.css";
 
 function Auth() {
     return (
-        <div id="login-panel">
-            <div className="header">
-                <div className="branding">
-                    <img src={"/logo96.png"} width={96} height={96} alt="" />
-                    <h1>UNsalib</h1>
-                </div>
-                <h2>Authentification</h2>
+        <main id="auth">
+            <div className="panel">
+                <header>
+                    <div className="branding">
+                        <img
+                            src={"/logo96.png"}
+                            width={96}
+                            height={96}
+                            alt=""
+                        />
+                        <h1>UNsalib</h1>
+                    </div>
+                    <h2>Connexion</h2>
+                </header>
+                <Outlet />
             </div>
-            <Outlet />
-        </div>
+        </main>
     );
 }
 

@@ -15,7 +15,6 @@ function useAuth() {
             if (!accessToken) {
                 if (!isRefreshing) {
                     setIsLoading(true);
-                    console.log("euh");
                     isRefreshing = true;
                     const newToken = await refreshToken();
                     isRefreshing = false;

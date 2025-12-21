@@ -11,7 +11,7 @@ import {
 } from "../../../stores/app.store.js";
 import { RoomsList } from "./rooms-list/RoomsList.js";
 import "./Panel.css";
-import { pushToHistory } from "../../../utils/navigation-manager.js";
+// import { pushToHistory } from "../../../utils/navigation.js";
 import { createPortal } from "react-dom";
 import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 import { SearchModal } from "./modals/SearchModal.js";
@@ -36,7 +36,7 @@ function ActionsContainer({
     const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);
 
     const loadTimetable = (room: ApiDataRoom) => {
-        pushToHistory("panel", openPanel);
+        // pushToHistory("panel", openPanel);
         closePanel();
         setSelectedRoom(room.id, room.name.toUpperCase());
     };

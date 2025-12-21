@@ -1,4 +1,4 @@
-.sidebar {
+#dashboard .sidebar {
     min-width: 350px;
     height: 100%;
     display: flex;
@@ -10,108 +10,118 @@
     position: relative;
     border-right: 2px solid var(--border-color);
     background-color: var(--surface-color);
-}
 
-.branding {
-    display: flex;
-    width: 100%;
-    gap: 12px;
-    align-items: center;
-}
-
-.branding h1 {
-    margin-block: 0px;
-}
-
-.branding img {
-    height: 48px;
-    width: auto;
-    border-radius: var(--border-radius);
-}
-
-.divider {
-    height: 2px;
-    width: 100%;
-    background-color: var(--border-color);
-}
-
-.spacer {
-    flex-grow: 1;
-}
-
-.actions-list {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.action {
-    position: relative;
-    border-radius: var(--border-radius);
-    background-color: var(--surface-color);
-    cursor: pointer;
-    border: none;
-    padding: 12px 18px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--on-surface-color);
-    text-decoration: none;
-}
-
-.action.active {
-    background-color: var(--accent-color);
-    color: var(--on-accent-color);
-}
-
-.action:hover {
-    background-color: var(--neutral-color);
-}
-
-.action.active:hover {
-    background-color: var(--accent-color-dark);
-    color: var(--on-accent-color-dark);
-}
-
-.action>span {
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-family: "Space Grotesk", sans-serif;
-}
-
-.action>img {
-    border-radius: var(--border-radius-full);
-    position: relative !important;
-    height: 24px !important;
-    width: auto !important;
-}
-
-.action>svg {
-    margin: 2px;
-}
-
-@media screen and (max-width: 1024px) {
-    .sidebar.shrinkable {
-        min-width: auto;
-        width: auto;
+    @media screen and (max-width: 1024px) {
+        &.shrinkable {
+            min-width: auto;
+            width: auto;
+            box-shadow: none;
+        }
     }
-    
-    .sidebar.shrinkable .action {
-        padding: 12px;
+
+    @media screen and (max-width: 480px) {
+        & {
+            min-width: auto;
+            box-shadow: none;
+        }
     }
-    
-    .sidebar.shrinkable .action>span {
-        display: none;
+
+    & .branding {
+        display: flex;
+        width: 100%;
+        gap: 12px;
+        align-items: center;
+
+        @media screen and (max-width: 1024px) {
+            .sidebar.shrinkable & {
+                justify-content: center;
+            }
+        }
+
+        & h1 {
+            margin-block: 0px;
+            @media screen and (max-width: 1024px) {
+                .sidebar.shrinkable & {
+                    display: none;
+                }
+            }
+        }
+
+        & img {
+            height: 48px;
+            width: auto;
+            border-radius: var(--border-radius);
+        }
     }
-    
-    .sidebar.shrinkable .branding h1 {
-        display: none;
+
+    & .divider {
+        height: 2px;
+        width: 100%;
+        background-color: var(--border-color);
     }
-    
-    .sidebar.shrinkable .branding {
-        justify-content: center;
+
+    & .spacer {
+        flex-grow: 1;
+    }
+
+    & .links-list {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+
+        & .link {
+            border-radius: var(--border-radius);
+            background-color: var(--surface-color);
+            cursor: pointer;
+            border: none;
+            padding: 0 18px;
+            height: 48px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--on-surface-color);
+            text-decoration: none;
+
+            @media screen and (max-width: 1024px) {
+                .sidebar.shrinkable & {
+                    padding: 12px;
+                }
+            }
+
+            &:hover {
+                background-color: var(--neutral-color);
+            }
+
+            &.active {
+                background-color: var(--accent-color);
+                color: var(--on-accent-color);
+            }
+
+            &.active:hover {
+                background-color: var(--accent-color-dark);
+                color: var(--on-accent-color-dark);
+            }
+
+            & > span {
+                font-size: 14px;
+                font-weight: bold;
+                text-transform: uppercase;
+                font-family: "Space Grotesk", sans-serif;
+
+                @media screen and (max-width: 1024px) {
+                    .sidebar.shrinkable & {
+                        display: none;
+                    }
+                }
+            }
+
+            & > img {
+                border-radius: var(--border-radius-full);
+                height: 20px;
+                width: auto;
+            }
+        }
     }
 }

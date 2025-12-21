@@ -1,49 +1,49 @@
 // import { useState, useEffect } from "react";
-// import { useLocation } from "react-router";
+import { useLocation } from "react-router";
 
 // import { ApiUserAccount } from "./_utils/types";
-import Sidebar from "./sidebar/sidebar";
+import { Sidebar } from "./sidebar/Sidebar";
 // import Navbar from "./_components/navbar/navbar";
 // import HomePage from "./_components/home/home";
 // import StatsPage from "./_components/stats/stats";
-import { VIEWS } from "./constants";
+import { DASHBOARD_VIEWS } from "./DashboardRouter";
+import "./Dashboard.css";
+import { useDeviceType } from "../../utils/hooks/device.hook";
+import { useAccountStore, type Account } from "../../stores/account.store";
+import { MobileAppbar } from "./mobile-appbar/MobileAppbar";
 
 function Dashboard() {
-    // const location = useLocation().pathname;
-
-    // const currentViewId = location.split("/")[1];
-    // const tabs = [
-    //     { id: "home", name: "Accueil", icon: <House /> },
-    //     { id: "manage", name: "Gestion", icon: <Pen /> },
-    //     { id: "stats", name: "Statistiques", icon: <ChartPie /> }
-    // ]
-    // const [selectedTab, setSelectedTab] = useState("home");
+    const location = useLocation().pathname;
+    const currentViewId = location.split("/")[2];
+    const device = useDeviceType();
+    const account = useAccountStore<Account | null>((s) => s.account);
 
     return (
-        <>
-            {/* <Navbar
-                userAccount={userAccount}
-                selectedTabId={currentViewId}
-                setSelectedTabId={setSelectedTab}
-                className="small-screen-nav"
-                tabsList={VIEWS}
-            /> */}
-            <Sidebar
-                userAccount={{
-                    icon: "zygefjf",
-                    lastname: "Admin",
-                    name: "UNsalib",
-                    username: "unsalib",
-                }}
-                // currentViewId={currentViewId}
-                // setSelectedTabId={setSelectedTab}
-                embedded={false}
-                className="large-screen-nav"
-                tabsList={VIEWS}
-            />
-            {/* {selectedTab === "home" && <HomePage />}
-            {selectedTab === "stats" && <StatsPage />} */}
-        </>
+        <main id="dashboard">
+            {device === "mobile" ? (
+                <MobileAppbar
+                    accountName={account?.name}
+                    accountLastname={account?.lastname}
+                    viewsList={DASHBOARD_VIEWS}
+                    currentViewTitle={
+                        DASHBOARD_VIEWS.filter(
+                            (view) => view.id === currentViewId,
+                        )[0].name
+                    }
+                />
+            ) : (
+                <Sidebar
+                    accountName={account?.name}
+                    accountLastname={account?.lastname}
+                    embedded={false}
+                    viewsList={DASHBOARD_VIEWS}
+                />
+            )}
+            {
+                DASHBOARD_VIEWS.filter((view) => view.id === currentViewId)[0]
+                    .component
+            }
+        </main>
     );
 }
 

@@ -1,55 +1,33 @@
-import {
-    useState,
-    useEffect,
-    useRef,
-    cloneElement,
-    type ReactElement,
-} from "react";
-// import { LogOut } from "lucide-react";
+import { cloneElement, type JSX } from "react";
+import { LogOut } from "lucide-react";
+import { NavLink } from "react-router";
 
-// import { logout } from "../../_utils/client-actions";
-import type { ApiDataAccount } from "../../../utils/types/api.type";
-import "./sidebar.css";
-import { 
-    NavLink, 
-    // useLocation,
-    // useNavigate 
-} from "react-router";
+import "./Sidebar.css";
 
-interface Action {
+interface Link {
     name: string;
-    icon: ReactElement;
+    icon: JSX.Element;
     path: string;
 }
 
-function Action({ name, icon, path }: Action) {
+function Link({ name, icon, path }: Link) {
     return (
         <NavLink
             to={path}
-            className={({ isActive }) =>
-                ["action", isActive ? "active" : ""].join(" ")
-            }
+            className={({ isActive }) => `link${isActive ? " active" : ""}`}
         >
-            {icon}
+            {cloneElement(icon, { size: 20 })}
             <span>{name}</span>
         </NavLink>
-        // <button
-        //     className={`action ${selected ? "selected" : ""}`}
-        //     onClick={onClick}
-        //     key={`action ${name}`}
-        // >
-        //     {icon}
-        //     <span>{name}</span>
-        // </button>
     );
 }
 
-function ActionsList({ actions }: { actions: Action[] }) {
+function LinksList({ actions }: { actions: Link[] }) {
     return (
-        <div className="actions-list">
+        <div className="links-list">
             {actions.map((action) => {
                 return (
-                    <Action
+                    <Link
                         name={action.name}
                         icon={action.icon}
                         key={`action ${action.name}`}
@@ -61,62 +39,23 @@ function ActionsList({ actions }: { actions: Action[] }) {
     );
 }
 
-function useOutsideClickHandler(
-    ref: React.RefObject<HTMLElement | null>,
-    stateHook: boolean,
-    setStateHook: (state: boolean) => void,
-) {
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                ref.current &&
-                !ref.current.contains(event.target as Node) &&
-                stateHook
-            ) {
-                setStateHook(false);
-            }
-        };
-
-        document.addEventListener("click", handleClickOutside);
-
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, [ref, stateHook, setStateHook]);
-}
-
-export default function Sidebar({
-    userAccount,
-    // currentViewId,
+function Sidebar({
+    accountName,
+    accountLastname,
     embedded,
-    className,
-    tabsList,
+    viewsList,
 }: {
-    userAccount: ApiDataAccount;
-    // currentViewId: string;
+    accountName?: string;
+    accountLastname?: string;
     embedded: boolean;
-    className: string;
-    tabsList: {
+    viewsList: {
         id: string;
         name: string;
-        icon: ReactElement<{ size: number }>;
+        icon: JSX.Element;
     }[];
 }) {
-    const [openUserMenu, setOpenUserMenu] = useState<boolean>(false);
-    const accountMenuRef = useRef<HTMLDivElement | null>(null);
-    useOutsideClickHandler(accountMenuRef, openUserMenu, setOpenUserMenu);
-    // const navigate = useNavigate();
-    // const location = useLocation().pathname;
-
-    // const handleLogout = async () => {
-        // const result = await logout();
-        // if (result.success) {
-        //     window.location.href = "/admin/auth";
-        // } else {
-        //     console.error(result.error);
-        // }
-    // };
-
     return (
-        <div className={`sidebar ${className}${embedded ? "" : " shrinkable"}`}>
+        <div className={`sidebar${embedded ? "" : " shrinkable"}`}>
             <div className="branding">
                 <img
                     className="logo"
@@ -128,33 +67,38 @@ export default function Sidebar({
                 <h1>UNsalib</h1>
             </div>
             <span className="divider" />
-            <ActionsList
-                actions={tabsList.map((tab) => ({
-                    icon: cloneElement(tab.icon, { size: 20 }),
+            <LinksList
+                actions={viewsList.map((tab) => ({
+                    icon: tab.icon,
                     name: tab.name,
                     path: `/dashboard/${tab.id}`,
                 }))}
             />
             <span className="spacer" />
-            <ActionsList
+            <LinksList
                 actions={[
                     {
                         icon: (
                             <img
-                                src={`data:image/png;base64,${userAccount.icon}`}
+                                // src={`data:image/png;base64,${userAccount.icon}`}
                                 alt=""
                             />
                         ),
-                        name: `${userAccount.name} ${userAccount.lastname}`,
+                        name:
+                            accountName && accountLastname
+                                ? `${accountName} ${accountLastname}`
+                                : "Inconnu·e",
                         path: "/dashboard/account",
                     },
-                    // {
-                    //     icon: <LogOut size={20} />,
-                    //     name: "Déconnexion",
-                    //     path: `/dashboard/${tab.id}`,
-                    // },
+                    {
+                        icon: <LogOut />,
+                        name: "Déconnexion",
+                        path: "/auth/logout",
+                    },
                 ]}
             />
         </div>
     );
 }
+
+export { Sidebar };

@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface AuthStore {
     accessToken: string | null;
-    setAccessToken: (token: string | null) => void;
+    setAccessToken: (token: string) => void;
     removeAccessToken: () => void;
 }
 

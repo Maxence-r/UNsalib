@@ -376,27 +376,19 @@ function Modal({
         [finalizeDrag],
     );
 
+    const handleScrimClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if ((e.target as HTMLElement).classList.contains("scrim")) {
+            close();
+        }
+    };
+
     return (
         <div
             tabIndex={-1}
             className={`modal${isOpen ? " open" : ""}${isExpanded ? " expanded" : ""}`}
         >
-            <div
-                className="scrim"
-                onClick={useCallback(
-                    (e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        if (
-                            (e.target as HTMLElement).classList.contains(
-                                "scrim",
-                            )
-                        ) {
-                            close();
-                        }
-                    },
-                    [close],
-                )}
-            />
+            <div className="scrim" onClick={handleScrimClick} />
 
             <div
                 ref={windowRef}

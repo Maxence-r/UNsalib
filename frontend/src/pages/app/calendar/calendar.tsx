@@ -12,7 +12,7 @@ import "./calendar.css";
 // } from "../../../utils/constants.js";
 // import CalendarContainer from "./grid/container.js";
 // import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
-import { goBack } from "../../../utils/navigation-manager.js";
+// import { goBack } from "../../../utils/navigation.js";
 // import type {
 //     ApiDataCourse,
 //     ApiDataTimetable,
@@ -185,7 +185,7 @@ function Calendar() {
                 <TextButton
                     icon={<ChevronUp />}
                     onClick={() => {
-                        goBack();
+                        // goBack();
                     }}
                     text="Menu"
                 />

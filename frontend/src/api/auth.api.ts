@@ -26,7 +26,6 @@ async function logout() {
 async function refreshToken() {
     const authStore = useAuthStore.getState();
     const accountStore = useAccountStore.getState();
-    console.log("ou")
 
     let newAccessToken: string | null = null;
     try {

@@ -2,13 +2,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface Account {
-    id: string | null;
-    username: string | null;
-    name: string | null;
-    lastname: string | null;
+    id: string;
+    username: string;
+    name: string;
+    lastname: string;
 }
 
-interface AccountStore extends Account {
+interface AccountStore {
+    account: Account | null;
     save: (account: Account) => void;
     remove: () => void;
 }
@@ -16,23 +17,10 @@ interface AccountStore extends Account {
 const useAccountStore = create<AccountStore>()(
     persist(
         (set) => ({
-            id: null,
-            username: null,
-            name: null,
-            lastname: null,
+            account: null,
 
-            save: (account: Account) => {
-                set({ id: account.id });
-                set({ username: account.username });
-                set({ name: account.name });
-                set({ lastname: account.lastname });
-            },
-            remove: () => {
-                set({ id: null });
-                set({ username: null });
-                set({ name: null });
-                set({ lastname: null });
-            },
+            save: (account: Account) => set({ account: account }),
+            remove: () => set({ account: null }),
         }),
         {
             name: "unsalib-account",
@@ -40,4 +28,4 @@ const useAccountStore = create<AccountStore>()(
     ),
 );
 
-export { useAccountStore };
+export { useAccountStore, type Account };

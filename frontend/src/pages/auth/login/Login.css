@@ -3,6 +3,21 @@
     flex-direction: column;
     gap: 24px;
 
+    @media screen and (max-width: 498px) {
+        height: 50%;
+    }
+
+    & h2 {
+        color: var(--neutral-color-dark);
+        margin-block: 0;
+        margin-bottom: 24px;
+        text-align: center;
+
+        @media screen and (max-width: 498px) {
+            flex-grow: 1;
+        }
+    }
+
     & .error {
         background: var(--error-color);
         border-radius: var(--border-radius);

@@ -62,6 +62,7 @@ function Login() {
 
     return (
         <div id="login">
+            <h2>Connexion</h2>
             {error && (
                 <div className="error">
                     <CircleAlert size={20} />

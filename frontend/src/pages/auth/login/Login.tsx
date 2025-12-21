@@ -1,6 +1,5 @@
-import { useState, type KeyboardEvent } from "react";
+import { useEffect, useState, type KeyboardEvent } from "react";
 import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
-import { useNavigate } from "react-router";
 
 import { TextButton, IconButton } from "../../../components/button/Button";
 import { Input } from "../../../components/input/Input";
@@ -9,6 +8,8 @@ import { login } from "../../../api/auth.api";
 import { useAuthStore } from "../../../stores/auth.store";
 import { useAccountStore } from "../../../stores/account.store";
 import { ResponseError } from "../../../api/axios";
+import { router } from "../../Router";
+import { useAuth } from "../../../utils/hooks/auth.hook";
 
 function Login() {
     const [error, setError] = useState<null | string>(null);
@@ -18,7 +19,6 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const setAccessToken = useAuthStore((s) => s.setAccessToken);
     const setAccount = useAccountStore((s) => s.save);
-    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         if (username.length > 0 && password.length > 0) {
@@ -27,7 +27,7 @@ function Login() {
                 const loginInfos = await login(username, password);
                 setAccessToken(loginInfos.accessToken);
                 setAccount(loginInfos.account);
-                navigate("/dashboard");
+                router.navigate("/dashboard");
             } catch (e) {
                 if (e instanceof ResponseError) {
                     switch (e.message) {
@@ -59,6 +59,16 @@ function Login() {
     };
 
     const handleShowPasswordButtonClick = () => setShowPassword(!showPassword);
+
+    const { isLoading: isLoginCheckLoading, isLoggedIn } = useAuth();
+
+    useEffect(() => {
+        if (!isLoginCheckLoading) {
+            (async () => {
+                if (isLoggedIn) router.navigate("/dashboard");
+            })();
+        }
+    }, [isLoggedIn, isLoginCheckLoading]);
 
     return (
         <div id="login">

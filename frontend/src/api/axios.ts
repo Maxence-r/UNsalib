@@ -2,8 +2,8 @@ import axios, { AxiosError } from "axios";
 
 import { useAuthStore } from "../stores/auth.store";
 import type { Api, ApiError, ApiSuccess } from "../utils/types/api.type";
-import { requestNewAccessToken } from "./auth.api";
-import { useAccountStore } from "../stores/account.store";
+import { refreshToken } from "./auth.api";
+import { router } from "../pages/Router";
 
 class ResponseError extends Error {
     constructor(message: string) {
@@ -28,22 +28,6 @@ function processQueue(error: unknown, token: string | null) {
         else p.reject(error);
     });
     failedQueue = [];
-}
-
-async function refreshToken(errorCallback?: (error: unknown) => void) {
-    const authStore = useAuthStore.getState();
-    const accountStore = useAccountStore.getState();
-
-    try {
-        const newAccessToken = (await requestNewAccessToken()).accessToken;
-        authStore.setAccessToken(newAccessToken);
-        return newAccessToken;
-    } catch (e) {
-        authStore.removeAccessToken();
-        accountStore.remove();
-        if (errorCallback) errorCallback(e);
-        window.location.href = "/auth/login";
-    }
 }
 
 api.interceptors.request.use((config) => {
@@ -79,6 +63,7 @@ api.interceptors.response.use(
             error.response?.status !== 401 ||
             error._retry ||
             originalRequest.url?.includes("login") ||
+            originalRequest.url?.includes("logout") ||
             originalRequest.url?.includes("refresh-token")
         ) {
             return Promise.reject(
@@ -105,21 +90,21 @@ api.interceptors.response.use(
         }
 
         isRefreshing = true;
+        const newAccessToken = await refreshToken();
 
-        const newAccessToken = await refreshToken((error) => {
+        if (!newAccessToken) {
             const responseError = new ResponseError((error as Error).message);
             processQueue(responseError, null);
-            Promise.reject(responseError);
             isRefreshing = false;
-        });
-
-        if (newAccessToken) {
-            processQueue(null, newAccessToken);
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-            isRefreshing = false;
-            return api(originalRequest);
+            router.navigate("/auth/login");
+            return Promise.reject(responseError);
         }
+
+        processQueue(null, newAccessToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        isRefreshing = false;
+        return api(originalRequest);
     },
 );
 
-export { api, refreshToken, ResponseError };
+export { api, ResponseError };

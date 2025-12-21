@@ -1,4 +1,4 @@
-#auth #login {
+#auth #logout {
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -29,30 +29,31 @@
         gap: 16px;
     }
 
-    & .form {
+    & .loader {
+        height: 100px;
+        width: 100%;
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    & .input-container {
-        display: flex;
-        gap: 12px;
         align-items: center;
-
-        & > input {
-            flex-grow: 1;
-        }
+        justify-content: center;
     }
 
-    & .actions {
-        display: flex;
-        justify-content: center;
+    & .loader::after {
+        content: "";
+        width: 24px;
+        height: 24px;
+        border: 4px solid transparent;
+        border-top-color: var(--accent-color);
+        border-radius: 50%;
+        animation: 1s infinite spinner-loading;
+    }
+}
 
-        @media screen and (max-width: 498px) {
-            & > button {
-                width: 100%;
-            }
-        }
+@keyframes spinner-loading {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
     }
 }

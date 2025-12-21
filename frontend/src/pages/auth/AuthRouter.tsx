@@ -1,31 +1,27 @@
-import { Navigate, Outlet, Route, Routes } from "react-router";
+import { Navigate } from "react-router";
 
-import { VIEWS } from "./constants";
+import { Login } from "./login/Login";
+import { Logout } from "./logout/Logout";
 import { Auth } from "./Auth";
-import { useAccountStore } from "../../stores/account.store";
 
-function AuthRoute() {
-    const isLoggedIn = useAccountStore<boolean>((s) => !!s.id);
+const AUTH_VIEWS = [
+    { id: "login", component: <Login /> },
+    { id: "logout", component: <Logout /> },
+];
 
-    return isLoggedIn ? <Navigate to="/dashboard" replace /> : <Outlet />;
-}
+const authRouter = {
+    path: "/auth",
+    element: <Auth />,
+    children: [
+        {
+            index: true,
+            element: <Navigate to={`/auth/${AUTH_VIEWS[0].id}`} replace />,
+        },
+        ...AUTH_VIEWS.map((view) => ({
+            path: view.id,
+            element: view.component,
+        })),
+    ],
+};
 
-function AuthRouter() {
-    return (
-        <Routes>
-            <Route element={<AuthRoute />}>
-                <Route
-                    index
-                    element={<Navigate to={`/auth/${VIEWS[0].id}`} replace />}
-                />
-                <Route element={<Auth />}>
-                    {VIEWS.map((view) => (
-                        <Route path={view.id} element={view.component} />
-                    ))}
-                </Route>
-            </Route>
-        </Routes>
-    );
-}
-
-export { AuthRouter };
+export { authRouter, AUTH_VIEWS };

@@ -1,45 +1,33 @@
-import { Navigate, Outlet, Route, Routes } from "react-router";
+import { Navigate } from "react-router";
+import { ChartPie, House, Pen } from "lucide-react";
 
-import { VIEWS } from "./constants";
 import { Dashboard } from "./Dashboard";
-import { useAuthStore } from "../../stores/auth.store";
-import { refreshToken } from "../../api/axios";
-import { useEffect, useRef } from "react";
+import { ProtectedRoute } from "../../utils/ProtectedRoute";
 
-function ProtectedRoute() {
-    const isLoggedIn = useAuthStore<boolean>((s) => !!s.accessToken);
-    const isRefreshing = useRef<boolean>(false);
+const DASHBOARD_VIEWS = [
+    { id: "home", name: "Accueil", icon: <House />, component: <></> },
+    { id: "manage", name: "Gestion", icon: <Pen />, component: <></> },
+    { id: "stats", name: "Statistiques", icon: <ChartPie />, component: <></> },
+];
 
-    useEffect(() => {
-        if (!isLoggedIn && !isRefreshing.current) {
-            isRefreshing.current = true;
-            refreshToken().finally(() => {
-                isRefreshing.current = false;
-            });
-        }
-    }, [isLoggedIn]);
+const dashboardRouter = {
+    path: "/dashboard",
+    element: <ProtectedRoute />,
+    children: [
+        {
+            index: true,
+            element: (
+                <Navigate to={`/dashboard/${DASHBOARD_VIEWS[0].id}`} replace />
+            ),
+        },
+        {
+            element: <Dashboard />,
+            children: DASHBOARD_VIEWS.map((view) => ({
+                path: view.id,
+                element: view.component,
+            })),
+        },
+    ],
+};
 
-    return <Outlet />;
-}
-
-function DashboardRouter() {
-    return (
-        <Routes>
-            <Route element={<ProtectedRoute />}>
-                <Route
-                    index
-                    element={
-                        <Navigate to={`/dashboard/${VIEWS[0].id}`} replace />
-                    }
-                />
-                <Route element={<Dashboard />}>
-                    {VIEWS.map((view) => (
-                        <Route path={view.id} element={view.component} />
-                    ))}
-                </Route>
-            </Route>
-        </Routes>
-    );
-}
-
-export { DashboardRouter };
+export { dashboardRouter, DASHBOARD_VIEWS };

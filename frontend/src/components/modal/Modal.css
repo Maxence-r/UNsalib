@@ -1,125 +1,42 @@
-/* Modal scrim rules */
-
 .modal {
     position: fixed;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
     pointer-events: none;
-}
 
-.modal.open {
-    pointer-events: auto;
-}
-
-.modal>.scrim {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    z-index: 0;
-    transition: opacity calc(var(--animation-duration) - .1s);
-    background-color: var(--scrim-color);
-    width: 100%;
-    height: 100%;
-}
-
-.modal.open>.scrim {
-    opacity: 1;
-    transition: opacity var(--animation-duration);
-}
-
-/* Modal window rules */
-
-.modal>.window {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 400px;
-    background-color: var(--surface-color);
-    color: var(--on-surface-color);
-    right: 0;
-    top: 0;
-    overflow: hidden;
-    transform: translateX(100%);
-    transition: background-color var(--animation-duration), transform calc(var(--animation-duration) - .1s);
-    z-index: 1;
-}
-
-.modal>.window .window-content {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 24px;
-}
-
-.modal.open>.window {
-    transform: translateX(0);
-    transition: background-color var(--animation-duration), transform var(--animation-duration);
-}
-
-@media screen and (max-width: 1024px) {
-    .modal>.window {
+    & .scrim {
+        background-color: var(--scrim-color);
+        position: absolute;
+        height: 100%;
         width: 100%;
-        height: 75%;
-        max-height: 75%;
-        bottom: 0;
-        top: auto;
-        transform: translateY(100%);
-        border-radius: 24px 24px 0 0;
-        transition: background-color var(--animation-duration),
-            transform var(--animation-duration),
-            height var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1),
-            max-height var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1),
-            border-radius var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
     }
 
-    .modal.open>.window {
-        transform: translateY(0);
-        transition: background-color var(--animation-duration),
-            transform var(--animation-duration),
-            height var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1),
-            max-height var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1),
-            border-radius var(--animation-duration) cubic-bezier(0.4, 0, 0.2, 1);
+    & .sheet {
+        position: absolute;
+        width: 100%;
+        z-index: 2;
+        background-color: var(--surface-color);
+        display: flex;
+        flex-direction: column;
+
+        & .handle {
+            width: 40px;
+            height: 4px;
+            background-color: var(--neutral-color);
+            border-radius: 2px;
+            margin: 14px auto;
+            flex-shrink: 0;
+        }
+
+        & .content-container {
+            flex-grow: 1;
+            width: 100%;
+            scrollbar-width: none;
+            padding: 0 20px 20px;
+        }
     }
-
-    .modal>.window.expanded {
-        border-radius: 0;
-    }
-
-    /* Hide scrollbar on mobile when not expanded */
-    .modal>.window .window-content {
-        overflow: hidden;
-        padding: 0 20px 20px;
-    }
-
-    /* Enable scroll only when expanded */
-    .modal>.window .window-content.scrollable {
-        overflow-y: auto;
-        scrollbar-width: none;
-    }
-}
-
-/* Mobile handle rules */
-
-.modal>.window .handle-container {
-    flex-shrink: 0;
-    padding: 8px 0 0;
-    cursor: grab;
-    touch-action: none;
-}
-
-.modal>.window .handle-container:active {
-    cursor: grabbing;
-}
-
-.modal>.window .handle {
-    width: 40px;
-    height: 4px;
-    background: var(--neutral-color);
-    border-radius: 100px;
-    margin: 0 auto 8px;
 }

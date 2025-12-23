@@ -1,415 +1,220 @@
 import {
+    useCallback,
+    useEffect,
+    useEffectEvent,
     useRef,
     useState,
-    useEffect,
-    useCallback,
-    useEffectEvent,
+    type JSX,
+    type TouchEvent,
 } from "react";
-import type { ReactNode } from "react";
 
-import "../../utils/theme.css";
 import "./Modal.css";
 
-// Constants
-const CLOSE_DISTANCE = 120;
-const CLOSE_VELOCITY = 0.6;
-const MIN_HEIGHT = 75;
-const MAX_HEIGHT = 100;
-const SNAP_THRESHOLD = 15;
-const MAX_BORDER_RADIUS = 24;
-const MIN_ANIMATION_DURATION = 150;
-const MAX_ANIMATION_DURATION = 400;
-const HEIGHT_RANGE = MAX_HEIGHT - MIN_HEIGHT;
-const RUBBER_BAND_FACTOR = 0.2;
-const MOBILE_QUERY = "(max-width: 1024px)";
-
-function calculateAnimationDuration(
-    velocity: number,
-    remainingDistance: number,
-): number {
-    if (velocity > 0.1) {
-        return Math.max(
-            MIN_ANIMATION_DURATION,
-            Math.min(MAX_ANIMATION_DURATION, remainingDistance / velocity),
-        );
-    }
-    return MAX_ANIMATION_DURATION;
+function windowPercent(percentage: number) {
+    return window.innerHeight * (percentage / 100);
 }
 
-function calculateBorderRadius(heightPercent: number): number {
-    const progress = (heightPercent - MIN_HEIGHT) / HEIGHT_RANGE;
-    return MAX_BORDER_RADIUS * (1 - progress);
-}
-
-function getTransitionStyle(duration: number): string {
-    return `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), 
-        height ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), 
-        max-height ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), 
-        border-radius ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+function clamp(val: number, min: number, max: number) {
+    return Math.max(min, Math.min(val, max));
 }
 
 function Modal({
+    children,
     isOpen,
     close,
-    children,
 }: {
+    children: JSX.Element;
     isOpen: boolean;
     close: () => void;
-    children: ReactNode;
 }) {
-    const windowRef = useRef<HTMLDivElement>(null);
-    const contentRef = useRef<HTMLDivElement>(null);
+    // Bottom sheet elements
+    const modal = useRef<null | HTMLDivElement>(null);
+    const scrim = useRef<null | HTMLDivElement>(null);
+    const sheet = useRef<null | HTMLDivElement>(null);
+    const contentContainer = useRef<null | HTMLDivElement>(null);
 
-    const dragState = useRef({
-        startY: 0,
-        currentY: 0,
-        lastTranslateY: 0,
-        startTime: 0,
-        isDraggingContent: false,
-    });
-    const rafId = useRef<number | null>(null);
-
-    const [dragging, setDragging] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    const isMobile = window.matchMedia(MOBILE_QUERY).matches;
-
-    // Memoized helper to apply styles
-    const applyStyles = useCallback(
-        (height: number, translateY = 0) => {
-            const win = windowRef.current;
-            if (!win) return;
-            win.style.height = `${height}%`;
-            win.style.maxHeight = `${height}%`;
-            win.style.transform = `translateY(${translateY}px)`;
-            if (isMobile) {
-                const radius = calculateBorderRadius(height);
-                win.style.borderRadius = `${radius}px ${radius}px 0 0`;
-            }
-        },
-        [isMobile],
+    const [y, setY] = useState<number>(
+        isOpen ? windowPercent(25) : windowPercent(100),
     );
+    const [sheetRadius, setSheetRadius] = useState<number>(24);
+    const [sheetOverflow, setSheetOverflow] = useState<"auto" | "hidden">(
+        "hidden",
+    );
+    const [scrimOpacity, setScrimOpacity] = useState<number>(isOpen ? 1 : 0);
 
-    // Cleanup RAF on unmount
-    useEffect(() => {
-        return () => {
-            if (rafId.current) cancelAnimationFrame(rafId.current);
-        };
+    const yMove = useRef({
+        start: 0,
+        startTime: 0,
+        up: true,
+    });
+
+    const touchStartY = useRef<number>(0);
+
+    const initialY = useRef<number>(y);
+    const distanceDelta = useRef<number>(0);
+    const timeDelta = useRef<number>(0);
+    const velocity = useRef<number>(0);
+    const isScrolling = useRef<boolean>(false);
+
+    const removeTransitions = () => {
+        if (!sheet.current || !scrim.current) return;
+        sheet.current.style.transition = "none";
+        scrim.current.style.transition = "none";
+    };
+
+    const setTransitions = (duration: number) => {
+        if (!sheet.current || !scrim.current) return;
+        sheet.current.style.transition = `top ${duration}s, border-radius ${duration}s, height ${duration}s`;
+        scrim.current.style.transition = `opacity ${duration}s`;
+    };
+
+    const handleManualClose = useCallback(() => {
+        setTransitions(0.3);
+        setScrimOpacity(0);
+        setSheetRadius(24);
+        setY(windowPercent(100));
+        if (isOpen) close();
+    }, [close, isOpen]);
+
+    const handleManualMiddleSnap = useCallback(() => {
+        setTransitions(0.3);
+        setScrimOpacity(1);
+        setSheetRadius(24);
+        setY(windowPercent(25));
     }, []);
 
-    // Reset state when modal closes
-    const updateIsExpanded = useEffectEvent(() => setIsExpanded(false));
-    useEffect(() => {
-        if (!isOpen) {
-            updateIsExpanded();
-            const win = windowRef.current;
-            if (win) {
-                win.style.removeProperty("height");
-                win.style.removeProperty("max-height");
-                win.style.removeProperty("transform");
-                win.style.removeProperty("borderRadius");
-            }
-        }
-    }, [isOpen]);
+    const handleManualTopSnap = () => {
+        setTransitions(0.3);
+        setY(windowPercent(0));
+        setSheetRadius(0);
+    };
 
-    // Common function to handle drag end logic
-    const finalizeDrag = useCallback(
-        (isFromContent = false) => {
-            const win = windowRef.current;
-            const state = dragState.current;
+    const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+        if (!sheet.current || !scrim.current || !contentContainer.current)
+            return;
 
-            if (!win || (isFromContent && !state.isDraggingContent)) {
-                state.isDraggingContent = false;
-                return;
-            }
+        // Init values
+        touchStartY.current = e.touches[0].clientY;
+        initialY.current = y;
+        yMove.current.startTime = performance.now();
+        yMove.current.start = touchStartY.current;
+        removeTransitions();
+    };
 
-            if (rafId.current) {
-                cancelAnimationFrame(rafId.current);
-                rafId.current = null;
-            }
+    const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+        if (
+            contentContainer.current &&
+            contentContainer.current.scrollTop === 0
+        ) {
+            isScrolling.current = false;
 
-            if (!isFromContent) setDragging(false);
-            state.isDraggingContent = false;
-
-            const duration = performance.now() - state.startTime;
-            const velocity = Math.abs(state.lastTranslateY) / duration;
-            const diff = state.lastTranslateY;
-            const winHeight = window.innerHeight;
-            const animationDuration = calculateAnimationDuration(
-                velocity,
-                winHeight - diff,
-            );
-
-            win.style.transition = getTransitionStyle(animationDuration);
-
-            const shouldClose =
-                diff > CLOSE_DISTANCE || velocity > CLOSE_VELOCITY;
-            const snapDistance = SNAP_THRESHOLD * (winHeight / 100);
-
-            const resetAfterAnimation = (timeout = 300) => {
-                setTimeout(
-                    () => win.style.removeProperty("transition"),
-                    timeout,
-                );
-            };
-
-            const closeModal = () => {
-                win.style.transform = "translateY(100%)";
-                setTimeout(() => {
-                    win.style.removeProperty("transform");
-                    win.style.removeProperty("transition");
-                    win.style.removeProperty("height");
-                    win.style.removeProperty("max-height");
-                    win.style.removeProperty("borderRadius");
-                    setIsExpanded(false);
-                    close();
-                }, animationDuration);
-            };
-
-            if (isExpanded) {
-                const shouldCollapse = diff > snapDistance;
-                if (shouldClose) {
-                    closeModal();
-                } else if (shouldCollapse) {
-                    applyStyles(MIN_HEIGHT);
-                    setIsExpanded(false);
-                    resetAfterAnimation();
-                } else {
-                    applyStyles(MAX_HEIGHT);
-                    resetAfterAnimation();
-                }
-            } else {
-                if (diff > 0) {
-                    if (shouldClose) {
-                        win.style.transform = "translateY(100%)";
-                        setTimeout(() => {
-                            win.style.removeProperty("transform");
-                            win.style.removeProperty("transition");
-                            close();
-                        }, animationDuration);
-                    } else {
-                        win.style.transform = "translateY(0)";
-                        resetAfterAnimation();
-                    }
-                } else {
-                    const dragDistance = Math.abs(diff);
-                    if (
-                        dragDistance > snapDistance ||
-                        velocity > CLOSE_VELOCITY
-                    ) {
-                        applyStyles(MAX_HEIGHT);
-                        setIsExpanded(true);
-                    } else {
-                        applyStyles(MIN_HEIGHT);
-                    }
-                    win.style.transform = "translateY(0)";
-                    resetAfterAnimation();
-                }
-            }
-
-            state.startY = 0;
-            state.currentY = 0;
-        },
-        [isExpanded, close, applyStyles],
-    );
-
-    // Common drag move logic
-    const handleDragMove = useCallback(
-        (diff: number) => {
-            const win = windowRef.current;
-            if (!win) return;
-
-            const winHeight = window.innerHeight;
-            const state = dragState.current;
-            state.lastTranslateY = diff;
-
-            if (isExpanded) {
-                if (diff > 0) {
-                    const newHeightPx = winHeight - diff;
-                    const minHeightPx = (winHeight * MIN_HEIGHT) / 100;
-
-                    if (newHeightPx >= minHeightPx) {
-                        applyStyles((newHeightPx / winHeight) * 100);
-                    } else {
-                        const translateY =
-                            diff - (winHeight * HEIGHT_RANGE) / 100;
-                        applyStyles(MIN_HEIGHT, Math.max(0, translateY));
-                    }
-                }
-            } else {
-                if (diff > 0) {
-                    win.style.transform = `translateY(${diff}px)`;
-                } else {
-                    const currentHeightPx = (winHeight * MIN_HEIGHT) / 100;
-                    const maxHeightPx = (winHeight * MAX_HEIGHT) / 100;
-                    const rawNewHeightPx = currentHeightPx - diff;
-
-                    const newHeightPx =
-                        rawNewHeightPx > maxHeightPx
-                            ? maxHeightPx +
-                              (rawNewHeightPx - maxHeightPx) *
-                                  RUBBER_BAND_FACTOR
-                            : rawNewHeightPx;
-                    const clampedPercent =
-                        (Math.min(maxHeightPx, newHeightPx) / winHeight) * 100;
-                    applyStyles(clampedPercent);
-                }
-            }
-        },
-        [isExpanded, applyStyles],
-    );
-
-    // Handle touch handlers
-    const onHandleTouchStart = useCallback(
-        (e: React.TouchEvent) => {
-            if (!isMobile || !windowRef.current) return;
-
-            e.stopPropagation();
-            const state = dragState.current;
-            state.startY = e.touches[0].clientY;
-            state.startTime = performance.now();
-            state.lastTranslateY = 0;
-            windowRef.current.style.transition = "none";
-            setDragging(true);
-        },
-        [isMobile],
-    );
-
-    const onHandleTouchMove = useCallback(
-        (e: React.TouchEvent) => {
-            if (!dragging || !windowRef.current) return;
-
-            e.stopPropagation();
-
-            const state = dragState.current;
-            state.currentY = e.touches[0].clientY;
-            const diff = state.currentY - state.startY;
-
-            if (rafId.current !== null) return;
-
-            rafId.current = requestAnimationFrame(() => {
-                handleDragMove(diff);
-                rafId.current = null;
-            });
-        },
-        [dragging, handleDragMove],
-    );
-
-    const onHandleTouchEnd = useCallback(
-        () => finalizeDrag(false),
-        [finalizeDrag],
-    );
-
-    // Content touch handlers
-    const onContentTouchStart = useCallback(
-        (e: React.TouchEvent) => {
-            if (!isMobile || !windowRef.current) return;
-
-            const state = dragState.current;
-            state.startY = e.touches[0].clientY;
-            state.startTime = performance.now();
-            state.lastTranslateY = 0;
+            const touchY = e.touches[0].clientY;
+            const delta = touchY - touchStartY.current;
+            const newY = initialY.current + delta;
 
             if (
-                isExpanded &&
-                contentRef.current &&
-                contentRef.current.scrollTop > 0
+                (newY > y && yMove.current.up) ||
+                (y > newY && !yMove.current.up)
             ) {
-                state.isDraggingContent = false;
-                return;
+                // Move direction change
+                yMove.current.up = !yMove.current.up;
+                yMove.current.start = touchY;
+                yMove.current.startTime = performance.now();
             }
 
-            if (!isExpanded) {
-                state.isDraggingContent = true;
-            }
-        },
-        [isMobile, isExpanded],
-    );
-
-    const onContentTouchMove = useCallback(
-        (e: React.TouchEvent) => {
-            if (!isMobile || !windowRef.current) return;
-
-            const state = dragState.current;
-            const diff = e.touches[0].clientY - state.startY;
-
-            if (isExpanded && contentRef.current) {
-                const isAtTop = contentRef.current.scrollTop <= 0;
-
-                if (isAtTop && diff > 0 && !state.isDraggingContent) {
-                    state.startY = e.touches[0].clientY;
-                    state.startTime = performance.now();
-                    state.lastTranslateY = 0;
-                    state.isDraggingContent = true;
-                    windowRef.current.style.transition = "none";
-                }
-
-                if (!state.isDraggingContent) return;
-
-                if (diff < 0 && state.isDraggingContent) {
-                    state.isDraggingContent = false;
-                    windowRef.current.style.transition = "";
-                    return;
-                }
+            if (!yMove.current.up) {
+                // Swipe down, disable scroll
+                setSheetOverflow("hidden");
             }
 
-            if (!isExpanded) {
-                if (!state.isDraggingContent) return;
-                windowRef.current.style.transition = "none";
+            distanceDelta.current = touchY - yMove.current.start;
+            timeDelta.current =
+                (performance.now() - yMove.current.startTime) / 1000;
+            velocity.current = distanceDelta.current / timeDelta.current; // px/s
+
+            setY(clamp(newY, 0, windowPercent(100)));
+            setSheetRadius(clamp((24 * y) / windowPercent(25), 0, 24));
+            if (y > windowPercent(25)) {
+                setScrimOpacity(
+                    1 - clamp((1 / windowPercent(75)) * newY - 1 / 3, 0, 1),
+                );
             }
-
-            state.currentY = e.touches[0].clientY;
-            const currentDiff = state.currentY - state.startY;
-
-            if (rafId.current !== null) return;
-
-            rafId.current = requestAnimationFrame(() => {
-                handleDragMove(currentDiff);
-                rafId.current = null;
-            });
-        },
-        [isMobile, isExpanded, handleDragMove],
-    );
-
-    const onContentTouchEnd = useCallback(
-        () => finalizeDrag(true),
-        [finalizeDrag],
-    );
-
-    const handleScrimClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if ((e.target as HTMLElement).classList.contains("scrim")) {
-            close();
+        } else if (contentContainer.current && sheetOverflow === "auto") {
+            isScrolling.current = true;
         }
     };
 
+    const handleTouchEnd = () => {
+        if (!contentContainer.current) return;
+
+        // If the transition duration is too small, we set it to 0.1s to avoid a brutal animation
+        const transitionDuration = Math.max(timeDelta.current, 0.1);
+        if (velocity.current < -100) {
+            // Swipe up
+            setTransitions(transitionDuration);
+            setY(0);
+            setSheetRadius(0);
+            setSheetOverflow("auto");
+        } else if (velocity.current > 100) {
+            // Swipe down
+            setTransitions(transitionDuration);
+            setY(windowPercent(100));
+            setSheetRadius(24);
+            setScrimOpacity(0);
+            close();
+        } else if (y < windowPercent(12.5)) {
+            // Bounce effect near the top
+            handleManualTopSnap();
+        } else if (y > windowPercent(12.5) && y < windowPercent(60)) {
+            // Bounce effect around the middle snap
+            handleManualMiddleSnap();
+        } else if (y > windowPercent(60)) {
+            // The sheet is near the bottom
+            handleManualClose();
+        }
+    };
+
+    const triggerClose = useEffectEvent(handleManualClose);
+    const triggerOpen = useEffectEvent(handleManualMiddleSnap);
+    useEffect(() => {
+        if (!isOpen && y < windowPercent(100)) {
+            // Should close
+            triggerClose();
+        } else if (isOpen && y == windowPercent(100)) {
+            // Should open
+            triggerOpen();
+        }
+    }, [handleManualClose, handleManualMiddleSnap, isOpen, y]);
+
     return (
         <div
-            tabIndex={-1}
-            className={`modal${isOpen ? " open" : ""}${isExpanded ? " expanded" : ""}`}
+            ref={modal}
+            className="modal"
+            style={{ pointerEvents: isOpen ? "auto" : "none" }}
         >
-            <div className="scrim" onClick={handleScrimClick} />
-
             <div
-                ref={windowRef}
-                className={`window${isExpanded ? " expanded" : ""}`}
+                className="scrim"
+                style={{ opacity: scrimOpacity }}
+                ref={scrim}
+                onClick={handleManualClose}
+            />
+            <div
+                className="sheet"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                ref={sheet}
+                style={{
+                    top: y,
+                    height: windowPercent(100) - y,
+                    borderRadius: `${sheetRadius}px ${sheetRadius}px 0 0`,
+                }}
             >
-                {isMobile && (
-                    <div
-                        className="handle-container"
-                        onTouchStart={onHandleTouchStart}
-                        onTouchMove={onHandleTouchMove}
-                        onTouchEnd={onHandleTouchEnd}
-                    >
-                        <div className="handle" />
-                    </div>
-                )}
+                <div className="handle" />
                 <div
-                    ref={contentRef}
-                    className={`window-content${isExpanded ? " scrollable" : ""}`}
-                    onTouchStart={onContentTouchStart}
-                    onTouchMove={onContentTouchMove}
-                    onTouchEnd={onContentTouchEnd}
+                    ref={contentContainer}
+                    className="content-container"
+                    style={{ overflowY: sheetOverflow }}
                 >
                     {children}
                 </div>

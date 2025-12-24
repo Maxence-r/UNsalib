@@ -4,8 +4,7 @@
     height: 100%;
     width: 100%;
     top: 0;
-    left: 0;
-    pointer-events: none;
+    right: 0;
 
     & .scrim {
         background-color: var(--scrim-color);
@@ -17,7 +16,8 @@
 
     & .sheet {
         position: absolute;
-        width: 100%;
+        bottom: 0;
+        right: 0;
         z-index: 2;
         background-color: var(--surface-color);
         display: flex;
@@ -32,11 +32,17 @@
             flex-shrink: 0;
         }
 
-        & .content-container {
+        & .content {
             flex-grow: 1;
             width: 100%;
-            scrollbar-width: none;
-            padding: 0 20px 20px;
+            padding: 24px;
+
+            @media screen and (max-width: 1024px) {
+                & {
+                    padding: 0 20px 20px;
+                    scrollbar-width: none;
+                }
+            }
         }
     }
 }

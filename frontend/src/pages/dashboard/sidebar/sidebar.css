@@ -8,8 +8,8 @@
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     gap: 24px;
     position: relative;
-    border-right: 2px solid var(--border-color);
-    background-color: var(--surface-color);
+    border-right: 2px solid var(--color-neutral-light);
+    background-color: var(--color-background);
 
     @media screen and (max-width: 1024px) {
         &.shrinkable {
@@ -57,7 +57,7 @@
     & .divider {
         height: 2px;
         width: 100%;
-        background-color: var(--border-color);
+        background-color: var(--color-neutral-light);
     }
 
     & .spacer {
@@ -72,7 +72,7 @@
 
         & .link {
             border-radius: var(--border-radius);
-            background-color: var(--surface-color);
+            background-color: var(--color-background);
             cursor: pointer;
             border: none;
             padding: 0 18px;
@@ -81,7 +81,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--on-surface-color);
+            color: var(--color-on-surface);
             text-decoration: none;
 
             @media screen and (max-width: 1024px) {
@@ -91,17 +91,17 @@
             }
 
             &:hover {
-                background-color: var(--neutral-color);
+                background-color: var(--color-neutral);
             }
 
             &.active {
-                background-color: var(--accent-color);
-                color: var(--on-accent-color);
+                background-color: var(--color-accent);
+                color: var(--color-on-accent);
             }
 
             &.active:hover {
-                background-color: var(--accent-color-dark);
-                color: var(--on-accent-color-dark);
+                background-color: var(--color-accent-dark);
+                color: var(--color-on-surface);
             }
 
             & > span {

@@ -99,7 +99,7 @@
 }
 
 .chart.bar .x-axis {
-    background-color: var(--surface-color);
+    background-color: var(--color-background);
 }
 
 .chart.bar .y-axis .labels {
@@ -114,7 +114,7 @@
     flex-grow: 0;
     position: sticky;
     left: 0;
-    background-color: var(--surface-color);
+    background-color: var(--color-background);
     z-index: 2;
     padding-right: 12px;
 }
@@ -144,7 +144,7 @@
 
 .chart.bar .grid .line {
     height: 2px;
-    background-color: var(--border-color);
+    background-color: var(--color-neutral-light);
 }
 
 .chart.bar .scroll-container {

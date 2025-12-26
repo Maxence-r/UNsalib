@@ -1,8 +1,8 @@
 #dashboard {
     width: 100%;
     height: 100%;
-    background-color: var(--background-color);
-    color: var(--on-background-color);
+    background-color: var(--color-background-dark);
+    color: var(--color-on-surface);
     display: flex;
 
     @media screen and (max-width: 425px) {

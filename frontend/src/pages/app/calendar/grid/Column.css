@@ -3,7 +3,7 @@
     position: relative;
     flex-direction: row;
     flex: 1;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--color-neutral-light);
 }
 
 .cell:last-child,
@@ -12,9 +12,9 @@
 }
 
 .column:has(.calendar-top.selected) .cell {
-    background-color: var(--neutral-color-light);
+    background-color: var(--color-neutral-light);
 }
 
 .column:has(.calendar-top.selected) .cell {
-    border-bottom: 2px solid var(--neutral-color);
+    border-bottom: 2px solid var(--color-neutral);
 }

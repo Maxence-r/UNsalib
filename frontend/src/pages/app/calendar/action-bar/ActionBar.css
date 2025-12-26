@@ -29,7 +29,7 @@
 }
 
 .main .action-bar>.week-switcher>.infos {
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
     font-weight: 600;
     font-size: 14px;
     display: flex;
@@ -47,7 +47,7 @@
 }
 
 .main .action-bar>.week-switcher>.infos .week {
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
 }
 
 .main .action-bar>.week-switcher>.infos .week.mobile {
@@ -79,7 +79,7 @@
 /* Current room box rules */
 
 .main .action-bar>.current-room {
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;

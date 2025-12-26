@@ -5,13 +5,13 @@
     min-height: 50px;
     border-radius: var(--border-radius);
     padding: 0px 16px;
-    background-color: var(--neutral-color-light);
+    background-color: var(--color-neutral-light);
     border: none;
     outline: none;
-    color: var(--on-neutral-color-light);
+    color: var(--color-on-surface);
 }
 
 .input::placeholder {
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
     font-size: 14px;
 }

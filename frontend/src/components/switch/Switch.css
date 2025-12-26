@@ -18,7 +18,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--neutral-color);
+    background-color: var(--color-neutral);
     transition: var(--animation-duration) background-color;
     border-radius: 100px;
 }
@@ -30,13 +30,13 @@
     width: 12px;
     left: 6px;
     bottom: 6px;
-    background-color: var(--on-accent-color);
+    background-color: var(--color-on-accent);
     transition: var(--animation-duration) transform;
     border-radius: 100px;
 }
 
 .switch-input:checked+.switch-slider {
-    background-color: var(--accent-color);
+    background-color: var(--color-accent);
 }
 
 .switch:hover .switch-slider::before {
@@ -64,7 +64,7 @@
 }
 
 .switch-view-desc {
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
     font-size: 14px;
 }
 

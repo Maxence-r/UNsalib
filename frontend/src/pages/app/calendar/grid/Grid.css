@@ -6,7 +6,7 @@
     height: 100%;
     border-radius: var(--border-radius) 0 0 0;
     overflow: hidden;
-    background-color: var(--background-color);
+    background-color: var(--color-background-dark);
     transition: background-color var(--animation-duration);
 }
 
@@ -24,7 +24,7 @@
     flex-direction: column;
     min-width: 70px;
     height: 100%;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--color-neutral-light);
 }
 
 /* Grid rules */
@@ -52,7 +52,7 @@
 }
 
 .calendar .grid-pattern .cell {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--color-neutral-light);
     min-width: 120px;
 }
 
@@ -98,7 +98,7 @@
     margin-top: 0;
     border: none;
     border-right: 1px solid;
-    border-image: linear-gradient(to bottom, transparent 70%, var(--border-color) 30%) 1 100%;
+    border-image: linear-gradient(to bottom, transparent 70%, var(--color-neutral-light) 30%) 1 100%;
 }
 
 @media screen and (max-width: 1024px) {
@@ -111,10 +111,10 @@
     text-align: right;
     font-size: 14px;
     font-weight: 600;
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
     flex-grow: 1;
     margin-top: -9px;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid var(--color-neutral-light);
     padding-right: 12px;
 }
 
@@ -124,7 +124,7 @@
 
 .calendar .grid .headers {
     width: 100%;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--color-neutral-light);
     display: grid;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
@@ -139,10 +139,10 @@
 
 .calendar .grid .headers .header {
     /* flex-grow: 1; */
-    /* border-bottom: 1px solid var(--border-color); */
+    /* border-bottom: 1px solid var(--color-neutral-light); */
     font-size: 14px;
     font-weight: 600;
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
     display: flex;
     align-items: start;
     justify-content: center;
@@ -150,7 +150,7 @@
     padding-bottom: 24px;
     border-left: 1px solid;
     border-right: 1px solid;
-    border-image: linear-gradient(to bottom, transparent 70%, var(--border-color) 30%) 1 100%;
+    border-image: linear-gradient(to bottom, transparent 70%, var(--color-neutral-light) 30%) 1 100%;
     min-width: 120px;
 }
 
@@ -161,6 +161,6 @@
 }
 
 .calendar .grid .headers .header>.day-number {
-    color: var(--on-background-color);
+    color: var(--color-on-surface);
     margin-left: 4px;
 }

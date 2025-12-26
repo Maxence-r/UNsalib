@@ -15,12 +15,12 @@
     gap: 8px;
     padding: 8px 14px;
     border-radius: 6px;
-    border: 1px solid var(--neutral-color);
+    border: 1px solid var(--color-neutral);
     cursor: pointer;
 }
 
 .tag.selected {
-    outline: 2px solid var(--accent-color);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
 }
 
@@ -97,17 +97,17 @@ input[type=number] {
     text-align: center;
     font-family: "Space Grotesk", sans-serif;
     border-radius: 6px;
-    border: 1px solid var(--neutral-color-light);
+    border: 1px solid var(--color-neutral-light);
     font-weight: 400;
     padding: 3px 4px;
     outline: none;
     -moz-appearance: textfield;
-    background-color: var(--neutral-color-light);
-    color: var(--on-neutral-color-light);
+    background-color: var(--color-neutral-light);
+    color: var(--color-on-surface);
 }
 
 .time-picker>input:focus {
-    outline: 2px solid var(--accent-color);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
 }
 
@@ -121,13 +121,13 @@ input[type=number] {
     width: 100%;
     height: 6px;
     border-radius: 5px;
-    background: var(--neutral-color-light);
+    background: var(--color-neutral-light);
     outline: none;
     transition: background .2s;
 }
 
 .slider:hover {
-    background: var(--neutral-color);
+    background: var(--color-neutral);
 }
 
 .slider::-webkit-slider-thumb {
@@ -136,7 +136,7 @@ input[type=number] {
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background: var(--accent-color);
+    background: var(--color-accent);
     cursor: pointer;
 }
 
@@ -144,7 +144,7 @@ input[type=number] {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: var(--accent-color);
+    background: var(--color-accent);
     cursor: pointer;
 }
 
@@ -159,7 +159,7 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
 }
 
 .sliders {
@@ -177,7 +177,7 @@ input[type=number] {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
 }
 
 .slide-selector>.slidecontainer {

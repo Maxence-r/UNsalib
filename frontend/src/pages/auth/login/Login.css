@@ -8,7 +8,7 @@
     }
 
     & h2 {
-        color: var(--neutral-color-dark);
+        color: var(--color-neutral-dark);
         margin-block: 0;
         margin-bottom: 24px;
         text-align: center;
@@ -19,10 +19,10 @@
     }
 
     & .error {
-        background: var(--error-color);
+        background: var(--color-error);
         border-radius: var(--border-radius);
         padding: 16px;
-        color: var(--on-error-color);
+        color: var(--color-on-error);
         font-size: 14px;
         display: flex;
         align-items: center;

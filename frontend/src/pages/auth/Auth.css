@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--background-color);
+    background-color: var(--color-background-dark);
     transition: background-color var(--animation-duration);
     height: 100%;
     width: 100%;
@@ -14,11 +14,11 @@
         padding: 24px;
         width: 450px;
         overflow: hidden;
-        background-color: var(--surface-color);
-        color: var(--on-surface-color);
+        background-color: var(--color-background);
+        color: var(--color-on-surface);
         border-radius: var(--border-radius);
         transition: background-color var(--animation-duration);
-        border: 2px solid var(--border-color);
+        border: 2px solid var(--color-neutral-light);
 
         @media screen and (max-width: 498px) {
             & {

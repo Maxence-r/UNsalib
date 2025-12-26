@@ -1,9 +1,9 @@
 #app {
     display: flex;
     flex-direction: row;
-    background-color: var(--surface-color);
+    background-color: var(--color-background);
     transition: background-color var(--animation-duration);
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
     height: 100%;
     width: 100%;
 }
@@ -61,14 +61,14 @@
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
 }
 
 .centered>p {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
 }
 
 .browsers {
@@ -86,7 +86,7 @@
     align-items: center;
     padding: 8px;
     background-color: aliceblue;
-    border: 1px solid var(--neutral-color-light);
+    border: 1px solid var(--color-neutral-light);
     border-radius: 12px;
     gap: 8px;
 }
@@ -100,11 +100,11 @@
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
 }
 
 .numb {
-    color: var(--accent-color);
+    color: var(--color-accent);
     font-weight: 800;
 }
 

@@ -61,41 +61,41 @@
 /* Primary */
 
 .button.primary {
-    background-color: var(--accent-color);
-    color: var(--on-accent-color);
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
 }
 
 .button.primary:hover {
-    background-color: var(--accent-color-dark);
+    background-color: var(--color-accent-dark);
 }
 
 .button.primary:disabled {
-    background-color: var(--neutral-color-light);
-    color: var(--neutral-color-dark);
+    background-color: var(--color-neutral-light);
+    color: var(--color-neutral-dark);
 }
 
 .button.primary.loading::after {
-    background-color: var(--neutral-color-light);
-    border-top-color: var(--neutral-color-dark);
+    background-color: var(--color-neutral-light);
+    border-top-color: var(--color-neutral-dark);
 }
 
 /* Secondary */
 
 .button.secondary {
     background-color: transparent;
-    color: var(--on-surface-color);
+    color: var(--color-on-surface);
 }
 
 .button.secondary:hover {
-    background-color: var(--neutral-color);
+    background-color: var(--color-neutral);
 }
 
 .button.secondary:disabled {
-    color: var(--neutral-color-dark);
+    color: var(--color-neutral-dark);
     background-color: transparent;
 }
 
 .button.secondary.loading::after {
     background-color: transparent;
-    border-top-color: var(--neutral-color-dark);
+    border-top-color: var(--color-neutral-dark);
 }

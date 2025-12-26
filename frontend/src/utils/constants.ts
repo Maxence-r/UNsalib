@@ -32,17 +32,19 @@ const THEME: {
     [key: string]: { [key: string]: string | { light: string; dark: string } };
 } = {
     color: {
-        accent: { light: "#3452FF", dark: "#3452FF" },
-        accentDark: { light: "#1F2DFF", dark: "#1F2DFF" },
+        accent: "#3452FF",
+        accentDark: "#1F2DFF",
+        onAccent: "#FFFFFF",
         neutralLight: { light: "#EFEFF4", dark: "#242528" },
-        neutral: { light: "#DEDEE2", dark: "#DEDEE2" },
+        neutral: { light: "#DEDEE2", dark: "#404044" },
         neutralDark: { light: "#6F7073", dark: "#7E7F83" },
-        success: { light: "#44C235", dark: "#44C235" },
-        error: { light: "#E64242", dark: "#E64242" },
-        surface: { light: "#FFFFFF", dark: "#FFFFFF" },
-        surfaceDark: { light: "#F9F9FC", dark: "#F9F9FC" },
-        onLight: { light: "#FFFFFF", dark: "#F6F7FA" },
-        onDark: { light: "#010205", dark: "#010205" },
+        background: { light: "#FFFFFF", dark: "#121216" },
+        backgroundDark: { light: "#F9F9FC", dark: "#16161A" },
+        onSurface: { light: "#010205", dark: "#F6F7FA" },
+        success: "#44C235",
+        onSuccess: "#FFFFFF",
+        error: "#E64242",
+        onError: "#FFFFFF",
     },
     radius: {
         normal: "12px",

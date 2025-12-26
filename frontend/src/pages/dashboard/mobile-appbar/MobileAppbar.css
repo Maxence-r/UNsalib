@@ -7,8 +7,8 @@
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
     gap: 18px;
     position: relative;
-    border-bottom: 2px solid var(--border-color);
-    background-color: var(--surface-color);
+    border-bottom: 2px solid var(--color-neutral-light);
+    background-color: var(--color-background);
 
     & h2 {
         margin-block: 0px;
@@ -54,7 +54,7 @@
             position: absolute;
             height: 100%;
             width: 80%;
-            background-color: var(--surface-color);
+            background-color: var(--color-background);
             z-index: 2;
             transform: translateX(-100%);
             transition: transform var(--animation-duration);

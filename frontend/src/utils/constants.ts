@@ -28,6 +28,27 @@ const MIN_WIDTH_BREAKPOINTS = {
     desktop: 1024,
 };
 
+const THEME: {
+    [key: string]: { [key: string]: string | { light: string; dark: string } };
+} = {
+    color: {
+        accent: { light: "#3452FF", dark: "#3452FF" },
+        accentDark: { light: "#1F2DFF", dark: "#1F2DFF" },
+        neutralLight: { light: "#EFEFF4", dark: "#242528" },
+        neutral: { light: "#DEDEE2", dark: "#DEDEE2" },
+        neutralDark: { light: "#6F7073", dark: "#7E7F83" },
+        success: { light: "#44C235", dark: "#44C235" },
+        error: { light: "#E64242", dark: "#E64242" },
+        surface: { light: "#FFFFFF", dark: "#FFFFFF" },
+        surfaceDark: { light: "#F9F9FC", dark: "#F9F9FC" },
+        onLight: { light: "#FFFFFF", dark: "#F6F7FA" },
+        onDark: { light: "#010205", dark: "#010205" },
+    },
+    radius: {
+        normal: "12px",
+    },
+};
+
 export {
     START_DAY_HOUR,
     END_DAY_HOUR,
@@ -36,5 +57,6 @@ export {
     VERSION_NUMBER,
     VERSION_NAME,
     PALETTE_HEX,
-    MIN_WIDTH_BREAKPOINTS
+    MIN_WIDTH_BREAKPOINTS,
+    THEME,
 };

@@ -11,9 +11,12 @@ import "@fontsource/cal-sans/400.css";
 import "../utils/theme.css";
 import "./main.css";
 import { router } from "./Router.js";
+import { ThemeProvider } from "../utils/ThemeProvider.js";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <RouterProvider router={router} />
+        <ThemeProvider>
+            <RouterProvider router={router} />
+        </ThemeProvider>
     </StrictMode>,
 );

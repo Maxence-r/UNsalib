@@ -312,7 +312,7 @@ function Modal({
                 style={{
                     opacity: scrimOpacity,
                     transition: transitionEnabled
-                        ? `opacity ${transitionDuration}s`
+                        ? `opacity ${transitionDuration}s ${ANIMATION.FUNCTION}`
                         : "none",
                 }}
                 onClick={handleClose}

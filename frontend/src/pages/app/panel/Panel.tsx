@@ -7,7 +7,7 @@ import { Header } from "./header/Header.js";
 import type { ApiDataRoom } from "../../../utils/types/api.type.js";
 import {
     usePanelStore,
-    useSelectedRoomStore,
+    useCurrentRoomStore,
 } from "../../../stores/app.store.js";
 import { RoomsList } from "./rooms-list/RoomsList.js";
 import "./Panel.css";
@@ -23,7 +23,7 @@ import { useModal } from "../../../components/modal/Modal.js";
 function ActionsContainer() {
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
-    const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
+    const setCurrentRoom = useCurrentRoomStore((state) => state.setRoom);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
     const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);
     const { open: openAboutPictosModal } = useModal(
@@ -34,7 +34,7 @@ function ActionsContainer() {
     const loadTimetable = (room: ApiDataRoom) => {
         // pushToHistory("panel", openPanel);
         closePanel();
-        setSelectedRoom(room.id, room.name.toUpperCase());
+        setCurrentRoom(room.id, room.name.toUpperCase());
     };
 
     const normalizeString = (value: string) => {

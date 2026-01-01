@@ -24,7 +24,7 @@ function ActionBar({
     weekNumber,
     weekStartDate,
 }: {
-    currentRoom: string | null;
+    currentRoom?: string;
     incrementDispatch: (
         action: "increase" | "decrease" | "reset-previous" | "reset",
     ) => void;

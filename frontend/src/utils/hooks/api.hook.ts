@@ -45,7 +45,8 @@ function useApi<T>(
         return () => {
             cancelled = true;
         };
-    }, [...deps, apiCall]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps);
 
     return { data, isLoading, error };
 }

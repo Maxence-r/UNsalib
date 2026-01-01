@@ -6,33 +6,34 @@
     top: 0;
     right: 0;
 
-    & .scrim {
+    & > .scrim {
         background-color: var(--scrim-color);
         position: absolute;
         height: 100%;
         width: 100%;
         z-index: 1;
+        cursor: pointer;
     }
 
-    & .sheet {
+    & > .sheet {
         position: absolute;
         bottom: 0;
         right: 0;
         z-index: 2;
-        background-color: var(--surface-color);
+        background-color: var(--color-background);
         display: flex;
         flex-direction: column;
 
-        & .handle {
+        & > .handle {
             width: 40px;
             height: 4px;
-            background-color: var(--neutral-color);
+            background-color: var(--color-neutral);
             border-radius: 2px;
             margin: 14px auto;
             flex-shrink: 0;
         }
 
-        & .content {
+        & > .content {
             flex-grow: 1;
             width: 100%;
             padding: 24px;

@@ -12,7 +12,6 @@ import {
 import { RoomsList } from "./rooms-list/RoomsList.js";
 import "./Panel.css";
 // import { pushToHistory } from "../../../utils/navigation.js";
-import { createPortal } from "react-dom";
 import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 import { SearchModal } from "./modals/SearchModal.js";
 import { Badge } from "../../../components/badge/Badge.js";
@@ -20,13 +19,7 @@ import { useApi } from "../../../utils/hooks/api.hook.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { getRoomsList } from "../../../api/rooms.api.js";
 
-function ActionsContainer({
-    isSearchModalOpen,
-    setIsSearchModalOpen,
-}: {
-    isSearchModalOpen: boolean;
-    setIsSearchModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+function ActionsContainer() {
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
@@ -96,13 +89,10 @@ function ActionsContainer({
                 <Badge text="Filtrées" />
                 <div className="actions">
                     <IconButton icon={<FunnelX />} secondary />
-                    {createPortal(
-                        <AboutPictosModal
-                            isOpen={isAboutPictosModalOpen}
-                            setIsOpen={setIsAboutPictosModalOpen}
-                        />,
-                        document.body,
-                    )}
+                    <AboutPictosModal
+                        isOpen={isAboutPictosModalOpen}
+                        setIsOpen={setIsAboutPictosModalOpen}
+                    />
                     <IconButton
                         icon={<Info />}
                         onClick={() => {
@@ -110,14 +100,6 @@ function ActionsContainer({
                         }}
                         secondary
                     />
-                    {createPortal(
-                        <SearchModal
-                            isOpen={isSearchModalOpen}
-                            setIsOpen={setIsSearchModalOpen}
-                            // availableRoomsListHook={filteredRooms}
-                        />,
-                        document.body,
-                    )}
                 </div>
             </div>
             <RoomsList
@@ -141,15 +123,17 @@ export default function Panel() {
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
             <Header />
-            <ActionsContainer
-                isSearchModalOpen={isSearchModalOpen}
-                setIsSearchModalOpen={setIsSearchModalOpen}
-            />
+            <ActionsContainer />
             <TextButton
                 className="search-button"
                 text="Chercher une salle"
                 icon={<Search />}
                 onClick={handleSearchButtonClick}
+            />
+            <SearchModal
+                isOpen={isSearchModalOpen}
+                setIsOpen={setIsSearchModalOpen}
+                // availableRoomsListHook={filteredRooms}
             />
         </div>
     );

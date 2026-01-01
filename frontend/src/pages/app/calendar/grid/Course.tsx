@@ -1,10 +1,8 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
-
 import type { ApiDataCourse } from "../../../../utils/types/api.type.js";
 import { CourseModal } from "../modals/CourseModal.js";
 import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
+import { useModal } from "../../../../components/modal/Modal.js";
 
 function buildModuleNamesString(modules: string[], category: string): string {
     const moduleNames = modules.map((module) => module.split(" - ")[1]);
@@ -48,12 +46,23 @@ function getCourseHeightPercent(
 }
 
 function Course({ course }: { course: ApiDataCourse }) {
-    const [isCourseModalOpen, setIsCourseModalOpen] = useState<boolean>(false);
-
     const moduleNames = buildModuleNamesString(course.modules, course.category);
     const courseDurationMinutes = getCourseDurationMinutes(
         course.start,
         course.end,
+    );
+
+    const { open: openCourseModal } = useModal(
+        `course-${course.courseId}`,
+        <CourseModal
+            startDate={course.start}
+            endDate={course.end}
+            color={course.color}
+            groups={course.groups}
+            moduleNamesString={moduleNames}
+            modules={course.modules}
+            teachers={course.teachers}
+        />,
     );
 
     return (
@@ -69,24 +78,8 @@ function Course({ course }: { course: ApiDataCourse }) {
                 // TODO: handle concurrent courses
             }}
             className="course"
-            onClick={() => {
-                setIsCourseModalOpen(true);
-            }}
+            onClick={openCourseModal}
         >
-            {createPortal(
-                <CourseModal
-                    isOpen={isCourseModalOpen}
-                    setIsOpen={setIsCourseModalOpen}
-                    startDate={course.start}
-                    endDate={course.end}
-                    color={course.color}
-                    groups={course.groups}
-                    moduleNamesString={moduleNames}
-                    modules={course.modules}
-                    teachers={course.teachers}
-                />,
-                document.body,
-            )}
             <h2>{moduleNames}</h2>
             <p>
                 {course.teachers.length > 0 ? course.teachers.join(" ; ") : ""}

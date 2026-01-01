@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
 import { IconButton } from "../../../../components/button/Button.js";
-import { createPortal } from "react-dom";
 import { SafariInstallModal } from "../modals/SafariInstallModal.js";
+import { useModal } from "../../../../components/modal/Modal.js";
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -12,7 +12,10 @@ interface BeforeInstallPromptEvent extends Event {
 function InstallButton() {
     const [deferredPrompt, setDeferredPrompt] =
         useState<BeforeInstallPromptEvent | null>(null);
-    const [isSafariModalOpen, setIsSafariModalOpen] = useState<boolean>(false);
+    const { open: openSafariInstallModal } = useModal(
+        "safari-install",
+        <SafariInstallModal />,
+    );
 
     const handleButtonClick = async () => {
         if (deferredPrompt) {
@@ -26,7 +29,7 @@ function InstallButton() {
                 console.log("The user has denied the installation of the PWA");
             }
         } else {
-            setIsSafariModalOpen(true);
+            openSafariInstallModal();
         }
     };
 
@@ -63,20 +66,7 @@ function InstallButton() {
     }
 
     return (
-        <>
-            {createPortal(
-                <SafariInstallModal
-                    isOpen={isSafariModalOpen}
-                    setIsOpen={setIsSafariModalOpen}
-                />,
-                document.body,
-            )}
-            <IconButton
-                onClick={handleButtonClick}
-                icon={<Download />}
-                secondary
-            />
-        </>
+        <IconButton onClick={handleButtonClick} icon={<Download />} secondary />
     );
 }
 

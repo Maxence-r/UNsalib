@@ -1,21 +1,17 @@
 import { Info } from "lucide-react";
-import { useState } from "react";
 
 import "./Header.css";
 import { IconButton } from "../../../../components/button/Button.js";
 import CampusBannerUrl from "../../../../assets/imgs/campus/sciences-et-techniques.jpg";
 import { AboutModal } from "../modals/AboutModal.js";
 import { InstallButton } from "./InstallButton.js";
+import { useModal } from "../../../../components/modal/Modal.js";
 
 function Header() {
-    const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
+    const { open: openAboutModal } = useModal("about", <AboutModal />);
 
     return (
         <header className="header">
-            <AboutModal
-                isOpen={isAboutModalOpen}
-                setIsOpen={setIsAboutModalOpen}
-            />
             <div className="top-bar">
                 <div className="branding">
                     <img src="/logo96.png" alt="UNsalib logo" />
@@ -24,9 +20,7 @@ function Header() {
                 <div className="actions">
                     <InstallButton />
                     <IconButton
-                        onClick={() => {
-                            setIsAboutModalOpen(true);
-                        }}
+                        onClick={openAboutModal}
                         icon={<Info />}
                         secondary
                     />

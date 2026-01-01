@@ -1,7 +1,6 @@
 import { Users, Monitor, Eye, Lock } from "lucide-react";
 
 import { TextButton } from "../../../../components/button/Button";
-import { Modal } from "../../../../components/modal/Modal";
 import "./AboutPictosModal.css";
 
 const PICTOS = [
@@ -11,32 +10,20 @@ const PICTOS = [
     { desc: "Salle à badge", icon: <Lock /> },
 ];
 
-function AboutPictosModal({
-    isOpen,
-    setIsOpen,
-}: {
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-    const handleCloseButtonClick = () => {
-        setIsOpen(false);
-    };
-
+function AboutPictosModal({ close }: { close?: () => void }) {
     return (
-        <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
-            <div className="about-pictos">
-                <div className="pictos">
-                    {PICTOS.map((picto) => (
-                        <div className="option" key={picto.desc}>
-                            <p>{picto.desc}</p>
-                            {picto.icon}
-                        </div>
-                    ))}
-                </div>
-
-                <TextButton onClick={handleCloseButtonClick} text="Compris !" />
+        <div className="about-pictos">
+            <div className="pictos">
+                {PICTOS.map((picto) => (
+                    <div className="option" key={picto.desc}>
+                        <p>{picto.desc}</p>
+                        {picto.icon}
+                    </div>
+                ))}
             </div>
-        </Modal>
+
+            <TextButton onClick={close} text="Compris !" />
+        </div>
     );
 }
 

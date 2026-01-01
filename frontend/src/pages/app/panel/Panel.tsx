@@ -18,15 +18,18 @@ import { Badge } from "../../../components/badge/Badge.js";
 import { useApi } from "../../../utils/hooks/api.hook.js";
 import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { getRoomsList } from "../../../api/rooms.api.js";
+import { useModal } from "../../../components/modal/Modal.js";
 
 function ActionsContainer() {
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
-    const [isAboutPictosModalOpen, setIsAboutPictosModalOpen] =
-        useState<boolean>(false);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
     const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);
+    const { open: openAboutPictosModal } = useModal(
+        "about-pictos",
+        <AboutPictosModal />,
+    );
 
     const loadTimetable = (room: ApiDataRoom) => {
         // pushToHistory("panel", openPanel);
@@ -89,15 +92,9 @@ function ActionsContainer() {
                 <Badge text="Filtrées" />
                 <div className="actions">
                     <IconButton icon={<FunnelX />} secondary />
-                    <AboutPictosModal
-                        isOpen={isAboutPictosModalOpen}
-                        setIsOpen={setIsAboutPictosModalOpen}
-                    />
                     <IconButton
                         icon={<Info />}
-                        onClick={() => {
-                            setIsAboutPictosModalOpen(true);
-                        }}
+                        onClick={openAboutPictosModal}
                         secondary
                     />
                 </div>
@@ -114,11 +111,11 @@ function ActionsContainer() {
 
 export default function Panel() {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
-    const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
-    const handleSearchButtonClick = () => {
-        setIsSearchModalOpen(true);
-    };
+    const { open: openSearchModal } = useModal(
+        "search",
+        <SearchModal />,
+    );
 
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
@@ -128,12 +125,7 @@ export default function Panel() {
                 className="search-button"
                 text="Chercher une salle"
                 icon={<Search />}
-                onClick={handleSearchButtonClick}
-            />
-            <SearchModal
-                isOpen={isSearchModalOpen}
-                setIsOpen={setIsSearchModalOpen}
-                // availableRoomsListHook={filteredRooms}
+                onClick={openSearchModal}
             />
         </div>
     );

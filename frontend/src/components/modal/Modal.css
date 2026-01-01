@@ -1,47 +1,50 @@
-.modal {
+.modals {
     position: fixed;
-    z-index: 999;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    right: 0;
 
-    & > .scrim {
-        background-color: var(--scrim-color);
-        position: absolute;
+    & > .modal {
+        position: fixed;
         height: 100%;
         width: 100%;
-        z-index: 1;
-        cursor: pointer;
-    }
-
-    & > .sheet {
-        position: absolute;
-        bottom: 0;
+        top: 0;
         right: 0;
-        z-index: 2;
-        background-color: var(--color-background);
-        display: flex;
-        flex-direction: column;
 
-        & > .handle {
-            width: 40px;
-            height: 4px;
-            background-color: var(--color-neutral);
-            border-radius: 2px;
-            margin: 14px auto;
-            flex-shrink: 0;
+        & > .scrim {
+            background-color: var(--scrim-color);
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+            cursor: pointer;
         }
 
-        & > .content {
-            flex-grow: 1;
-            width: 100%;
-            padding: 24px;
+        & > .sheet {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 2;
+            background-color: var(--color-background);
+            display: flex;
+            flex-direction: column;
 
-            @media screen and (max-width: 1024px) {
-                & {
-                    padding: 0 20px 20px;
-                    scrollbar-width: none;
+            & > .handle {
+                width: 40px;
+                height: 4px;
+                background-color: var(--color-neutral);
+                border-radius: 2px;
+                margin: 14px auto;
+                flex-shrink: 0;
+            }
+
+            & > .content {
+                flex-grow: 1;
+                width: 100%;
+                padding: 24px;
+
+                @media screen and (max-width: 1024px) {
+                    & {
+                        padding: 0 20px 20px;
+                        scrollbar-width: none;
+                    }
                 }
             }
         }

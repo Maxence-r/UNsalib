@@ -1,11 +1,15 @@
 import {
+    cloneElement,
+    isValidElement,
     useCallback,
     useEffect,
     useRef,
     useState,
     type ReactNode,
+    type ReactElement,
     type TouchEvent,
 } from "react";
+import { create } from "zustand";
 
 import "./Modal.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
@@ -61,10 +65,12 @@ function Modal({
     children,
     isOpen,
     close,
+    depth,
 }: {
     children: ReactNode;
     isOpen: boolean;
     close: () => void;
+    depth: number;
 }) {
     const sheetRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -305,7 +311,7 @@ function Modal({
     return (
         <div
             className="modal"
-            style={{ pointerEvents: isOpen ? "auto" : "none" }}
+            style={{ pointerEvents: isOpen ? "auto" : "none", zIndex: depth }}
         >
             <div
                 className="scrim"
@@ -351,11 +357,95 @@ function Modal({
                     className="content"
                     style={{ overflowY: isMobile ? contentOverflow : "auto" }}
                 >
-                    {children}
+                    {isValidElement(children)
+                        ? cloneElement(
+                              children as ReactElement<{ close?: () => void }>,
+                              { close },
+                          )
+                        : children}
                 </div>
             </div>
         </div>
     );
 }
 
-export { Modal };
+interface ModalStore {
+    modals: { [id: string]: { contentRef: React.RefObject<ReactNode> } };
+    openModals: string[];
+    register: (id: string, contentRef: React.RefObject<ReactNode>) => void;
+    unregister: (id: string) => void;
+    open: (id: string) => void;
+    close: (id: string) => void;
+}
+
+const useModalStore = create<ModalStore>()((set) => ({
+    modals: {},
+    openModals: [],
+
+    register: (id, contentRef) =>
+        set((state) => {
+            if (Object.keys(state.modals).includes(id))
+                console.warn(`Duplicate modal ids found: ${id}`);
+
+            return {
+                modals: { [id]: { contentRef }, ...state.modals },
+            };
+        }),
+    unregister: (id) =>
+        set((state) => {
+            delete state.modals[id];
+            return {
+                modals: state.modals,
+            };
+        }),
+    open: (id) => set((state) => ({ openModals: [id, ...state.openModals] })),
+    close: (id) =>
+        set((state) => ({
+            openModals: state.openModals.filter((modalId) => modalId != id),
+        })),
+}));
+
+function ModalProvider({ zIndex }: { zIndex: number }) {
+    const modals = useModalStore((s) => s.modals);
+    const openModals = useModalStore((s) => s.openModals);
+    const close = useModalStore((s) => s.close);
+
+    return (
+        <div className="modals" style={{ zIndex: zIndex }}>
+            {Object.keys(modals).map((id) => (
+                <Modal
+                    isOpen={openModals.includes(id)}
+                    key={id}
+                    close={() => close(id)}
+                    depth={
+                        openModals.length > 0
+                            ? openModals.length - openModals.indexOf(id) + 1
+                            : 0
+                    }
+                >
+                    {modals[id].contentRef.current}
+                </Modal>
+            ))}
+        </div>
+    );
+}
+
+function useModal(id: string, content: ReactNode) {
+    const register = useModalStore((s) => s.register);
+    const unregister = useModalStore((s) => s.unregister);
+    const open = useModalStore((s) => s.open);
+
+    // Avoid loop re-renders when content use useModal
+    const contentRef = useRef<ReactNode>(content);
+
+    useEffect(() => {
+        register(id, contentRef);
+
+        return () => unregister(id);
+    }, [id, register, unregister]);
+
+    return { open: () => open(id) };
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { ModalProvider, useModal };

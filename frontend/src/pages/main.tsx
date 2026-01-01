@@ -12,11 +12,13 @@ import "../utils/theme.css";
 import "./main.css";
 import { router } from "./Router.js";
 import { ThemeProvider } from "../utils/ThemeProvider.js";
+import { ModalProvider } from "../components/modal/Modal.js";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider>
             <RouterProvider router={router} />
+            <ModalProvider zIndex={20} />
         </ThemeProvider>
     </StrictMode>,
 );

@@ -30,7 +30,8 @@
 
         & > h1 {
             font-size: 20px;
-            font-weight: 900;
+            font-family: "Cal Sans";
+            font-weight: normal;
             margin-block: 0;
         }
 
@@ -38,6 +39,8 @@
             height: 30px;
             width: auto;
             border-radius: 10px;
+            background-color: var(--color-accent);
+            padding: 1px;
         }
     }
 

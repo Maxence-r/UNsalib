@@ -3,8 +3,8 @@ import { compare } from "bcrypt";
 
 import { Account } from "../models/account.model.js";
 import { config } from "../configs/app.config.js";
-import { Token } from "models/token.model.js";
-import { ApiError } from "middlewares/error.middleware.js";
+import { Token } from "../models/token.model.js";
+import { ApiError } from "../middlewares/error.middleware.js";
 
 class AccountsService {
     /**

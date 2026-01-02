@@ -3,7 +3,7 @@ import { matchedData } from "express-validator";
 
 import { accountsService } from "../services/accounts.service.js";
 import { ApiError } from "../middlewares/error.middleware.js";
-import { config } from "configs/app.config.js";
+import { config } from "../configs/app.config.js";
 
 class AuthController {
     /**

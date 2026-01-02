@@ -1,7 +1,7 @@
 import { Schema, Types, model, type InferSchemaType } from "mongoose";
 import jwt from "jsonwebtoken";
 
-import { config } from "configs/app.config.js";
+import { config } from "../configs/app.config.js";
 
 type AccountSchemaProperties = InferSchemaType<typeof AccountSchema>;
 

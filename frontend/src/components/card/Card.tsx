@@ -1,53 +1,49 @@
 import type { ReactNode } from "react";
 
-import "../../utils/theme.css";
 import "./Card.css";
 
-export function CardHeader({ children }: { children: string }) {
+function CardHeader({ text }: { text: string }) {
     return (
-        <div className="card-header">
-            <h3>{children}</h3>
-        </div>
-    )
-}
-
-export function CardContent({ children }: { children: ReactNode }) {
-    return (
-        <div className="card-content">
-            {children}
-        </div>
-    )
-}
-
-export function CardActions({ children }: { children: ReactNode }) {
-    return (
-        <div className="card-actions">
-            {children}
-        </div>
-    )
-}
-
-export function Card({
-    className,
-    children,
-    id,
-    highlighted,
-    elevated,
-    isLoading
-}: {
-    className: string,
-    children: ReactNode,
-    id: string,
-    highlighted: boolean,
-    elevated: boolean,
-    isLoading: boolean
-}) {
-    return (
-        <div className={`card${highlighted ? " highlighted" : ""}${elevated ? " elevated" : ""} ${className}`} id={id}>
-            {children}
-            {isLoading && <div className="loader"></div>}
+        <div className="header">
+            <h3>{text}</h3>
         </div>
     );
 }
 
-Card.defaultProps = { className: "", id: "", highlighted: false, elevated: false, isLoading: false };
+function CardContent({ children }: { children: ReactNode }) {
+    return <div className="content">{children}</div>;
+}
+
+function CardActions({ children }: { children: ReactNode }) {
+    return <div className="actions">{children}</div>;
+}
+
+function Card({
+    className,
+    id,
+    children,
+    highlighted = false,
+    secondary = false,
+    isLoading = false,
+}: {
+    className?: string;
+    id?: string;
+    children: ReactNode;
+    highlighted?: boolean;
+    secondary?: boolean;
+    isLoading?: boolean;
+}) {
+    let classes = "card";
+    classes += secondary ? " secondary" : "";
+    classes += highlighted ? " highlighted" : "";
+    classes += className ? ` ${className}` : "";
+    
+    return (
+        <div className={classes} id={id}>
+            {children}
+            {isLoading && <div className="loader" />}
+        </div>
+    );
+}
+
+export { CardHeader, CardContent, CardActions, Card };

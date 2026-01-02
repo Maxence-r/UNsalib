@@ -371,7 +371,7 @@ function Modal({
 
 interface ModalStore {
     modals: { [id: string]: { contentRef: React.RefObject<ReactNode> } };
-    openModals: string[];
+    openModalsStack: string[];
     register: (id: string, contentRef: React.RefObject<ReactNode>) => void;
     unregister: (id: string) => void;
     open: (id: string) => void;
@@ -380,7 +380,7 @@ interface ModalStore {
 
 const useModalStore = create<ModalStore>()((set) => ({
     modals: {},
-    openModals: [],
+    openModalsStack: [],
 
     register: (id, contentRef) =>
         set((state) => {
@@ -398,28 +398,28 @@ const useModalStore = create<ModalStore>()((set) => ({
                 modals: state.modals,
             };
         }),
-    open: (id) => set((state) => ({ openModals: [id, ...state.openModals] })),
+    open: (id) => set((state) => ({ openModalsStack: [id, ...state.openModalsStack] })),
     close: (id) =>
         set((state) => ({
-            openModals: state.openModals.filter((modalId) => modalId != id),
+            openModalsStack: state.openModalsStack.filter((modalId) => modalId != id),
         })),
 }));
 
 function ModalProvider({ zIndex }: { zIndex: number }) {
     const modals = useModalStore((s) => s.modals);
-    const openModals = useModalStore((s) => s.openModals);
+    const openModalsStack = useModalStore((s) => s.openModalsStack);
     const close = useModalStore((s) => s.close);
 
     return (
         <div className="modals" style={{ zIndex: zIndex }}>
             {Object.keys(modals).map((id) => (
                 <Modal
-                    isOpen={openModals.includes(id)}
+                    isOpen={openModalsStack.includes(id)}
                     key={id}
                     close={() => close(id)}
                     depth={
-                        openModals.length > 0
-                            ? openModals.length - openModals.indexOf(id) + 1
+                        openModalsStack.length > 0
+                            ? openModalsStack.length - openModalsStack.indexOf(id) + 1
                             : 0
                     }
                 >

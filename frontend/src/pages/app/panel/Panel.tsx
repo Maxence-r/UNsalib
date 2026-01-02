@@ -22,7 +22,7 @@ import { useToast } from "../../../components/toast/Toast.js";
 
 function ActionsContainer() {
     const closePanel = usePanelStore((state) => state.close);
-    const openPanel = usePanelStore((state) => state.open);
+    // const openPanel = usePanelStore((state) => state.open);
     const setCurrentRoom = useCurrentRoomStore((state) => state.setRoom);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
     const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);

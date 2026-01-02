@@ -35,7 +35,7 @@ const THEME: {
         accent: "#3452FF",
         accentDark: "#1F2DFF",
         onAccent: "#FFFFFF",
-        neutralLight: { light: "#EFEFF4", dark: "#242528" },
+        neutralLight: { light: "#F1F2F5", dark: "#242528" },
         neutral: { light: "#DEDEE2", dark: "#404044" },
         neutralDark: { light: "#6F7073", dark: "#7E7F83" },
         background: { light: "#FFFFFF", dark: "#121216" },

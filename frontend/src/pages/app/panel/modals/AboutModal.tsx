@@ -1,6 +1,6 @@
-import { Users, BookOpen, Smile, Link2, ArrowUpRight } from "lucide-react";
+// import { Users, BookOpen, Smile, Link2, ArrowUpRight } from "lucide-react";
 
-import { VERSION_NAME, VERSION_NUMBER } from "../../../../utils/constants.js";
+// import { VERSION_NAME, VERSION_NUMBER } from "../../../../utils/constants.js";
 import "./AboutModal.css";
 
 import {

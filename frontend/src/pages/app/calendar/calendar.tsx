@@ -1,7 +1,7 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { ChevronUp } from "lucide-react";
 
-import { useSelectedRoomStore } from "../../../stores/app.store.js";
+import { useCurrentRoomStore } from "../../../stores/app.store.js";
 import { TextButton } from "../../../components/button/Button.js";
 import "./calendar.css";
 // import {
@@ -11,7 +11,6 @@ import "./calendar.css";
 //     WEEK_DAYS,
 // } from "../../../utils/constants.js";
 // import CalendarContainer from "./grid/container.js";
-// import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 // import { goBack } from "../../../utils/navigation.js";
 // import type {
 //     ApiDataCourse,
@@ -21,6 +20,7 @@ import { ActionBar } from "./action-bar/ActionBar.js";
 import { Grid } from "./grid/Grid.js";
 import { useApi } from "../../../utils/hooks/api.hook.js";
 import { getRoomTimetable } from "../../../api/timetables.api.js";
+import { useToast } from "../../../components/toast/Toast.js";
 
 function incrementReducer(
     state: { value: number; previous: number },
@@ -93,7 +93,7 @@ function Calendar() {
     // const [increment, setIncrement] = useState(0);
     // const [previousIncrement, setPreviousIncrement] = useState(0);
     // const [timetableUrl, setTimetableUrl] = useState<string>("");
-    const selectedRoom = useSelectedRoomStore((state) => state.room);
+    const currentRoom = useCurrentRoomStore((state) => state.room);
 
     const [increment, incrementDispatch] = useReducer(incrementReducer, {
         value: 0,
@@ -119,44 +119,30 @@ function Calendar() {
     //     return () => clearInterval(interval);
     // }, [hourIndicatorValue]);
     // const timetableUrl = useMemo(() => {
-    //     if (selectedRoom.id != "") {
-    //         return `${import.meta.env.VITE_BACKEND_URL}/rooms/timetable?id=${selectedRoom.id}&increment=${increment.value}`;
+    //     if (currentRoom.id != "") {
+    //         return `${import.meta.env.VITE_BACKEND_URL}/rooms/timetable?id=${currentRoom.id}&increment=${increment.value}`;
     //     }
-    // }, [selectedRoom, increment]);
+    // }, [currentRoom, increment]);
 
     const {
         isLoading,
         data: courses,
         error,
     } = useApi(
-        () => getRoomTimetable(selectedRoom.id, increment.value),
-        [selectedRoom, increment],
+        () => getRoomTimetable(increment.value, currentRoom?.id),
+        [currentRoom?.id, increment.value],
     );
 
-    if (error) {
-        setToastMessage(
-            "Impossible de récupérer les données pour cette salle.",
-            true,
-        );
-        showToast();
-    }
+    const { open: openToast } = useToast();
 
-    // const courses = useMemo(() => {
-    //     if (error) {
-    //         // setToastMessage(
-    //         //     "Impossible de récupérer les données pour cette salle.",
-    //         //     true,
-    //         // );
-    //         // showToast();
-    //         incrementDispatch("reset-previous");
-    //     } else if (!isLoading && data) {
-    //         return data as ApiDataTimetable;
-    //     }
-    // }, [data, error, isLoading]);
+    useEffect(() => {
+        if (error)
+            openToast("Impossible de récupérer les données pour cette salle.");
+    }, [error, openToast]);
 
     return (
         <div className="main">
-            {isLoading && !selectedRoom.id && (
+            {isLoading && currentRoom && (
                 <div className="loader-indicator">
                     <span className="spin"></span>
                     <p>Chargement de l&apos;EDT...</p>
@@ -164,7 +150,7 @@ function Calendar() {
             )}
             <ActionBar
                 incrementDispatch={incrementDispatch}
-                currentRoom={selectedRoom.id ? selectedRoom.name : null}
+                currentRoom={currentRoom?.name}
                 weekNumber={courses ? courses.weekInfos.number : null}
                 weekStartDate={
                     courses ? new Date(courses.weekInfos.number) : null
@@ -179,7 +165,7 @@ function Calendar() {
                 <div className="current-room">
                     <p>Salle actuelle :</p>
                     <h2 id="room-name">
-                        {selectedRoom.id == "" ? "--" : selectedRoom.name}
+                        {currentRoom ? currentRoom.name : "--"}
                     </h2>
                 </div>
                 <TextButton

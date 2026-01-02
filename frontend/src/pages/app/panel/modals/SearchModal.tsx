@@ -2,11 +2,8 @@ import { useState, useEffect } from "react";
 
 import { TextButton } from "../../../../components/button/Button.js";
 import type { ApiDataRoom } from "../../../../utils/types/api.type.js";
-import {
-    showToast,
-    setToastMessage,
-} from "../../../../components/toast/Toast.js";
 import "./SearchModal.css";
+import { useToast } from "../../../../components/toast/Toast.js";
 
 function SearchModal({
     close,
@@ -22,6 +19,8 @@ function SearchModal({
     const [seats, setSeats] = useState(6);
     const [whiteBoards, setWhiteBoards] = useState(0);
     const [blackBoards, setBlackBoards] = useState(0);
+
+    const { open: openToast } = useToast();
 
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -102,9 +101,7 @@ function SearchModal({
                 errors.push("L'heure de fin doit être après l'heure de début.");
 
             if (errors.length > 0) {
-                setToastMessage(errors.join(" "), true);
-                showToast();
-
+                openToast(errors.join(" "));
                 launchSearch(false);
                 return;
             }
@@ -148,11 +145,9 @@ function SearchModal({
                 }
             } catch (e) {
                 console.error(e);
-                setToastMessage(
+                openToast(
                     "Impossible de rechercher une salle pour l'instant. Réessayez plus tard.",
-                    true,
                 );
-                showToast();
             } finally {
                 launchSearch(false);
                 if (close) close();
@@ -162,7 +157,24 @@ function SearchModal({
         if (searchLaunched) {
             render();
         }
-    }, [searchLaunched]);
+    }, [
+        blackBoards,
+        close,
+        day,
+        endHour,
+        endMinute,
+        ilotFeature,
+        month,
+        nobadgeFeature,
+        openToast,
+        searchLaunched,
+        seats,
+        startHour,
+        startMinute,
+        type,
+        visioFeature,
+        whiteBoards,
+    ]);
 
     return (
         <div className="filter-rooms">

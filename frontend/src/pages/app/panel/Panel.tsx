@@ -16,9 +16,9 @@ import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 import { SearchModal } from "./modals/SearchModal.js";
 import { Badge } from "../../../components/badge/Badge.js";
 import { useApi } from "../../../utils/hooks/api.hook.js";
-import { showToast, setToastMessage } from "../../../components/toast/Toast.js";
 import { getRoomsList } from "../../../api/rooms.api.js";
 import { useModal } from "../../../components/modal/Modal.js";
+import { useToast } from "../../../components/toast/Toast.js";
 
 function ActionsContainer() {
     const closePanel = usePanelStore((state) => state.close);
@@ -30,6 +30,7 @@ function ActionsContainer() {
         "about-pictos",
         <AboutPictosModal />,
     );
+    const { open: openToast } = useToast();
 
     const loadTimetable = (room: ApiDataRoom) => {
         // pushToHistory("panel", openPanel);
@@ -66,14 +67,8 @@ function ActionsContainer() {
     }, [roomsSearch, roomsList, error, isLoading]);
 
     useEffect(() => {
-        if (error) {
-            setToastMessage(
-                "Impossible de récupérer la liste des salles.",
-                true,
-            );
-            showToast();
-        }
-    }, [error]);
+        if (error) openToast("Impossible de récupérer la liste des salles.");
+    }, [error, openToast]);
 
     return (
         <div className="actions-container">
@@ -111,11 +106,7 @@ function ActionsContainer() {
 
 export default function Panel() {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
-
-    const { open: openSearchModal } = useModal(
-        "search",
-        <SearchModal />,
-    );
+    const { open: openSearchModal } = useModal("search", <SearchModal />);
 
     return (
         <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>

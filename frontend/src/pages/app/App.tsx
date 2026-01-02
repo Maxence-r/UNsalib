@@ -1,6 +1,5 @@
 import Panel from "./panel/Panel.js";
 import { Calendar } from "./calendar/calendar.js";
-import Toast from "../../components/toast/Toast.js";
 // import NavigationManager from "../../utils/navigation.js";
 import "./App.css";
 
@@ -20,8 +19,6 @@ function App() {
                 </section>
                 <Panel />
                 <Calendar />
-                {/* <Modal /> */}
-                <Toast />
             {/* </NavigationManager> */}
         </main>
     );

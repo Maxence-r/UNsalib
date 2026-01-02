@@ -13,12 +13,14 @@ import "./main.css";
 import { router } from "./Router.js";
 import { ThemeProvider } from "../utils/ThemeProvider.js";
 import { ModalProvider } from "../components/modal/Modal.js";
+import { ToastProvider } from "../components/toast/Toast.js";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider>
             <RouterProvider router={router} />
             <ModalProvider zIndex={20} />
+            <ToastProvider zIndex={30} />
         </ThemeProvider>
     </StrictMode>,
 );

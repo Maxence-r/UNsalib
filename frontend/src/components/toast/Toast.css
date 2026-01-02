@@ -1,44 +1,66 @@
 .toast {
     display: flex;
-    position: fixed;
-    margin: 20px;
-    bottom: 0;
-    right: 0;
-    height: fit-content;
+    align-items: center;
+    gap: 10px;
     border-radius: var(--border-radius);
     background-color: var(--color-success);
-    padding: 16px;
-    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.05);
-    transform: translateY(100%);
-    opacity: 0;
-    transition: all 0.6s;
-    z-index: 5000;
-    cursor: pointer;
-}
-
-.toast.error {
-    background-color: var(--color-error);
-}
-
-.toast.active {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.toast>p {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
     color: var(--color-on-success);
+    padding: 16px;
+    max-height: 200px;
+    margin-top: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    pointer-events: auto;
+    width: fit-content;
+    flex-shrink: 0;
+    transition:
+        max-height 0.2s,
+        padding 0.3s,
+        margin-top 0.3s;
+
+    @media screen and (max-width: 1024px) {
+        & {
+            width: 100%;
+            gap: 16px;
+        }
+    }
+
+    &.entering,
+    &.hidden {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+    }
+
+    & > span {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    &.error {
+        background-color: var(--color-error);
+        color: var(--color-on-error);
+    }
 }
 
-.toast.error>p {
-    color: var(--color-on-error);
+.toasts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 24px;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
 }
 
 @media screen and (max-width: 1024px) {
-    .toast {
-        width: calc(100% - 72px);
-        text-align: center;
+    .toasts {
+        padding: 20px;
     }
 }

@@ -14,43 +14,9 @@ import { create } from "zustand";
 import "./Modal.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
 
-function windowHPercent(percentage: number) {
-    return window.innerHeight * (percentage / 100);
-}
-
-function windowWPercent(percentage: number) {
-    return window.innerWidth * (percentage / 100);
-}
-
 function clamp(val: number, min: number, max: number) {
     return Math.max(min, Math.min(val, max));
 }
-
-function getOpacity(coord: number, isMobile: boolean) {
-    const p1 = { x: isMobile ? SNAP.MOBILE.OPEN : SNAP.DESKTOP.OPEN, y: 1 };
-    const p2 = { x: isMobile ? SNAP.MOBILE.CLOSED : SNAP.DESKTOP.CLOSED, y: 0 };
-    const a = (p2.y - p1.y) / (p2.x - p1.x);
-    const b = p1.y - a * p1.x;
-    return a * coord + b;
-}
-
-const SNAP = {
-    MOBILE: {
-        // y = 0 is at the top
-        EXPANDED: 0,
-        OPEN: windowHPercent(25),
-        CLOSED: windowHPercent(100),
-        CLOSE_THRESHOLD: windowHPercent(37.5),
-        BOUNCE_THRESHOLD: windowHPercent(12.5),
-    },
-    DESKTOP: {
-        // x = 0 is at the left
-        OPEN: windowWPercent(100) - 500,
-        CLOSED: windowWPercent(100),
-        CLOSE_THRESHOLD: windowWPercent(100) - 300,
-        BOUNCE_THRESHOLD: 200,
-    },
-};
 
 const ANIMATION = {
     DURATION: 0.3,
@@ -60,6 +26,26 @@ const ANIMATION = {
 };
 
 const VELOCITY_THRESHOLD = 80;
+
+function useWindowSize() {
+    const [height, setHeight] = useState<number>(window.innerHeight);
+    const [width, setWidth] = useState<number>(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setHeight(window.innerHeight);
+            setWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+    return { windowHeight: height, windowWidth: width };
+}
 
 function Modal({
     children,
@@ -74,6 +60,30 @@ function Modal({
 }) {
     const sheetRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+
+    const isMobile = useDeviceType() === "mobile";
+    const { windowHeight, windowWidth } = useWindowSize();
+
+    const windowHPercent = (percent: number) => windowHeight * (percent / 100);
+    const windowWPercent = (percent: number) => windowWidth * (percent / 100);
+
+    const SNAP = {
+        MOBILE: {
+            // y = 0 is at the top
+            EXPANDED: 0,
+            OPEN: windowHPercent(25),
+            CLOSED: windowHPercent(100),
+            CLOSE_THRESHOLD: windowHPercent(37.5),
+            BOUNCE_THRESHOLD: windowHPercent(12.5),
+        },
+        DESKTOP: {
+            // x = 0 is at the left
+            OPEN: windowWPercent(100) - 500,
+            CLOSED: windowWPercent(100),
+            CLOSE_THRESHOLD: windowWPercent(100) - 300,
+            BOUNCE_THRESHOLD: 200,
+        },
+    };
 
     const [y, setY] = useState<number>(SNAP.MOBILE.CLOSED);
     const [x, setX] = useState<number>(SNAP.DESKTOP.CLOSED);
@@ -100,8 +110,6 @@ function Modal({
     const distanceDelta = useRef(0);
     const timeDelta = useRef(0);
     const velocity = useRef(0);
-
-    const isMobile = useDeviceType() === "mobile";
 
     const snapToState = useCallback(
         (
@@ -143,7 +151,14 @@ function Modal({
                 }
             }
         },
-        [isMobile],
+        [
+            SNAP.DESKTOP.CLOSED,
+            SNAP.DESKTOP.OPEN,
+            SNAP.MOBILE.CLOSED,
+            SNAP.MOBILE.EXPANDED,
+            SNAP.MOBILE.OPEN,
+            isMobile,
+        ],
     );
 
     const handleClose = useCallback(() => {
@@ -191,6 +206,20 @@ function Modal({
             // Do nothing when the user is scrolling the content
             if (!contentRef.current || contentRef.current.scrollTop !== 0)
                 return;
+
+            const getOpacity = (coord: number, isMobile: boolean) => {
+                const p1 = {
+                    x: isMobile ? SNAP.MOBILE.OPEN : SNAP.DESKTOP.OPEN,
+                    y: 1,
+                };
+                const p2 = {
+                    x: isMobile ? SNAP.MOBILE.CLOSED : SNAP.DESKTOP.CLOSED,
+                    y: 0,
+                };
+                const a = (p2.y - p1.y) / (p2.x - p1.x);
+                const b = p1.y - a * p1.x;
+                return a * coord + b;
+            };
 
             const touchX = e.touches[0].clientX;
             const touchY = e.touches[0].clientY;
@@ -263,7 +292,15 @@ function Modal({
                 }
             }
         },
-        [isMobile, x, y],
+        [
+            SNAP.DESKTOP.CLOSED,
+            SNAP.DESKTOP.OPEN,
+            SNAP.MOBILE.CLOSED,
+            SNAP.MOBILE.OPEN,
+            isMobile,
+            x,
+            y,
+        ],
     );
 
     const handleTouchEnd = useCallback(() => {
@@ -291,7 +328,17 @@ function Modal({
         } else if (y > SNAP.MOBILE.CLOSE_THRESHOLD) {
             handleClose();
         }
-    }, [isMobile, y, x, snapToState, close, handleClose]);
+    }, [
+        isMobile,
+        y,
+        SNAP.MOBILE.BOUNCE_THRESHOLD,
+        SNAP.MOBILE.CLOSE_THRESHOLD,
+        SNAP.DESKTOP.CLOSE_THRESHOLD,
+        x,
+        snapToState,
+        close,
+        handleClose,
+    ]);
 
     useEffect(() => {
         // Handle external open state change
@@ -398,10 +445,13 @@ const useModalStore = create<ModalStore>()((set) => ({
                 modals: state.modals,
             };
         }),
-    open: (id) => set((state) => ({ openModalsStack: [id, ...state.openModalsStack] })),
+    open: (id) =>
+        set((state) => ({ openModalsStack: [id, ...state.openModalsStack] })),
     close: (id) =>
         set((state) => ({
-            openModalsStack: state.openModalsStack.filter((modalId) => modalId != id),
+            openModalsStack: state.openModalsStack.filter(
+                (modalId) => modalId != id,
+            ),
         })),
 }));
 
@@ -419,7 +469,9 @@ function ModalProvider({ zIndex }: { zIndex: number }) {
                     close={() => close(id)}
                     depth={
                         openModalsStack.length > 0
-                            ? openModalsStack.length - openModalsStack.indexOf(id) + 1
+                            ? openModalsStack.length -
+                              openModalsStack.indexOf(id) +
+                              1
                             : 0
                     }
                 >

@@ -54,6 +54,25 @@ class CoursesService {
             ],
         }).lean();
     }
+
+    /**
+     * Clear group references from courses
+     */
+    async clearGroupReferences(groupId: string) {
+        const courses = await Course.find({ groups: groupId });
+        for (const course of courses) {
+            if (course.groups.length === 1) {
+                // If the group is the only one linked to the course, delete the course
+                await course.deleteOne();
+            } else {
+                // Otherwise, just remove the group from the course
+                course.groups = course.groups.filter(
+                    (g) => g.toString() !== groupId,
+                );
+                await course.save();
+            }
+        }
+    }
 }
 
 const coursesService = new CoursesService();

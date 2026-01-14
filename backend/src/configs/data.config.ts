@@ -4,6 +4,7 @@ const config = {
         {
             name: "Sciences et techniques",
             timetableIds: ["sciences"],
+            id: "sciences",
         },
     ],
 };

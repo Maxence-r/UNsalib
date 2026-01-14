@@ -1,4 +1,4 @@
-import { Group } from "../models/group.model.js";
+import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
 class GroupsService {
     /**
@@ -26,6 +26,52 @@ class GroupsService {
         });
 
         return parsedGroups;
+    }
+
+    /**
+     * Update the name of a group
+     */
+    async updateName(groupId: string, campusId: string, newName: string) {
+        const group = await Group.findOne({univId: groupId, campus: campusId });
+        if (!group) {
+            throw new Error("Group not found");
+        }
+        group.name = newName;
+        await group.save();
+    }
+
+    /**
+     * Add a new group
+     */
+    async addGroup(groupId: string, campusId: string, groupName: string) {
+        const existingGroup = await Group.findOne({univId: groupId, campus: campusId });
+        if (existingGroup) {
+            throw new Error("Group with the same univId and campus already exists");
+        }
+        const newGroup = new Group({
+            univId: groupId,
+            campus: campusId,
+            name: groupName,
+        });
+        await newGroup.save();
+    }
+
+    /**
+     * Delete a group
+     */
+    async deleteGroup(groupId: string, campusId: string) {
+        const group = await Group.findOne({univId: groupId, campus: campusId });
+        if (!group) {
+            throw new Error("Group not found");
+        }
+        await Group.deleteOne({ _id: group._id });
+    }
+
+    /**
+     * Get all groups for a campus
+     */
+    async getGroupsForCampus(campusId: string): Promise<GroupSchemaProperties[]> {
+        return await Group.find({ campus: campusId }).lean();
     }
 }
 

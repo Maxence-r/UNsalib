@@ -41,7 +41,8 @@ const CourseSchema = new Schema({
         default: [],
     },
     groups: {
-        type: [String],
+        type: [Schema.Types.ObjectId],
+        ref: "Group",
         required: true,
         default: [],
     },

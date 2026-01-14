@@ -2,6 +2,7 @@ import type { Types } from "mongoose";
 
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
+import { Building } from "models/building.model.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -89,6 +90,52 @@ class RoomsService {
         });
 
         return availableRoomsFiltered;
+    }
+
+    /**
+     * Add a room if it does not exist
+     */
+    async addRoomIfNotExists(rawName: string, campusId: string) {
+        if (rawName.includes(";")) throw new Error("Invalid room name");
+        if (/\(.*\)$/.test(rawName)){
+            const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
+            const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
+            // Test if the building exists in the campus
+            const existingBuilding = await Building.findOne({ univName: building });
+            if (existingBuilding) {
+                const existingRoom = await Room.findOne({ name: room, building: existingBuilding._id });
+                if (!existingRoom) {
+                    const newRoom = new Room({
+                        name: room,
+                        building: existingBuilding._id,
+                        univId: rawName,
+                    });
+                    await newRoom.save();
+                }
+            } else {
+                const newBuilding = new Building({
+                    univName: building,
+                    campus: campusId,
+                });
+                await newBuilding.save();
+
+                const newRoom = new Room({
+                    name: room,
+                    building: newBuilding._id,
+                    univId: rawName,
+                });
+                await newRoom.save();
+            }
+        } else {
+            const existingRoom = await Room.findOne({ univId: rawName });
+            if (!existingRoom) {
+                const newRoom = new Room({
+                    name: rawName,
+                    univId: rawName,
+                });
+                await newRoom.save();
+            }
+        }
     }
 }
 

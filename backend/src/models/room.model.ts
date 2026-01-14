@@ -6,9 +6,12 @@ const RoomSchema = new Schema({
     building: {
         type: Schema.Types.ObjectId,
         ref: "Building",
-        required: true,
     },
     univName: {
+        type: String,
+        required: true,
+    },
+    univId: {
         type: String,
         required: true,
     },

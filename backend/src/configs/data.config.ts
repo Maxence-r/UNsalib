@@ -2,9 +2,19 @@ const config = {
     baseUrl: "https://edt-v2.univ-nantes.fr",
     campus: [
         {
-            name: "Sciences et techniques",
+            name: "Lombarderie",
             timetableIds: ["sciences"],
-            id: "sciences",
+        },
+        {
+            name: "Tertre",
+            timetableIds: [
+                "droit",
+                "inspe-nantes",
+                "flce",
+                "histoire",
+                "igarun",
+                "sociologie"
+            ],
         },
     ],
 };

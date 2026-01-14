@@ -2,14 +2,14 @@ import { parse } from "node-html-parser";
 
 import { Group } from "../models/group.model.js";
 import { logger } from "../utils/logger.js";
-
-// CONSTANTS
-// The URL to get the timetable page
-const TIMETABLE_URL =
-    "https://edt-v2.univ-nantes.fr/sciences/educational_groups";
+import { config } from "configs/data.config.js";
 
 // Main function to fetch and update groups from the university timetable page
 async function getGroups(): Promise<void> {
+    for (const campus of config.campus) {
+        
+    }
+
     try {
         // Getting the timetable HTML page
         const page = await fetch(TIMETABLE_URL);

@@ -3,7 +3,12 @@ import { Schema, model, type InferSchemaType } from "mongoose";
 type RoomSchemaProperties = InferSchemaType<typeof RoomSchema>;
 
 const RoomSchema = new Schema({
-    name: {
+    building: {
+        type: Schema.Types.ObjectId,
+        ref: "Building",
+        required: true,
+    },
+    univName: {
         type: String,
         required: true,
     },
@@ -16,40 +21,35 @@ const RoomSchema = new Schema({
         type: Number,
         required: true,
     },
-    building: {
+    type: {
         type: String,
-        required: true,
+        required: false,
+        default: "",
     },
-    banned: {
+    whiteBoards: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
+    blackBoards: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
+    display: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
+    locked: {
         type: Boolean,
         required: false,
         default: false,
-    },
-    boards: {
-        type: new Schema(
-            {
-                white: { type: Number, required: false, default: 0 },
-                black: { type: Number, required: false, default: 0 },
-                display: { type: Number, required: false, default: 0 },
-            },
-            { _id: false },
-        ),
-        required: false,
-        default: {
-            white: 0,
-            black: 0,
-            display: 0,
-        },
     },
     features: {
         type: [String],
         required: false,
         default: [],
-    },
-    type: {
-        type: String,
-        required: false,
-        default: "",
     },
 });
 

@@ -24,18 +24,14 @@ const CourseSchema = new Schema({
         type: String,
         required: true,
     },
-    notes: {
-        type: String,
-        required: false,
-        default: "",
-    },
     color: {
         type: String,
         required: false,
         default: "#ff7675",
     },
     rooms: {
-        type: [String],
+        type: [Schema.Types.ObjectId],
+        ref: "Room",
         required: true,
         default: [],
     },

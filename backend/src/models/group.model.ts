@@ -16,6 +16,11 @@ const GroupSchema = new Schema({
         required: true,
         default: false,
     },
+    campus: {
+        type: Schema.Types.ObjectId,
+        ref: "Campus",
+        required: true,
+    },
 });
 
 const Group = model("Group", GroupSchema);

@@ -137,6 +137,40 @@ class RoomsService {
             }
         }
     }
+
+    /**
+     * Move room to another building
+     */
+    async moveRoom(roomId: Types.ObjectId, newBuildingId: Types.ObjectId) {
+        const room = await Room.findById(roomId);
+        if (!room) {
+            throw new Error("Room not found");
+        }
+        room.building = newBuildingId;
+        await room.save();
+    }
+
+    /**
+     * Merge two rooms
+     */
+    async mergeRooms(sourceRoomId: Types.ObjectId, targetRoomId: Types.ObjectId) {
+        const sourceRoom = await Room.findById(sourceRoomId);
+        const targetRoom = await Room.findById(targetRoomId);
+        if (!sourceRoom || !targetRoom) {
+            throw new Error("Room not found");
+        }
+        // Update all courses referencing the source room to reference the target room
+        const courses = await coursesService.getCoursesByRoom(sourceRoomId);
+        for (const course of courses) {
+            course.rooms = course.rooms.map((roomId) =>
+                roomId.toString() === sourceRoomId.toString() ? targetRoomId : roomId,
+            );
+            await course.save();
+        }
+
+        // Delete the source room
+        await Room.findByIdAndDelete(sourceRoomId);
+    }
 }
 
 const roomsService = new RoomsService();

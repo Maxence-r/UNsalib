@@ -12,7 +12,7 @@ const GroupSchema = new Schema({
         type: String,
         required: true,
     },
-    campus: {
+    campusId: {
         type: Schema.Types.ObjectId,
         ref: "Campus",
         required: true,

@@ -95,7 +95,7 @@ class RoomsService {
     /**
      * Add a room if it does not exist
      */
-    async addRoomIfNotExists(rawName: string, campusId: string) {
+    async addRoomIfNotExists(rawName: string, campusId: Types.ObjectId) {
         if (rawName.includes(";")) throw new Error("Invalid room name");
         if (/\(.*\)$/.test(rawName)){
             const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
@@ -111,7 +111,9 @@ class RoomsService {
                         univId: rawName,
                     });
                     await newRoom.save();
+                    return newRoom;
                 }
+                return existingRoom;
             } else {
                 const newBuilding = new Building({
                     univName: building,
@@ -125,6 +127,7 @@ class RoomsService {
                     univId: rawName,
                 });
                 await newRoom.save();
+                return newRoom;
             }
         } else {
             const existingRoom = await Room.findOne({ univId: rawName });
@@ -134,7 +137,9 @@ class RoomsService {
                     univId: rawName,
                 });
                 await newRoom.save();
+                return newRoom;
             }
+            return existingRoom;
         }
     }
 

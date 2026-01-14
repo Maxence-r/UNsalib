@@ -5,6 +5,9 @@ import { Course } from "../models/course.model.js";
 import { Room } from "../models/room.model.js";
 import { closestPaletteColor } from "../utils/color.js";
 import { socket } from "../server.js";
+import { roomsService } from "../services/rooms.service.js";
+import { Types } from "mongoose";
+import { groupsService } from "../services/groups.service.js";
 
 // CONSTANTS
 // Groups update interval in milliseconds
@@ -54,75 +57,16 @@ function getRequestDates(increment): {
 }
 
 // Processes a room to add it to the database if it not already exists
-async function processRoom(roomName) {
+async function processRoom(roomName: string, campusId: Types.ObjectId) {
     // Checking if the room name is valid
     if (!roomName) return;
 
-    // Formatting the room and building names
-    // New format: I005 - Bât 15-C I E
-    // Old format: Amphi 111- Maria SKLODOWSKA-CURIE Vidéo (Bât 26- RdC) - Bât 26- RdC
-
-    // New and old format compatible
-    let formattedBuilding = roomName.match(/(?<= - )(?!.* - ).+$/)
-        ? roomName.match(/(?<= - )(?!.* - ).+$/)[0]
-        : roomName;
-    let formattedRoom = roomName.match(/^.*(?= \()|^.*(?= - )/)
-        ? roomName.match(/^.*(?= \()|^.*(?= - )/)[0]
-        : roomName;
-
-    // Trying to find the room in the database
-    let room = await Room.findOne({ name: formattedRoom });
-
-    // If the room does not exist, create a new record
-    if (!room) {
-        room = new Room({
-            name: formattedRoom,
-            seats: 0,
-            building: formattedBuilding,
-        });
-        await room.save();
-        console.log(
-            `\r\x1b[KNouvelle salle ajoutée : ${formattedRoom} (${formattedBuilding})`,
-        );
-    }
-
-    return room;
+    return await roomsService.addRoomIfNotExists(roomName, campusId);
 }
 
 // Returns all groups used for the current university year, dealing with duplicate IDs if necessary
-async function getAllGroups(): Promise<
-    {
-        id: string;
-        name: string;
-        univId: string;
-    }[]
-> {
-    // Get all groups from the database that are currently used by the University
-    const dbGroups = await Group.find({ current: true });
-
-    const processedGroups = [];
-    for (const group of dbGroups) {
-        if (group.univId.length > 1) {
-            // If the group is associated with more than one univId, we add the group multiple
-            // times with each of the IDs
-            for (let i = 0; i < group.univId.length; i++) {
-                processedGroups.push({
-                    id: group._id.toString(),
-                    name: group.name,
-                    univId: group.univId[i],
-                });
-            }
-        } else {
-            // Otherwise, we add it only once
-            processedGroups.push({
-                id: group._id.toString(),
-                name: group.name,
-                univId: group.univId[0],
-            });
-        }
-    }
-
-    return processedGroups;
+async function getAllGroups() {
+    return await Group.find({});
 }
 
 // Splits a string present in the data supplied by the University
@@ -208,6 +152,7 @@ async function processGroupCourses(
     univData: UnivApiCourse[],
     dbData,
     dbGroupId: string,
+    campusId: Types.ObjectId,
 ): Promise<{
     removed: number;
     updated: number;
@@ -272,7 +217,7 @@ async function processGroupCourses(
         // Processing the course's rooms, teachers and modules to put them into our DB format
         let rooms = splitUnivDataBlocks(course.rooms_for_item_details);
         rooms = await Promise.all(
-            rooms.map(async (roomName) => (await processRoom(roomName))._id),
+            rooms.map(async (roomName) => (await processRoom(roomName, campusId))._id),
         );
         const teachers = splitUnivDataBlocks(course.teachers_for_blocks);
         const modules = splitUnivDataBlocks(course.modules_for_blocks);
@@ -362,11 +307,12 @@ function sanitizeJsonString(str: string): string {
 }
 
 // Retrieves courses for a group
-async function fetchCourses(group: {
-    id: string;
-    name: string;
-    univId: string;
-}): Promise<void> {
+async function fetchCourses(
+    id: string,
+    name: string,
+    univId: string,
+    campusId: Types.ObjectId,
+): Promise<void> {
     // Saving the start time to make stats
     const startProcessingTime = Date.now();
 
@@ -375,7 +321,7 @@ async function fetchCourses(group: {
 
     // Logging if needed
     console.log(
-        `---- Récupération des cours pour le groupe ${group.name} du ${dates.start} au ${dates.end}`,
+        `---- Récupération des cours pour le groupe ${name} du ${dates.start} au ${dates.end}`,
     );
 
     // Building request URL
@@ -392,11 +338,11 @@ async function fetchCourses(group: {
         const dbRecords = await Course.find({
             start: { $gte: dates.start + "T00:00:00+01:00" },
             end: { $lte: dates.end + "T23:59:59+01:00" },
-            groups: group.id,
+            groups: id,
         });
 
         // Processing all the courses for this group
-        const result = await processGroupCourses(jsonData, dbRecords, group.id);
+        const result = await processGroupCourses(jsonData, dbRecords, id, campusId);
 
         // Calculating the new average processing time
         const processingTime = Date.now() - startProcessingTime;
@@ -412,29 +358,29 @@ async function fetchCourses(group: {
         );
 
         // Sending an update message to all clients
-        socket.sendGroupsUpdate(group.name);
+        socket.sendGroupsUpdate(name);
     } catch (error) {
         console.error(
-            `Erreur pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) :`,
+            `Erreur pour le groupe ${name} (id : ${univId}, url : ${requestUrl}) :`,
             error,
         );
     }
 }
 
 // Processes a group (dev only)
-async function processGroup(groupName: string): Promise<void> {
-    const group = (await getAllGroups()).filter(
-        (group) => group.name === groupName,
-    )[0];
-    await fetchCourses(group);
-}
+// async function processGroup(groupName: string): Promise<void> {
+//     const group = (await getAllGroups()).filter(
+//         (group) => group.name === groupName,
+//     )[0];
+//     await fetchCourses(group);
+// }
 
 // Processes a batch of groups
-async function processBatchGroups(): Promise<void> {
-    const groups = await getAllGroups();
+async function processBatchGroups(campusId: Types.ObjectId): Promise<void> {
+    const groups = await groupsService.getGroupsForCampus(campusId);
 
     for (const group of groups) {
-        await fetchCourses(group);
+        await fetchCourses(group._id.toString(), group.name, group.univId, campusId);
     }
 }
 
@@ -453,12 +399,13 @@ async function getCourses(): Promise<void> {
         // Function to schedule the next group to update
         const scheduleNextGroup = (): void => {
             if (groupIndex < groupsNumber) {
-                setTimeout(async () => {
+                const process = async() => {
                     const group = groups[groupIndex];
-                    await fetchCourses(group);
+                    await fetchCourses(group._id.toString(), group.name, group.univId, group.campusId);
                     groupIndex++;
                     scheduleNextGroup();
-                }, intervalBetweenGroups);
+                }
+                setTimeout(() => void process(), intervalBetweenGroups);
             } else {
                 // all groups were processed
                 // Resetting the group index for the next cycle
@@ -486,4 +433,4 @@ async function getCourses(): Promise<void> {
     startUpdateCycle();
 }
 
-export { getCourses, processBatchGroups, processGroup };
+export { getCourses, processBatchGroups };

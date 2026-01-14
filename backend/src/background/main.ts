@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { getGroups } from "./groups.js";
-import { getCourses, processBatchGroups } from "./getCourses.js";
+import { getCourses, processBatchGroups } from "./courses.js";
 import { config } from "../configs/app.config.js";
 import { logger } from "../utils/logger.js";
 import { publishAvailableRooms } from "./refresh-available.js";

@@ -17,10 +17,10 @@ async function launchBackgroundTasks(): Promise<void> {
         await processBatchGroups();
     }
 
-    if (config.tasks.syncTimetables) {
-        logger.info("Starting timetables sync");
-        void getCourses();
-    }
+    // if (config.tasks.syncTimetables) {
+    //     logger.info("Starting timetables sync");
+    //     void getCourses();
+    // }
 
     // processGroup("387");
     void publishAvailableRooms();

@@ -28,6 +28,7 @@ const router = express.Router();
 // PATCH /room/:id
 // PATCH /building/:id
 
-
+// POST /building/merge
+// POST /room/merge
 
 export { router };

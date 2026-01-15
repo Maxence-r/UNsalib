@@ -208,6 +208,24 @@ class AdminController {
             next(error);
         }
     }
+
+    /**
+     * Update building details
+     */
+    async updateBuildingDetails(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { buildingId, details } = matchedData(req);
+            const building = await Building.findById(buildingId);
+            if (!building) {
+                throw new Error("Building not found");
+            }
+            Object.assign(building, details);
+            await building.save();
+            res.json({ success: true, data: building });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 const adminController = new AdminController();

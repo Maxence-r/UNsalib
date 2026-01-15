@@ -2,6 +2,7 @@ import type { Types } from "mongoose";
 
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
+import { Building } from "models/building.model.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -89,6 +90,91 @@ class RoomsService {
         });
 
         return availableRoomsFiltered;
+    }
+
+    /**
+     * Add a room if it does not exist
+     */
+    async addRoomIfNotExists(rawName: string, campusId: Types.ObjectId) {
+        if (rawName.includes(";")) throw new Error("Invalid room name");
+        if (/\(.*\)$/.test(rawName)){
+            const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
+            const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
+            // Test if the building exists in the campus
+            const existingBuilding = await Building.findOne({ univName: building });
+            if (existingBuilding) {
+                const existingRoom = await Room.findOne({ name: room, building: existingBuilding._id });
+                if (!existingRoom) {
+                    const newRoom = new Room({
+                        name: room,
+                        building: existingBuilding._id,
+                        univId: rawName,
+                    });
+                    await newRoom.save();
+                    return newRoom;
+                }
+                return existingRoom;
+            } else {
+                const newBuilding = new Building({
+                    univName: building,
+                    campus: campusId,
+                });
+                await newBuilding.save();
+
+                const newRoom = new Room({
+                    name: room,
+                    building: newBuilding._id,
+                    univId: rawName,
+                });
+                await newRoom.save();
+                return newRoom;
+            }
+        } else {
+            const existingRoom = await Room.findOne({ univId: rawName });
+            if (!existingRoom) {
+                const newRoom = new Room({
+                    name: rawName,
+                    univId: rawName,
+                });
+                await newRoom.save();
+                return newRoom;
+            }
+            return existingRoom;
+        }
+    }
+
+    /**
+     * Move room to another building
+     */
+    async moveRoom(roomId: Types.ObjectId, newBuildingId: Types.ObjectId) {
+        const room = await Room.findById(roomId);
+        if (!room) {
+            throw new Error("Room not found");
+        }
+        room.building = newBuildingId;
+        await room.save();
+    }
+
+    /**
+     * Merge two rooms
+     */
+    async mergeRooms(sourceRoomId: Types.ObjectId, targetRoomId: Types.ObjectId) {
+        const sourceRoom = await Room.findById(sourceRoomId);
+        const targetRoom = await Room.findById(targetRoomId);
+        if (!sourceRoom || !targetRoom) {
+            throw new Error("Room not found");
+        }
+        // Update all courses referencing the source room to reference the target room
+        const courses = await coursesService.getCoursesByRoom(sourceRoomId);
+        for (const course of courses) {
+            course.rooms = course.rooms.map((roomId) =>
+                roomId.toString() === sourceRoomId.toString() ? targetRoomId : roomId,
+            );
+            await course.save();
+        }
+
+        // Delete the source room
+        await Room.findByIdAndDelete(sourceRoomId);
     }
 }
 

@@ -16,10 +16,10 @@ const BuildingSchema = new Schema({
         type: String,
         required: false,
     },
-    new: {
+    reviewed: {
         type: Boolean,
         required: true,
-        default: true,
+        default: false,
     }
 });
 

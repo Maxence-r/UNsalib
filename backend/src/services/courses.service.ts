@@ -73,6 +73,13 @@ class CoursesService {
             }
         }
     }
+
+    /**
+     * Get courses by room
+     */
+    async getCoursesByRoom(roomId: Types.ObjectId) {
+        return await Course.find({ rooms: roomId });
+    }
 }
 
 const coursesService = new CoursesService();

@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
 class GroupsService {
@@ -70,8 +71,8 @@ class GroupsService {
     /**
      * Get all groups for a campus
      */
-    async getGroupsForCampus(campusId: string): Promise<GroupSchemaProperties[]> {
-        return await Group.find({ campus: campusId }).lean();
+    async getGroupsForCampus(campusId: Types.ObjectId) {
+        return await Group.find({ campus: campusId });
     }
 }
 

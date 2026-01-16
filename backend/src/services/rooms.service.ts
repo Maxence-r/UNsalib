@@ -42,7 +42,7 @@ class RoomsService {
         const busyRoomsIds: string[] = [];
         overlappingCourses.forEach((course) => {
             course.rooms.forEach((room) => {
-                if (!busyRoomsIds.includes(room)) busyRoomsIds.push(room);
+                if (!busyRoomsIds.includes(room.toString())) busyRoomsIds.push(room.toString());
             });
         });
 

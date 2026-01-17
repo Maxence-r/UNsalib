@@ -9,7 +9,8 @@
     "start": "node ./dist/server.js",
     "lint": "eslint ./src",
     "fix": "eslint ./src --fix",
-    "format": "prettier --write src/**/*.ts"
+    "format": "prettier --write src/**/*.ts",
+    "test": "node --import tsx --test src/**/*.test.ts"
   },
   "type": "module",
   "dependencies": {
@@ -41,7 +42,7 @@
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.10.0",
+    "@types/node": "^24.10.9",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",

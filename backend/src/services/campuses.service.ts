@@ -1,18 +1,22 @@
+import { Types } from "mongoose";
+
 import { Campus, CampusSchemaProperties } from "models/campus.model.js";
 
 class CampusesService {
     /**
      * Get all campuses
      */
-    async getAllCampuses(): Promise<CampusSchemaProperties[]> {
+    async getAllCampuses(): Promise<
+        (CampusSchemaProperties & { _id: Types.ObjectId })[]
+    > {
         return await Campus.find().lean();
     }
 
     /**
-     * Get campus by name
+     * Get campus ID by name
      */
-    async getCampusByName(name: string): Promise<string | null> {
-        return (await Campus.findOne({ name }).lean())?._id.toString() || null;
+    async getCampusIdByName(name: string): Promise<Types.ObjectId | undefined> {
+        return (await Campus.findOne({ name }).lean())?._id;
     }
 
     /**

@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { getGroups } from "./groups.js";
+import { processGroups } from "./groups.js";
 import { getCourses, processBatchGroups } from "./courses.js";
 import { config } from "../configs/app.config.js";
 import { logger } from "../utils/logger.js";
@@ -10,10 +10,10 @@ import { initCampuses } from "./campuses.js";
 async function launchBackgroundTasks(): Promise<void> {
     await initCampuses();
 
-    // if (config.tasks.forceGroupsFetch) {
+    if (config.tasks.forceGroupsFetch) {
         logger.info("Starting groups force fetch");
-        await getGroups();
-    // }
+        await processGroups();
+    }
 
     // if (config.tasks.forceTimetablesFetch) {
     //     logger.info("Starting timetables force fetch");

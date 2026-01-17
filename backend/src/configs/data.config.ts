@@ -3,11 +3,11 @@ const config = {
     campus: [
         {
             name: "Lombarderie",
-            timetableIds: ["sciences"],
+            sectorIds: ["sciences"],
         },
         {
             name: "Tertre",
-            timetableIds: [
+            sectorIds: [
                 "droit",
                 "inspe-nantes",
                 "flce",

@@ -89,19 +89,19 @@ router.patch(
         adminController.moveRoom(req, res, next),
 );
 
-// PATCH /room/:id
-router.patch(
-    "/room/:roomId",
-    updateRoomValidation,
-    (req: Request, res: Response, next: NextFunction) =>
-        adminController.updateRoomDetails(req, res, next),
-);
 // PATCH /building/:id
 router.patch(
     "/building/:buildingId",
     updateBuildingValidation,
     (req: Request, res: Response, next: NextFunction) =>
         adminController.updateBuildingDetails(req, res, next),
+);
+// PATCH /room/:id
+router.patch(
+    "/room/:roomId",
+    updateRoomValidation,
+    (req: Request, res: Response, next: NextFunction) =>
+        adminController.updateRoomDetails(req, res, next),
 );
 
 // POST /building/merge

@@ -10,7 +10,6 @@ export default defineConfig([
         extends: ["js/recommended"],
         languageOptions: { globals: globals.node },
     },
-    tseslint.configs.recommended,
     tseslint.configs.recommendedTypeChecked,
     {
         languageOptions: {
@@ -20,6 +19,9 @@ export default defineConfig([
                 },
                 tsconfigRootDir: import.meta.dirname,
             },
+        },
+        rules: {
+            "@typescript-eslint/explicit-function-return-type": "error",
         },
     },
 ]);

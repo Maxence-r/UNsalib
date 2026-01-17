@@ -1,5 +1,20 @@
 import { logger } from "../utils/logger.js";
 
+function extractBoolean(
+    value: string | undefined,
+    defaultValue: boolean,
+): boolean {
+    if (value) {
+        if (value.toLowerCase() === "true") {
+            return true;
+        } else if (value.toLowerCase() === "false") {
+            return false;
+        }
+    }
+
+    return defaultValue;
+}
+
 if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
     logger.error(
         "JWT secrets are missing from the environment file. Please set 'JWT_ACCESS_SECRET' and 'JWT_REFRESH_SECRET' to use UNsalib securely.",
@@ -36,10 +51,12 @@ const config = {
             : 60 * 60 * 24 * 30, // 30 days,
     },
     tasks: {
-        syncTimetables: process.env.SYNC_TIMETABLES === "true" || true,
-        forceGroupsFetch: process.env.FORCE_GROUPS_FETCH === "true" || false,
-        forceTimetablesFetch:
-            process.env.FORCE_TIMETABLES_FETCH === "true" || false,
+        syncTimetables: extractBoolean(process.env.SYNC_TIMETABLES, true),
+        forceGroupsFetch: extractBoolean(process.env.FORCE_GROUPS_FETCH, false),
+        forceTimetablesFetch: extractBoolean(
+            process.env.FORCE_TIMETABLES_FETCH,
+            false,
+        ),
     },
 };
 

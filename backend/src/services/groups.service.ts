@@ -39,7 +39,7 @@ class GroupsService {
     ): Promise<void> {
         const group = await Group.findOne({
             univId: groupUnivId,
-            campus: campusId,
+            campusId: campusId,
         });
         if (!group) {
             throw new Error("Group not found");
@@ -59,7 +59,7 @@ class GroupsService {
     ): Promise<void> {
         const existingGroup = await Group.findOne({
             univId: groupUnivId,
-            campus: campusId,
+            campusId: campusId,
         });
         if (existingGroup) {
             throw new Error(
@@ -69,7 +69,7 @@ class GroupsService {
 
         const newGroup = new Group({
             univId: groupUnivId,
-            campus: campusId,
+            campusId: campusId,
             name: groupName,
         });
         await newGroup.save();
@@ -95,7 +95,7 @@ class GroupsService {
     async getGroupsForCampus(
         campusId: Types.ObjectId,
     ): Promise<(GroupSchemaProperties & { _id: Types.ObjectId })[]> {
-        return await Group.find({ campus: campusId }).lean();
+        return await Group.find({ campusId: campusId }).lean();
     }
 }
 

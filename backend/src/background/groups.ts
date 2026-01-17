@@ -45,21 +45,17 @@ async function extractGroupsFromTimetablePage(
     return foundGroups;
 }
 
-async function processGroupsBySector(
-    sectorId: string,
+async function processExtractedGroups(
     campusId: Types.ObjectId,
     existingGroups: (GroupSchemaProperties & { _id: Types.ObjectId })[],
-): Promise<
-    [number, number, (GroupSchemaProperties & { _id: Types.ObjectId })[]]
-> {
+    extractedGroups: ExtractedGroupInfos[],
+): Promise<{
+    added: number;
+    updated: number;
+    existingGroups: (GroupSchemaProperties & { _id: Types.ObjectId })[];
+}> {
     let added = 0;
     let updated = 0;
-
-    let extractedGroups: ExtractedGroupInfos[] = [];
-
-    extractedGroups = await extractGroupsFromTimetablePage(
-        `${config.baseUrl}/${sectorId}/educational_groups`,
-    );
 
     for (const group of extractedGroups) {
         const existingGroup = existingGroups.find((g) => g.univId === group.id);
@@ -73,13 +69,13 @@ async function processGroupsBySector(
                     group.name,
                 );
 
-                // Remove the processed group from the available groups array
-                existingGroups = existingGroups.filter(
-                    (g) => g.univId !== group.id,
-                );
-
                 updated++;
             }
+
+            // Remove the processed group from the available groups array
+            existingGroups = existingGroups.filter(
+                (g) => g.univId !== group.id,
+            );
         } else {
             // New group, add it to the database
             await groupsService.addGroup(group.id, campusId, group.name);
@@ -87,7 +83,7 @@ async function processGroupsBySector(
         }
     }
 
-    return [added, updated, existingGroups];
+    return { added, updated, existingGroups };
 }
 
 async function processGroupsByCampus(
@@ -99,15 +95,23 @@ async function processGroupsByCampus(
 
     let existingGroups = await groupsService.getGroupsForCampus(campusId);
 
-    let added = 0;
-    let updated = 0;
+    let totalAdded = 0;
+    let totalUpdated = 0;
 
     for (const sectorId of sectorIds) {
-        [added, updated, existingGroups] = await processGroupsBySector(
-            sectorId,
+        const extractedGroups = await extractGroupsFromTimetablePage(
+            `${config.baseUrl}/${sectorId}/educational_groups`,
+        );
+
+        const results = await processExtractedGroups(
             campusId,
             existingGroups,
+            extractedGroups,
         );
+
+        totalAdded += results.added;
+        totalUpdated += results.updated;
+        existingGroups = results.existingGroups;
     }
 
     for (const existingGroup of existingGroups) {
@@ -115,14 +119,20 @@ async function processGroupsByCampus(
         await groupsService.deleteGroup(existingGroup._id);
     }
 
-    return { added, updated, deleted: existingGroups.length };
+    return {
+        added: totalAdded,
+        updated: totalUpdated,
+        deleted: existingGroups.length,
+    };
 }
 
 // Main function to fetch and update groups from the university timetable page
 async function processGroups(): Promise<void> {
     for (const campus of config.campus) {
         try {
-            logger.info(`Starting processing of the ${campus.name} groups`);
+            logger.info(
+                `Starting processing of the ${campus.name} campus groups`,
+            );
 
             const results = await processGroupsByCampus(
                 campus.name,
@@ -144,6 +154,8 @@ async function processGroups(): Promise<void> {
             }
         }
     }
+
+    logger.info(`Groups processing successful`);
 }
 
 export { processGroups };

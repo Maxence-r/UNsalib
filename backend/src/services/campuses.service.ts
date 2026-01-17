@@ -18,7 +18,7 @@ class CampusesService {
     /**
      * Create campuses if they don't exist
      */
-    async createIfNotExist(campuses: string[]) {
+    async createIfNotExist(campuses: string[]): Promise<void> {
         for (const campus of campuses) {
             await Campus.findOneAndUpdate(
                 { name: campus },

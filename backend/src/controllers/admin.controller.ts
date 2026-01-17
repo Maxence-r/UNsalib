@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { matchedData } from "express-validator";
+import { Types } from "mongoose";
 
-import { Campus } from "models/campus.model.js";
+import { Campus } from "../models/campus.model.js";
 import { Building } from "../models/building.model.js";
 import { Room } from "../models/room.model.js";
 import { buildingsService } from "../services/buildings.service.js";
 import { roomsService } from "../services/rooms.service.js";
-import { Types } from "mongoose";
 
 class AdminController {
     /**

@@ -1,4 +1,4 @@
-import type { Types } from "mongoose";
+import type { Types, HydratedDocument } from "mongoose";
 
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
@@ -11,11 +11,15 @@ const CIE_CLOSING_DATES = {
 };
 
 class RoomsService {
+    // **********************************************************
+    // TODO
+    // **********************************************************
+
     /**
      * Find all rooms
      */
     async findAll(): Promise<
-        (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
+        (RoomSchemaProperties & { _id: Types.ObjectId })[]
     > {
         // Getting all the rooms that are not banned
         return await Room.find({ banned: { $ne: true } }).lean();
@@ -36,13 +40,17 @@ class RoomsService {
     ): Promise<
         (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
     > {
-        const overlappingCourses = await coursesService.getOverlappingCourses(start, end);
+        const overlappingCourses = await coursesService.getOverlappingCourses(
+            start,
+            end,
+        );
 
         // Getting all busy rooms ids from the courses array
         const busyRoomsIds: string[] = [];
         overlappingCourses.forEach((course) => {
             course.rooms.forEach((room) => {
-                if (!busyRoomsIds.includes(room.toString())) busyRoomsIds.push(room.toString());
+                if (!busyRoomsIds.includes(room.toString()))
+                    busyRoomsIds.push(room.toString());
             });
         });
 
@@ -92,18 +100,27 @@ class RoomsService {
         return availableRoomsFiltered;
     }
 
+    // **********************************************************
+    // END TODO
+    // **********************************************************
+
     /**
      * Add a room if it does not exist
      */
     async addRoomIfNotExists(rawName: string, campusId: Types.ObjectId) {
         if (rawName.includes(";")) throw new Error("Invalid room name");
-        if (/\(.*\)$/.test(rawName)){
+        if (/\(.*\)$/.test(rawName)) {
             const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
             const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
             // Test if the building exists in the campus
-            const existingBuilding = await Building.findOne({ univName: building });
+            const existingBuilding = await Building.findOne({
+                univName: building,
+            });
             if (existingBuilding) {
-                const existingRoom = await Room.findOne({ name: room, building: existingBuilding._id });
+                const existingRoom = await Room.findOne({
+                    name: room,
+                    building: existingBuilding._id,
+                });
                 if (!existingRoom) {
                     const newRoom = new Room({
                         name: room,
@@ -144,13 +161,17 @@ class RoomsService {
     }
 
     /**
-     * Move room to another building
+     * Move a room to another building
      */
-    async moveRoom(roomId: Types.ObjectId, newBuildingId: Types.ObjectId) {
+    async moveRoom(
+        roomId: Types.ObjectId,
+        newBuildingId: Types.ObjectId,
+    ): Promise<void> {
         const room = await Room.findById(roomId);
         if (!room) {
             throw new Error("Room not found");
         }
+
         room.building = newBuildingId;
         await room.save();
     }
@@ -158,23 +179,36 @@ class RoomsService {
     /**
      * Merge two rooms
      */
-    async mergeRooms(sourceRoomId: Types.ObjectId, targetRoomId: Types.ObjectId) {
+    async mergeRooms(
+        sourceRoomId: Types.ObjectId,
+        targetRoomId: Types.ObjectId,
+    ): Promise<void> {
         const sourceRoom = await Room.findById(sourceRoomId);
         const targetRoom = await Room.findById(targetRoomId);
         if (!sourceRoom || !targetRoom) {
             throw new Error("Room not found");
         }
+
         // Update all courses referencing the source room to reference the target room
-        const courses = await coursesService.getCoursesByRoom(sourceRoomId);
+        const courses = await coursesService.getCourseDocsByRoom(sourceRoomId);
         for (const course of courses) {
             course.rooms = course.rooms.map((roomId) =>
-                roomId.toString() === sourceRoomId.toString() ? targetRoomId : roomId,
+                roomId === sourceRoomId ? targetRoomId : roomId,
             );
             await course.save();
         }
 
         // Delete the source room
-        await Room.findByIdAndDelete(sourceRoomId);
+        await sourceRoom.deleteOne();
+    }
+
+    /**
+     * Get room documents by building
+     */
+    async getRoomDocsByBuilding(
+        buildingId: Types.ObjectId,
+    ): Promise<HydratedDocument<RoomSchemaProperties>[]> {
+        return await Room.find({ building: buildingId });
     }
 }
 

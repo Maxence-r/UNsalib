@@ -27,7 +27,7 @@ GroupSchema.pre(
     { document: true, query: false },
     async function () {
         // Clear group references from courses
-        await coursesService.clearGroupReferences(this._id.toString());
+        await coursesService.clearGroupReferences(this._id);
     },
 );
 

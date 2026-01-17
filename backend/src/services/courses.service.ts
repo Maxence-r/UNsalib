@@ -1,4 +1,4 @@
-import type { Types } from "mongoose";
+import type { Types, HydratedDocument } from "mongoose";
 
 import { Course, CourseSchemaProperties } from "../models/course.model.js";
 
@@ -10,9 +10,7 @@ class CoursesService {
         roomId: string,
         start: string,
         end: string,
-    ): Promise<
-        (CourseSchemaProperties & { _id: Types.ObjectId; __v: number })[]
-    > {
+    ): Promise<(CourseSchemaProperties & { _id: Types.ObjectId })[]> {
         // Getting courses based on room id and given period
         return await Course.find({
             rooms: roomId, // the room is included in the course rooms array
@@ -26,9 +24,7 @@ class CoursesService {
     async getOverlappingCourses(
         start: string,
         end: string,
-    ): Promise<
-        (CourseSchemaProperties & { _id: Types.ObjectId; __v: number })[]
-    > {
+    ): Promise<(CourseSchemaProperties & { _id: Types.ObjectId })[]> {
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période
@@ -58,26 +54,27 @@ class CoursesService {
     /**
      * Clear group references from courses
      */
-    async clearGroupReferences(groupId: string) {
+    async clearGroupReferences(groupId: Types.ObjectId): Promise<void> {
         const courses = await Course.find({ groups: groupId });
+
         for (const course of courses) {
             if (course.groups.length === 1) {
                 // If the group is the only one linked to the course, delete the course
                 await course.deleteOne();
             } else {
                 // Otherwise, just remove the group from the course
-                course.groups = course.groups.filter(
-                    (g) => g.toString() !== groupId,
-                );
+                course.groups = course.groups.filter((g) => g !== groupId);
                 await course.save();
             }
         }
     }
 
     /**
-     * Get courses by room
+     * Get course documents by room
      */
-    async getCoursesByRoom(roomId: Types.ObjectId) {
+    async getCourseDocsByRoom(
+        roomId: Types.ObjectId,
+    ): Promise<HydratedDocument<CourseSchemaProperties>[]> {
         return await Course.find({ rooms: roomId });
     }
 }

@@ -77,7 +77,7 @@ async function getGroups(): Promise<void> {
 
         for (const existingGroup of existingGroups) {
             // Remaining existing groups are no longer present, delete them
-            await groupsService.deleteGroup(existingGroup.univId, campusId);
+            await groupsService.deleteGroup(existingGroup._id);
         }
 
         logger.info(`Added ${added} groups`);

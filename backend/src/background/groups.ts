@@ -158,4 +158,4 @@ async function processGroups(): Promise<void> {
     logger.info(`Groups processing successful`);
 }
 
-export { processGroups };
+export { processGroups, extractGroupsFromTimetablePage, processExtractedGroups };

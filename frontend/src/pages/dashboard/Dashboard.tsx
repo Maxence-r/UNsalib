@@ -12,7 +12,7 @@ import { useDeviceType } from "../../utils/hooks/device.hook";
 import { useAccountStore, type Account } from "../../stores/account.store";
 import { MobileAppbar } from "./mobile-appbar/MobileAppbar";
 
-function Dashboard() {
+function Dashboard(): React.JSX.Element {
     const location = useLocation().pathname;
     const currentViewId = location.split("/")[2];
     const device = useDeviceType();
@@ -39,10 +39,22 @@ function Dashboard() {
                     viewsList={DASHBOARD_VIEWS}
                 />
             )}
-            {
-                DASHBOARD_VIEWS.filter((view) => view.id === currentViewId)[0]
-                    .component
-            }
+            <div className="main">
+                <h2 className="title">
+                    {
+                        DASHBOARD_VIEWS.filter(
+                            (view) => view.id === currentViewId,
+                        )[0].name
+                    }
+                </h2>
+                <div className="content">
+                    {
+                        DASHBOARD_VIEWS.filter(
+                            (view) => view.id === currentViewId,
+                        )[0].component
+                    }
+                </div>
+            </div>
         </main>
     );
 }

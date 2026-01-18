@@ -1,66 +1,67 @@
-#dashboard .mobile-appbar {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
-    gap: 18px;
-    position: relative;
-    border-bottom: 2px solid var(--color-neutral-light);
-    background-color: var(--color-background);
-
-    & h2 {
-        margin-block: 0px;
-    }
-
-    & .account-icon {
-        border-radius: var(--border-radius-full);
-        height: 30px;
-        width: auto;
-        margin-left: 10px;
-    }
-
-    & .menu {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
+#dashboard {
+    & > .mobile-appbar {
         width: 100%;
-        z-index: 1000;
-        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        gap: 18px;
+        position: relative;
+        background-color: var(--color-background);
 
-        &.open {
-            pointer-events: auto;
+        & > h2 {
+            margin-block: 0px;
+            font-weight: 600;
         }
 
-        & .scrim {
-            z-index: 1;
-            position: absolute;
-            width: 100%;
-            background-color: var(--scrim-color);
-            height: 100%;
+        & > .account-icon {
+            border-radius: var(--border-radius-full);
+            height: 30px;
+            width: auto;
+            margin-left: 10px;
+        }
+
+        & > .menu {
+            position: fixed;
             top: 0;
             left: 0;
-            opacity: 0;
-            transition: opacity var(--animation-duration);
-
-            .menu.open & {
-                opacity: 1;
-            }
-        }
-
-        & .window {
-            position: absolute;
             height: 100%;
-            width: 80%;
-            background-color: var(--color-background);
-            z-index: 2;
-            transform: translateX(-100%);
-            transition: transform var(--animation-duration);
+            width: 100%;
+            z-index: 1000;
+            pointer-events: none;
 
-            .menu.open & {
-                transform: translateX(0);
+            &.open {
+                pointer-events: auto;
+            }
+
+            & > .scrim {
+                z-index: 1;
+                position: absolute;
+                width: 100%;
+                background-color: var(--scrim-color);
+                height: 100%;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                transition: opacity var(--animation-duration);
+
+                .menu.open & {
+                    opacity: 1;
+                }
+            }
+
+            & > .window {
+                position: absolute;
+                height: 100%;
+                width: 80%;
+                background-color: var(--color-background);
+                z-index: 2;
+                transform: translateX(-100%);
+                transition: transform var(--animation-duration);
+
+                .menu.open & {
+                    transform: translateX(0);
+                }
             }
         }
     }

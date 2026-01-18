@@ -6,12 +6,12 @@ function Section({
     title,
     children,
 }: {
-    title: string;
+    title?: string;
     children: ReactNode;
 }): React.JSX.Element {
     return (
         <div className="section">
-            <h3 className="title">{title}</h3>
+            {title && <h3 className="title">{title}</h3>}
             {children}
         </div>
     );
@@ -21,12 +21,12 @@ function Layout({
     title,
     children,
 }: {
-    title: string;
+    title?: string;
     children: ReactNode;
 }): React.JSX.Element {
     return (
         <div className="layout">
-            <h3 className="title">{title}</h3>
+            {title && <h3 className="title">{title}</h3>}
             {children}
         </div>
     );

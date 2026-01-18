@@ -22,17 +22,13 @@
         padding: 32px 40px;
         overflow-y: auto;
 
-        & > .title {
-            margin-block: 0;
-            font-weight: 600;
-            font-size: 24px;
-        }
-
-        & .subtitle {
-            margin-block: 0;
-            font-size: 18px;
-            color: var(--color-neutral-dark);
-            /* margi */
+        @media screen and (max-width: 425px) {
+            & {
+                margin-top: 0;
+                height: 100%;
+                padding: 24px;
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
+            }
         }
 
         & > .content {

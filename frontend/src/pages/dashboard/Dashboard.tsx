@@ -43,9 +43,11 @@ function Dashboard(): React.JSX.Element {
             <div className="main">
                 <Layout
                     title={
-                        DASHBOARD_VIEWS.filter(
-                            (view) => view.id === currentViewId,
-                        )[0].name
+                        device !== "mobile"
+                            ? DASHBOARD_VIEWS.filter(
+                                  (view) => view.id === currentViewId,
+                              )[0].name
+                            : undefined
                     }
                 >
                     <div className="content">
@@ -56,14 +58,6 @@ function Dashboard(): React.JSX.Element {
                         }
                     </div>
                 </Layout>
-                {/* // <h2 className="title">
-                //     {
-                //         DASHBOARD_VIEWS.filter(
-                //             (view) => view.id === currentViewId,
-                //         )[0].name
-                //     }
-                // </h2> */}
-                {/* //{" "} */}
             </div>
         </main>
     );

@@ -21,6 +21,7 @@
             & {
                 min-width: auto;
                 box-shadow: none;
+                padding: 20px;
             }
         }
 

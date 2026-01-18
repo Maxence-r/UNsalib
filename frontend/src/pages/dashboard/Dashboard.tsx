@@ -11,6 +11,7 @@ import "./Dashboard.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
 import { useAccountStore, type Account } from "../../stores/account.store";
 import { MobileAppbar } from "./mobile-appbar/MobileAppbar";
+import { Layout } from "../../components/layout/Layout";
 
 function Dashboard(): React.JSX.Element {
     const location = useLocation().pathname;
@@ -40,20 +41,29 @@ function Dashboard(): React.JSX.Element {
                 />
             )}
             <div className="main">
-                <h2 className="title">
-                    {
+                <Layout
+                    title={
                         DASHBOARD_VIEWS.filter(
                             (view) => view.id === currentViewId,
                         )[0].name
                     }
-                </h2>
-                <div className="content">
-                    {
-                        DASHBOARD_VIEWS.filter(
-                            (view) => view.id === currentViewId,
-                        )[0].component
-                    }
-                </div>
+                >
+                    <div className="content">
+                        {
+                            DASHBOARD_VIEWS.filter(
+                                (view) => view.id === currentViewId,
+                            )[0].component
+                        }
+                    </div>
+                </Layout>
+                {/* // <h2 className="title">
+                //     {
+                //         DASHBOARD_VIEWS.filter(
+                //             (view) => view.id === currentViewId,
+                //         )[0].name
+                //     }
+                // </h2> */}
+                {/* //{" "} */}
             </div>
         </main>
     );

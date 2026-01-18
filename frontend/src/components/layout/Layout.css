@@ -1,0 +1,21 @@
+.layout {
+    width: 100%;
+
+    & > .title {
+        margin-block: 0;
+        font-weight: 600;
+        font-size: 24px;
+        margin-block-end: 24px;
+    }
+
+    & .section {
+        margin-bottom: 32px;
+
+        & > .title {
+            margin-block: 0;
+            font-size: 16px;
+            color: var(--color-neutral-dark);
+            margin-block-end: 12px;
+        }
+    }
+}

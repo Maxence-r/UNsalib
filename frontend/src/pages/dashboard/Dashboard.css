@@ -17,7 +17,7 @@
         width: 100%;
         margin-top: 24px;
         gap: 24px;
-        background-color: var(--color-neutral-light);
+        background-color: var(--color-background-dark);
         border-radius: var(--border-radius) 0 0 0;
         padding: 32px 40px;
         overflow-y: auto;
@@ -25,7 +25,14 @@
         & > .title {
             margin-block: 0;
             font-weight: 600;
-            font-size: 20px;
+            font-size: 24px;
+        }
+
+        & .subtitle {
+            margin-block: 0;
+            font-size: 18px;
+            color: var(--color-neutral-dark);
+            /* margi */
         }
 
         & > .content {

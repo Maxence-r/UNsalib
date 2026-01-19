@@ -69,6 +69,24 @@ await describe("groups processing", async () => {
             assert.equal(results.updated, 0);
             assert.equal(results.existingGroups.length, 0);
         });
+
+        await t.test("should update 2 groups and add 1 group", async () => {
+            const results = await processExtractedGroups(
+                campus._id,
+                existingGroups,
+                [
+                    { name: "Group 1 Updated", id: "1" },
+                    { name: "Group 2 Updated", id: "2" },
+                    { name: "Group 4", id: "4" },
+                ],
+            );
+            const groups = await Group.find({});
+
+            assert.equal(groups.length, 4);
+            assert.equal(results.added, 1);
+            assert.equal(results.updated, 2);
+            assert.equal(results.existingGroups.length, 1); // Group 3 should be remaining
+        });
     });
 
     after(async () => {

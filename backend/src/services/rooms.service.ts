@@ -210,6 +210,16 @@ class RoomsService {
     ): Promise<HydratedDocument<RoomSchemaProperties>[]> {
         return await Room.find({ building: buildingId });
     }
+
+    /**
+     * Return a room associated with the given ID
+     */
+    async getRoomById(roomId: Types.ObjectId): Promise<RoomSchemaProperties> {
+        const room = await Room.findOne({ _id: roomId }).lean();
+        if (!room) throw new Error("Room not found");
+
+        return room;
+    }
 }
 
 const roomsService = new RoomsService();

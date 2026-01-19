@@ -5,7 +5,7 @@ type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 const CourseSchema = new Schema(
     {
         univId: {
-            type: String,
+            type: Number,
             required: true,
         },
         celcatId: {
@@ -18,16 +18,16 @@ const CourseSchema = new Schema(
             default: "",
         },
         start: {
-            type: String,
+            type: Date,
             required: true,
         },
         end: {
-            type: String,
+            type: Date,
             required: true,
         },
-        color: {
+        colorRef: {
             type: String,
-            required: false,
+            required: true,
             default: "#ff7675",
         },
         rooms: {
@@ -53,7 +53,7 @@ const CourseSchema = new Schema(
             default: [],
         },
     },
-    { versionKey: false },
+    { versionKey: false, timestamps: true },
 );
 
 const Course = model("Course", CourseSchema);

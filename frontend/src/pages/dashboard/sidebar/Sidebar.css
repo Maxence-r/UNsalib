@@ -1,114 +1,47 @@
-#dashboard .sidebar {
-    min-width: 350px;
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 24px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
-    gap: 24px;
-    position: relative;
-    border-right: 2px solid var(--color-neutral-light);
-    background-color: var(--color-background);
-
-    @media screen and (max-width: 1024px) {
-        &.shrinkable {
-            min-width: auto;
-            width: auto;
-            box-shadow: none;
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-        & {
-            min-width: auto;
-            box-shadow: none;
-        }
-    }
-
-    & .branding {
+#dashboard {
+    & .sidebar {
+        min-width: 350px;
+        height: 100%;
         display: flex;
-        width: 100%;
-        gap: 12px;
-        align-items: center;
+        flex-direction: column;
+        padding: 24px;
+        gap: 48px;
+        position: relative;
+        background-color: var(--color-background);
 
         @media screen and (max-width: 1024px) {
-            .sidebar.shrinkable & {
-                justify-content: center;
+            &.shrinkable {
+                min-width: auto;
+                width: auto;
+                box-shadow: none;
             }
         }
 
-        & h1 {
-            margin-block: 0px;
-            @media screen and (max-width: 1024px) {
-                .sidebar.shrinkable & {
-                    display: none;
-                }
+        @media screen and (max-width: 480px) {
+            & {
+                min-width: auto;
+                box-shadow: none;
+                padding: 20px;
             }
         }
 
-        & img {
-            height: 48px;
-            width: auto;
-            border-radius: var(--border-radius);
-        }
-    }
-
-    & .divider {
-        height: 2px;
-        width: 100%;
-        background-color: var(--color-neutral-light);
-    }
-
-    & .spacer {
-        flex-grow: 1;
-    }
-
-    & .links-list {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        gap: 8px;
-
-        & .link {
-            border-radius: var(--border-radius);
-            background-color: var(--color-background);
-            cursor: pointer;
-            border: none;
-            padding: 0 18px;
-            height: 48px;
-            flex-shrink: 0;
+        /* Branding rules */
+        & > .branding {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--color-on-surface);
-            text-decoration: none;
 
             @media screen and (max-width: 1024px) {
                 .sidebar.shrinkable & {
-                    padding: 12px;
+                    justify-content: center;
                 }
             }
 
-            &:hover {
-                background-color: var(--color-neutral);
-            }
-
-            &.active {
-                background-color: var(--color-accent);
-                color: var(--color-on-accent);
-            }
-
-            &.active:hover {
-                background-color: var(--color-accent-dark);
-                color: var(--color-on-surface);
-            }
-
-            & > span {
-                font-size: 14px;
-                font-weight: bold;
-                text-transform: uppercase;
-                font-family: "Space Grotesk", sans-serif;
+            & > h1 {
+                font-size: 28px;
+                font-family: "Cal Sans";
+                font-weight: normal;
+                margin-block: 0;
 
                 @media screen and (max-width: 1024px) {
                     .sidebar.shrinkable & {
@@ -118,9 +51,83 @@
             }
 
             & > img {
-                border-radius: var(--border-radius-full);
-                height: 20px;
+                height: 48px;
                 width: auto;
+                border-radius: var(--border-radius);
+                background-color: var(--color-accent);
+                padding: 3px;
+            }
+        }
+
+        & > .nav {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 24px;
+
+            & > .links-list {
+                display: flex;
+                width: 100%;
+                flex-direction: column;
+                gap: 8px;
+
+                & > .link {
+                    border-radius: var(--border-radius);
+                    background-color: var(--color-background);
+                    cursor: pointer;
+                    border: none;
+                    padding: 0 18px;
+                    height: 48px;
+                    min-width: 48px;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: var(--color-on-surface);
+                    text-decoration: none;
+
+                    @media screen and (max-width: 1024px) {
+                        .sidebar.shrinkable & {
+                            padding: 0;
+                            justify-content: center;
+                        }
+                    }
+
+                    &:hover {
+                        background-color: var(--color-neutral);
+                    }
+
+                    &.active {
+                        background-color: var(--color-accent);
+                        color: var(--color-on-accent);
+                    }
+
+                    &.active:hover {
+                        background-color: var(--color-accent-dark);
+                        color: var(--color-on-accent);
+                    }
+
+                    & > span {
+                        font-size: 14px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        font-family: "Space Grotesk", sans-serif;
+
+                        @media screen and (max-width: 1024px) {
+                            .sidebar.shrinkable & {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    & > img {
+                        border-radius: var(--border-radius-full);
+                        height: 20px;
+                        width: auto;
+                    }
+                }
             }
         }
     }

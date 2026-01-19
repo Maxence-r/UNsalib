@@ -3,10 +3,11 @@ import { ChartPie, House, Pen } from "lucide-react";
 
 import { Dashboard } from "./Dashboard";
 import { ProtectedRoute } from "../../utils/ProtectedRoute";
+import { Manage } from "./manage/Manage";
 
 const DASHBOARD_VIEWS = [
     { id: "home", name: "Accueil", icon: <House />, component: <></> },
-    { id: "manage", name: "Gestion", icon: <Pen />, component: <></> },
+    { id: "manage", name: "Gestion", icon: <Pen />, component: <Manage /> },
     { id: "stats", name: "Statistiques", icon: <ChartPie />, component: <></> },
 ];
 

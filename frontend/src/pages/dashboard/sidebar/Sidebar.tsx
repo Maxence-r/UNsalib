@@ -10,7 +10,7 @@ interface Link {
     path: string;
 }
 
-function Link({ name, icon, path }: Link) {
+function Link({ name, icon, path }: Link): React.JSX.Element {
     return (
         <NavLink
             to={path}
@@ -22,7 +22,7 @@ function Link({ name, icon, path }: Link) {
     );
 }
 
-function LinksList({ actions }: { actions: Link[] }) {
+function LinksList({ actions }: { actions: Link[] }): React.JSX.Element {
     return (
         <div className="links-list">
             {actions.map((action) => {
@@ -53,50 +53,44 @@ function Sidebar({
         name: string;
         icon: JSX.Element;
     }[];
-}) {
+}): React.JSX.Element {
     return (
         <div className={`sidebar${embedded ? "" : " shrinkable"}`}>
             <div className="branding">
-                <img
-                    className="logo"
-                    src="/logo96.png"
-                    alt="logo"
-                    width={96}
-                    height={96}
-                />
+                <img src="/logo96.png" alt="logo" />
                 <h1>UNsalib</h1>
             </div>
-            <span className="divider" />
-            <LinksList
-                actions={viewsList.map((tab) => ({
-                    icon: tab.icon,
-                    name: tab.name,
-                    path: `/dashboard/${tab.id}`,
-                }))}
-            />
-            <span className="spacer" />
-            <LinksList
-                actions={[
-                    {
-                        icon: (
-                            <img
-                                // src={`data:image/png;base64,${userAccount.icon}`}
-                                alt=""
-                            />
-                        ),
-                        name:
-                            accountName && accountLastname
-                                ? `${accountName} ${accountLastname}`
-                                : "Inconnu·e",
-                        path: "/dashboard/account",
-                    },
-                    {
-                        icon: <LogOut />,
-                        name: "Déconnexion",
-                        path: "/auth/logout",
-                    },
-                ]}
-            />
+            <div className="nav">
+                <LinksList
+                    actions={viewsList.map((tab) => ({
+                        icon: tab.icon,
+                        name: tab.name,
+                        path: `/dashboard/${tab.id}`,
+                    }))}
+                />
+                <LinksList
+                    actions={[
+                        {
+                            icon: (
+                                <img
+                                    // src={`data:image/png;base64,${userAccount.icon}`}
+                                    alt=""
+                                />
+                            ),
+                            name:
+                                accountName && accountLastname
+                                    ? `${accountName} ${accountLastname}`
+                                    : "Inconnu·e",
+                            path: "/dashboard/account",
+                        },
+                        {
+                            icon: <LogOut />,
+                            name: "Déconnexion",
+                            path: "/auth/logout",
+                        },
+                    ]}
+                />
+            </div>
         </div>
     );
 }

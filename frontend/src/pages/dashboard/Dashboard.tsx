@@ -11,8 +11,9 @@ import "./Dashboard.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
 import { useAccountStore, type Account } from "../../stores/account.store";
 import { MobileAppbar } from "./mobile-appbar/MobileAppbar";
+import { Layout } from "../../components/layout/Layout";
 
-function Dashboard() {
+function Dashboard(): React.JSX.Element {
     const location = useLocation().pathname;
     const currentViewId = location.split("/")[2];
     const device = useDeviceType();
@@ -39,10 +40,25 @@ function Dashboard() {
                     viewsList={DASHBOARD_VIEWS}
                 />
             )}
-            {
-                DASHBOARD_VIEWS.filter((view) => view.id === currentViewId)[0]
-                    .component
-            }
+            <div className="main">
+                <Layout
+                    title={
+                        device !== "mobile"
+                            ? DASHBOARD_VIEWS.filter(
+                                  (view) => view.id === currentViewId,
+                              )[0].name
+                            : undefined
+                    }
+                >
+                    <div className="content">
+                        {
+                            DASHBOARD_VIEWS.filter(
+                                (view) => view.id === currentViewId,
+                            )[0].component
+                        }
+                    </div>
+                </Layout>
+            </div>
         </main>
     );
 }

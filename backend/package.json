@@ -10,18 +10,18 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
-    "@octokit/rest": "^21.0.2",
-    "bcrypt": "^5.1.1",
+    "@octokit/rest": "^21.1.1",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
     "fetch": "^1.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.7.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.21.0",
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.13",
-    "nodemon": "^3.1.7",
-    "socket.io": "^4.8.1",
-    "ua-parser-js": "^2.0.0"
+    "nodemon": "^3.1.11",
+    "socket.io": "^4.8.3",
+    "ua-parser-js": "^2.0.8"
   }
 }

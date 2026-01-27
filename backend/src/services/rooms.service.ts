@@ -105,10 +105,15 @@ class RoomsService {
     // **********************************************************
 
     /**
-     * Add a room if it does not exist
+     * Add a room if it does not exist and return the resulting document ID
      */
-    async addRoomIfNotExists(rawName: string, campusId: Types.ObjectId) {
+    async addRoomIfNotExists(
+        rawName: string,
+        campusId: Types.ObjectId,
+    ): Promise<Types.ObjectId> {
+        // Filter room blocks (e.g: Room A ; Room B)
         if (rawName.includes(";")) throw new Error("Invalid room name");
+
         if (/\(.*\)$/.test(rawName)) {
             const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
             const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
@@ -128,9 +133,9 @@ class RoomsService {
                         univId: rawName,
                     });
                     await newRoom.save();
-                    return newRoom;
+                    return newRoom._id;
                 }
-                return existingRoom;
+                return existingRoom._id;
             } else {
                 const newBuilding = new Building({
                     univName: building,
@@ -144,7 +149,7 @@ class RoomsService {
                     univId: rawName,
                 });
                 await newRoom.save();
-                return newRoom;
+                return newRoom._id;
             }
         } else {
             const existingRoom = await Room.findOne({ univId: rawName });
@@ -154,9 +159,9 @@ class RoomsService {
                     univId: rawName,
                 });
                 await newRoom.save();
-                return newRoom;
+                return newRoom._id;
             }
-            return existingRoom;
+            return existingRoom._id;
         }
     }
 

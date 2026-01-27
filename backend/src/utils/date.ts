@@ -100,6 +100,23 @@ function getDatesRange(start: Date, end: Date): string[] {
     return range;
 }
 
+// Return the start and end dates from now to now + increment,
+// formatted as a yyyy-MM-dd string
+function getStringBoundDates(increment: number): {
+    start: string;
+    end: string;
+} {
+    const startDate = new Date();
+    const endDate = startDate;
+    endDate.setDate(endDate.getDate() + increment);
+    startDate.setDate(startDate.getDate());
+
+    return {
+        start: startDate.toISOString().split("T")[0],
+        end: endDate.toISOString().split("T")[0],
+    };
+}
+
 export {
     isValidDate,
     getWeekInfos,
@@ -107,4 +124,5 @@ export {
     getMinutesOverflow,
     isSameDay,
     getDatesRange,
+    getStringBoundDates,
 };

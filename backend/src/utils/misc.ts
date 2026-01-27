@@ -14,4 +14,9 @@ function areArraysEqual<T>(a: T[], b: T[]): boolean {
     return true;
 }
 
-export { areArraysEqual };
+// Remove character sequences from a raw JSON string
+function sanitizeJsonString(str: string): string {
+    return str.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "");
+}
+
+export { areArraysEqual, sanitizeJsonString };

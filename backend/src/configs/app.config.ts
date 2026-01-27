@@ -57,6 +57,9 @@ const config = {
             process.env.FORCE_TIMETABLES_FETCH,
             false,
         ),
+        daysToRetrieve: process.env.DAYS_TO_RETRIEVE
+            ? parseInt(process.env.DAYS_TO_RETRIEVE)
+            : 60
     },
 };
 

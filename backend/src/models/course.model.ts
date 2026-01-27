@@ -15,7 +15,6 @@ const CourseSchema = new Schema(
         category: {
             type: String,
             required: false,
-            default: "",
         },
         start: {
             type: Date,

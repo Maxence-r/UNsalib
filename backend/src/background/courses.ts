@@ -1,23 +1,27 @@
-import "dotenv/config";
-
-import { Group } from "../models/group.model.js";
-import { Course } from "../models/course.model.js";
-import { Room } from "../models/room.model.js";
+import { Course, CourseSchemaProperties } from "models/course.model.js";
+import { HydratedDocument, Types } from "mongoose";
+import { roomsService } from "services/rooms.service.js";
+import { areArraysEqual } from "utils/misc.js";
 import { closestPaletteColor } from "../utils/color.js";
-import { socket } from "../server.js";
-import { roomsService } from "../services/rooms.service.js";
-import { Types } from "mongoose";
-import { groupsService } from "../services/groups.service.js";
+import { sanitizeJsonString } from "utils/misc.js";
+import { GroupSchemaProperties } from "models/group.model.js";
+import { getStringBoundDates } from "utils/date.js";
+import { config } from "configs/app.config.js";
+import { logger } from "utils/logger.js";
+import { socket } from "server.js";
 
-// CONSTANTS
-// Groups update interval in milliseconds
-const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
-// Number of days to fetch for each timetable
-const DAYS_TO_RETRIEVE = 120;
-// Storage of the average processing time for each group
-let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
+interface NormalizedCourse {
+    univId: number;
+    celcatId: string;
+    start: Date;
+    end: Date;
+    category?: string | null;
+    color?: string;
+    rooms: string[];
+    teachers: string[];
+    modules: string[];
+}
 
-// TYPES
 interface UnivApiCourse {
     id: number;
     celcat_id: string;
@@ -40,37 +44,18 @@ interface UnivApiCourse {
     modules_for_item_details: string;
 }
 
-// Gets the start and end dates for the request to the timetable website
-function getRequestDates(increment): {
-    start: string;
-    end: string;
-} {
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + increment);
-    startDate.setDate(startDate.getDate() - 1);
+// Storage of the average processing time for each group
+const stats = {
+    timeSum: 0,
+    groupsProcessed: 0,
+    removed: 0,
+    added: 0,
+    updated: 0,
+};
+const groupFetchStatsInterval = 10;
 
-    return {
-        start: startDate.toISOString().split("T")[0],
-        end: endDate.toISOString().split("T")[0],
-    };
-}
-
-// Processes a room to add it to the database if it not already exists
-async function processRoom(roomName: string, campusId: Types.ObjectId) {
-    // Checking if the room name is valid
-    if (!roomName) return;
-
-    return await roomsService.addRoomIfNotExists(roomName, campusId);
-}
-
-// Returns all groups used for the current university year, dealing with duplicate IDs if necessary
-async function getAllGroups() {
-    return await Group.find({});
-}
-
-// Splits a string present in the data supplied by the University
-// (blocks separated by ‘;’) and returns an array of elements
+// Split a string present in the data supplied by the University
+// (blocks separated by ;) and return an array of elements
 function splitUnivDataBlocks(blocks: string): string[] {
     if (blocks && blocks !== "") {
         return blocks.split(";").map((item) => item.trim());
@@ -78,80 +63,79 @@ function splitUnivDataBlocks(blocks: string): string[] {
     return [];
 }
 
-async function isDbCourseInUnivArray(
-    dbCourse,
-    univDataArray,
-): Promise<null | number> {
-    // Checks if two arrays are the same
-    // Adapted from https://stackoverflow.com/a/16436975
-    function areArraysEqual(a, b): boolean {
-        if (a === b) return true;
-        if (a == null || b == null) return false;
-        if (a.length !== b.length) return false;
+function getNormalizedUnivCourses(
+    courses: UnivApiCourse[],
+): NormalizedCourse[] {
+    return courses.map((course) => ({
+        univId: course.id,
+        celcatId: course.celcat_id,
+        start: new Date(course.start_at),
+        end: new Date(course.end_at),
+        rooms: splitUnivDataBlocks(course.rooms_for_blocks),
+        teachers: splitUnivDataBlocks(course.teachers_for_blocks),
+        modules: splitUnivDataBlocks(course.modules_for_blocks),
+        ...(course.categories && { category: course.categories }),
+        ...(course.color && { color: course.color }),
+    }));
+}
 
-        const a1 = a.sort();
-        const b1 = b.sort();
-
-        for (let i = 0; i < a1.length; ++i) {
-            if (a1[i] !== b1[i]) return false;
-        }
-        return true;
-    }
-
-    // Processing the dbCourse's rooms, teachers and modules to put them into a convenient format
-    const dbRooms = await Promise.all(
-        dbCourse.rooms.map(async (roomId) => {
-            const room = await Room.findOne({ _id: roomId });
-            return room.name == room.building
-                ? `${room.name}`
-                : `${room.name} (${room.building})`;
-        }),
+async function getNormalizedDbCourses(
+    courses: (CourseSchemaProperties & { _id: Types.ObjectId })[],
+): Promise<NormalizedCourse[]> {
+    return Promise.all(
+        courses.map(async (course) => ({
+            univId: course.univId,
+            celcatId: course.celcatId,
+            start: course.start,
+            end: course.end,
+            rooms: await Promise.all(
+                course.rooms.map(
+                    async (roomId) =>
+                        (await roomsService.getRoomById(roomId)).univId,
+                ),
+            ),
+            teachers: course.teachers,
+            modules: course.modules,
+            category: course.category,
+        })),
     );
-    const dbModules = dbCourse.modules;
-    const dbTeachers = dbCourse.teachers;
+}
 
-    // Checking if our DB course is present in the University data
-    let univRooms, univTeachers, univModules;
-    for (let i = 0; i < univDataArray.length; i++) {
-        const univCourse = univDataArray[i];
+// Return a normalized course index if found in an array on normalized courses,
+// null otherwise
+function getCourseIndex(
+    searchedCourse: NormalizedCourse,
+    courses: NormalizedCourse[],
+): null | number {
+    // Eliminate each course by testing its characteristics from the most likely to
+    // differ to the least likely
+    for (let i = 0; i < courses.length; i++) {
+        const course = courses[i];
 
-        // Processing the univCourse's rooms, teachers and modules to put them into the same format as above
-        univRooms = splitUnivDataBlocks(univCourse.rooms_for_item_details);
-        univTeachers = splitUnivDataBlocks(univCourse.teachers_for_blocks);
-        univModules = splitUnivDataBlocks(univCourse.modules_for_blocks);
-
-        // Eliminating the course by testing its characteristics from the most likely to differ to the least likely (saves time)
         if (
-            univCourse.start_at === dbCourse.start &&
-            univCourse.end_at === dbCourse.end
+            course.univId === searchedCourse.univId &&
+            course.celcatId === searchedCourse.celcatId &&
+            course.start.getTime() === searchedCourse.start.getTime() &&
+            course.end.getTime() === searchedCourse.end.getTime() &&
+            areArraysEqual(course.rooms, searchedCourse.rooms) &&
+            areArraysEqual(course.teachers, searchedCourse.teachers) &&
+            areArraysEqual(course.modules, searchedCourse.modules) &&
+            course.category === searchedCourse.category
         ) {
-            if (
-                univCourse.notes === dbCourse.notes ||
-                (univCourse.notes === null && dbCourse.notes === "") ||
-                (univCourse.notes === undefined && dbCourse.notes === "")
-            ) {
-                if (areArraysEqual(univRooms, dbRooms)) {
-                    if (areArraysEqual(univTeachers, dbTeachers)) {
-                        if (areArraysEqual(univModules, dbModules)) {
-                            if (univCourse.categories === dbCourse.category) {
-                                // This University course is the same as the DB course
-                                return index;
-                            }
-                        }
-                    }
-                }
-            }
+            // This course is the same as the searched course
+            return i;
         }
     }
 
+    // Not found
     return null;
 }
 
 // Processes all the courses in a given group to perform add/remove/update operations in our database
 async function processGroupCourses(
-    univData: UnivApiCourse[],
-    dbData,
-    dbGroupId: string,
+    univCourses: UnivApiCourse[],
+    dbCourses: HydratedDocument<CourseSchemaProperties>[],
+    dbGroupId: Types.ObjectId,
     campusId: Types.ObjectId,
 ): Promise<{
     removed: number;
@@ -161,132 +145,78 @@ async function processGroupCourses(
     // Creating a variable to store the operations that have been performed in our database
     const result = { removed: 0, updated: 0, created: 0 };
 
-    // Parsing all the courses stored in our DB for this group
-    const dbToRemove = [];
-    let wantedCourse;
-    for (const course of dbData) {
+    const normalizedUnivCourses = getNormalizedUnivCourses(univCourses);
+    const normalizedDbCourses = await getNormalizedDbCourses(dbCourses);
+
+    // Parsing all the DB courses for this group
+    let wantedCourseIndex: number | null;
+    for (const course of normalizedDbCourses) {
         // Trying to find the course in the latest University data
-        wantedCourse = await isDbCourseInUnivArray(course, univData);
-        if (wantedCourse) {
-            // if the course is found remove it from univData
-            univData.splice(wantedCourse, 1);
-        } else {
-            // else flag it for deletion
-            dbToRemove.push(course);
+        wantedCourseIndex = getCourseIndex(course, normalizedUnivCourses);
+
+        if (wantedCourseIndex) {
+            // If the course is found, remove it from the University and DB courses arrays
+            normalizedUnivCourses.splice(wantedCourseIndex, 1);
+            dbCourses.splice(wantedCourseIndex, 1);
         }
     }
-    // Now, univData only contains the courses that need to be added to our DB
-    // and dbToRemove contains the courses that need to be deleted
+    // Now, normalizedUnivCourses only contains courses that need to be added to our DB
+    // and dbCourses contains courses that need to be deleted
 
-    // Browsing the courses that need to be deleted from our database
-    for (const course of dbToRemove) {
+    // Browse courses that need to be deleted from our DB
+    for (const course of dbCourses) {
         if (course.groups.length > 1) {
-            // If there are several groups in the course record, modify it by just deleting the group
-            const updatedGroups = [];
-            course.groups.forEach((group) => {
-                if (group.toString() !== dbGroupId) {
-                    updatedGroups.push(group);
-                }
-            });
-            await Course.updateOne(
-                { _id: course._id },
-                {
-                    $set: { groups: updatedGroups },
-                },
-            );
-            result.updated += 1;
+            // If there are several groups in the course record, just delete the group
+            course.groups.filter((group) => group !== dbGroupId);
+            await course.save();
+            result.updated++;
         } else {
-            // If there is only one group in the course record, delete it
+            // If there is only the current processed group in the course record, delete it
             await Course.deleteOne({ _id: course._id });
-            result.removed += 1;
+            result.removed++;
         }
     }
 
-    // Browsing courses that remain in univData (new to our database)
-    for (const course of univData) {
-        // Checking if data is valid (e.g: excludes holidays with no associated rooms)
-        if (
-            !course.start_at ||
-            !course.end_at ||
-            !course.id ||
-            !course.celcat_id ||
-            !course.rooms_for_item_details
-        )
-            continue;
+    // Browse courses that remain in normalizedUnivCourses (new to our database or need to be updated)
+    for (const course of normalizedUnivCourses) {
+        // Check if data is valid (e.g: exclude holidays with no associated rooms)
+        if (!course.rooms) continue;
 
-        // Processing the course's rooms, teachers and modules to put them into our DB format
-        let rooms = splitUnivDataBlocks(course.rooms_for_item_details);
-        rooms = await Promise.all(
-            rooms.map(async (roomName) => (await processRoom(roomName, campusId))._id),
+        // Process the course's rooms, teachers and modules to put them into our DB format
+        const cleanRooms = await Promise.all(
+            course.rooms.map(
+                async (roomName) =>
+                    await roomsService.addRoomIfNotExists(roomName, campusId),
+            ),
         );
-        const teachers = splitUnivDataBlocks(course.teachers_for_blocks);
-        const modules = splitUnivDataBlocks(course.modules_for_blocks);
 
-        // Building a minimal query
-        const dbQuery: {
-            univId: string;
-            start: string;
-            end: string;
-            category: string;
-            notes: string;
-            rooms: { $all: string[]; $size: number }[];
-            teachers: { $all: string[]; $size: number }[];
-            modules: { $all: string[]; $size: number }[];
-        } = {
-            univId: course.id.toString(),
-            start: course.start_at,
-            end: course.end_at,
-            category: course.categories || "",
-            notes: course.notes || "",
-            rooms: [], // empty by default
-            teachers: [],
-            modules: [],
-        };
-        // If there are rooms, teachers or modules, add it to the query
-        if (rooms.length > 0) {
-            dbQuery.rooms = {
-                $all: rooms, // only checks that all the elements of rooms are present
-                $size: rooms.length, // so we need to also check the array size
-                // if it contains exactly all the rooms it's the same array
-            };
-        }
-        if (teachers.length > 0) {
-            dbQuery.teachers = {
-                $all: teachers,
-                $size: teachers.length,
-            };
-        }
-        if (modules.length > 0) {
-            dbQuery.modules = {
-                $all: modules,
-                $size: modules.length,
-            };
-        }
-        // Executing the query
-        const existingCourse = await Course.findOne(dbQuery);
+        const existingCourse = await Course.findOne({
+            univId: course.univId,
+            start: course.start,
+            end: course.end,
+            ...(course.category && { category: course.category }),
+            ...(cleanRooms
+                ? {
+                      $all: cleanRooms, // only check that all the elements of rooms are present
+                      $size: cleanRooms.length, // so we need to also check the array size
+                      // If it contains exactly all the rooms then it's the same array
+                  }
+                : []),
+            ...(course.teachers
+                ? {
+                      $all: course.teachers,
+                      $size: course.teachers.length,
+                  }
+                : []),
+            ...(course.modules
+                ? {
+                      $all: course.modules,
+                      $size: course.modules.length,
+                  }
+                : []),
+        });
 
-        if (
-            !existingCourse ||
-            existingCourse === null ||
-            existingCourse === undefined
-        ) {
-            // If the course doesn't exists, create it in our DB
-            const newCourse = new Course({
-                univId: course.id,
-                celcatId: course.celcat_id,
-                category: course.categories || "",
-                start: course.start_at,
-                end: course.end_at,
-                notes: course.notes || "",
-                color: closestPaletteColor(course.color) || "#FF7675",
-                rooms: rooms,
-                teachers: teachers,
-                groups: [dbGroupId],
-                modules: modules,
-            });
-            await newCourse.save();
-            result.created += 1;
-        } else {
+        if (existingCourse) {
             // If the course already exists, add the current processed group to its record
             await Course.updateOne(
                 { _id: existingCourse._id },
@@ -294,143 +224,93 @@ async function processGroupCourses(
                     $push: { groups: dbGroupId },
                 },
             );
-            result.updated += 1;
+            result.updated++;
+        } else {
+            // If the course doesn't exists, create it in our DB
+            const newCourse = new Course({
+                univId: course.univId,
+                celcatId: course.celcatId,
+                start: course.start,
+                end: course.end,
+                color: closestPaletteColor(course.color ?? "#bdc3c7"),
+                rooms: cleanRooms,
+                teachers: course.teachers,
+                groups: [dbGroupId],
+                modules: course.modules,
+                ...(course.category && { category: course.category }),
+            });
+            await newCourse.save();
+            result.created++;
         }
     }
 
     return result;
 }
 
-// Removes character sequences from a raw JSON string
-function sanitizeJsonString(str: string): string {
-    return str.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "");
-}
-
-// Retrieves courses for a group
-async function fetchCourses(
-    id: string,
-    name: string,
-    univId: string,
+// Retrieve courses for a group
+async function fetchGroupCourses(
+    group: GroupSchemaProperties & { _id: Types.ObjectId },
     campusId: Types.ObjectId,
 ): Promise<void> {
-    // Saving the start time to make stats
+    // Save the start time to make stats
     const startProcessingTime = Date.now();
 
-    // Getting dates for the specified amount of time
-    const dates = getRequestDates(DAYS_TO_RETRIEVE);
+    // Get dates for the specified amount of time
+    const dates = getStringBoundDates(config.tasks.daysToRetrieve);
 
-    // Logging if needed
-    console.log(
-        `---- Récupération des cours pour le groupe ${name} du ${dates.start} au ${dates.end}`,
-    );
-
-    // Building request URL
+    // Build the request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;
 
     try {
-        // Getting data from the Nantes Université timetable API
+        // Get data from the Nantes Université timetable API
         const response = await fetch(requestUrl);
         const jsonData = JSON.parse(
             sanitizeJsonString(await response.text()),
         ) as UnivApiCourse[];
 
-        // Getting some related data from our database
-        const dbRecords = await Course.find({
-            start: { $gte: dates.start + "T00:00:00+01:00" },
-            end: { $lte: dates.end + "T23:59:59+01:00" },
-            groups: id,
+        // Get some related data from our database
+        const dbCourseRecords = await Course.find({
+            start: { $gte: new Date(dates.start) },
+            end: { $lte: new Date(dates.end) },
+            groups: group._id,
         });
 
-        // Processing all the courses for this group
-        const result = await processGroupCourses(jsonData, dbRecords, id, campusId);
+        // Process all the courses for this group
+        const result = await processGroupCourses(
+            jsonData,
+            dbCourseRecords,
+            group._id,
+            campusId,
+        );
 
-        // Calculating the new average processing time
+        // Calculate the new average processing time
         const processingTime = Date.now() - startProcessingTime;
-        averageProcessingTime.timeSum += processingTime;
-        averageProcessingTime.measuresNumber++;
+        stats.timeSum += processingTime;
+        stats.groupsProcessed++;
 
-        // Logging if needed
-        console.log(
-            `Supprimés : ${result.removed} | Mis à jour : ${result.updated} | Créés : ${result.created}`,
-        );
-        console.log(
-            `Temps de traitement : ${parseFloat("" + processingTime / 1000).toFixed(2)}s | Temps de traitement moyen : ${parseFloat("" + averageProcessingTime.timeSum / averageProcessingTime.measuresNumber / 1000).toFixed(2)}s`,
-        );
+        // Log if needed
+        if (stats.groupsProcessed > groupFetchStatsInterval) {
+            logger.info(
+                `${groupFetchStatsInterval} groups processed in ${parseFloat("" + stats.timeSum / stats.groupsProcessed / 1000).toFixed(2)}s`,
+            );
+            logger.info(
+                `Removed: ${result.removed} | Updated: ${result.updated} | Created: ${result.created}`,
+            );
+            stats.timeSum = 0;
+            stats.groupsProcessed = 0;
+            stats.removed = 0;
+            stats.added = 0;
+            stats.updated = 0;
+        }
 
         // Sending an update message to all clients
-        socket.sendGroupsUpdate(name);
+        socket.sendGroupsUpdate(group.name);
     } catch (error) {
-        console.error(
-            `Erreur pour le groupe ${name} (id : ${univId}, url : ${requestUrl}) :`,
+        logger.error(
+            `Cannot retrieve timetable for the ${group.name} group (univId: ${group.univId}, url: ${requestUrl})`,
             error,
         );
     }
 }
 
-// Processes a group (dev only)
-// async function processGroup(groupName: string): Promise<void> {
-//     const group = (await getAllGroups()).filter(
-//         (group) => group.name === groupName,
-//     )[0];
-//     await fetchCourses(group);
-// }
-
-// Processes a batch of groups
-async function processBatchGroups(campusId: Types.ObjectId): Promise<void> {
-    const groups = await groupsService.getGroupsForCampus(campusId);
-
-    for (const group of groups) {
-        await fetchCourses(group._id.toString(), group.name, group.univId, campusId);
-    }
-}
-
-// Main
-async function getCourses(): Promise<void> {
-    const groups = await getAllGroups();
-
-    // Calculating the interval between each group for a CYCLE_INTERVAL-hour distribution
-    const groupsNumber = groups.length;
-    const intervalBetweenGroups = Math.floor(CYCLE_INTERVAL / groupsNumber);
-
-    // Function to start the update cycle
-    function startUpdateCycle(): void {
-        let groupIndex = 0;
-
-        // Function to schedule the next group to update
-        const scheduleNextGroup = (): void => {
-            if (groupIndex < groupsNumber) {
-                const process = async() => {
-                    const group = groups[groupIndex];
-                    await fetchCourses(group._id.toString(), group.name, group.univId, group.campusId);
-                    groupIndex++;
-                    scheduleNextGroup();
-                }
-                setTimeout(() => void process(), intervalBetweenGroups);
-            } else {
-                // all groups were processed
-                // Resetting the group index for the next cycle
-                groupIndex = 0;
-                setTimeout(() => {
-                    console.log("Démarrage d'un nouveau cycle...");
-                    averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
-                    scheduleNextGroup();
-                }, intervalBetweenGroups);
-            }
-        };
-
-        // Starting to update the first group
-        scheduleNextGroup();
-    }
-
-    // Starting the update process
-    console.log("Démarrage du cycle de mise à jour...");
-    console.log(
-        `${groupsNumber} groupes seront traités toutes les ${CYCLE_INTERVAL / 1000 / 60 / 60}h`,
-    );
-    console.log(
-        `Intervalle entre chaque groupe : ${intervalBetweenGroups / 1000} secondes`,
-    );
-    startUpdateCycle();
-}
-
-export { getCourses, processBatchGroups };
+export { fetchGroupCourses };

@@ -2,7 +2,7 @@ import type { Types, HydratedDocument } from "mongoose";
 
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
-import { Building } from "models/building.model.js";
+import { Building } from "../models/building.model.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,

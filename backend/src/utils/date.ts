@@ -117,6 +117,16 @@ function getStringBoundDates(increment: number): {
     };
 }
 
+function scheduleRun(triggerDate: Date, fn: () => void): void {
+    setTimeout(function () {
+        if (new Date() >= triggerDate) {
+            fn();
+        } else {
+            scheduleRun(triggerDate, fn);
+        }
+    }, 1000);
+}
+
 export {
     isValidDate,
     getWeekInfos,
@@ -125,4 +135,5 @@ export {
     isSameDay,
     getDatesRange,
     getStringBoundDates,
+    scheduleRun,
 };

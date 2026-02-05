@@ -6,7 +6,7 @@ type GroupSchemaProperties = InferSchemaType<typeof GroupSchema>;
 const GroupSchema = new Schema(
     {
         univId: {
-            type: String,
+            type: Number,
             required: true,
         },
         name: {

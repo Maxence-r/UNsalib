@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { Campus, CampusSchemaProperties } from "models/campus.model.js";
+import { Campus, CampusSchemaProperties } from "../models/campus.model.js";
 
 class CampusesService {
     /**

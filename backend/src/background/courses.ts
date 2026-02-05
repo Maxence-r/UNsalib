@@ -1,14 +1,14 @@
-import { Course, CourseSchemaProperties } from "models/course.model.js";
 import { HydratedDocument, Types } from "mongoose";
-import { roomsService } from "services/rooms.service.js";
-import { areArraysEqual } from "utils/misc.js";
+
+import { CourseSchemaProperties } from "../models/course.model.js";
+import { roomsService } from "../services/rooms.service.js";
+import { areArraysEqual, sanitizeJsonString } from "../utils/misc.js";
 import { closestPaletteColor } from "../utils/color.js";
-import { sanitizeJsonString } from "utils/misc.js";
-import { GroupSchemaProperties } from "models/group.model.js";
-import { getStringBoundDates } from "utils/date.js";
-import { config } from "configs/app.config.js";
-import { logger } from "utils/logger.js";
-import { socket } from "server.js";
+import { GroupSchemaProperties } from "../models/group.model.js";
+import { getStringBoundDates } from "../utils/date.js";
+import { config } from "../configs/app.config.js";
+import { socket } from "../server.js";
+import { coursesService } from "../services/courses.service.js";
 
 interface NormalizedCourse {
     univId: number;
@@ -44,15 +44,23 @@ interface UnivApiCourse {
     modules_for_item_details: string;
 }
 
-// Storage of the average processing time for each group
-const stats = {
-    timeSum: 0,
-    groupsProcessed: 0,
-    removed: 0,
-    added: 0,
-    updated: 0,
-};
-const groupFetchStatsInterval = 10;
+class CoursesFetchError extends Error {
+    groupUnivId: number;
+    groupName: string;
+    url: string;
+
+    constructor(
+        message: string,
+        groupUnivId: number,
+        groupName: string,
+        url: string,
+    ) {
+        super(message);
+        this.groupUnivId = groupUnivId;
+        this.groupName = groupName;
+        this.url = url;
+    }
+}
 
 // Split a string present in the data supplied by the University
 // (blocks separated by ;) and return an array of elements
@@ -172,7 +180,7 @@ async function processGroupCourses(
             result.updated++;
         } else {
             // If there is only the current processed group in the course record, delete it
-            await Course.deleteOne({ _id: course._id });
+            await coursesService.deleteCourse(course._id)
             result.removed++;
         }
     }
@@ -190,56 +198,37 @@ async function processGroupCourses(
             ),
         );
 
-        const existingCourse = await Course.findOne({
-            univId: course.univId,
-            start: course.start,
-            end: course.end,
-            ...(course.category && { category: course.category }),
-            ...(cleanRooms
-                ? {
-                      $all: cleanRooms, // only check that all the elements of rooms are present
-                      $size: cleanRooms.length, // so we need to also check the array size
-                      // If it contains exactly all the rooms then it's the same array
-                  }
-                : []),
-            ...(course.teachers
-                ? {
-                      $all: course.teachers,
-                      $size: course.teachers.length,
-                  }
-                : []),
-            ...(course.modules
-                ? {
-                      $all: course.modules,
-                      $size: course.modules.length,
-                  }
-                : []),
-        });
+        const existingCourse = await coursesService.findCourseId(
+            course.univId,
+            course.start,
+            course.end,
+            cleanRooms,
+            course.teachers,
+            course.modules,
+            course.category ?? undefined,
+        );
 
         if (existingCourse) {
             // If the course already exists, add the current processed group to its record
-            await Course.updateOne(
-                { _id: existingCourse._id },
-                {
-                    $push: { groups: dbGroupId },
-                },
+            await coursesService.addGroupToCourse(
+                existingCourse._id,
+                dbGroupId,
             );
             result.updated++;
         } else {
             // If the course doesn't exists, create it in our DB
-            const newCourse = new Course({
-                univId: course.univId,
-                celcatId: course.celcatId,
-                start: course.start,
-                end: course.end,
-                color: closestPaletteColor(course.color ?? "#bdc3c7"),
-                rooms: cleanRooms,
-                teachers: course.teachers,
-                groups: [dbGroupId],
-                modules: course.modules,
-                ...(course.category && { category: course.category }),
-            });
-            await newCourse.save();
+            await coursesService.addCourse(
+                course.univId,
+                course.celcatId,
+                course.start,
+                course.end,
+                closestPaletteColor(course.color ?? "#bdc3c7"),
+                cleanRooms,
+                course.teachers,
+                course.modules,
+                dbGroupId,
+                course.category ?? undefined,
+            );
             result.created++;
         }
     }
@@ -251,10 +240,11 @@ async function processGroupCourses(
 async function fetchGroupCourses(
     group: GroupSchemaProperties & { _id: Types.ObjectId },
     campusId: Types.ObjectId,
-): Promise<void> {
-    // Save the start time to make stats
-    const startProcessingTime = Date.now();
-
+): Promise<{
+    removed: number;
+    updated: number;
+    created: number;
+}> {
     // Get dates for the specified amount of time
     const dates = getStringBoundDates(config.tasks.daysToRetrieve);
 
@@ -269,11 +259,12 @@ async function fetchGroupCourses(
         ) as UnivApiCourse[];
 
         // Get some related data from our database
-        const dbCourseRecords = await Course.find({
-            start: { $gte: new Date(dates.start) },
-            end: { $lte: new Date(dates.end) },
-            groups: group._id,
-        });
+        const dbCourseRecords =
+            await coursesService.getCourseDocsByGroupAndRange(
+                new Date(dates.start),
+                new Date(dates.end),
+                group._id,
+            );
 
         // Process all the courses for this group
         const result = await processGroupCourses(
@@ -283,34 +274,26 @@ async function fetchGroupCourses(
             campusId,
         );
 
-        // Calculate the new average processing time
-        const processingTime = Date.now() - startProcessingTime;
-        stats.timeSum += processingTime;
-        stats.groupsProcessed++;
-
-        // Log if needed
-        if (stats.groupsProcessed > groupFetchStatsInterval) {
-            logger.info(
-                `${groupFetchStatsInterval} groups processed in ${parseFloat("" + stats.timeSum / stats.groupsProcessed / 1000).toFixed(2)}s`,
-            );
-            logger.info(
-                `Removed: ${result.removed} | Updated: ${result.updated} | Created: ${result.created}`,
-            );
-            stats.timeSum = 0;
-            stats.groupsProcessed = 0;
-            stats.removed = 0;
-            stats.added = 0;
-            stats.updated = 0;
-        }
-
         // Sending an update message to all clients
         socket.sendGroupsUpdate(group.name);
-    } catch (error) {
-        logger.error(
-            `Cannot retrieve timetable for the ${group.name} group (univId: ${group.univId}, url: ${requestUrl})`,
-            error,
-        );
+
+        return {
+            removed: result.removed,
+            updated: result.updated,
+            created: result.created,
+        };
+    } catch (e) {
+        if (e instanceof Error) {
+            throw new CoursesFetchError(
+                e.message,
+                group.univId,
+                group.name,
+                requestUrl,
+            );
+        } else {
+            throw e;
+        }
     }
 }
 
-export { fetchGroupCourses };
+export { fetchGroupCourses, CoursesFetchError };

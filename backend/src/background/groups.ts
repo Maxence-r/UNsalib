@@ -8,7 +8,7 @@ import { campusesService } from "../services/campuses.service.js";
 import { GroupSchemaProperties } from "../models/group.model.js";
 
 interface ExtractedGroupInfos {
-    id: string;
+    id: number;
     name: string;
 }
 
@@ -30,11 +30,11 @@ async function extractGroupsFromTimetablePage(
 
     for (const input of groupInputs) {
         // Get the ID and name for each group checkbox
-        const groupId = input.getAttribute("value");
+        const groupId = parseInt(input.getAttribute("value") || "");
         const labelElement = docRoot.querySelector(`label[for="${input.id}"]`);
         const groupName = labelElement?.textContent.trim();
 
-        if (groupId && groupName) {
+        if (!isNaN(groupId) && groupName) {
             foundGroups.push({
                 id: groupId,
                 name: groupName,
@@ -155,7 +155,7 @@ async function processGroups(): Promise<void> {
         }
     }
 
-    logger.info(`Groups processing successful`);
+    logger.info("Groups processing successful");
 }
 
 export { processGroups, extractGroupsFromTimetablePage, processExtractedGroups };

@@ -33,7 +33,7 @@ class GroupsService {
      * Update the name of a group associated with a certain University ID
      */
     async updateNameByUnivId(
-        groupUnivId: string,
+        groupUnivId: number,
         campusId: Types.ObjectId,
         newName: string,
     ): Promise<void> {
@@ -53,7 +53,7 @@ class GroupsService {
      * Add a new group
      */
     async addGroup(
-        groupUnivId: string,
+        groupUnivId: number,
         campusId: Types.ObjectId,
         groupName: string,
     ): Promise<void> {

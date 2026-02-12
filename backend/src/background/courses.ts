@@ -188,7 +188,7 @@ async function processGroupCourses(
     // Browse courses that remain in normalizedUnivCourses (new to our database or need to be updated)
     for (const course of normalizedUnivCourses) {
         // Check if data is valid (e.g: exclude holidays with no associated rooms)
-        if (!course.rooms) continue;
+        if (course.rooms.length === 0) continue;
 
         // Process the course's rooms, teachers and modules to put them into our DB format
         const cleanRooms = await Promise.all(

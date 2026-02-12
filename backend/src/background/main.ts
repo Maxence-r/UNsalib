@@ -68,8 +68,7 @@ async function syncTimetables(force = false): Promise<void> {
                 } catch (e) {
                     if (e instanceof CoursesFetchError) {
                         logger.error(
-                            `Cannot retrieve timetable for the ${e.groupName} group (univId: ${e.groupUnivId}, url: ${e.url})`,
-                            e.message,
+                            `Cannot retrieve timetable for the ${e.groupName} group (univId: ${e.groupUnivId}, url: ${e.url}): ${e.message}`,
                         );
                     }
                 }

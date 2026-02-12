@@ -113,21 +113,27 @@ class CoursesService {
             ...(category && { category: category }),
             ...(rooms
                 ? {
-                      $all: rooms, // only check that all the elements of rooms are present
-                      $size: rooms.length, // so we need to also check the array size
-                      // If it contains exactly all the rooms then it's the same array
+                      rooms: {
+                          $all: rooms, // only check that all the elements of rooms are present
+                          $size: rooms.length, // so we need to also check the array size
+                          // If it contains exactly all the rooms then it's the same array
+                      },
                   }
                 : []),
             ...(teachers
                 ? {
-                      $all: teachers,
-                      $size: teachers.length,
+                      teachers: {
+                          $all: teachers,
+                          $size: teachers.length,
+                      },
                   }
                 : []),
             ...(modules
                 ? {
-                      $all: modules,
-                      $size: modules.length,
+                      modules: {
+                          $all: modules,
+                          $size: modules.length,
+                      },
                   }
                 : []),
         });

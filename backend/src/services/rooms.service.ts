@@ -115,52 +115,59 @@ class RoomsService {
         if (rawName.includes(";")) throw new Error("Invalid room name");
 
         if (/\(.*\)$/.test(rawName)) {
+            // Raw name correctly formatted: 'roomName (roomBuilding)'
             const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
             const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
+
             // Test if the building exists in the campus
-            const existingBuilding = await Building.findOne({
+            const existingBuilding = await Building.exists({
                 univName: building,
+                campus: campusId,
             });
-            if (existingBuilding) {
-                const existingRoom = await Room.findOne({
-                    name: room,
-                    building: existingBuilding._id,
-                });
-                if (!existingRoom) {
-                    const newRoom = new Room({
-                        name: room,
-                        building: existingBuilding._id,
-                        univId: rawName,
-                    });
-                    await newRoom.save();
-                    return newRoom._id;
-                }
-                return existingRoom._id;
-            } else {
+
+            let buildingId = existingBuilding?._id;
+            if (!buildingId) {
+                // Add the building if not found
                 const newBuilding = new Building({
                     univName: building,
                     campus: campusId,
                 });
                 await newBuilding.save();
+                buildingId = newBuilding._id;
+            }
 
+            // Test if the room exists
+            const existingRoom = await Room.findOne({
+                univName: room,
+                building: buildingId,
+            });
+
+            let roomId = existingRoom?._id;
+            if (!roomId) {
+                // Add the room if not found
                 const newRoom = new Room({
-                    name: room,
-                    building: newBuilding._id,
+                    univName: room,
+                    building: buildingId,
                     univId: rawName,
                 });
                 await newRoom.save();
-                return newRoom._id;
+                roomId = newRoom._id;
             }
+
+            return roomId;
         } else {
+            // Bad raw name formatting
             const existingRoom = await Room.findOne({ univId: rawName });
+
             if (!existingRoom) {
                 const newRoom = new Room({
-                    name: rawName,
+                    univName: rawName,
                     univId: rawName,
                 });
                 await newRoom.save();
                 return newRoom._id;
             }
+
             return existingRoom._id;
         }
     }

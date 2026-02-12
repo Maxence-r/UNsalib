@@ -18,42 +18,35 @@ const RoomSchema = new Schema(
         },
         alias: {
             type: String,
-            required: false,
-            default: "",
         },
         seats: {
             type: Number,
-            required: true,
         },
         type: {
             type: String,
-            required: false,
-            default: "",
         },
         whiteBoards: {
             type: Number,
-            required: false,
-            default: 0,
         },
         blackBoards: {
             type: Number,
-            required: false,
-            default: 0,
         },
         display: {
             type: Number,
-            required: false,
-            default: 0,
         },
         locked: {
             type: Boolean,
-            required: false,
+            required: true,
             default: false,
         },
         features: {
             type: [String],
-            required: false,
             default: [],
+        },
+        reviewed: {
+            type: Boolean,
+            required: true,
+            default: false,
         },
     },
     { versionKey: false },

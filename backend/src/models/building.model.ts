@@ -15,12 +15,6 @@ const BuildingSchema = new Schema(
         },
         alias: {
             type: String,
-            required: false,
-        },
-        reviewed: {
-            type: Boolean,
-            required: true,
-            default: false,
         },
     },
     { versionKey: false },

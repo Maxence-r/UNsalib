@@ -1,7 +1,7 @@
 import { Schema, Types, model, type InferSchemaType } from "mongoose";
 import jwt from "jsonwebtoken";
 
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 
 type AccountSchemaProperties = InferSchemaType<typeof AccountSchema>;
 
@@ -43,8 +43,8 @@ AccountSchema.methods.generateAccessToken = function (
         _id: Types.ObjectId;
     },
 ): string {
-    return jwt.sign({ sub: this._id }, config.jwt.accessSecret, {
-        expiresIn: config.jwt.accessExpire,
+    return jwt.sign({ sub: this._id }, appConfig.jwt.accessSecret, {
+        expiresIn: appConfig.jwt.accessExpire,
     });
 };
 
@@ -54,8 +54,8 @@ AccountSchema.methods.generateRefreshToken = function (
         _id: Types.ObjectId;
     },
 ): string {
-    return jwt.sign({ sub: this._id }, config.jwt.refreshSecret, {
-        expiresIn: config.jwt.refreshExpire,
+    return jwt.sign({ sub: this._id }, appConfig.jwt.refreshSecret, {
+        expiresIn: appConfig.jwt.refreshExpire,
     });
 };
 

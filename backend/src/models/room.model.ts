@@ -12,7 +12,7 @@ const RoomSchema = new Schema(
             type: String,
             required: true,
         },
-        univId: {
+        univFullName: {
             type: String,
             required: true,
         },
@@ -24,6 +24,7 @@ const RoomSchema = new Schema(
         },
         type: {
             type: String,
+            enum: ["amphi", "tp", "td", "info"],
         },
         whiteBoards: {
             type: Number,
@@ -36,16 +37,15 @@ const RoomSchema = new Schema(
         },
         locked: {
             type: Boolean,
-            required: true,
             default: false,
         },
         features: {
             type: [String],
+            enum: ["visio", "ilot"],
             default: [],
         },
         reviewed: {
             type: Boolean,
-            required: true,
             default: false,
         },
     },

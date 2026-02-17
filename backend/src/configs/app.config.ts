@@ -30,7 +30,7 @@ if (
     process.exit(1);
 }
 
-const config = {
+const appConfig = {
     cors: {
         origin: process.env.FRONTEND_URL || "http://localhost:5173",
     },
@@ -71,7 +71,11 @@ const config = {
         syncInterval: process.env.SYNC_INTERVAL_HOURS
             ? parseInt(process.env.SYNC_INTERVAL_HOURS)
             : 6, // hours
+        extractFromCelcat: extractBoolean(
+            process.env.EXTRACT_FROM_CELCAT,
+            true,
+        ),
     },
 };
 
-export { config };
+export { appConfig };

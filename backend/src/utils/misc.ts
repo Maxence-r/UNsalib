@@ -1,3 +1,5 @@
+import { parse, HTMLElement } from "node-html-parser";
+
 // Checks if two arrays are the same
 // Adapted from https://stackoverflow.com/a/16436975
 function areArraysEqual<T>(a: T[], b: T[]): boolean {
@@ -19,4 +21,9 @@ function sanitizeJsonString(str: string): string {
     return str.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "");
 }
 
-export { areArraysEqual, sanitizeJsonString };
+async function getPageRoot(url: string): Promise<HTMLElement> {
+    const page = await fetch(url);
+    return parse(await page.text());
+}
+
+export { areArraysEqual, sanitizeJsonString, getPageRoot };

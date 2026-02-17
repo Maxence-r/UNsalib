@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { ApiError } from "./error.middleware.js";
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 
 interface AccessTokenPayload extends JwtPayload {
     sub: string;
@@ -27,7 +27,7 @@ function authHandler(req: Request, res: Response, next: NextFunction): void {
         try {
             payload = jwt.verify(
                 accessToken,
-                config.jwt.accessSecret,
+                appConfig.jwt.accessSecret,
             ) as AccessTokenPayload;
         } catch (err: unknown) {
             if ((err as Error).name === "TokenExpiredError") {

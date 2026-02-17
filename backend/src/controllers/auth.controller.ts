@@ -3,7 +3,7 @@ import { matchedData } from "express-validator";
 
 import { accountsService } from "../services/accounts.service.js";
 import { ApiError } from "../middlewares/error.middleware.js";
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 
 class AuthController {
     /**
@@ -31,7 +31,7 @@ class AuthController {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
-                maxAge: config.jwt.refreshExpire * 1000,
+                maxAge: appConfig.jwt.refreshExpire * 1000,
             });
 
             res.status(200).json({
@@ -71,7 +71,7 @@ class AuthController {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
-                maxAge: config.jwt.refreshExpire * 1000,
+                maxAge: appConfig.jwt.refreshExpire * 1000,
             });
 
             res.status(200).json({

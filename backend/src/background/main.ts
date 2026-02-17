@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 
 import { processGroups } from "./groups.js";
 import { fetchGroupCourses } from "./courses.js";
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 import { logger } from "../utils/logger.js";
 import { publishAvailableRooms } from "./refresh-available.js";
 import { initCampuses } from "./campuses.js";
@@ -41,7 +41,7 @@ async function syncTimetables(force = false): Promise<void> {
     // If force is true, the the interval is 0 to fetch immediately
     const intervalBetweenGroups = force
         ? 0
-        : (config.tasks.syncInterval / allGroups.length) * 60 * 60 * 1000;
+        : (appConfig.tasks.syncInterval / allGroups.length) * 60 * 60 * 1000;
 
     let groupIndex = 0;
 
@@ -100,20 +100,20 @@ async function syncTimetables(force = false): Promise<void> {
 async function launchBackgroundTasks(): Promise<void> {
     await initCampuses();
 
-    if (config.tasks.forceGroupsFetch) {
+    if (appConfig.tasks.forceGroupsFetch) {
         logger.info("Starting groups force fetch");
         await processGroups();
     }
 
-    if (config.tasks.forceTimetablesFetch) {
+    if (appConfig.tasks.forceTimetablesFetch) {
         logger.info("Starting timetables force fetch");
         await syncTimetables(true);
     }
 
-    if (config.tasks.syncTimetables) {
+    if (appConfig.tasks.syncTimetables) {
         // Scheduling sync each day each specified hour interval
-        const hours = [...Array(24 / config.tasks.syncInterval).keys()].map(
-            (v) => v * config.tasks.syncInterval,
+        const hours = [...Array(24 / appConfig.tasks.syncInterval).keys()].map(
+            (v) => v * appConfig.tasks.syncInterval,
         );
 
         cron.schedule(`0 ${hours.join(",")} * * *`, () => {

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { compare } from "bcrypt";
 
 import { Account } from "../models/account.model.js";
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 import { Token } from "../models/token.model.js";
 import { ApiError } from "../middlewares/error.middleware.js";
 
@@ -43,7 +43,7 @@ class AccountsService {
             token: refreshToken,
             issuedAt: new Date(),
             // Seconds to milliseconds
-            expiresAt: new Date(Date.now() + config.jwt.refreshExpire * 1000),
+            expiresAt: new Date(Date.now() + appConfig.jwt.refreshExpire * 1000),
         });
 
         return {
@@ -66,7 +66,7 @@ class AccountsService {
         refreshToken: string;
     }> {
         // Check JWT signature
-        jwt.verify(oldToken, config.jwt.refreshSecret);
+        jwt.verify(oldToken, appConfig.jwt.refreshSecret);
 
         // Search our DB for the stored refresh token
         const savedToken = await Token.findOne({ token: oldToken });
@@ -104,7 +104,7 @@ class AccountsService {
             token: refreshToken,
             issuedAt: new Date(),
             // Seconds to milliseconds
-            expiresAt: new Date(Date.now() + config.jwt.refreshExpire * 1000),
+            expiresAt: new Date(Date.now() + appConfig.jwt.refreshExpire * 1000),
         });
 
         return {

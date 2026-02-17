@@ -8,6 +8,10 @@ const CampusSchema = new Schema(
             type: String,
             required: true,
         },
+        sectorIds: {
+            type: [String],
+            required: true,
+        },
     },
     { versionKey: false },
 );

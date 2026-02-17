@@ -6,7 +6,7 @@ import { areArraysEqual, sanitizeJsonString } from "../utils/misc.js";
 import { closestPaletteColor } from "../utils/color.js";
 import { GroupSchemaProperties } from "../models/group.model.js";
 import { getStringBoundDates } from "../utils/date.js";
-import { config } from "../configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 import { socket } from "../server.js";
 import { coursesService } from "../services/courses.service.js";
 
@@ -246,7 +246,7 @@ async function fetchGroupCourses(
     created: number;
 }> {
     // Get dates for the specified amount of time
-    const dates = getStringBoundDates(config.tasks.daysToRetrieve);
+    const dates = getStringBoundDates(appConfig.tasks.daysToRetrieve);
 
     // Build the request URL
     const requestUrl = `https://edt-v2.univ-nantes.fr/events?start=${dates.start}&end=${dates.end}&timetables%5B%5D=${group.univId}`;

@@ -4,13 +4,13 @@ import { Server } from "socket.io";
 
 import { app } from "./app.js";
 import { logger } from "./utils/logger.js";
-import { config } from "./configs/app.config.js";
+import { appConfig } from "./configs/app.config.js";
 import { Socket } from "./utils/socket.js";
 import { launchBackgroundTasks } from "./background/main.js";
 
 async function connectToDb(): Promise<void> {
     try {
-        const conn = await connect(config.mongodb.uri);
+        const conn = await connect(appConfig.mongodb.uri);
         logger.info("MongoDB connection successful");
         logger.info(`Host: ${conn.connection.host}`);
         logger.info(`Database: ${conn.connection.name}`);
@@ -40,8 +40,8 @@ async function startServer(): Promise<Socket> {
         void (await connectToDb());
 
         // Start server
-        const server = app.listen(config.server.port, () => {
-            logger.info(`Server running on port ${config.server.port}`);
+        const server = app.listen(appConfig.server.port, () => {
+            logger.info(`Server running on port ${appConfig.server.port}`);
         });
 
         // Handle unhandled promise rejections
@@ -63,7 +63,7 @@ async function startServer(): Promise<Socket> {
         // Initialize a new Socket.IO server
         const socketServer = new Server(server, {
             cors: {
-                origin: config.cors.origin,
+                origin: appConfig.cors.origin,
                 credentials: true,
             },
         });

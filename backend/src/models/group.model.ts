@@ -7,7 +7,9 @@ const GroupSchema = new Schema(
     {
         univId: {
             type: Number,
-            required: true,
+        },
+        celcatId: {
+            type: Number,
         },
         name: {
             type: String,

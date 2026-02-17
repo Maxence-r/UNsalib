@@ -7,7 +7,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 // import rateLimit from "express-rate-limit";
 
-import { config } from "./configs/app.config.js";
+import { appConfig } from "./configs/app.config.js";
 import { logger } from "./utils/logger.js";
 import { router as routes } from "./routes/index.route.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
@@ -21,7 +21,7 @@ app.disable("x-powered-by");
 
 // CORS configuration
 const corsOptions = {
-    origin: config.cors.origin,
+    origin: appConfig.cors.origin,
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ["GET", "POST"],

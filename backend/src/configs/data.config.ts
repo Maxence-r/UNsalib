@@ -1,5 +1,6 @@
-const config = {
+const dataConfig = {
     baseUrl: "https://edt-v2.univ-nantes.fr",
+    baseUrlCelcat: "https://edt.univ-nantes.fr",
     campus: [
         {
             name: "Lombarderie",
@@ -19,4 +20,4 @@ const config = {
     ],
 };
 
-export { config };
+export { dataConfig };

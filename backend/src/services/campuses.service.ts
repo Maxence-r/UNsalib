@@ -6,7 +6,7 @@ class CampusesService {
     /**
      * Get all campuses
      */
-    async getAllCampuses(): Promise<
+    async getAll(): Promise<
         (CampusSchemaProperties & { _id: Types.ObjectId })[]
     > {
         return await Campus.find().lean();

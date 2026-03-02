@@ -43,19 +43,19 @@ function getWeekInfos(weekNumber) {
 // Returns the number of the current week
 function getWeeksNumber() {
     const currentDate = new Date(); // current date
-    const startDate = new Date(currentDate.getFullYear(), 0, 1); // start date of the year (1st January)
     const currentDay = currentDate.getDay(); // current day (0 for Sunday, ... , 6 for Saturday)
 
-    // Algorithm from https://perso.univ-lemans.fr/~hainry/articles/semaine.html
-    const J = startDate.getDay();
-    const N = Math.round((currentDate - startDate) / 1000 / 24 / 60 / 60);
-
-    let weekNumber;
-    if (J <= 4) {
-        weekNumber = Math.floor((J + N + 5) / 7);
-    } else {
-        weekNumber = Math.floor((J + N + 5) / 6);
-    }
+    // ISO-8601 week number (weeks start on Monday).
+    const utcDate = new Date(
+        Date.UTC(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        )
+    );
+    utcDate.setUTCDate(utcDate.getUTCDate() + 4 - (utcDate.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+    let weekNumber = Math.ceil((((utcDate - yearStart) / 86400000) + 1) / 7);
 
     // If it's Saturday (6) or Sunday (0), incrementing the week number (weekend not displayed in the UI)
     if (currentDay === 6 || currentDay === 0) {

@@ -322,6 +322,14 @@ async function fetchCourses(group) {
     try {
         // Getting data from the Nantes Université timetable API
         const response = await fetch(requestUrl);
+        if (!response.ok) {
+            const responseContent = await response.text();
+            console.error(
+                `Erreur HTTP pour le groupe ${group.name} (id : ${group.univId}, url : ${requestUrl}) : code ${response.status}`,
+            );
+            console.error("Contenu retourné par l'EDT :", responseContent);
+            return;
+        }
         const jsonData = await response.json();
 
         // Getting some related data from our database

@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 function Settings() {
     return (
-        <div style={{ viewTransitionName: "panel-settings" }}>
+        <div className="settings">
             Settings
             <Link to="/" viewTransition>
                 Home

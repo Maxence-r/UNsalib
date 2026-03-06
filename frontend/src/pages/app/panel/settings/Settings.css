@@ -1,13 +1,22 @@
-@keyframes test {
+#app > .panel {
+    /* Global settings view rules */
+    & > .settings {
+        view-transition-name: panel-settings;
+        width: 100%;
+        padding: 24px;
+    }
+}
+
+@keyframes slide-to-right {
     to {
-        transform: translateX(100px);
+        transform: translateX(100%);
     }
 }
 
 ::view-transition-old(panel-settings) {
-	animation: test 0.3s reverse;
+    animation: slide-to-right var(--animation-duration) forwards;
 }
 
 ::view-transition-new(panel-settings) {
-	animation: test 0.3s;
+    animation: slide-to-right var(--animation-duration) reverse forwards ease-in;
 }

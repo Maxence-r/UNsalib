@@ -1,27 +1,10 @@
-// import { useState, useMemo, useEffect } from "react";
-// import { Info, Search, FunnelX } from "lucide-react";
-
-// import { IconButton, TextButton } from "../../../components/button/Button.js";
-// import { Input } from "../../../components/input/Input.js";
-// import { Header } from "./header/Header.js";
-// import type { ApiDataRoom } from "../../../utils/types/api.type.js";
-import {
-    usePanelStore,
-    useCurrentRoomStore,
-} from "../../../stores/app.store.js";
-// import { RoomsList } from "./rooms-list/RoomsList.js";
-// import "./Panel.css";
-// // import { pushToHistory } from "../../../utils/navigation.js";
-// import { AboutPictosModal } from "./modals/AboutPictosModal.js";
-// import { SearchModal } from "./modals/SearchModal.js";
-// import { Badge } from "../../../components/badge/Badge.js";
-// import { useApi } from "../../../utils/hooks/api.hook.js";
-// import { getRoomsList } from "../../../api/rooms.api.js";
-// import { useModal } from "../../../components/modal/Modal.js";
-// import { useToast } from "../../../components/toast/Toast.js";
+import type { JSX } from "react";
 import { Outlet } from "react-router";
 
-function Panel() {
+import "./Panel.css";
+import { usePanelStore } from "../../../stores/app.store.js";
+
+function Panel(): JSX.Element {
     const isPanelOpened = usePanelStore((state) => state.isOpened);
 
     return (

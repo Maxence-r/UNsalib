@@ -108,7 +108,10 @@ function Home(): JSX.Element {
     const { open: openSearchModal } = useModal("search", <SearchModal />);
 
     return (
-        <div style={{ viewTransitionName: "panel-home" }}>
+        <div className="home">
+            <Link to="/settings" viewTransition>
+                Settings
+            </Link>
             <Header />
             <ActionsContainer />
             <TextButton
@@ -117,9 +120,6 @@ function Home(): JSX.Element {
                 icon={<Search />}
                 onClick={openSearchModal}
             />
-            <Link to="/settings" viewTransition>
-                Settings
-            </Link>
         </div>
     );
 }

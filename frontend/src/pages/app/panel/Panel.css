@@ -1,75 +1,40 @@
 #app {
-    /* Global panel rules */
-    & .panel {
-        display: flex;
-        flex-direction: column;
+    /* Panel rules */
+    & > .panel {
         position: relative;
-        padding: 24px;
         width: 22%;
         height: 100%;
         min-width: 400px;
-        gap: 20px;
         overflow: hidden;
         background-color: var(--color-background);
         color: var(--color-on-surface);
         z-index: 10;
-        border-radius: 0;
         transition: background-color var(--animation-duration);
+        view-transition-name: panel;
+        view-transition-group: contain;
 
         @media screen and (max-width: 1024px) {
+            /* Mobile responsive */
             & {
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                border: none;
                 min-width: auto;
                 transition:
                     transform var(--animation-duration),
                     background-color var(--animation-duration);
                 transform: translateY(0);
-                padding: 20px;
             }
 
             &.hidden {
                 transform: translateY(100%);
             }
         }
-
-        /* Bottom area rules */
-        & .actions-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            gap: 12px;
-            overflow: hidden;
-
-            /* Container head rules */
-            & > .head {
-                display: flex;
-                font-size: 14px;
-                font-weight: 600;
-                gap: 12px;
-                align-items: center;
-
-                & p {
-                    margin: 0;
-                }
-
-                /* Container head actions rules */
-                & .actions {
-                    display: flex;
-                    gap: 0;
-                    align-items: center;
-                    flex-grow: 1;
-                    justify-content: end;
-                }
-            }
-        }
-
-        & .search-button {
-            flex-grow: 1;
-        }
     }
+}
+
+::view-transition-group-children(panel) {
+    overflow: hidden;
 }

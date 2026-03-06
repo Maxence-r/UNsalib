@@ -1,6 +1,8 @@
-import { TextButton } from "../../../../components/button/Button";
+import type { JSX } from "react";
 
-function SafariInstallModal({ close }: { close?: () => void }) {
+import { TextButton } from "../../../../../components/button/Button";
+
+function SafariInstallModal({ close }: { close?: () => void }): JSX.Element {
     return (
         <div className="safariInstall">
             <div className="option">

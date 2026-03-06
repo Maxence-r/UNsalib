@@ -7,9 +7,10 @@ import {
     Card,
     CardHeader,
     CardContent,
-} from "../../../../components/card/Card.js";
+} from "../../../../../components/card/Card.js";
+import type { JSX } from "react";
 
-function AboutModal() {
+function AboutModal(): JSX.Element {
     return (
         <div className="about">
             <div className="project">

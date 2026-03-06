@@ -1,0 +1,31 @@
+@keyframes test {
+    to {
+        transform: translateX(-100px);
+    }
+}
+
+@keyframes test2 {
+    from {
+        transform: translateX(100px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+::view-transition-old(panel-home) {
+	animation: test 0.3s;
+}
+
+::view-transition-new(panel-home) {
+	animation: test 0.3s reverse;
+}
+
+::view-transition-old(panel-settings) {
+	animation: test2 0.3s reverse;
+}
+
+::view-transition-new(panel-settings) {
+	animation: test2 0.3s;
+}

@@ -1,0 +1,13 @@
+@keyframes test {
+    to {
+        transform: translateX(100px);
+    }
+}
+
+::view-transition-old(panel-settings) {
+	animation: test 0.3s reverse;
+}
+
+::view-transition-new(panel-settings) {
+	animation: test 0.3s;
+}

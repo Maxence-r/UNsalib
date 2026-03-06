@@ -1,14 +1,11 @@
 import { createBrowserRouter } from "react-router";
 
-import { App } from "./app/App.js";
+import { appRouter } from "./app/AppRouter.js";
 import { dashboardRouter } from "./dashboard/DashboardRouter.js";
 import { authRouter } from "./auth/AuthRouter.js";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <App />,
-    },
+    appRouter,
     authRouter,
     dashboardRouter,
     {

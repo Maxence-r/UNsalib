@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type JSX } from "react";
 
-import { TextButton } from "../../../../components/button/Button.js";
-import type { ApiDataRoom } from "../../../../utils/types/api.type.js";
+import { TextButton } from "../../../../../components/button/Button.js";
+import type { ApiDataRoom } from "../../../../../utils/types/api.type.js";
 import "./SearchModal.css";
-import { useToast } from "../../../../components/toast/Toast.js";
+import { useToast } from "../../../../../components/toast/Toast.js";
 
 function SearchModal({
     close,
 }: {
     // availableRoomsListHook: Dispatch<SetStateAction<string[]>>;
     close?: () => void;
-}) {
+}): JSX.Element {
     const [searchLaunched, launchSearch] = useState(false);
     const [type, setType] = useState("");
     const [visioFeature, setVisioFeature] = useState(false);

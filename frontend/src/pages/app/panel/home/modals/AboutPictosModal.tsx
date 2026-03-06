@@ -1,6 +1,7 @@
 import { Users, Monitor, Eye, Lock } from "lucide-react";
+import type { JSX } from "react";
 
-import { TextButton } from "../../../../components/button/Button";
+import { TextButton } from "../../../../../components/button/Button";
 import "./AboutPictosModal.css";
 
 const PICTOS = [
@@ -10,7 +11,7 @@ const PICTOS = [
     { desc: "Salle à badge", icon: <Lock /> },
 ];
 
-function AboutPictosModal({ close }: { close?: () => void }) {
+function AboutPictosModal({ close }: { close?: () => void }): JSX.Element {
     return (
         <div className="about-pictos">
             <div className="pictos">

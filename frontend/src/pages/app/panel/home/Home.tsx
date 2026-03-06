@@ -109,9 +109,6 @@ function Home(): JSX.Element {
 
     return (
         <div className="home">
-            <Link to="/settings" viewTransition>
-                Settings
-            </Link>
             <Header />
             <ActionsContainer />
             <TextButton

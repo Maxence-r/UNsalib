@@ -53,9 +53,9 @@
 }
 
 ::view-transition-old(panel-home) {
-    animation: slide-to-left 0.3s forwards;
+    animation: slide-to-left var(--animation-duration) forwards;
 }
 
 ::view-transition-new(panel-home) {
-    animation: slide-to-left 0.3s reverse forwards ease-in;
+    animation: slide-to-left var(--animation-duration) reverse forwards ease-in;
 }

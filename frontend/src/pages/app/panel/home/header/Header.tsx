@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { Info, Settings } from "lucide-react";
 import type { JSX } from "react";
 
 import "./Header.css";
@@ -7,6 +7,7 @@ import CampusBannerUrl from "../../../../../assets/imgs/campus/sciences-et-techn
 import { AboutModal } from "../modals/AboutModal.js";
 import { InstallButton } from "./InstallButton.js";
 import { useModal } from "../../../../../components/modal/Modal.js";
+import { router } from "../../../../Router.js";
 
 function Header(): JSX.Element {
     const { open: openAboutModal } = useModal("about", <AboutModal />);
@@ -20,6 +21,15 @@ function Header(): JSX.Element {
                 </div>
                 <div className="actions">
                     <InstallButton />
+                    <IconButton
+                        onClick={() =>
+                            router.navigate("/settings", {
+                                viewTransition: true,
+                            })
+                        }
+                        icon={<Settings />}
+                        secondary
+                    />
                     <IconButton
                         onClick={openAboutModal}
                         icon={<Info />}

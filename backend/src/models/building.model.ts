@@ -4,8 +4,8 @@ type BuildingSchemaProperties = InferSchemaType<typeof BuildingSchema>;
 
 const BuildingSchema = new Schema(
     {
-        campus: {
-            type: Schema.Types.ObjectId,
+        campusId: {
+            type: String,
             ref: "Campus",
             required: true,
         },

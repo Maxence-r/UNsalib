@@ -90,10 +90,7 @@ async function processGroupsByCampus(
     campusName: string,
     sectorIds: string[],
 ): Promise<{ added: number; updated: number; deleted: number }> {
-    const campusId = await campusesService.getCampusIdByName(campusName);
-    if (!campusId) throw new CampusIdNotFoundError();
-
-    let existingGroups = await groupsService.getGroupsForCampus(campusId);
+    let existingGroups = await groupsService.getGroupsForCampus(campusName);
 
     let totalAdded = 0;
     let totalUpdated = 0;

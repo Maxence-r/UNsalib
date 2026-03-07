@@ -4,9 +4,8 @@ type CampusSchemaProperties = InferSchemaType<typeof CampusSchema>;
 
 const CampusSchema = new Schema(
     {
-        name: {
+        _id: {
             type: String,
-            required: true,
         },
         sectorIds: {
             type: [String],

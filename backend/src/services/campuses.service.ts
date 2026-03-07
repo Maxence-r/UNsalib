@@ -6,17 +6,8 @@ class CampusesService {
     /**
      * Get all campuses
      */
-    async getAll(): Promise<
-        (CampusSchemaProperties & { _id: Types.ObjectId })[]
-    > {
+    async getAll(): Promise<CampusSchemaProperties[]> {
         return await Campus.find().lean();
-    }
-
-    /**
-     * Get campus ID by name
-     */
-    async getCampusIdByName(name: string): Promise<Types.ObjectId | undefined> {
-        return (await Campus.findOne({ name }).lean())?._id;
     }
 
     /**
@@ -25,8 +16,8 @@ class CampusesService {
     async createIfNotExist(campuses: string[]): Promise<void> {
         for (const campus of campuses) {
             await Campus.findOneAndUpdate(
-                { name: campus },
-                { name: campus },
+                { _id: campus },
+                { _id: campus },
                 { upsert: true, new: true },
             );
         }

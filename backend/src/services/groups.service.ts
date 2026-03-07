@@ -115,9 +115,9 @@ class GroupsService {
      * Get all groups for a campus
      */
     async getGroupsForCampus(
-        campusId: Types.ObjectId,
+        campusId: string,
     ): Promise<(GroupSchemaProperties & { _id: Types.ObjectId })[]> {
-        return await Group.find({ campusId: campusId }).lean();
+        return await Group.find({ campusId }).lean();
     }
 
     async extractFromCelcat(sector: string): Promise<CelcatGroup[]> {

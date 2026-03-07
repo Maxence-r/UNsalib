@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from "express";
 import {
     availableValidation,
     timetableValidation,
+    allValidation,
 } from "../validators/rooms.validator.js";
 import { statHandler } from "../middlewares/stats.middleware.js";
 import { validationHandler } from "../middlewares/validation.middleware.js";
@@ -13,6 +14,8 @@ const router = express.Router();
 // Public routes
 router.get(
     "/",
+    allValidation,
+    validationHandler,
     statHandler,
     (req: Request, res: Response, next: NextFunction) =>
         roomsController.getAll(req, res, next),

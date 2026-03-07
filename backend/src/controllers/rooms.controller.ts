@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { matchedData } from "express-validator";
+import { Types } from "mongoose";
 
 import { roomsService } from "../services/rooms.service.js";
+import { buildingsService } from "../services/buildings.service.js";
 import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos, getWeeksNumber } from "../utils/date.js";
@@ -10,7 +12,7 @@ import { hexToRgb, isLightColor, rgbToHex, blend } from "../utils/color.js";
 class RoomsController {
     /**
      * @route   GET /
-     * @desc    Return all rooms with their availability status
+     * @desc    Return all rooms
      * @access  Public
      */
     async getAll(
@@ -19,15 +21,31 @@ class RoomsController {
         next: NextFunction,
     ): Promise<void> {
         try {
-            const result = await roomsService.findAll();
+            // Getting validated queries
+            const { campusId } = matchedData<{ campusId: string }>(req);
+
+            const rooms = await roomsService.findAll();
+            const buildings =
+                await buildingsService.getBuildingsByCampus(campusId);
 
             // Formatting the response
-            const formattedResponse = result.map((doc) => ({
-                id: doc._id,
-                name: doc.alias ? doc.alias : doc.name, // replace name with alias if present
-                building: doc.building,
-                features: doc.features,
-            }));
+            const formattedResponse = rooms.map((room) => {
+                const building = buildings.find(
+                    (building) => building._id === room.building,
+                );
+
+                return {
+                    id: room._id,
+                    name: room.alias ? room.alias : room.univName, // replace name with alias if present
+                    buildingName: building
+                        ? building.alias
+                            ? building.alias
+                            : building.univName
+                        : "Unknown building",
+                    features: room.features,
+                    locked: room.locked,
+                };
+            });
 
             res.status(200).json({
                 success: true,

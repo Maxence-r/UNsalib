@@ -15,10 +15,15 @@
     font-size: 14px;
     font-weight: 500;
     font-family: "Space Grotesk", sans-serif;
+    transition: scale var(--animation-duration);
 }
 
 .button:disabled {
     cursor: not-allowed;
+}
+
+.button:active {
+    scale: 0.98;
 }
 
 .button:has(svg) {

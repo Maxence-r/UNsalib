@@ -21,8 +21,7 @@ class RoomsService {
     async findAll(): Promise<
         (RoomSchemaProperties & { _id: Types.ObjectId })[]
     > {
-        // Getting all the rooms that are not banned
-        return await Room.find({ banned: { $ne: true } }).lean();
+        return await Room.find({ reviewed: true }).lean();
     }
 
     /**
@@ -227,7 +226,7 @@ class RoomsService {
      * Return a room associated with the given ID
      */
     async getRoomById(roomId: Types.ObjectId): Promise<RoomSchemaProperties> {
-        const room = await Room.findOne({ _id: roomId }).lean();
+        const room = await Room.findById(roomId).lean();
         if (!room) throw new Error("Room not found");
 
         return room;

@@ -32,7 +32,7 @@ const RoomSchema = new Schema(
         blackBoards: {
             type: Number,
         },
-        display: {
+        displays: {
             type: Number,
         },
         locked: {

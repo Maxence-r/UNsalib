@@ -190,14 +190,17 @@ export function BarChart({
                                                 })
                                             }
                                             title={`${group.group} - ${data.legend}: ${formatChartValue(group.value)}`}
+                                            style={{
+                                                width:
+                                                    (100 / groupCount)
+                                                        .toString() + "%",
+                                            }}
                                         >
                                             <span
                                                 className="shape"
                                                 style={{
                                                     backgroundColor: group.color,
-                                                    width:
-                                                        (100 / groupCount)
-                                                            .toString() + "%",
+                                                    width: "100%",
                                                     height: displayData
                                                         ? (
                                                               (100 *
@@ -314,13 +317,22 @@ export function PieChart({
                                 target: "data",
                                 eventHandlers: {
                                     onClick: (_, props) => {
-                                        const slice =
-                                            processedDataset[props.index];
-                                        if (slice) {
+                                        const datum = props.datum as
+                                            | {
+                                                  x?: string;
+                                                  y?: number;
+                                                  color?: string;
+                                              }
+                                            | undefined;
+                                        if (
+                                            datum?.x &&
+                                            typeof datum.y === "number" &&
+                                            datum.color
+                                        ) {
                                             setSelectedSlice({
-                                                legend: slice.x,
-                                                value: slice.y,
-                                                color: slice.color,
+                                                legend: datum.x,
+                                                value: datum.y,
+                                                color: datum.color,
                                             });
                                         }
                                         return [];
@@ -331,25 +343,23 @@ export function PieChart({
                         style={{
                             labels: { display: "none" },
                             data: {
-                                fill: ({ index }) =>
-                                    processedDataset[index as number].color,
-                                stroke: ({ index }) =>
+                                fill: ({ datum }) =>
+                                    (datum as { color?: string } | undefined)
+                                        ?.color ?? "var(--accent-color)",
+                                stroke: ({ datum }) =>
                                     selectedSlice?.legend ===
-                                    processedDataset[index as number].x
+                                    (datum as { x?: string } | undefined)?.x
                                         ? "var(--on-surface-color)"
                                         : "transparent",
-                                strokeWidth: ({ index }) =>
+                                strokeWidth: ({ datum }) =>
                                     selectedSlice?.legend ===
-                                    processedDataset[index as number].x
+                                    (datum as { x?: string } | undefined)?.x
                                         ? 2
                                         : 0,
                                 cursor: "pointer",
                             },
                         }}
-                        data={processedDataset.map((item) => ({
-                            x: item.x,
-                            y: item.y,
-                        }))}
+                        data={processedDataset}
                     />
                 </div>
             </div>

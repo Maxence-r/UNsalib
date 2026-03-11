@@ -1,71 +1,67 @@
-.pie-chart,
-.bar-chart {
-    height: auto;
-    width: 100%;
+.chart {
     display: flex;
-    gap: 24px;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
 }
-
-.pie-chart .shape {
-    width: 250px;
-    border-radius: 100%;
-    flex-shrink: 0;
-    aspect-ratio: 1 / 1;
-}
-
-/* New */
 
 .chart .legend {
-    flex-grow: 1;
     display: flex;
     gap: var(--large-space);
     flex-wrap: wrap;
-    height: auto;
     justify-content: center;
     align-items: center;
     font-size: 14px;
 }
 
 .chart .legend .item {
-    height: min-content;
     display: flex;
     gap: var(--space);
     flex-wrap: nowrap;
     align-items: center;
+    min-height: 36px;
+    min-width: 0;
 }
 
 .chart .legend .color {
     height: 12px;
     width: 12px;
+    border-radius: 999px;
+    flex-shrink: 0;
 }
 
 .chart-no-data {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 180px;
+    color: var(--neutral-color-dark);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
 }
 
-.chart {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.chart .scroll-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.chart,
 .chart .container {
     width: 100%;
     height: 100%;
-}
-
-.chart .container {
     display: flex;
     gap: 10px;
     justify-content: space-between;
     position: relative;
     overflow-x: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    min-width: 0;
+    padding-bottom: 6px;
 }
 
 .chart.bar .group-container,
@@ -83,14 +79,40 @@
 
 .chart.bar .shapes {
     display: flex;
-    gap: 2px;
+    gap: 4px;
     align-items: end;
     flex-grow: 1;
     width: 100%;
 }
 
+.chart.bar .shape-button {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    min-height: 100%;
+    flex: 1 1 0;
+    transition: transform var(--animation-duration);
+}
+
+.chart.bar .shape-button:hover,
+.chart.bar .shape-button.active {
+    transform: translateY(-2px);
+}
+
+.chart.bar .shape-button.active .shape {
+    outline: 2px solid var(--on-surface-color);
+    outline-offset: 2px;
+}
+
 .chart.bar .shape {
+    display: block;
     transition: height 1s;
+    border-radius: 6px 6px 0 0;
+    min-height: 2px;
 }
 
 .chart.bar .x-axis,
@@ -99,8 +121,16 @@
     font-size: 14px;
 }
 
+.chart .legend .name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .chart.bar .x-axis {
     background-color: var(--surface-color);
+    text-align: center;
+    width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .chart.bar .y-axis .labels {
@@ -109,6 +139,7 @@
     justify-content: space-between;
     align-items: flex-end;
     flex-grow: 1;
+    gap: 8px;
 }
 
 .chart.bar .y-axis {
@@ -148,8 +179,82 @@
     background-color: var(--border-color);
 }
 
-.chart.bar .scroll-container {
+.chart-selection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.selection-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--neutral-color);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.selection-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.selection-copy {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.chart.pie .pie-visual {
+    display: flex;
+    justify-content: center;
     width: 100%;
-    height: 100%;
-    position: relative;
+}
+
+.chart .legend-button {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background-color: transparent;
+    color: var(--on-surface-color);
+    cursor: pointer;
+    font-family: "Space Grotesk", sans-serif;
+    text-align: left;
+}
+
+.chart .legend-button.active {
+    border-color: var(--border-color);
+    background-color: var(--neutral-color);
+}
+
+.chart.pie .legend-button {
+    min-width: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .chart .container {
+        gap: 8px;
+    }
+
+    .chart.bar .group-container {
+        min-width: 48px;
+    }
+
+    .chart .legend {
+        justify-content: flex-start;
+    }
+
+    .chart-selection {
+        align-items: flex-start;
+    }
 }

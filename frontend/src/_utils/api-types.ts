@@ -100,6 +100,15 @@ export interface ApiAdminStatsOverview {
     selectedYear: number;
     selectedMonth: number;
     availableYears: number[];
+    today: {
+        date: string;
+        uniqueVisitors: number;
+        uniqueHumanVisitors: number;
+        views: number;
+        roomRequests: number;
+        availableRoomsRequests: number;
+        internalErrors: number;
+    };
     month: {
         label: string;
         activeDays: number;

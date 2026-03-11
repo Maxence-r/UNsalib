@@ -55,6 +55,12 @@ function formatMonthDay(date: string) {
     return `${day} ${MONTH_LABELS[monthIndex]}`;
 }
 
+function formatFullDate(date: string) {
+    const [year, month, day] = date.split("-");
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${day} ${MONTH_LABELS[monthIndex]} ${year}`;
+}
+
 function toPieDataset(values: Record<string, number>) {
     return Object.entries(values)
         .filter(([, value]) => value > 0)
@@ -69,51 +75,36 @@ function getTrafficAverage(total: number, activeDays: number) {
     return formatNumber(Math.round(total / activeDays));
 }
 
-function getHumanRate(totals: ApiStatsTotals) {
-    if (totals.uniqueVisitors === 0) {
-        return 0;
-    }
-    return Math.round(
-        (100 * totals.uniqueHumanVisitors) / totals.uniqueVisitors,
-    );
+function getActiveMonths(months: ApiStatsMonthlyPoint[]) {
+    return months.filter((month) => month.uniqueHumanVisitors > 0).length;
 }
 
 function getTopDays(days: ApiStatsDailyPoint[]) {
     return [...days]
-        .filter(
-            (day) =>
-                day.uniqueVisitors > 0 ||
-                day.uniqueHumanVisitors > 0 ||
-                day.views > 0,
-        )
+        .filter((day) => day.uniqueHumanVisitors > 0)
         .sort((a, b) => {
             if (b.uniqueHumanVisitors !== a.uniqueHumanVisitors) {
                 return b.uniqueHumanVisitors - a.uniqueHumanVisitors;
             }
-            if (b.uniqueVisitors !== a.uniqueVisitors) {
-                return b.uniqueVisitors - a.uniqueVisitors;
+            if (b.availableRoomsRequests !== a.availableRoomsRequests) {
+                return b.availableRoomsRequests - a.availableRoomsRequests;
             }
-            return b.views - a.views;
+            return b.roomRequests - a.roomRequests;
         })
         .slice(0, 5);
 }
 
 function getTopMonths(months: ApiStatsMonthlyPoint[]) {
     return [...months]
-        .filter(
-            (month) =>
-                month.uniqueVisitors > 0 ||
-                month.uniqueHumanVisitors > 0 ||
-                month.views > 0,
-        )
+        .filter((month) => month.uniqueHumanVisitors > 0)
         .sort((a, b) => {
             if (b.uniqueHumanVisitors !== a.uniqueHumanVisitors) {
                 return b.uniqueHumanVisitors - a.uniqueHumanVisitors;
             }
-            if (b.uniqueVisitors !== a.uniqueVisitors) {
-                return b.uniqueVisitors - a.uniqueVisitors;
+            if (b.availableRoomsRequests !== a.availableRoomsRequests) {
+                return b.availableRoomsRequests - a.availableRoomsRequests;
             }
-            return b.views - a.views;
+            return b.roomRequests - a.roomRequests;
         })
         .slice(0, 4);
 }
@@ -123,17 +114,19 @@ function MetricCard({
     value,
     note,
     highlighted,
+    compact,
     isLoading,
 }: {
     title: string;
     value: string;
     note: string;
     highlighted?: boolean;
+    compact?: boolean;
     isLoading: boolean;
 }) {
     return (
         <Card
-            className="metric-card"
+            className={`metric-card${compact ? " compact" : ""}`}
             highlighted={highlighted ?? false}
             isLoading={isLoading}
         >
@@ -175,7 +168,7 @@ function RankingCard({
                                     <div className="ranking-index">
                                         {index + 1}
                                     </div>
-                                    <div>
+                                    <div className="ranking-text">
                                         <div className="ranking-title">
                                             {item.title}
                                         </div>
@@ -246,37 +239,24 @@ export default function StatsPage() {
             ? overview.availableYears
             : [selectedYear];
 
+    const todayTotals = overview?.today ?? {
+        date: `${selectedYear}-${selectedMonth.toString().padStart(2, "0")}-01`,
+        ...EMPTY_TOTALS,
+    };
     const monthTotals = overview?.month.totals ?? EMPTY_TOTALS;
     const yearTotals = overview?.year.totals ?? EMPTY_TOTALS;
     const monthActiveDays = overview?.month.activeDays ?? 0;
     const peakDay = overview?.month.peakDay;
     const peakMonth = overview?.year.peakMonth;
-    const monthHumanRate = getHumanRate(monthTotals);
-    const yearHumanRate = getHumanRate(yearTotals);
+    const activeMonths = getActiveMonths(overview?.year.monthlyStats ?? []);
 
     const yearlyAudienceDataset = (overview?.year.monthlyStats ?? []).map(
         (month) => ({
             legend: month.label,
             y: [
                 {
-                    value: month.uniqueVisitors,
-                    group: "Audience cumulee",
-                },
-                {
                     value: month.uniqueHumanVisitors,
-                    group: "Audience humaine cumulee",
-                },
-            ],
-        }),
-    );
-
-    const yearlyViewsDataset = (overview?.year.monthlyStats ?? []).map(
-        (month) => ({
-            legend: month.label,
-            y: [
-                {
-                    value: month.views,
-                    group: "Vues cumulees",
+                    group: "Audience humaine",
                 },
             ],
         }),
@@ -287,12 +267,8 @@ export default function StatsPage() {
             legend: day.label,
             y: [
                 {
-                    value: day.uniqueVisitors,
-                    group: "Audience par jour",
-                },
-                {
                     value: day.uniqueHumanVisitors,
-                    group: "Audience humaine par jour",
+                    group: "Audience humaine",
                 },
             ],
         }),
@@ -302,10 +278,6 @@ export default function StatsPage() {
         (day) => ({
             legend: day.label,
             y: [
-                {
-                    value: day.views,
-                    group: "Vues",
-                },
                 {
                     value: day.roomRequests,
                     group: "EDT charges",
@@ -327,7 +299,7 @@ export default function StatsPage() {
         (month) => ({
             id: month.label,
             title: month.label,
-            meta: `${formatNumber(month.uniqueVisitors)} audience cumulee, ${formatNumber(month.views)} vues`,
+            meta: `${formatNumber(month.availableRoomsRequests)} recherches, ${formatNumber(month.roomRequests)} EDT`,
             value: formatNumber(month.uniqueHumanVisitors),
         }),
     );
@@ -335,7 +307,7 @@ export default function StatsPage() {
     const topDays = getTopDays(overview?.month.dailyStats ?? []).map((day) => ({
         id: day.date,
         title: formatMonthDay(day.date),
-        meta: `${formatNumber(day.uniqueVisitors)} audience, ${formatNumber(day.views)} vues`,
+        meta: `${formatNumber(day.availableRoomsRequests)} recherches, ${formatNumber(day.roomRequests)} EDT`,
         value: formatNumber(day.uniqueHumanVisitors),
     }));
 
@@ -344,6 +316,30 @@ export default function StatsPage() {
             <div className="view">
                 <h2 className="view-title">Statistiques</h2>
                 <div className="view-content">
+                    <div className="section">
+                        <h4 className="section-title">Aujourdhui</h4>
+                        <div className="today-grid">
+                            <MetricCard
+                                title="Vues humaines reelles"
+                                value={formatNumber(
+                                    todayTotals.uniqueHumanVisitors,
+                                )}
+                                note={`Le ${formatFullDate(todayTotals.date)}`}
+                                compact
+                                highlighted
+                                isLoading={isLoading}
+                            />
+                            <MetricCard
+                                title="Recherches de salles"
+                                value={formatNumber(
+                                    todayTotals.availableRoomsRequests,
+                                )}
+                                note={`Le ${formatFullDate(todayTotals.date)}`}
+                                compact
+                                isLoading={isLoading}
+                            />
+                        </div>
+                    </div>
                     <div className="section">
                         <Card
                             className="period-card"
@@ -360,10 +356,10 @@ export default function StatsPage() {
                                             `${MONTH_LABELS[selectedMonth - 1]} ${selectedYear}`}
                                     </h3>
                                     <p>
-                                        Les vues mensuelles et annuelles
-                                        cumulent les visiteurs uniques
-                                        quotidiens. La collecte de donnees
-                                        reste inchangee.
+                                        Toute la lecture visible privilegie les
+                                        vues humaines reelles. Les recherches et
+                                        les chargements EDT restent visibles
+                                        sans modifier la collecte.
                                     </p>
                                 </div>
                                 <label className="period-select">
@@ -415,30 +411,12 @@ export default function StatsPage() {
                         <h4 className="section-title">Synthese du mois</h4>
                         <div className="summary-grid">
                             <MetricCard
-                                title="Audience mensuelle cumulee"
-                                value={formatNumber(monthTotals.uniqueVisitors)}
-                                note={`${monthActiveDays} jours actifs sur la periode`}
-                                highlighted
-                                isLoading={isLoading}
-                            />
-                            <MetricCard
-                                title="Audience humaine cumulee"
+                                title="Audience humaine du mois"
                                 value={formatNumber(
                                     monthTotals.uniqueHumanVisitors,
                                 )}
-                                note={`${monthHumanRate}% de la part humaine du mois`}
-                                isLoading={isLoading}
-                            />
-                            <MetricCard
-                                title="Vues cumulees"
-                                value={formatNumber(monthTotals.views)}
-                                note={`${getTrafficAverage(monthTotals.views, monthActiveDays)} vues par jour actif`}
-                                isLoading={isLoading}
-                            />
-                            <MetricCard
-                                title="EDT charges"
-                                value={formatNumber(monthTotals.roomRequests)}
-                                note="Demandes de planning sur le mois"
+                                note={`${monthActiveDays} jours avec vue humaine`}
+                                highlighted
                                 isLoading={isLoading}
                             />
                             <MetricCard
@@ -446,7 +424,13 @@ export default function StatsPage() {
                                 value={formatNumber(
                                     monthTotals.availableRoomsRequests,
                                 )}
-                                note="Requetes de disponibilite sur le mois"
+                                note={`${getTrafficAverage(monthTotals.availableRoomsRequests, monthActiveDays)} par jour humain actif`}
+                                isLoading={isLoading}
+                            />
+                            <MetricCard
+                                title="EDT charges"
+                                value={formatNumber(monthTotals.roomRequests)}
+                                note={`${getTrafficAverage(monthTotals.roomRequests, monthActiveDays)} par jour humain actif`}
                                 isLoading={isLoading}
                             />
                             <MetricCard
@@ -458,9 +442,15 @@ export default function StatsPage() {
                                 }
                                 note={
                                     peakDay
-                                        ? `${formatNumber(peakDay.uniqueHumanVisitors)} humains, ${formatNumber(peakDay.views)} vues`
-                                        : "Aucune activite"
+                                        ? `${formatNumber(peakDay.uniqueHumanVisitors)} vues humaines`
+                                        : "Aucune activite humaine"
                                 }
+                                isLoading={isLoading}
+                            />
+                            <MetricCard
+                                title="Erreurs internes"
+                                value={formatNumber(monthTotals.internalErrors)}
+                                note="Incidents enregistres sur la periode"
                                 isLoading={isLoading}
                             />
                         </div>
@@ -475,34 +465,17 @@ export default function StatsPage() {
                                 className="chart-card chart-span-2"
                                 isLoading={isLoading}
                             >
-                                <CardHeader>
-                                    Audience annuelle cumulee
-                                </CardHeader>
+                                <CardHeader>Audience humaine annuelle</CardHeader>
                                 <CardContent>
                                     <p className="card-subtitle">
-                                        Chaque barre mensuelle additionne les
-                                        valeurs quotidiennes du mois pour rendre
-                                        les tendances lisibles sur toute
-                                        lannee.
+                                        Somme mensuelle des vues humaines
+                                        quotidiennes. Cliquez sur une barre
+                                        pour lire la valeur exacte.
                                     </p>
                                     <BarChart
                                         style={{ height: 320 }}
                                         dataset={yearlyAudienceDataset}
                                         chartId="yearly-audience"
-                                    />
-                                </CardContent>
-                            </Card>
-                            <Card className="chart-card" isLoading={isLoading}>
-                                <CardHeader>Vues par mois</CardHeader>
-                                <CardContent>
-                                    <p className="card-subtitle">
-                                        Les vues correspondent aux chargements
-                                        de la liste des salles.
-                                    </p>
-                                    <BarChart
-                                        style={{ height: 320 }}
-                                        dataset={yearlyViewsDataset}
-                                        chartId="yearly-views"
                                     />
                                 </CardContent>
                             </Card>
@@ -515,17 +488,7 @@ export default function StatsPage() {
                                     <div className="insight-list">
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Audience cumulee
-                                            </span>
-                                            <strong>
-                                                {formatNumber(
-                                                    yearTotals.uniqueVisitors,
-                                                )}
-                                            </strong>
-                                        </div>
-                                        <div className="insight-item">
-                                            <span className="insight-label">
-                                                Audience humaine cumulee
+                                                Audience humaine annuelle
                                             </span>
                                             <strong>
                                                 {formatNumber(
@@ -535,9 +498,29 @@ export default function StatsPage() {
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Ratio humain
+                                                Recherches de salles
                                             </span>
-                                            <strong>{yearHumanRate}%</strong>
+                                            <strong>
+                                                {formatNumber(
+                                                    yearTotals.availableRoomsRequests,
+                                                )}
+                                            </strong>
+                                        </div>
+                                        <div className="insight-item">
+                                            <span className="insight-label">
+                                                EDT charges
+                                            </span>
+                                            <strong>
+                                                {formatNumber(
+                                                    yearTotals.roomRequests,
+                                                )}
+                                            </strong>
+                                        </div>
+                                        <div className="insight-item">
+                                            <span className="insight-label">
+                                                Mois avec vue humaine
+                                            </span>
+                                            <strong>{activeMonths}</strong>
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
@@ -551,10 +534,12 @@ export default function StatsPage() {
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Vues cumulees
+                                                Erreurs internes
                                             </span>
                                             <strong>
-                                                {formatNumber(yearTotals.views)}
+                                                {formatNumber(
+                                                    yearTotals.internalErrors,
+                                                )}
                                             </strong>
                                         </div>
                                     </div>
@@ -562,14 +547,13 @@ export default function StatsPage() {
                             </Card>
                             <RankingCard
                                 title="Mois les plus actifs"
-                                description="Classement par audience humaine cumulee, puis audience totale et vues."
-                                emptyLabel="Aucune activite annuelle."
+                                description="Classement par vues humaines reelles. Les recherches et EDT servent seulement de departage."
+                                emptyLabel="Aucune activite humaine annuelle."
                                 items={topMonths}
                                 isLoading={isLoading}
                             />
                         </div>
                     </div>
-
                     <div className="section">
                         <h4 className="section-title">
                             Detail de {overview?.month.label ??
@@ -583,9 +567,9 @@ export default function StatsPage() {
                                 <CardHeader>Audience par jour</CardHeader>
                                 <CardContent>
                                     <p className="card-subtitle">
-                                        Lecture quotidienne de laudience totale
-                                        et de laudience humaine sur le mois
-                                        selectionne.
+                                        Lecture quotidienne des vues humaines
+                                        reelles. Cliquez sur une barre pour
+                                        lire la valeur exacte.
                                     </p>
                                     <BarChart
                                         style={{ height: 320 }}
@@ -601,8 +585,9 @@ export default function StatsPage() {
                                 <CardHeader>Activite par jour</CardHeader>
                                 <CardContent>
                                     <p className="card-subtitle">
-                                        Comparaison entre vues, emplois du temps
-                                        charges et recherches de salles.
+                                        Comparaison entre chargements EDT et
+                                        recherches de salles. Cliquez sur une
+                                        barre pour lire la valeur exacte.
                                     </p>
                                     <BarChart
                                         style={{ height: 320 }}
@@ -615,9 +600,10 @@ export default function StatsPage() {
                                 <CardHeader>Plateformes du mois</CardHeader>
                                 <CardContent>
                                     <p className="card-subtitle">
-                                        Repartition des systemes
-                                        dexploitation sur la periode
-                                        selectionnee.
+                                        Repartition des systemes dexploitation
+                                        humains connus sur la periode.
+                                        Cliquez sur une part pour lire la
+                                        valeur exacte.
                                     </p>
                                     <PieChart
                                         dataset={osDataset}
@@ -630,8 +616,9 @@ export default function StatsPage() {
                                 <CardHeader>Navigateurs du mois</CardHeader>
                                 <CardContent>
                                     <p className="card-subtitle">
-                                        Lecture rapide des navigateurs les plus
-                                        presents sur le mois.
+                                        Repartition des navigateurs humains
+                                        connus sur la periode. Cliquez sur une
+                                        part pour lire la valeur exacte.
                                     </p>
                                     <PieChart
                                         dataset={browserDataset}
@@ -642,8 +629,8 @@ export default function StatsPage() {
                             </Card>
                             <RankingCard
                                 title="Jours les plus actifs"
-                                description="Les jours sont tries par audience humaine, puis par audience totale et vues."
-                                emptyLabel="Aucune journee active sur ce mois."
+                                description="Les jours sont tries par vues humaines reelles. Les recherches et EDT servent seulement de departage."
+                                emptyLabel="Aucune journee humaine active sur ce mois."
                                 items={topDays}
                                 isLoading={isLoading}
                             />
@@ -656,23 +643,39 @@ export default function StatsPage() {
                                     <div className="insight-list">
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Jours actifs
+                                                Vues humaines du mois
+                                            </span>
+                                            <strong>
+                                                {formatNumber(
+                                                    monthTotals.uniqueHumanVisitors,
+                                                )}
+                                            </strong>
+                                        </div>
+                                        <div className="insight-item">
+                                            <span className="insight-label">
+                                                Jours avec vue humaine
                                             </span>
                                             <strong>{monthActiveDays}</strong>
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Ratio humain
+                                                Moyenne humaine par jour actif
                                             </span>
-                                            <strong>{monthHumanRate}%</strong>
+                                            <strong>
+                                                {getTrafficAverage(
+                                                    monthTotals.uniqueHumanVisitors,
+                                                    monthActiveDays,
+                                                )}
+                                            </strong>
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Erreurs internes
+                                                Moyenne recherches par jour actif
                                             </span>
                                             <strong>
-                                                {formatNumber(
-                                                    monthTotals.internalErrors,
+                                                {getTrafficAverage(
+                                                    monthTotals.availableRoomsRequests,
+                                                    monthActiveDays,
                                                 )}
                                             </strong>
                                         </div>
@@ -690,12 +693,11 @@ export default function StatsPage() {
                                         </div>
                                         <div className="insight-item">
                                             <span className="insight-label">
-                                                Moyenne audience par jour actif
+                                                Erreurs internes
                                             </span>
                                             <strong>
-                                                {getTrafficAverage(
-                                                    monthTotals.uniqueVisitors,
-                                                    monthActiveDays,
+                                                {formatNumber(
+                                                    monthTotals.internalErrors,
                                                 )}
                                             </strong>
                                         </div>

@@ -50,6 +50,10 @@ function isHumanVisitorStat(stat) {
     return stat.availableRoomsRequests > 0 || stat.roomRequests > 0 || stat.searchBarUsed === true || stat.homepageScrolled === true;
 }
 
+function hasHumanAudience(entry) {
+    return (entry.uniqueHumanVisitors || 0) > 0;
+}
+
 function aggregateStatTotals(stats) {
     return stats.reduce((totals, stat) => {
         totals.uniqueVisitors += 1;
@@ -73,20 +77,20 @@ function hasTraffic(entry) {
 }
 
 function getPeakEntry(entries) {
-    const activeEntries = entries.filter(hasTraffic);
+    const activeEntries = entries.filter(hasHumanAudience);
     if (activeEntries.length === 0) {
         return null;
     }
 
     return activeEntries.reduce((best, current) => {
-        if (current.uniqueHumanVisitors !== best.uniqueHumanVisitors) {
+        if ((current.uniqueHumanVisitors || 0) !== (best.uniqueHumanVisitors || 0)) {
             return current.uniqueHumanVisitors > best.uniqueHumanVisitors ? current : best;
         }
-        if (current.uniqueVisitors !== best.uniqueVisitors) {
-            return current.uniqueVisitors > best.uniqueVisitors ? current : best;
+        if ((current.availableRoomsRequests || 0) !== (best.availableRoomsRequests || 0)) {
+            return current.availableRoomsRequests > best.availableRoomsRequests ? current : best;
         }
-        if (current.views !== best.views) {
-            return current.views > best.views ? current : best;
+        if ((current.roomRequests || 0) !== (best.roomRequests || 0)) {
+            return current.roomRequests > best.roomRequests ? current : best;
         }
         return best;
     });
@@ -99,20 +103,20 @@ function buildTrafficBreakdown(stats) {
     stats.forEach((userStats) => {
         const parsedUserAgent = new UAParser({ Bots });
         parsedUserAgent.setUA(userStats.userAgent);
-
-        let osName;
-        let browserName;
-
-        if (!isBot(parsedUserAgent.getResult())) {
-            osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
-            browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
-        } else {
-            osName = 'Bot';
-            browserName = 'Bot';
+        if (isBot(parsedUserAgent.getResult())) {
+            return;
         }
 
-        os[osName] = Object.keys(os).includes(osName) ? os[osName] + 1 : 1;
-        browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
+        const osName = parsedUserAgent.getOS().name;
+        const browserName = parsedUserAgent.getBrowser().name;
+
+        if (osName && osName !== 'Inconnu' && osName !== 'Unknown') {
+            os[osName] = Object.keys(os).includes(osName) ? os[osName] + 1 : 1;
+        }
+
+        if (browserName && browserName !== 'Inconnu' && browserName !== 'Unknown') {
+            browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
+        }
     });
 
     return { os, browsers };
@@ -405,9 +409,11 @@ router.get('/stats/overview', async (req, res) => {
     }
 
     try {
-        const [yearStats, allDates] = await Promise.all([
+        const todayDate = new Date().toISOString().split('T')[0];
+        const [yearStats, allDates, todayStats] = await Promise.all([
             Stat.find({ date: { $regex: `^${year}-` } }).lean(),
-            Stat.distinct('date')
+            Stat.distinct('date'),
+            Stat.find({ date: todayDate }).lean()
         ]);
 
         const availableYears = [...new Set([
@@ -451,7 +457,11 @@ router.get('/stats/overview', async (req, res) => {
             return {
                 month: currentMonth,
                 label: MONTH_LABELS[index],
-                activeDays: new Set(statsForMonth.map((stat) => stat.date)).size,
+                activeDays: new Set(
+                    statsForMonth
+                        .filter((stat) => isHumanVisitorStat(stat))
+                        .map((stat) => stat.date)
+                ).size,
                 ...aggregateStatTotals(statsForMonth)
             };
         });
@@ -460,9 +470,13 @@ router.get('/stats/overview', async (req, res) => {
             selectedYear: year,
             selectedMonth: month,
             availableYears,
+            today: {
+                date: todayDate,
+                ...aggregateStatTotals(todayStats)
+            },
             month: {
                 label: `${MONTH_LABELS[month - 1]} ${year}`,
-                activeDays: dailyStats.filter(hasTraffic).length,
+                activeDays: dailyStats.filter(hasHumanAudience).length,
                 peakDay: getPeakEntry(dailyStats),
                 totals: aggregateEntryTotals(dailyStats),
                 dailyStats,

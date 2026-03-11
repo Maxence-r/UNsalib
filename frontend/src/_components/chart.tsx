@@ -1,7 +1,7 @@
 "use client";
 
-import { VictoryPie } from "victory";
 import { useEffect, useState } from "react";
+import { VictoryPie } from "victory";
 
 import "@/_utils/theme.css";
 import { PALETTE_HEX } from "@/_utils/constants";
@@ -22,6 +22,19 @@ type BarChartDataset = {
     legend: string;
     y: { value: number; group: string }[];
 }[];
+
+interface BarSelection {
+    legend: string;
+    group: string;
+    value: number;
+    color: string;
+}
+
+interface PieSelection {
+    legend: string;
+    value: number;
+    color: string;
+}
 
 function comparePieDatasets(
     a: { legend: string; value: number },
@@ -48,54 +61,29 @@ function chooseColor(colors: string[], pickedColors: string[]) {
     };
 }
 
+function formatChartValue(value: number) {
+    return new Intl.NumberFormat("fr-FR").format(value);
+}
+
 export function BarChart({
-    className,
-    id,
-    style,
+    className = "",
+    id = "",
+    style = {},
     chartId,
     dataset,
 }: {
-    className: string;
-    id: string;
-    style: React.CSSProperties;
+    className?: string;
+    id?: string;
+    style?: React.CSSProperties;
     chartId: string;
     dataset: BarChartDataset;
 }) {
-    // dataset:  = [
-    //     {
-    //         legend: "day1",
-    //         y: [
-    //             { value: 4, group: "test1" },
-    //             { value: 8, group: "test2" },
-    //         ],
-    //     },
-    //     {
-    //         legend: "day2",
-    //         y: [
-    //             { value: 4, group: "test1" },
-    //             { value: 8, group: "test2" },
-    //         ],
-    //     },
-    //     {
-    //         legend: "day3",
-    //         y: [
-    //             { value: 4, group: "test1" },
-    //             { value: 8, group: "test2" },
-    //         ],
-    //     },
-    //     {
-    //         legend: "day4",
-    //         y: [
-    //             { value: 4, group: "test1" },
-    //             { value: 8, group: "test2" },
-    //         ],
-    //     },
-    // ];
-
     const [displayData, setDisplayData] = useState<boolean>(false);
+    const [selectedBar, setSelectedBar] = useState<BarSelection | null>(null);
 
     useEffect(() => {
         setDisplayData(false);
+        setSelectedBar(null);
         const timeout = window.setTimeout(() => {
             setDisplayData(true);
         }, 10);
@@ -108,12 +96,11 @@ export function BarChart({
     if (dataset.length < 1) {
         return (
             <div className={`chart-no-data ${className}`} style={style} id={id}>
-                Aucune donnée.
+                Aucune donnee.
             </div>
         );
     }
 
-    // Get all groups and give them a color
     let pickedColors: string[] = [];
     const groups: { [key: string]: string } = {};
     dataset.forEach((data) => {
@@ -130,15 +117,20 @@ export function BarChart({
     let hasAnyValue = false;
     const processedDataset: {
         legend: string;
-        y: { value: number; color: string }[];
+        y: { value: number; color: string; group: string }[];
     }[] = dataset.map((data) => ({
         legend: data.legend,
         y: data.y.map((bar) => {
-            if (bar.value > maxY) maxY = bar.value;
-            if (bar.value > 0) hasAnyValue = true;
+            if (bar.value > maxY) {
+                maxY = bar.value;
+            }
+            if (bar.value > 0) {
+                hasAnyValue = true;
+            }
             return {
                 value: bar.value,
                 color: groups[bar.group],
+                group: bar.group,
             };
         }),
     }));
@@ -146,11 +138,12 @@ export function BarChart({
     if (!hasAnyValue) {
         return (
             <div className={`chart-no-data ${className}`} style={style} id={id}>
-                Aucune donnÃ©e.
+                Aucune donnee.
             </div>
         );
     }
 
+    const groupCount = Object.keys(groups).length || 1;
     const safeMaxY = maxY > 0 ? maxY : 1;
 
     return (
@@ -167,7 +160,7 @@ export function BarChart({
                 <div className="container">
                     <div className="y-axis">
                         <div className="labels">
-                            <div>{maxY}</div>
+                            <div>{formatChartValue(maxY)}</div>
                             <div>0</div>
                         </div>
                         <div className="placeholder">y</div>
@@ -175,25 +168,48 @@ export function BarChart({
                     {processedDataset.map((data) => (
                         <div key={data.legend} className="group-container">
                             <div className="shapes">
-                                {data.y.map((group) => (
-                                    <div
-                                        key={group.color}
-                                        className="shape"
-                                        style={{
-                                            backgroundColor: group.color,
-                                            width:
-                                                100 /
-                                                    Object.keys(groups).length +
-                                                "%",
-                                            height: displayData
-                                                ? (
-                                                      (100 * group.value) /
-                                                      safeMaxY
-                                                  ).toString() + "%"
-                                                : "0px",
-                                        }}
-                                    />
-                                ))}
+                                {data.y.map((group) => {
+                                    const isActive =
+                                        selectedBar?.legend === data.legend &&
+                                        selectedBar?.group === group.group &&
+                                        selectedBar?.value === group.value;
+
+                                    return (
+                                        <button
+                                            key={`${chartId}-${data.legend}-${group.group}`}
+                                            type="button"
+                                            className={`shape-button ${
+                                                isActive ? "active" : ""
+                                            }`}
+                                            onClick={() =>
+                                                setSelectedBar({
+                                                    legend: data.legend,
+                                                    group: group.group,
+                                                    value: group.value,
+                                                    color: group.color,
+                                                })
+                                            }
+                                            title={`${group.group} - ${data.legend}: ${formatChartValue(group.value)}`}
+                                        >
+                                            <span
+                                                className="shape"
+                                                style={{
+                                                    backgroundColor: group.color,
+                                                    width:
+                                                        (100 / groupCount)
+                                                            .toString() + "%",
+                                                    height: displayData
+                                                        ? (
+                                                              (100 *
+                                                                  group.value) /
+                                                              safeMaxY
+                                                          ).toString() + "%"
+                                                        : "0px",
+                                                }}
+                                            />
+                                        </button>
+                                    );
+                                })}
                             </div>
                             <div className="x-axis">{data.legend}</div>
                         </div>
@@ -203,10 +219,7 @@ export function BarChart({
             <div className="legend">
                 {Object.keys(groups).map((groupName, index) => {
                     return (
-                        <div
-                            className="item"
-                            key={`legend-${chartId}-${index}`}
-                        >
+                        <div className="item" key={`legend-${chartId}-${index}`}>
                             <div
                                 className="color"
                                 style={{
@@ -218,170 +231,48 @@ export function BarChart({
                     );
                 })}
             </div>
+            {selectedBar && (
+                <div className="chart-selection">
+                    <div className="selection-chip">
+                        <span
+                            className="selection-color"
+                            style={{ backgroundColor: selectedBar.color }}
+                        />
+                        <span className="selection-group">
+                            {selectedBar.group}
+                        </span>
+                    </div>
+                    <div className="selection-copy">
+                        <strong>{selectedBar.legend}</strong>
+                        <span>{formatChartValue(selectedBar.value)}</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
-// export function BarChart({
-//     className,
-//     id,
-//     chartId,
-//     dataset,
-//     sortDataset,
-// }: {
-//     className: string;
-//     id: string;
-//     chartId: string;
-//     dataset: PieChartDataset;
-//     sortDataset: "asc" | "desc" | "none";
-// }) {
-//     const sortedDataset = dataset;
-//     if (sortDataset === "asc") {
-//         sortedDataset.sort(comparePieDatasets);
-//     }
-
-//     const valuesSum = sortedDataset.reduce((a, b) => {
-//         return a + b.value;
-//     }, 0);
-//     const processedDataset: ProcessedPieChartDataset = [];
-//     let pickedColors: string[] = [];
-//     let color;
-//     sortedDataset.forEach((data) => {
-//         const colorResult = chooseColor(PALETTE_HEX, pickedColors);
-//         color = colorResult.chosenColor;
-//         pickedColors = colorResult.updatedPickedColors;
-//         processedDataset.push({
-//             x: data.legend,
-//             y: data.value,
-//             color: color,
-//         });
-//     });
-
-//     return (
-//         <div className={`bar-chart ${className}`} id={id}>
-//             <div
-//                 style={{
-//                     display: "flex",
-//                     justifyContent: "center",
-//                     width: "100%",
-//                 }}
-//             >
-//                 <div style={{ maxHeight: 200, width: "100%" }}>
-//                     <VictoryChart
-//                         domain={{ y: [0.5, 5.5] }}
-//                         domainPadding={{ x: 40 }}
-//                         animate={{ duration: 1000 }}
-//                     >
-//                         <VictoryGroup
-//                             offset={20}
-//                             style={{ data: { width: 15 } }}
-//                         >
-//                             <VictoryBar
-//                                 data={[
-//                                     { x: "2023 Q1", y: 1 },
-//                                     { x: "2023 Q2", y: 2 },
-//                                     { x: "2023 Q3", y: 3 },
-//                                     { x: "2023 Q4", y: 2 },
-//                                     { x: "2023 Q5", y: 1 },
-//                                     { x: "2023 Q6", y: 2 },
-//                                     { x: "2023 Q7", y: 3 },
-//                                     { x: "2023 Q8", y: 2 },
-//                                 ]}
-//                             />
-//                             <VictoryBar
-//                                 data={[
-//                                     { x: "2023 Q1", y: 2 },
-//                                     { x: "2023 Q2", y: 3 },
-//                                     { x: "2023 Q3", y: 4 },
-//                                     { x: "2023 Q4", y: 5 },
-//                                     { x: "2023 Q5", y: 1 },
-//                                     { x: "2023 Q6", y: 2 },
-//                                     { x: "2023 Q7", y: 3 },
-//                                     { x: "2023 Q8", y: 2 },
-//                                 ]}
-//                             />
-//                             <VictoryBar
-//                                 data={[
-//                                     { x: "2023 Q1", y: 1 },
-//                                     { x: "2023 Q2", y: 2 },
-//                                     { x: "2023 Q3", y: 3 },
-//                                     { x: "2023 Q4", y: 4 },
-//                                     { x: "2023 Q5", y: 1 },
-//                                     { x: "2023 Q6", y: 2 },
-//                                     { x: "2023 Q7", y: 3 },
-//                                     { x: "2023 Q8", y: 2 },
-//                                 ]}
-//                             />
-//                         </VictoryGroup>
-//                     </VictoryChart>
-//                     {/* <VictoryPie
-//                         animate={{ duration: 1000 }}
-//                         radius={200}
-//                         style={{
-//                             labels: { display: "none" },
-//                             data:
-//                                 processedDataset.length > 0
-//                                     ? {
-//                                           fill: ({ index }) =>
-//                                               processedDataset[index as number]
-//                                                   .color,
-//                                       }
-//                                     : {
-//                                           fill: "transparent",
-//                                       },
-//                         }}
-//                         data={
-//                             processedDataset.length > 0
-//                                 ? processedDataset.map((item) => ({
-//                                       x: item.x,
-//                                       y: item.y,
-//                                   }))
-//                                 : [{ x: "", y: 100 }]
-//                         }
-//                     />*/}
-//                 </div>
-//             </div>
-//             <div className="legend">
-//                 {processedDataset.length > 0 ? (
-//                     processedDataset.map((data, index) => {
-//                         return (
-//                             <div
-//                                 className="legend-item"
-//                                 key={`${chartId} ${index}`}
-//                             >
-//                                 <div
-//                                     className="legend-color"
-//                                     style={{ backgroundColor: data.color }}
-//                                 ></div>
-//                                 <div className="legend-name">
-//                                     {`${data.x} (${Math.round(
-//                                         (100 * data.y) / valuesSum,
-//                                     )}%)`}
-//                                 </div>
-//                             </div>
-//                         );
-//                     })
-//                 ) : (
-//                     <>Aucune donnée</>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// }
-
 export function PieChart({
-    className,
-    id,
+    className = "",
+    id = "",
     chartId,
     dataset,
-    sortDataset,
+    sortDataset = "none",
 }: {
-    className: string;
-    id: string;
+    className?: string;
+    id?: string;
     chartId: string;
     dataset: PieChartDataset;
-    sortDataset: "asc" | "desc" | "none";
+    sortDataset?: "asc" | "desc" | "none";
 }) {
+    const [selectedSlice, setSelectedSlice] = useState<PieSelection | null>(
+        null,
+    );
+
+    useEffect(() => {
+        setSelectedSlice(null);
+    }, [dataset]);
+
     const sortedDataset = [...dataset];
     if (sortDataset === "asc") {
         sortedDataset.sort(comparePieDatasets);
@@ -389,7 +280,11 @@ export function PieChart({
 
     const hasAnyValue = sortedDataset.some((entry) => entry.value > 0);
     if (!hasAnyValue) {
-        return <div className={`chart-no-data ${className}`} id={id}>Aucune donnÃ©e.</div>;
+        return (
+            <div className={`chart-no-data ${className}`} id={id}>
+                Aucune donnee.
+            </div>
+        );
     }
 
     const valuesSum = sortedDataset.reduce((a, b) => {
@@ -397,82 +292,117 @@ export function PieChart({
     }, 0);
     const processedDataset: ProcessedPieChartDataset = [];
     let pickedColors: string[] = [];
-    let color;
     sortedDataset.forEach((data) => {
         const colorResult = chooseColor(PALETTE_HEX, pickedColors);
-        color = colorResult.chosenColor;
         pickedColors = colorResult.updatedPickedColors;
         processedDataset.push({
             x: data.legend,
             y: data.value,
-            color: color,
+            color: colorResult.chosenColor,
         });
     });
 
     return (
-        <div className={`pie-chart ${className}`} id={id}>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    width: "100%",
-                }}
-            >
-                <div style={{ maxWidth: 200 }}>
+        <div className={`chart pie ${className}`} id={id}>
+            <div className="pie-visual">
+                <div style={{ width: "100%", maxWidth: 220 }}>
                     <VictoryPie
                         animate={{ duration: 1000 }}
                         radius={200}
+                        events={[
+                            {
+                                target: "data",
+                                eventHandlers: {
+                                    onClick: (_, props) => {
+                                        const slice =
+                                            processedDataset[props.index];
+                                        if (slice) {
+                                            setSelectedSlice({
+                                                legend: slice.x,
+                                                value: slice.y,
+                                                color: slice.color,
+                                            });
+                                        }
+                                        return [];
+                                    },
+                                },
+                            },
+                        ]}
                         style={{
                             labels: { display: "none" },
-                            data:
-                                processedDataset.length > 0
-                                    ? {
-                                          fill: ({ index }) =>
-                                              processedDataset[index as number]
-                                                  .color,
-                                      }
-                                    : {
-                                          fill: "transparent",
-                                      },
+                            data: {
+                                fill: ({ index }) =>
+                                    processedDataset[index as number].color,
+                                stroke: ({ index }) =>
+                                    selectedSlice?.legend ===
+                                    processedDataset[index as number].x
+                                        ? "var(--on-surface-color)"
+                                        : "transparent",
+                                strokeWidth: ({ index }) =>
+                                    selectedSlice?.legend ===
+                                    processedDataset[index as number].x
+                                        ? 2
+                                        : 0,
+                                cursor: "pointer",
+                            },
                         }}
-                        data={
-                            processedDataset.length > 0
-                                ? processedDataset.map((item) => ({
-                                      x: item.x,
-                                      y: item.y,
-                                  }))
-                                : [{ x: "", y: 100 }]
-                        }
+                        data={processedDataset.map((item) => ({
+                            x: item.x,
+                            y: item.y,
+                        }))}
                     />
                 </div>
             </div>
             <div className="legend">
-                {processedDataset.length > 0 ? (
-                    processedDataset.map((data, index) => {
-                        return (
+                {processedDataset.map((data, index) => {
+                    const isActive = selectedSlice?.legend === data.x;
+
+                    return (
+                        <button
+                            type="button"
+                            className={`item legend-button ${
+                                isActive ? "active" : ""
+                            }`}
+                            key={`${chartId}-${index}`}
+                            onClick={() =>
+                                setSelectedSlice({
+                                    legend: data.x,
+                                    value: data.y,
+                                    color: data.color,
+                                })
+                            }
+                            title={`${data.x}: ${formatChartValue(data.y)}`}
+                        >
                             <div
-                                className="legend-item"
-                                key={`${chartId} ${index}`}
-                            >
-                                <div
-                                    className="legend-color"
-                                    style={{ backgroundColor: data.color }}
-                                ></div>
-                                <div className="legend-name">
-                                    {`${data.x} (${Math.round(
-                                        (100 * data.y) / valuesSum,
-                                    )}%)`}
-                                </div>
+                                className="color"
+                                style={{ backgroundColor: data.color }}
+                            ></div>
+                            <div className="name">
+                                {`${data.x} (${Math.round(
+                                    (100 * data.y) / valuesSum,
+                                )}%)`}
                             </div>
-                        );
-                    })
-                ) : (
-                    <>Aucune donnée</>
-                )}
+                        </button>
+                    );
+                })}
             </div>
+            {selectedSlice && (
+                <div className="chart-selection">
+                    <div className="selection-chip">
+                        <span
+                            className="selection-color"
+                            style={{ backgroundColor: selectedSlice.color }}
+                        />
+                        <span className="selection-group">
+                            {selectedSlice.legend}
+                        </span>
+                    </div>
+                    <div className="selection-copy">
+                        <strong>Valeur exacte</strong>
+                        <span>{formatChartValue(selectedSlice.value)}</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
-
-PieChart.defaultProps = { className: "", id: "", sortDataset: "none" };
-BarChart.defaultProps = { className: "", id: "", style: "none" };

@@ -14,6 +14,7 @@
     flex-direction: column;
     gap: 24px;
     overflow: auto;
+    min-width: 0;
 }
 
 .view-title {
@@ -25,6 +26,7 @@
 
 .view-content {
     flex-grow: 1;
+    min-width: 0;
 }
 
 .view-content,
@@ -46,6 +48,7 @@
 .ranking-card,
 .insight-card {
     gap: 16px;
+    min-width: 0;
 }
 
 .period-toolbar {
@@ -61,6 +64,7 @@
     flex-direction: column;
     gap: 8px;
     max-width: 720px;
+    min-width: 0;
 }
 
 .period-copy h3,
@@ -121,6 +125,13 @@
     gap: 12px;
 }
 
+.today-grid,
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
 .month-pill {
     border: 2px solid var(--border-color);
     border-radius: 12px;
@@ -149,21 +160,25 @@
     color: var(--on-accent-color);
 }
 
-.summary-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-}
-
 .metric-card .metric-value {
     font-size: 34px;
     line-height: 1.1;
+}
+
+.metric-card.compact .metric-value {
+    font-size: 28px;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
+}
+
+.today-grid > *,
+.summary-grid > *,
+.stats-grid > * {
+    min-width: 0;
 }
 
 .chart-span-2 {
@@ -177,6 +192,7 @@
     flex-direction: column;
     gap: 16px;
     height: 100%;
+    min-width: 0;
 }
 
 .ranking-list,
@@ -209,6 +225,10 @@
     min-width: 0;
 }
 
+.ranking-text {
+    min-width: 0;
+}
+
 .ranking-index {
     min-width: 28px;
     min-height: 28px;
@@ -232,8 +252,21 @@
     color: var(--on-surface-color);
 }
 
+.ranking-title,
+.ranking-meta,
+.metric-note,
+.card-subtitle {
+    overflow-wrap: anywhere;
+}
+
+.ranking-item,
+.insight-item {
+    flex-wrap: wrap;
+}
+
 .ranking-value {
     white-space: nowrap;
+    margin-left: auto;
 }
 
 .empty-state {
@@ -248,7 +281,6 @@
 }
 
 @media screen and (max-width: 1024px) {
-    .summary-grid,
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -265,6 +297,11 @@
 @media screen and (max-width: 640px) {
     .view {
         padding: 16px;
+    }
+
+    .period-select {
+        width: 100%;
+        min-width: 0;
     }
 
     .month-grid {

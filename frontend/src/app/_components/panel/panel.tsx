@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, useEffect, useRef, Dispatch, SetStateAction, UIEvent, FormEvent } from "react";
 import Image from "next/image";
 import { Info, BookOpen, Users, Smile, Link2, ArrowUpRight, Monitor, Eye, Lock } from "lucide-react";
 
@@ -16,6 +16,7 @@ import { VERSION_NAME, VERSION_NUMBER } from "@/_utils/constants";
 import { closeModal, openModal, setModalContent } from "@/_components/modal";
 import { pushToHistory } from "@/_utils/navigation-manager";
 import { showToast, setToastMessage } from "@/_components/toast";
+import { trackHumanInteraction } from "@/_utils/human-interaction-tracker";
 
 function SearchAvailableModalContent({ availableRoomsListHook }: { availableRoomsListHook: Dispatch<SetStateAction<ApiRoomsList>> }) {
     const [searchLaunched, launchSearch] = useState(false);
@@ -340,9 +341,43 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
     const [timetableTabSearch, setTimetableTabSearch] = useState("");
     const [availableTabSearch, setAvailableTabSearch] = useState("");
     const [availableRoomsList, setAvailableRoomsList] = useState<ApiRoomsList>([]);
+    const hasTrackedSearchBarInteraction = useRef(false);
+    const hasTrackedHomepageScroll = useRef(false);
     const closePanel = usePanelStore((state) => state.close);
     const openPanel = usePanelStore((state) => state.open);
     const setSelectedRoom = useSelectedRoomStore((state) => state.setRoom);
+
+    function markSearchBarInteraction(value: string) {
+        if (hasTrackedSearchBarInteraction.current || value.trim() === "") {
+            return;
+        }
+
+        hasTrackedSearchBarInteraction.current = true;
+        void trackHumanInteraction("search_bar");
+    }
+
+    function handleSearchInput(
+        event: FormEvent<HTMLInputElement>,
+        setSearch: Dispatch<SetStateAction<string>>
+    ) {
+        const value = event.currentTarget.value.toString();
+        setSearch(value);
+        markSearchBarInteraction(value);
+    }
+
+    function handleHomepageScroll(event: UIEvent<HTMLDivElement>) {
+        if (hasTrackedHomepageScroll.current) {
+            return;
+        }
+
+        const container = event.currentTarget;
+        if (container.scrollTop <= 0 && container.scrollLeft <= 0) {
+            return;
+        }
+
+        hasTrackedHomepageScroll.current = true;
+        void trackHumanInteraction("homepage_scroll");
+    }
 
     function loadTimetable(room: ApiRoom) {
         pushToHistory("panel", openPanel)
@@ -378,7 +413,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         className="search"
                         type="text"
                         placeholder="Rechercher une salle, un bâtiment..."
-                        onInput={(event) => setTimetableTabSearch((event.target as HTMLInputElement).value.toString())}
+                        onInput={(event) => handleSearchInput(event, setTimetableTabSearch)}
                     ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
@@ -393,7 +428,13 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-                    <RoomsList containerClassName="edt" roomsList={roomsList} filter={timetableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                    <RoomsList
+                        containerClassName="edt"
+                        roomsList={roomsList}
+                        filter={timetableTabSearch}
+                        onRoomClick={loadTimetable}
+                        onScroll={handleHomepageScroll}
+                    ></RoomsList>
                 </div>
 
                 <div className={`room-finder ${activeTab == "room-finder" ? "displayed" : ""}`}>
@@ -412,7 +453,7 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                         className="search"
                         type="text"
                         placeholder="Filtrer par salle, bâtiment..."
-                        onInput={(event) => setAvailableTabSearch((event.target as HTMLInputElement).value.toString())}
+                        onInput={(event) => handleSearchInput(event, setAvailableTabSearch)}
                     ></Input>
                     <div className="results-head">
                         <p>Résultats de recherche</p>
@@ -427,7 +468,13 @@ function TabView({ roomsList }: { roomsList: ApiRoomsList }) {
                             <p>Pictos</p>
                         </div>
                     </div>
-                    <RoomsList containerClassName="available" roomsList={availableRoomsList} filter={availableTabSearch} onRoomClick={loadTimetable}></RoomsList>
+                    <RoomsList
+                        containerClassName="available"
+                        roomsList={availableRoomsList}
+                        filter={availableTabSearch}
+                        onRoomClick={loadTimetable}
+                        onScroll={handleHomepageScroll}
+                    ></RoomsList>
                 </div>
             </div>
         </>

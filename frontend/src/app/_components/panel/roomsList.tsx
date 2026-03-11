@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, UIEventHandler } from "react";
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 
 import { ApiRoom, ApiRoomsList } from "@/_utils/api-types";
@@ -37,7 +37,19 @@ function Badges({ features, available, id }: { features: ("visio" | "badge" | "v
     );
 }
 
-export default function RoomsList({ containerClassName, onRoomClick, roomsList, filter }: { containerClassName: string, onRoomClick: (room: ApiRoom) => void, roomsList: ApiRoomsList, filter: string }) {
+export default function RoomsList({
+    containerClassName,
+    onRoomClick,
+    roomsList,
+    filter,
+    onScroll
+}: {
+    containerClassName: string,
+    onRoomClick: (room: ApiRoom) => void,
+    roomsList: ApiRoomsList,
+    filter: string,
+    onScroll?: UIEventHandler<HTMLDivElement>
+}) {
     const [filteredRoomsList, setFilteredRoomsList] = useState(roomsList);
 
     useEffect(() => {
@@ -50,7 +62,7 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
     }, [filter, roomsList]);
 
     return (
-        <div className={`results ${containerClassName}`}>
+        <div className={`results ${containerClassName}`} onScroll={onScroll}>
             {filteredRoomsList.length > 0 ? filteredRoomsList.map((room: ApiRoom) => (
                 <div
                     key={room.id}
@@ -74,4 +86,4 @@ export default function RoomsList({ containerClassName, onRoomClick, roomsList, 
     );
 }
 
-RoomsList.defaultProps = { containerClassName: "", onClick: ((room: ApiRoom) => { return room }), roomsList: [], filter: "" };
+RoomsList.defaultProps = { containerClassName: "", onClick: ((room: ApiRoom) => { return room }), roomsList: [], filter: "", onScroll: undefined };

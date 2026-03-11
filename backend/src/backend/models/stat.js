@@ -20,6 +20,16 @@ const StatSchema = Schema({
         required: true,
         default: 0
     },
+    searchBarUsed: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    homepageScrolled: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     internalErrors: {
         type: Number,
         required: true,

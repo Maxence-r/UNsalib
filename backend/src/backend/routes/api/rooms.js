@@ -16,6 +16,10 @@ import { getGroupsFromCoursesList } from '../../utils/dbProcessing.js';
 
 const VACATIONS = [52, 1, 8, 16];
 const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };
+const HUMAN_INTERACTION_STATS = {
+    search_bar: 'search_bar_interaction',
+    homepage_scroll: 'homepage_scroll_interaction'
+};
 
 router.get('/', async (req, res) => {
     try {
@@ -197,6 +201,27 @@ router.get('/available', async (req, res) => {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+    }
+});
+
+router.post('/interactions', async (req, res) => {
+    const interactionType = req.body?.type;
+
+    if (!interactionType) {
+        return res.status(400).json({ error: 'MISSING_BODY' });
+    }
+
+    const statName = HUMAN_INTERACTION_STATS[interactionType];
+    if (!statName) {
+        return res.status(400).json({ error: 'INVALID_INTERACTION_TYPE' });
+    }
+
+    try {
+        await updateStats(statName, req.statsUUID, req.get('User-Agent'));
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requÃªte Ã  '${req.url}' (${error.message})`);
     }
 });
 

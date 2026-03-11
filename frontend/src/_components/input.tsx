@@ -14,7 +14,7 @@ export default function Input({
     type: string,
     placeholder: string,
     value: string,
-    onInput: React.KeyboardEventHandler<HTMLInputElement> 
+    onInput: React.FormEventHandler<HTMLInputElement>
 }) {
     return (
         <input id={id} className={`input ${className}`} type={type} placeholder={placeholder} value={value} onInput={onInput} />

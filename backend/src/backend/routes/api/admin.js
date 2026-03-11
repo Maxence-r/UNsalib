@@ -488,7 +488,9 @@ router.get('/stats/unique-human-visitors', async (req, res) => {
             },
             $or: [
                 { availableRoomsRequests: { $gt: 0 } },
-                { roomRequests: { $gt: 0 } }
+                { roomRequests: { $gt: 0 } },
+                { searchBarUsed: true },
+                { homepageScrolled: true }
             ]
         });
 

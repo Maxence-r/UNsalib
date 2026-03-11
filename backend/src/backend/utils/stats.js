@@ -18,29 +18,46 @@ async function updateStats(statName, userId, userAgent) {
         try {
             let today = new Date().toISOString().split('T')[0];
             let userStats = await Stat.findOne({ userId: userId, date: today });
+            const baseStats = {
+                roomRequests: 0,
+                roomsListRequests: 0,
+                availableRoomsRequests: 0,
+                searchBarUsed: false,
+                homepageScrolled: false,
+                internalErrors: 0
+            };
+            const initialStatsByName = {
+                room_requests: { roomRequests: 1 },
+                rooms_list_requests: { roomsListRequests: 1 },
+                available_rooms_requests: { availableRoomsRequests: 1 },
+                search_bar_interaction: { searchBarUsed: true },
+                homepage_scroll_interaction: { homepageScrolled: true },
+                internal_errors: { internalErrors: 1 }
+            };
             if (!userStats) {
                 const userStatsToday = new Stat({
                     date: today,
-                    roomRequests: statName === 'room_requests' ? 1 : 0,
-                    roomsListRequests: statName === 'rooms_list_requests' ? 1 : 0,
-                    availableRoomsRequests: statName === 'available_rooms_requests' ? 1 : 0,
-                    internalErrors: statName === 'internal_errors' ? 1 : 0,
+                    ...baseStats,
+                    ...(initialStatsByName[statName] || {}),
                     userId: userId,
                     userAgent: userAgent
                 });
                 await userStatsToday.save();
             } else {
-                let update;
+                const update = { $set: { userAgent: userAgent } };
                 if (statName === 'rooms_list_requests') {
-                    update = { $inc: { roomsListRequests: 1 } };
+                    update.$inc = { roomsListRequests: 1 };
                 } else if (statName === 'available_rooms_requests') {
-                    update = { $inc: { availableRoomsRequests: 1 } };
+                    update.$inc = { availableRoomsRequests: 1 };
                 } else if (statName === 'room_requests') {
-                    update = { $inc: { roomRequests: 1 } };
+                    update.$inc = { roomRequests: 1 };
+                } else if (statName === 'search_bar_interaction') {
+                    update.$set.searchBarUsed = true;
+                } else if (statName === 'homepage_scroll_interaction') {
+                    update.$set.homepageScrolled = true;
                 } else if (statName === 'internal_errors') {
-                    update = { $inc: { internalErrors: 1 } };
+                    update.$inc = { internalErrors: 1 };
                 }
-                update.userAgent = userAgent;
                 await Stat.findOneAndUpdate({ userId: userId, date: today }, update, {});
             }
             wsManager.sendStatsUpdate();

@@ -1,11 +1,11 @@
 "use client";
 
 import { VictoryPie } from "victory";
+import { useEffect, useState } from "react";
 
 import "@/_utils/theme.css";
 import { PALETTE_HEX } from "@/_utils/constants";
 import "./chart.css";
-import { useState } from "react";
 
 type PieChartDataset = {
     legend: string;
@@ -39,7 +39,7 @@ function comparePieDatasets(
 function chooseColor(colors: string[], pickedColors: string[]) {
     const index =
         pickedColors.length < colors.length
-            ? pickedColors.length + 1
+            ? pickedColors.length
             : Math.floor(Math.random() * colors.length);
     pickedColors.push(colors[index]);
     return {
@@ -94,6 +94,17 @@ export function BarChart({
 
     const [displayData, setDisplayData] = useState<boolean>(false);
 
+    useEffect(() => {
+        setDisplayData(false);
+        const timeout = window.setTimeout(() => {
+            setDisplayData(true);
+        }, 10);
+
+        return () => {
+            window.clearTimeout(timeout);
+        };
+    }, [dataset]);
+
     if (dataset.length < 1) {
         return (
             <div className={`chart-no-data ${className}`} style={style} id={id}>
@@ -101,8 +112,6 @@ export function BarChart({
             </div>
         );
     }
-
-    setTimeout(() => setDisplayData(true), 0.1);
 
     // Get all groups and give them a color
     let pickedColors: string[] = [];
@@ -118,6 +127,7 @@ export function BarChart({
     });
 
     let maxY = 0;
+    let hasAnyValue = false;
     const processedDataset: {
         legend: string;
         y: { value: number; color: string }[];
@@ -125,12 +135,23 @@ export function BarChart({
         legend: data.legend,
         y: data.y.map((bar) => {
             if (bar.value > maxY) maxY = bar.value;
+            if (bar.value > 0) hasAnyValue = true;
             return {
                 value: bar.value,
                 color: groups[bar.group],
             };
         }),
     }));
+
+    if (!hasAnyValue) {
+        return (
+            <div className={`chart-no-data ${className}`} style={style} id={id}>
+                Aucune donnÃ©e.
+            </div>
+        );
+    }
+
+    const safeMaxY = maxY > 0 ? maxY : 1;
 
     return (
         <div className={`chart bar ${className}`} style={style} id={id}>
@@ -167,7 +188,7 @@ export function BarChart({
                                             height: displayData
                                                 ? (
                                                       (100 * group.value) /
-                                                      maxY
+                                                      safeMaxY
                                                   ).toString() + "%"
                                                 : "0px",
                                         }}
@@ -361,9 +382,14 @@ export function PieChart({
     dataset: PieChartDataset;
     sortDataset: "asc" | "desc" | "none";
 }) {
-    const sortedDataset = dataset;
+    const sortedDataset = [...dataset];
     if (sortDataset === "asc") {
         sortedDataset.sort(comparePieDatasets);
+    }
+
+    const hasAnyValue = sortedDataset.some((entry) => entry.value > 0);
+    if (!hasAnyValue) {
+        return <div className={`chart-no-data ${className}`} id={id}>Aucune donnÃ©e.</div>;
     }
 
     const valuesSum = sortedDataset.reduce((a, b) => {

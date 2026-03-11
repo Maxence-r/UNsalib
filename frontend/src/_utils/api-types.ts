@@ -67,6 +67,54 @@ export interface ApiPlatforms {
     }
 }
 
+export interface ApiStatsTotals {
+    uniqueVisitors: number;
+    uniqueHumanVisitors: number;
+    views: number;
+    roomRequests: number;
+    availableRoomsRequests: number;
+    internalErrors: number;
+}
+
+export interface ApiStatsDailyPoint extends ApiStatsTotals {
+    date: string;
+    label: string;
+}
+
+export interface ApiStatsMonthlyPoint extends ApiStatsTotals {
+    month: number;
+    label: string;
+    activeDays: number;
+}
+
+export interface ApiStatsTrafficBreakdown {
+    os: {
+        [key: string]: number;
+    };
+    browsers: {
+        [key: string]: number;
+    };
+}
+
+export interface ApiAdminStatsOverview {
+    selectedYear: number;
+    selectedMonth: number;
+    availableYears: number[];
+    month: {
+        label: string;
+        activeDays: number;
+        peakDay: ApiStatsDailyPoint | null;
+        totals: ApiStatsTotals;
+        dailyStats: ApiStatsDailyPoint[];
+        platforms: ApiStatsTrafficBreakdown;
+    };
+    year: {
+        totals: ApiStatsTotals;
+        monthlyStats: ApiStatsMonthlyPoint[];
+        peakMonth: ApiStatsMonthlyPoint | null;
+    };
+}
+
 // API error
 
 export interface ApiError {

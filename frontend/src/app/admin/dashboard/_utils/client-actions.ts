@@ -1,8 +1,13 @@
 import {
+    ApiAdminStatsOverview,
     ApiPlatforms,
     ApiUniqueVisitors,
     ApiUniqueHumanVisitors,
 } from "@/_utils/api-types";
+
+function formatStatsDate(date: Date) {
+    return date.toISOString().split("T")[0];
+}
 
 function getMonthFirstDay() {
     const today = new Date();
@@ -35,15 +40,9 @@ async function getStats(
     end: Date,
 ): Promise<Response> {
     return get(
-        `/admin/stats/${statsEndpoint}?start=${start
-            .toLocaleDateString()
-            .split("/")
-            .reverse()
-            .join("-")}&end=${end
-            .toLocaleDateString()
-            .split("/")
-            .reverse()
-            .join("-")}`,
+        `/admin/stats/${statsEndpoint}?start=${formatStatsDate(
+            start,
+        )}&end=${formatStatsDate(end)}`,
     );
 }
 
@@ -70,9 +69,7 @@ export async function logout(): Promise<LogoutResult> {
 
 export async function getDayUniqueVisitors(): Promise<number> {
     const response = await getStats("unique-visitors", new Date(), new Date());
-    return (await response.json())[
-        new Date().toLocaleDateString().split("/").reverse().join("-")
-    ];
+    return (await response.json())[formatStatsDate(new Date())];
 }
 
 export async function getDayUniqueHumanVisitors(): Promise<number> {
@@ -81,9 +78,7 @@ export async function getDayUniqueHumanVisitors(): Promise<number> {
         new Date(),
         new Date(),
     );
-    return (await response.json())[
-        new Date().toLocaleDateString().split("/").reverse().join("-")
-    ];
+    return (await response.json())[formatStatsDate(new Date())];
 }
 
 export async function getMonthUniqueHumanVisitors(): Promise<ApiUniqueHumanVisitors> {
@@ -106,13 +101,19 @@ export async function getMonthUniqueVisitors(): Promise<ApiUniqueVisitors> {
 
 export async function getDayViews(): Promise<number> {
     const response = await getStats("views", new Date(), new Date());
-    return (await response.json())[
-        new Date().toLocaleDateString().split("/").reverse().join("-")
-    ];
+    return (await response.json())[formatStatsDate(new Date())];
 }
 
 export async function getDayPlatforms(): Promise<ApiPlatforms> {
     const response = await getStats("platforms", new Date(), new Date());
+    return await response.json();
+}
+
+export async function getStatsOverview(
+    year: number,
+    month: number,
+): Promise<ApiAdminStatsOverview> {
+    const response = await get(`/admin/stats/overview?year=${year}&month=${month}`);
     return await response.json();
 }
 

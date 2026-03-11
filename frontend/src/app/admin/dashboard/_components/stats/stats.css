@@ -40,34 +40,245 @@
     margin-block: 0px;
 }
 
-.view-content .section-content {
+.period-card,
+.chart-card,
+.metric-card,
+.ranking-card,
+.insight-card {
+    gap: 16px;
+}
+
+.period-toolbar {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
-.view-content .section-content>div {
-    flex-grow: 1;
-}
-
-.view-content .section-content .column {
+.period-copy {
     display: flex;
     flex-direction: column;
+    gap: 8px;
+    max-width: 720px;
+}
+
+.period-copy h3,
+.metric-value {
+    margin: 0;
+}
+
+.period-copy p,
+.card-subtitle,
+.metric-note,
+.insight-label,
+.ranking-meta {
+    margin: 0;
+    color: var(--neutral-color-dark);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.eyebrow,
+.metric-label {
+    color: var(--neutral-color-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.period-select {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 180px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.period-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+}
+
+.period-select select:focus {
+    border-color: var(--accent-color);
+}
+
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.month-pill {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    padding: 12px 14px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        border-color var(--animation-duration),
+        background-color var(--animation-duration),
+        color var(--animation-duration),
+        transform var(--animation-duration);
+}
+
+.month-pill:hover {
+    transform: translateY(-1px);
+    border-color: var(--neutral-color-dark);
+}
+
+.month-pill.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--on-accent-color);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
-    max-width: calc(50% - 24px);
 }
 
-.column.stats-overview h1 {
-    margin-block: 0px;
+.metric-card .metric-value {
+    font-size: 34px;
+    line-height: 1.1;
 }
 
-.column.stats-overview>div {
-    flex-grow: 1;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.chart-span-2 {
+    grid-column: span 2;
+}
+
+.chart-card .card-content,
+.ranking-card .card-content,
+.insight-card .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.ranking-list,
+.insight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ranking-item,
+.insight-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.ranking-item:first-child,
+.insight-item:first-child {
+    padding-top: 0;
+    border-top: none;
+}
+
+.ranking-copy {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.ranking-index {
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 999px;
+    background-color: var(--neutral-color);
+    color: var(--on-surface-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ranking-title,
+.ranking-value {
+    font-weight: 700;
+}
+
+.ranking-title,
+.insight-label {
+    color: var(--on-surface-color);
+}
+
+.ranking-value {
+    white-space: nowrap;
+}
+
+.empty-state {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-color-dark);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+    .summary-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-span-2 {
+        grid-column: span 1;
+    }
+
+    .month-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .view {
+        padding: 16px;
+    }
+
+    .month-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric-card .metric-value {
+        font-size: 28px;
+    }
 }
 
 @media screen and (max-width: 425px) {
-    .view-content .section-content .column {
-        max-width: 100%;
+    .month-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .view-title {

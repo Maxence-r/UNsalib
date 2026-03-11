@@ -19,6 +19,114 @@ import {
 } from '../../utils/stats.js';
 const router = express.Router();
 const { sign } = pkg;
+const MONTH_LABELS = ['Janv.', 'Fevr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Aout', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+
+function padUnit(value) {
+    return value.toString().padStart(2, '0');
+}
+
+function createEmptyTotals() {
+    return {
+        uniqueVisitors: 0,
+        uniqueHumanVisitors: 0,
+        views: 0,
+        roomRequests: 0,
+        availableRoomsRequests: 0,
+        internalErrors: 0
+    };
+}
+
+function mergeTotals(target, source) {
+    target.uniqueVisitors += source.uniqueVisitors || 0;
+    target.uniqueHumanVisitors += source.uniqueHumanVisitors || 0;
+    target.views += source.views || 0;
+    target.roomRequests += source.roomRequests || 0;
+    target.availableRoomsRequests += source.availableRoomsRequests || 0;
+    target.internalErrors += source.internalErrors || 0;
+    return target;
+}
+
+function isHumanVisitorStat(stat) {
+    return stat.availableRoomsRequests > 0 || stat.roomRequests > 0 || stat.searchBarUsed === true || stat.homepageScrolled === true;
+}
+
+function aggregateStatTotals(stats) {
+    return stats.reduce((totals, stat) => {
+        totals.uniqueVisitors += 1;
+        if (isHumanVisitorStat(stat)) {
+            totals.uniqueHumanVisitors += 1;
+        }
+        totals.views += stat.roomsListRequests || 0;
+        totals.roomRequests += stat.roomRequests || 0;
+        totals.availableRoomsRequests += stat.availableRoomsRequests || 0;
+        totals.internalErrors += stat.internalErrors || 0;
+        return totals;
+    }, createEmptyTotals());
+}
+
+function aggregateEntryTotals(entries) {
+    return entries.reduce((totals, entry) => mergeTotals(totals, entry), createEmptyTotals());
+}
+
+function hasTraffic(entry) {
+    return entry.uniqueVisitors > 0 || entry.uniqueHumanVisitors > 0 || entry.views > 0 || entry.roomRequests > 0 || entry.availableRoomsRequests > 0 || entry.internalErrors > 0;
+}
+
+function getPeakEntry(entries) {
+    const activeEntries = entries.filter(hasTraffic);
+    if (activeEntries.length === 0) {
+        return null;
+    }
+
+    return activeEntries.reduce((best, current) => {
+        if (current.uniqueHumanVisitors !== best.uniqueHumanVisitors) {
+            return current.uniqueHumanVisitors > best.uniqueHumanVisitors ? current : best;
+        }
+        if (current.uniqueVisitors !== best.uniqueVisitors) {
+            return current.uniqueVisitors > best.uniqueVisitors ? current : best;
+        }
+        if (current.views !== best.views) {
+            return current.views > best.views ? current : best;
+        }
+        return best;
+    });
+}
+
+function buildTrafficBreakdown(stats) {
+    const os = {};
+    const browsers = {};
+
+    stats.forEach((userStats) => {
+        const parsedUserAgent = new UAParser({ Bots });
+        parsedUserAgent.setUA(userStats.userAgent);
+
+        let osName;
+        let browserName;
+
+        if (!isBot(parsedUserAgent.getResult())) {
+            osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
+            browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
+        } else {
+            osName = 'Bot';
+            browserName = 'Bot';
+        }
+
+        os[osName] = Object.keys(os).includes(osName) ? os[osName] + 1 : 1;
+        browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
+    });
+
+    return { os, browsers };
+}
+
+function getAvailableYearsFromDates(dates) {
+    const years = [...new Set(
+        dates
+            .map((date) => parseInt(date.split('-')[0], 10))
+            .filter((year) => !isNaN(year))
+    )];
+
+    return years.sort((a, b) => b - a);
+}
 
 router.post('/auth/login', async (req, res) => {
     try {
@@ -240,7 +348,7 @@ router.get('/stats', async (req, res) => {
         const stats = await Stat.find({ date: { $regex: `^${year}-${month.length == 1 ? '0' + month : month}` } });
 
         // Processing query stats to produce an array with stats for each day in the month
-        let daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        let daysInMonth = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
         daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
         const processedStats = [];
         let statsForDate, availableRoomsRequests, roomRequests, roomsListRequests, internalErrors, uniqueVisitors;
@@ -274,27 +382,101 @@ router.get('/stats', async (req, res) => {
         processedStats.sort(compareStatsObjs);
 
         // Processing user-agent stats to produce objects with the number of each device
-        const OS = {};
-        const browsers = {};
-        stats.forEach((userStats) => {
-            const parsedUserAgent = new UAParser({ Bots });
-            parsedUserAgent.setUA(userStats.userAgent);
-            let osName, browserName;
-            if (!isBot(parsedUserAgent.getResult())) {
-                osName = !parsedUserAgent.getOS().name ? 'Inconnu' : parsedUserAgent.getOS().name;
-                browserName = !parsedUserAgent.getBrowser().name ? 'Inconnu' : parsedUserAgent.getBrowser().name;
-            } else {
-                osName = 'Bot';
-                browserName = 'Bot';
-            }
-            OS[osName] = Object.keys(OS).includes(osName) ? OS[osName] + 1 : 1;
-            browsers[browserName] = Object.keys(browsers).includes(browserName) ? browsers[browserName] + 1 : 1;
-        });
-
-        res.status(200).json({ dailyStats: processedStats, monthlyStats: { os: OS, browsers: browsers } });
+        res.status(200).json({ dailyStats: processedStats, monthlyStats: buildTrafficBreakdown(stats) });
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
+    }
+});
+
+router.get('/stats/overview', async (req, res) => {
+    // Redirect user if not logged in
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    const year = parseInt(req.query.year, 10);
+    const month = parseInt(req.query.month, 10);
+
+    if (isNaN(year) || isNaN(month)) {
+        return res.status(400).json({ error: 'MISSING_QUERIES' });
+    }
+
+    if (month < 1 || month > 12) {
+        return res.status(400).json({ error: 'INVALID_MONTH' });
+    }
+
+    try {
+        const [yearStats, allDates] = await Promise.all([
+            Stat.find({ date: { $regex: `^${year}-` } }).lean(),
+            Stat.distinct('date')
+        ]);
+
+        const availableYears = [...new Set([
+            ...getAvailableYearsFromDates(allDates),
+            year
+        ])].sort((a, b) => b - a);
+        const statsByDate = {};
+        const statsByMonth = {};
+
+        yearStats.forEach((stat) => {
+            const monthKey = stat.date.slice(0, 7);
+
+            if (!statsByDate[stat.date]) {
+                statsByDate[stat.date] = [];
+            }
+            if (!statsByMonth[monthKey]) {
+                statsByMonth[monthKey] = [];
+            }
+
+            statsByDate[stat.date].push(stat);
+            statsByMonth[monthKey].push(stat);
+        });
+
+        const selectedMonthKey = `${year}-${padUnit(month)}`;
+        const selectedMonthStats = statsByMonth[selectedMonthKey] || [];
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const dailyStats = Array.from({ length: daysInMonth }, (_, index) => {
+            const dayNumber = index + 1;
+            const date = `${selectedMonthKey}-${padUnit(dayNumber)}`;
+            return {
+                date,
+                label: padUnit(dayNumber),
+                ...aggregateStatTotals(statsByDate[date] || [])
+            };
+        });
+
+        const monthlyStats = Array.from({ length: 12 }, (_, index) => {
+            const currentMonth = index + 1;
+            const monthKey = `${year}-${padUnit(currentMonth)}`;
+            const statsForMonth = statsByMonth[monthKey] || [];
+            return {
+                month: currentMonth,
+                label: MONTH_LABELS[index],
+                activeDays: new Set(statsForMonth.map((stat) => stat.date)).size,
+                ...aggregateStatTotals(statsForMonth)
+            };
+        });
+
+        res.status(200).json({
+            selectedYear: year,
+            selectedMonth: month,
+            availableYears,
+            month: {
+                label: `${MONTH_LABELS[month - 1]} ${year}`,
+                activeDays: dailyStats.filter(hasTraffic).length,
+                peakDay: getPeakEntry(dailyStats),
+                totals: aggregateEntryTotals(dailyStats),
+                dailyStats,
+                platforms: buildTrafficBreakdown(selectedMonthStats)
+            },
+            year: {
+                totals: aggregateEntryTotals(monthlyStats),
+                monthlyStats,
+                peakMonth: getPeakEntry(monthlyStats)
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requÃªte Ã  '${req.url}' (${error.message})`);
     }
 });
 

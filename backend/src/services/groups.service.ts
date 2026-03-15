@@ -3,7 +3,9 @@ import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
 import { dataConfig } from "configs/data.config.js";
 import { getPageRoot } from "utils/misc.js";
-import { campusesService } from "./campuses.service.js";
+import { sectorsService } from "./sectors.service.js";
+import type { SectorSchemaProperties } from "models/sector.model.js";
+import { logger } from "utils/logger.js";
 
 interface UnivGroup {
     univId: number;
@@ -16,7 +18,6 @@ interface CelcatGroup {
 }
 
 interface GroupsExtractionReport {
-    campusName: string;
     added: number;
     updated: number;
     removed: number;
@@ -51,63 +52,55 @@ class GroupsService {
     }
 
     /**
-     * Update the name of a group associated with a certain University ID
+     * Update a group
      */
-    async updateNameByUnivId(
-        groupUnivId: number,
-        campusId: string,
-        newName: string,
+    async update(
+        id: string,
+        univId?: number,
+        celcatId?: number,
     ): Promise<void> {
         const group = await Group.findOne({
-            univId: groupUnivId,
-            campusId: campusId,
+            _id: id,
         });
         if (!group) {
             throw new Error("Group not found");
         }
 
-        group.name = newName;
+        if (univId) group.univId = univId;
+        if (celcatId) group.celcatId = celcatId;
+
         await group.save();
     }
 
     /**
      * Add a new group
      */
-    async addGroup(
-        groupUnivId: number,
-        campusId: string,
-        groupName: string,
+    async add(
+        sectorId: string,
+        name: string,
+        univId?: number,
+        celcatId?: number,
     ): Promise<void> {
-        const existingGroup = await Group.findOne({
-            univId: groupUnivId,
-            campusId: campusId,
-        });
-        if (existingGroup) {
-            throw new Error(
-                "Group with the same univId and campus already exists",
-            );
-        }
-
-        const newGroup = new Group({
-            univId: groupUnivId,
-            campusId: campusId,
-            name: groupName,
-        });
-        await newGroup.save();
+        await new Group({
+            _id: name,
+            univId,
+            celcatId,
+            sectorId,
+        }).save();
     }
 
     /**
      * Delete a group
      */
-    async deleteGroup(groupId: Types.ObjectId): Promise<void> {
-        const group = await Group.findOne({
-            _id: groupId,
-        });
-        if (!group) {
-            throw new Error("Group not found");
-        }
+    async delete(groupId: string): Promise<void> {
+        await Group.deleteOne({ _id: groupId });
+    }
 
-        await Group.deleteOne({ _id: group._id });
+    /**
+     * Get all groups
+     */
+    async getBySectorId(sectorId: string): Promise<GroupSchemaProperties[]> {
+        return await Group.find({ sectorId }).lean();
     }
 
     /**
@@ -126,7 +119,7 @@ class GroupsService {
 
         const foundGroups: CelcatGroup[] = [];
 
-        const selectElm = docRoot.querySelector("form>select");
+        const selectElm = docRoot.querySelector("select");
         const optionElms = selectElm?.querySelectorAll("option");
 
         if (optionElms) {
@@ -187,49 +180,108 @@ class GroupsService {
         return foundGroups;
     }
 
-    async processExtracted(
-        campusId: string,
-        existingGroups: (GroupSchemaProperties & { _id: Types.ObjectId })[],
-        extractedGroups: UnivGroup[] | CelcatGroup[],
+    mergeExtracted(
+        celcatGroups: CelcatGroup[],
+        univGroups: UnivGroup[],
+    ): ((UnivGroup & CelcatGroup) | UnivGroup | CelcatGroup)[] {
+        if (celcatGroups.length === 0) return univGroups;
+        if (univGroups.length === 0) return celcatGroups;
+
+        const mergedGroups: (
+            | (UnivGroup & CelcatGroup)
+            | UnivGroup
+            | CelcatGroup
+        )[] = [];
+
+        const largestGroupsArray =
+            celcatGroups.length > univGroups.length ? celcatGroups : univGroups;
+        const additionalGroupsArray =
+            celcatGroups.length > univGroups.length ? univGroups : celcatGroups;
+
+        for (const g of largestGroupsArray) {
+            const additionalGroupIndex = additionalGroupsArray.findIndex(
+                (ag) => ag.name === g.name,
+            );
+
+            let additionalGroupInfos: UnivGroup[] | CelcatGroup[] | null = null;
+            if (additionalGroupIndex !== -1) {
+                additionalGroupInfos = additionalGroupsArray.splice(
+                    additionalGroupIndex,
+                    additionalGroupIndex + 1,
+                );
+            }
+
+            mergedGroups.push({
+                name: g.name,
+                ...("celcatId" in g
+                    ? { celcatId: g.celcatId }
+                    : { univId: g.univId }),
+                ...(additionalGroupInfos &&
+                    additionalGroupInfos.length > 0 &&
+                    ("celcatId" in additionalGroupInfos[0]
+                        ? { celcatId: additionalGroupInfos[0].celcatId }
+                        : { univId: additionalGroupInfos[0].univId })),
+            });
+        }
+
+        additionalGroupsArray.forEach((g) =>
+            mergedGroups.push({
+                name: g.name,
+                ...("celcatId" in g
+                    ? { celcatId: g.celcatId }
+                    : { univId: g.univId }),
+            }),
+        );
+
+        return mergedGroups;
+    }
+
+    async processMergedGroups(
+        sectorId: string,
+        existingGroups: GroupSchemaProperties[],
+        mergedGroups: ((UnivGroup & CelcatGroup) | UnivGroup | CelcatGroup)[],
     ): Promise<{
         added: number;
         updated: number;
-        existingGroups: (GroupSchemaProperties & { _id: Types.ObjectId })[];
+        existingGroups: GroupSchemaProperties[];
     }> {
         let added = 0;
         let updated = 0;
 
-        if (extractedGroups.length === 0)
-            return { added, updated, existingGroups };
-
-        // TODO AFTER
-
-        const isCelcat = "celcatId" in extractedGroups[0];
-
-        for (const group of extractedGroups) {
-            const existingGroup = extractedGroups.existingGroups.find(
-                (g) => g.univId === group.id,
+        for (const group of mergedGroups) {
+            const existingGroup = existingGroups.find(
+                (g) => g._id === group.name,
             );
 
             if (existingGroup) {
-                // Group exists, check if the name needs to be updated
-                if (existingGroup.name !== group.name) {
-                    await groupsService.updateNameByUnivId(
-                        group.id,
-                        campusId,
+                // Group exists, check if it needs to be updated
+                if (
+                    ("univId" in group &&
+                        existingGroup.univId !== group.univId) ||
+                    ("celcatId" in group &&
+                        existingGroup.celcatId !== group.celcatId)
+                ) {
+                    await this.update(
                         group.name,
+                        "univId" in group ? group.univId : undefined,
+                        "celcatId" in group ? group.celcatId : undefined,
                     );
-
                     updated++;
                 }
 
                 // Remove the processed group from the available groups array
                 existingGroups = existingGroups.filter(
-                    (g) => g.univId !== group.id,
+                    (g) => g._id !== group.name,
                 );
             } else {
-                // New group, add it to the database
-                await groupsService.addGroup(group.id, campusId, group.name);
+                // New group, add it to the database with the default campus
+                // provided in the function arguments
+                await groupsService.add(
+                    sectorId,
+                    group.name,
+                    "univId" in group ? group.univId : undefined,
+                    "celcatId" in group ? group.celcatId : undefined,
+                );
                 added++;
             }
         }
@@ -237,50 +289,78 @@ class GroupsService {
         return { added, updated, existingGroups };
     }
 
-    async launchExtraction(
-        useCelcat: boolean,
-    ): Promise<GroupsExtractionReport[]> {
-        const operationReports: GroupsExtractionReport[] = [];
-        const campuses = await campusesService.getAll();
+    async sync(sectors: SectorSchemaProperties[]): Promise<void> {
+        logger.info("Starting groups sync");
 
-        for (const campus of campuses) {
-            let existingGroups = await groupsService.getGroupsForCampus(
-                campus._id,
-            );
+        let addedGroups = 0;
+        let updatedGroups = 0;
+        const start = Date.now();
+        const remainingGroups: GroupSchemaProperties[] = [];
+        let processedSectors = 0;
 
-            let totalAdded = 0;
-            let totalUpdated = 0;
+        for (const sector of sectors) {
+            try {
+                const dbGroups = await this.getBySectorId(sector._id);
 
-            for (const sectorId of campus.sectorIds) {
-                const extractedGroups = await (useCelcat
-                    ? this.extractFromCelcat(sectorId)
-                    : this.extractFromUniv(sectorId));
+                const extractedUniv = await this.extractFromUniv(sector.univId);
+                const extractedCelcat = sector.celcatId
+                    ? await this.extractFromCelcat(sector.celcatId)
+                    : [];
 
-                const result = await this.processExtracted(
-                    campus._id,
-                    existingGroups,
-                    extractedGroups,
+                if (
+                    extractedUniv.length === 0 ||
+                    extractedCelcat.length === 0
+                ) {
+                    if (extractedUniv.length === extractedCelcat.length) {
+                        // Both are empty, cannot continue
+                        throw new Error(
+                            "Cannot retrieve data from Celcat and univ",
+                        );
+                    } else {
+                        // Only one is empty
+                        if (sector.celcatId) {
+                            logger.warn(
+                                `Cannot retrieve ${extractedUniv.length > extractedCelcat.length ? "Celcat" : "univ"} groups of the ${sector.campusName} campus, sector '${sector._id}'`,
+                            );
+                        }
+                    }
+                }
+
+                const result = await this.processMergedGroups(
+                    sector._id,
+                    dbGroups,
+                    this.mergeExtracted(extractedCelcat, extractedUniv),
                 );
 
-                totalAdded += result.added;
-                totalUpdated += result.updated;
-                existingGroups = result.existingGroups;
+                addedGroups += result.added;
+                updatedGroups += result.updated;
+                // Save the remaining groups to be deleted later
+                result.existingGroups.forEach((g) => {
+                    if (!remainingGroups.some((rg) => (rg._id = g._id))) {
+                        remainingGroups.push(g);
+                    }
+                });
+            } catch (e) {
+                logger.error(
+                    `Cannot process groups of the ${sector.campusName} campus, sector '${sector._id}'`,
+                );
+                logger.error(e);
             }
 
-            for (const existingGroup of existingGroups) {
-                // Remaining existing groups are no longer present, delete them
-                await groupsService.deleteGroup(existingGroup._id);
-            }
-
-            operationReports.push({
-                campusName: campus._id,
-                added: totalAdded,
-                updated: totalUpdated,
-                removed: existingGroups.length,
-            });
+            processedSectors++;
+            logger.info(
+                `Groups sync progress: ${Math.round((100 * processedSectors) / sectors.length)}%`,
+            );
         }
 
-        return operationReports;
+        for (const rg of remainingGroups) {
+            // Remaining groups are no longer present, delete them
+            await groupsService.delete(rg._id);
+        }
+
+        logger.info(
+            `Groups sync finished: ${addedGroups} added, ${updatedGroups} updated and ${remainingGroups.length} removed (${Date.now() - start} ms)`,
+        );
     }
 }
 

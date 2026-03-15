@@ -8,18 +8,19 @@ import { appConfig } from "../configs/app.config.js";
 import { logger } from "../utils/logger.js";
 import { publishAvailableRooms } from "./refresh-available.js";
 import { initCampuses } from "./campuses.js";
-import { campusesService } from "../services/campuses.service.js";
-import { groupsService } from "../services/groups.service.js";
+import { sectorsService } from "../services/sectors.service.js";
 import { CoursesFetchError } from "./courses.js";
 import { GroupSchemaProperties } from "../models/group.model.js";
+import { groupsService } from "../services/groups.service.js";
+import { dataConfig } from "configs/data.config.js";
 
 async function syncTimetables(force = false): Promise<void> {
     const allGroups: {
         details: GroupSchemaProperties & { _id: Types.ObjectId };
-        campusId: Types.ObjectId;
+        campusId: string;
     }[] = [];
 
-    const campuses = await campusesService.getAllCampuses();
+    const campuses = await campusesService.getAll();
     for (const campus of campuses) {
         const groups = await groupsService.getGroupsForCampus(campus._id);
 
@@ -98,12 +99,14 @@ async function syncTimetables(force = false): Promise<void> {
 }
 
 async function launchBackgroundTasks(): Promise<void> {
-    await initCampuses();
+    await sectorsService.init(dataConfig.campuses);
 
     if (appConfig.tasks.forceGroupsFetch) {
-        logger.info("Starting groups force fetch");
-        await processGroups();
+        logger.info("Forcing groups fetch");
+        await groupsService.sync(await sectorsService.getAll());
     }
+
+    return;
 
     if (appConfig.tasks.forceTimetablesFetch) {
         logger.info("Starting timetables force fetch");

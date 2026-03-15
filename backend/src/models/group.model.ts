@@ -1,23 +1,24 @@
 import { Schema, model, type InferSchemaType } from "mongoose";
+
 import { coursesService } from "../services/courses.service.js";
 
 type GroupSchemaProperties = InferSchemaType<typeof GroupSchema>;
 
 const GroupSchema = new Schema(
     {
+        _id: {
+            type: String,
+            required: true,
+        },
         univId: {
             type: Number,
         },
         celcatId: {
             type: Number,
         },
-        name: {
+        sectorId: {
             type: String,
-            required: true,
-        },
-        campusId: {
-            type: Schema.Types.ObjectId,
-            ref: "Campus",
+            ref: "Sector",
             required: true,
         },
     },
@@ -25,8 +26,19 @@ const GroupSchema = new Schema(
 );
 
 GroupSchema.pre(
+    "save",
+    { document: true },
+    function () {
+        // Check that at least one ID is defined
+        if (!this.univId && !this.celcatId) {
+            throw new Error("At least one ID must be defined")
+        }
+    },
+);
+
+GroupSchema.pre(
     "deleteOne",
-    { document: true, query: false },
+    { document: true },
     async function () {
         // Clear group references from courses
         await coursesService.clearGroupReferences(this._id);

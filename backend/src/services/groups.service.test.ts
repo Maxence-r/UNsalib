@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, test, before, after } from "node:test";
-import { connect, Types } from "mongoose";
+// import { connect, Types } from "mongoose";
 
-import {
-    extractGroupsFromTimetablePage,
-    processExtractedGroups,
-} from "./groups.js";
-import { Campus } from "models/campus.model.js";
-import { Group, type GroupSchemaProperties } from "models/group.model.js";
+// import {
+//     extractGroupsFromTimetablePage,
+//     processExtractedGroups,
+// } from "./groups.js";
+// import { Campus } from "models/campus.model.js";
+// import { Group, type GroupSchemaProperties } from "models/group.model.js";
 import { groupsService } from "./groups.service.js";
 
 await describe("groups service", async () => {
@@ -18,23 +18,23 @@ await describe("groups service", async () => {
     // });
 
     await test("groups extraction", async (t) => {
-        await t.test("should extract more than one group", async () => {
-            assert.equal(
-                (await groupsService.extractFromUniv("sciences")).length > 0,
-                true,
-            );
+        const celcatGroups = await groupsService.extractFromCelcat("sciences");
+        const univGroups = await groupsService.extractFromUniv("sciences");
+
+        await t.test("should extract more than one group", () => {
+            assert.equal(univGroups.length > 0, true);
         });
 
-        await t.test(
-            "should extract more than one group (Celcat)",
-            async () => {
-                assert.equal(
-                    (await groupsService.extractFromCelcat("sciences")).length >
-                        0,
-                    true,
-                );
-            },
-        );
+        await t.test("should extract more than one group (Celcat)", () => {
+            assert.equal(celcatGroups.length > 0, true);
+        });
+
+        await t.test("should extract the same groups as Celcat", () => {
+            assert.deepEqual(
+                univGroups.map((g) => g.name).sort(),
+                celcatGroups.map((g) => g.name).sort(),
+            );
+        });
     });
 
     // await test("extracted groups processing", async (t) => {

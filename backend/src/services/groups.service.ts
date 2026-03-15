@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
-import { appConfig } from "configs/app.config.js";
 import { dataConfig } from "configs/data.config.js";
 import { getPageRoot } from "utils/misc.js";
 import { campusesService } from "./campuses.service.js";
@@ -56,7 +55,7 @@ class GroupsService {
      */
     async updateNameByUnivId(
         groupUnivId: number,
-        campusId: Types.ObjectId,
+        campusId: string,
         newName: string,
     ): Promise<void> {
         const group = await Group.findOne({
@@ -76,7 +75,7 @@ class GroupsService {
      */
     async addGroup(
         groupUnivId: number,
-        campusId: Types.ObjectId,
+        campusId: string,
         groupName: string,
     ): Promise<void> {
         const existingGroup = await Group.findOne({
@@ -134,15 +133,17 @@ class GroupsService {
             for (const elm of optionElms) {
                 const stringId = elm.getAttribute("value")?.match(/[0-9]+/);
                 const groupId = parseInt(stringId ? stringId[0] : "");
-                const groupName = elm.innerText;
+                const groupName = elm.innerText.trim().replaceAll("&amp;", "&");
 
-                if (!isNaN(groupId) && groupName) {
-                    if (groupId) {
-                        foundGroups.push({
-                            celcatId: groupId,
-                            name: groupName,
-                        });
-                    }
+                if (
+                    !isNaN(groupId) &&
+                    groupName &&
+                    !foundGroups.some((g) => g.name === groupName)
+                ) {
+                    foundGroups.push({
+                        celcatId: groupId,
+                        name: groupName,
+                    });
                 }
             }
         }
@@ -167,9 +168,15 @@ class GroupsService {
             const labelElement = docRoot.querySelector(
                 `label[for="${input.id}"]`,
             );
-            const groupName = labelElement?.textContent.trim();
+            const groupName = labelElement?.textContent
+                .trim()
+                .replaceAll("&amp;", "&");
 
-            if (!isNaN(groupId) && groupName) {
+            if (
+                !isNaN(groupId) &&
+                groupName &&
+                !foundGroups.some((g) => g.name === groupName)
+            ) {
                 foundGroups.push({
                     univId: groupId,
                     name: groupName,
@@ -181,7 +188,7 @@ class GroupsService {
     }
 
     async processExtracted(
-        campusId: Types.ObjectId,
+        campusId: string,
         existingGroups: (GroupSchemaProperties & { _id: Types.ObjectId })[],
         extractedGroups: UnivGroup[] | CelcatGroup[],
     ): Promise<{
@@ -198,7 +205,6 @@ class GroupsService {
         // TODO AFTER
 
         const isCelcat = "celcatId" in extractedGroups[0];
-
 
         for (const group of extractedGroups) {
             const existingGroup = extractedGroups.existingGroups.find(
@@ -231,7 +237,9 @@ class GroupsService {
         return { added, updated, existingGroups };
     }
 
-    async launchExtraction(): Promise<GroupsExtractionReport[]> {
+    async launchExtraction(
+        useCelcat: boolean,
+    ): Promise<GroupsExtractionReport[]> {
         const operationReports: GroupsExtractionReport[] = [];
         const campuses = await campusesService.getAll();
 
@@ -244,7 +252,7 @@ class GroupsService {
             let totalUpdated = 0;
 
             for (const sectorId of campus.sectorIds) {
-                const extractedGroups = await (appConfig.tasks.extractFromCelcat
+                const extractedGroups = await (useCelcat
                     ? this.extractFromCelcat(sectorId)
                     : this.extractFromUniv(sectorId));
 
@@ -265,7 +273,7 @@ class GroupsService {
             }
 
             operationReports.push({
-                campusName: campus.name,
+                campusName: campus._id,
                 added: totalAdded,
                 updated: totalUpdated,
                 removed: existingGroups.length,

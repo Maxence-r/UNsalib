@@ -9,12 +9,22 @@ import { pushToHistory, goBack } from "@/_utils/navigation-manager";
 
 interface ModalState {
     isOpen: boolean,
-    content: ReactNode
+    content: ReactNode,
+    modalClassName: string,
+    contentClassName: string,
+    closeOnBackdropClick: boolean
+};
+
+const DEFAULT_MODAL_PRESENTATION = {
+    modalClassName: "",
+    contentClassName: "",
+    closeOnBackdropClick: true
 };
 
 const useModalStore = create<ModalState>()(() => ({
     isOpen: false,
-    content: <></>
+    content: <></>,
+    ...DEFAULT_MODAL_PRESENTATION
 }));
 
 export function openModal() {
@@ -26,7 +36,11 @@ export function openModal() {
 
 function onlyCloseModal() {
     useModalStore.setState(() => {
-        return { isOpen: false };
+        return {
+            isOpen: false,
+            content: <></>,
+            ...DEFAULT_MODAL_PRESENTATION
+        };
     });
 }
 
@@ -40,22 +54,39 @@ export function setModalContent(newContent: ReactNode) {
     });
 }
 
+export function setModalPresentation({
+    modalClassName = "",
+    contentClassName = "",
+    closeOnBackdropClick = true
+}: Partial<Pick<ModalState, "modalClassName" | "contentClassName" | "closeOnBackdropClick">> = {}) {
+    useModalStore.setState(() => {
+        return {
+            modalClassName,
+            contentClassName,
+            closeOnBackdropClick
+        };
+    });
+}
+
 export default function Modal() {
     const isModalOpen = useModalStore(state => state.isOpen);
     const modalContent = useModalStore(state => state.content);
+    const modalClassName = useModalStore(state => state.modalClassName);
+    const contentClassName = useModalStore(state => state.contentClassName);
+    const closeOnBackdropClick = useModalStore(state => state.closeOnBackdropClick);
 
     return (
         <div
             tabIndex={-1}
-            className={`modal ${isModalOpen ? "active" : ""}`}
+            className={`modal ${modalClassName} ${isModalOpen ? "active" : ""}`}
             onClick={(event) => {
                 const target = event.target as HTMLInputElement;
-                if (target.classList.contains("modal")) {
+                if (closeOnBackdropClick && target.classList.contains("modal")) {
                     closeModal();
                 }
             }}
         >
-            <div className="modal-content">
+            <div className={`modal-content ${contentClassName}`}>
                 {modalContent}
             </div>
         </div>

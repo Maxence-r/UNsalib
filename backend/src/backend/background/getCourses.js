@@ -398,6 +398,13 @@ async function getCourses() {
 
     // Calculating the interval between each group for a CYCLE_INTERVAL-hour distribution
     const groupsNumber = groups.length;
+    if (groupsNumber === 0) {
+        console.warn(
+            "Aucun groupe actif trouvé en base. Synchronisation des emplois du temps ignorée.",
+        );
+        return;
+    }
+
     const intervalBetweenGroups = Math.floor(CYCLE_INTERVAL / groupsNumber);
 
     // Function to start the update cycle

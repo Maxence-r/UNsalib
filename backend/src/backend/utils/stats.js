@@ -22,6 +22,7 @@ async function updateStats(statName, userId, userAgent) {
                 roomRequests: 0,
                 roomsListRequests: 0,
                 availableRoomsRequests: 0,
+                qrcodeRequests: 0,
                 searchBarUsed: false,
                 homepageScrolled: false,
                 internalErrors: 0
@@ -30,6 +31,7 @@ async function updateStats(statName, userId, userAgent) {
                 room_requests: { roomRequests: 1 },
                 rooms_list_requests: { roomsListRequests: 1 },
                 available_rooms_requests: { availableRoomsRequests: 1 },
+                qrcode_requests: { qrcodeRequests: 1 },
                 search_bar_interaction: { searchBarUsed: true },
                 homepage_scroll_interaction: { homepageScrolled: true },
                 internal_errors: { internalErrors: 1 }
@@ -49,6 +51,8 @@ async function updateStats(statName, userId, userAgent) {
                     update.$inc = { roomsListRequests: 1 };
                 } else if (statName === 'available_rooms_requests') {
                     update.$inc = { availableRoomsRequests: 1 };
+                } else if (statName === 'qrcode_requests') {
+                    update.$inc = { qrcodeRequests: 1 };
                 } else if (statName === 'room_requests') {
                     update.$inc = { roomRequests: 1 };
                 } else if (statName === 'search_bar_interaction') {

@@ -73,6 +73,7 @@ export interface ApiStatsTotals {
     views: number;
     roomRequests: number;
     availableRoomsRequests: number;
+    qrcodeRequests: number;
     internalErrors: number;
 }
 
@@ -107,6 +108,7 @@ export interface ApiAdminStatsOverview {
         views: number;
         roomRequests: number;
         availableRoomsRequests: number;
+        qrcodeRequests: number;
         internalErrors: number;
     };
     month: {

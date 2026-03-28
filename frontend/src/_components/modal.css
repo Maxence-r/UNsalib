@@ -60,6 +60,10 @@
     height: fit-content;
 }
 
+.modal-content.modal-content--fullHeight>div {
+    height: 100%;
+}
+
 @media screen and (max-width: 1024px) {
     .modal-content {
         width: calc(100% - 48px);

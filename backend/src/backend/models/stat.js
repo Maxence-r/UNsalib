@@ -20,6 +20,11 @@ const StatSchema = Schema({
         required: true,
         default: 0
     },
+    qrcodeRequests: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     searchBarUsed: {
         type: Boolean,
         required: true,

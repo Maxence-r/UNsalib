@@ -34,6 +34,7 @@ const EMPTY_TOTALS: ApiStatsTotals = {
     views: 0,
     roomRequests: 0,
     availableRoomsRequests: 0,
+    qrcodeRequests: 0,
     internalErrors: 0,
 };
 
@@ -89,6 +90,9 @@ function getTopDays(days: ApiStatsDailyPoint[]) {
             if (b.availableRoomsRequests !== a.availableRoomsRequests) {
                 return b.availableRoomsRequests - a.availableRoomsRequests;
             }
+            if (b.qrcodeRequests !== a.qrcodeRequests) {
+                return b.qrcodeRequests - a.qrcodeRequests;
+            }
             return b.roomRequests - a.roomRequests;
         })
         .slice(0, 5);
@@ -103,6 +107,9 @@ function getTopMonths(months: ApiStatsMonthlyPoint[]) {
             }
             if (b.availableRoomsRequests !== a.availableRoomsRequests) {
                 return b.availableRoomsRequests - a.availableRoomsRequests;
+            }
+            if (b.qrcodeRequests !== a.qrcodeRequests) {
+                return b.qrcodeRequests - a.qrcodeRequests;
             }
             return b.roomRequests - a.roomRequests;
         })
@@ -286,6 +293,10 @@ export default function StatsPage() {
                     value: day.availableRoomsRequests,
                     group: "Recherches",
                 },
+                {
+                    value: day.qrcodeRequests,
+                    group: "QR code",
+                },
             ],
         }),
     );
@@ -299,7 +310,7 @@ export default function StatsPage() {
         (month) => ({
             id: month.label,
             title: month.label,
-            meta: `${formatNumber(month.availableRoomsRequests)} recherches, ${formatNumber(month.roomRequests)} EDT`,
+            meta: `${formatNumber(month.availableRoomsRequests)} recherches, ${formatNumber(month.qrcodeRequests)} QR, ${formatNumber(month.roomRequests)} EDT`,
             value: formatNumber(month.uniqueHumanVisitors),
         }),
     );
@@ -307,7 +318,7 @@ export default function StatsPage() {
     const topDays = getTopDays(overview?.month.dailyStats ?? []).map((day) => ({
         id: day.date,
         title: formatMonthDay(day.date),
-        meta: `${formatNumber(day.availableRoomsRequests)} recherches, ${formatNumber(day.roomRequests)} EDT`,
+        meta: `${formatNumber(day.availableRoomsRequests)} recherches, ${formatNumber(day.qrcodeRequests)} QR, ${formatNumber(day.roomRequests)} EDT`,
         value: formatNumber(day.uniqueHumanVisitors),
     }));
 
@@ -333,6 +344,15 @@ export default function StatsPage() {
                                 title="Recherches de salles"
                                 value={formatNumber(
                                     todayTotals.availableRoomsRequests,
+                                )}
+                                note={`Le ${formatFullDate(todayTotals.date)}`}
+                                compact
+                                isLoading={isLoading}
+                            />
+                            <MetricCard
+                                title="Acces /qrcode"
+                                value={formatNumber(
+                                    todayTotals.qrcodeRequests,
                                 )}
                                 note={`Le ${formatFullDate(todayTotals.date)}`}
                                 compact
@@ -434,6 +454,12 @@ export default function StatsPage() {
                                 isLoading={isLoading}
                             />
                             <MetricCard
+                                title="Acces /qrcode"
+                                value={formatNumber(monthTotals.qrcodeRequests)}
+                                note={`${getTrafficAverage(monthTotals.qrcodeRequests, monthActiveDays)} par jour humain actif`}
+                                isLoading={isLoading}
+                            />
+                            <MetricCard
                                 title="Jour fort du mois"
                                 value={
                                     peakDay
@@ -513,6 +539,16 @@ export default function StatsPage() {
                                             <strong>
                                                 {formatNumber(
                                                     yearTotals.roomRequests,
+                                                )}
+                                            </strong>
+                                        </div>
+                                        <div className="insight-item">
+                                            <span className="insight-label">
+                                                Acces /qrcode
+                                            </span>
+                                            <strong>
+                                                {formatNumber(
+                                                    yearTotals.qrcodeRequests,
                                                 )}
                                             </strong>
                                         </div>
@@ -675,6 +711,17 @@ export default function StatsPage() {
                                             <strong>
                                                 {getTrafficAverage(
                                                     monthTotals.availableRoomsRequests,
+                                                    monthActiveDays,
+                                                )}
+                                            </strong>
+                                        </div>
+                                        <div className="insight-item">
+                                            <span className="insight-label">
+                                                Moyenne /qrcode par jour actif
+                                            </span>
+                                            <strong>
+                                                {getTrafficAverage(
+                                                    monthTotals.qrcodeRequests,
                                                     monthActiveDays,
                                                 )}
                                             </strong>

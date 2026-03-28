@@ -18,8 +18,26 @@ const VACATIONS = [52, 1, 8, 16];
 const CIE_CLOSING_DATE = { dayNumber: 1, startTime: '00:00', endTime: '12:15' };
 const HUMAN_INTERACTION_STATS = {
     search_bar: 'search_bar_interaction',
-    homepage_scroll: 'homepage_scroll_interaction'
+    homepage_scroll: 'homepage_scroll_interaction',
+    qrcode_reached: 'qrcode_requests'
 };
+const ROOM_NAME_COLLATOR = new Intl.Collator('fr', {
+    sensitivity: 'base',
+    numeric: true
+});
+
+function getRoomSortLabel(room) {
+    return (room.alias && room.alias.trim() !== '' ? room.alias : room.name).trim();
+}
+
+function sortRoomsAlphabetically(rooms) {
+    return rooms.sort((firstRoom, secondRoom) => {
+        return ROOM_NAME_COLLATOR.compare(
+            getRoomSortLabel(firstRoom),
+            getRoomSortLabel(secondRoom)
+        );
+    });
+}
 
 router.get('/', async (req, res) => {
     try {
@@ -65,7 +83,7 @@ router.get('/', async (req, res) => {
             features: doc.features,
         }));
 
-        res.json(formattedResponse);
+        res.json(sortRoomsAlphabetically(formattedResponse));
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));
@@ -196,7 +214,7 @@ router.get('/available', async (req, res) => {
             features: doc.features,
         }));
 
-        res.json(formattedResponse);
+        res.json(sortRoomsAlphabetically(formattedResponse));
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
         updateStats('internal_errors', req.statsUUID, req.get('User-Agent'));

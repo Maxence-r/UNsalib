@@ -32,6 +32,7 @@ function createEmptyTotals() {
         views: 0,
         roomRequests: 0,
         availableRoomsRequests: 0,
+        qrcodeRequests: 0,
         internalErrors: 0
     };
 }
@@ -42,12 +43,13 @@ function mergeTotals(target, source) {
     target.views += source.views || 0;
     target.roomRequests += source.roomRequests || 0;
     target.availableRoomsRequests += source.availableRoomsRequests || 0;
+    target.qrcodeRequests += source.qrcodeRequests || 0;
     target.internalErrors += source.internalErrors || 0;
     return target;
 }
 
 function isHumanVisitorStat(stat) {
-    return stat.availableRoomsRequests > 0 || stat.roomRequests > 0 || stat.searchBarUsed === true || stat.homepageScrolled === true;
+    return stat.availableRoomsRequests > 0 || stat.roomRequests > 0 || stat.qrcodeRequests > 0 || stat.searchBarUsed === true || stat.homepageScrolled === true;
 }
 
 function hasHumanAudience(entry) {
@@ -63,6 +65,7 @@ function aggregateStatTotals(stats) {
         totals.views += stat.roomsListRequests || 0;
         totals.roomRequests += stat.roomRequests || 0;
         totals.availableRoomsRequests += stat.availableRoomsRequests || 0;
+        totals.qrcodeRequests += stat.qrcodeRequests || 0;
         totals.internalErrors += stat.internalErrors || 0;
         return totals;
     }, createEmptyTotals());
@@ -73,7 +76,7 @@ function aggregateEntryTotals(entries) {
 }
 
 function hasTraffic(entry) {
-    return entry.uniqueVisitors > 0 || entry.uniqueHumanVisitors > 0 || entry.views > 0 || entry.roomRequests > 0 || entry.availableRoomsRequests > 0 || entry.internalErrors > 0;
+    return entry.uniqueVisitors > 0 || entry.uniqueHumanVisitors > 0 || entry.views > 0 || entry.roomRequests > 0 || entry.availableRoomsRequests > 0 || entry.qrcodeRequests > 0 || entry.internalErrors > 0;
 }
 
 function getPeakEntry(entries) {
@@ -88,6 +91,9 @@ function getPeakEntry(entries) {
         }
         if ((current.availableRoomsRequests || 0) !== (best.availableRoomsRequests || 0)) {
             return current.availableRoomsRequests > best.availableRoomsRequests ? current : best;
+        }
+        if ((current.qrcodeRequests || 0) !== (best.qrcodeRequests || 0)) {
+            return current.qrcodeRequests > best.qrcodeRequests ? current : best;
         }
         if ((current.roomRequests || 0) !== (best.roomRequests || 0)) {
             return current.roomRequests > best.roomRequests ? current : best;
@@ -355,12 +361,13 @@ router.get('/stats', async (req, res) => {
         let daysInMonth = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
         daysInMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
         const processedStats = [];
-        let statsForDate, availableRoomsRequests, roomRequests, roomsListRequests, internalErrors, uniqueVisitors;
+        let statsForDate, availableRoomsRequests, roomRequests, roomsListRequests, qrcodeRequests, internalErrors, uniqueVisitors;
         daysInMonth.map((day) => {
             statsForDate = 0;
             availableRoomsRequests = 0;
             roomRequests = 0;
             roomsListRequests = 0;
+            qrcodeRequests = 0;
             internalErrors = 0;
             uniqueVisitors = 0;
             stats.forEach((userStats) => {
@@ -369,6 +376,7 @@ router.get('/stats', async (req, res) => {
                     availableRoomsRequests += userStats.availableRoomsRequests;
                     roomRequests += userStats.roomRequests;
                     roomsListRequests += userStats.roomsListRequests;
+                    qrcodeRequests += userStats.qrcodeRequests || 0;
                     internalErrors += userStats.internalErrors;
                     uniqueVisitors++;
                 }
@@ -378,6 +386,7 @@ router.get('/stats', async (req, res) => {
                 availableRoomsRequests: statsForDate > 0 ? availableRoomsRequests : 0,
                 roomRequests: statsForDate > 0 ? roomRequests : 0,
                 roomsListRequests: statsForDate > 0 ? roomsListRequests : 0,
+                qrcodeRequests: statsForDate > 0 ? qrcodeRequests : 0,
                 internalErrors: statsForDate > 0 ? internalErrors : 0,
                 uniqueVisitors: statsForDate > 0 ? uniqueVisitors : 0
             });
@@ -685,6 +694,7 @@ router.get('/stats/unique-human-visitors', async (req, res) => {
             $or: [
                 { availableRoomsRequests: { $gt: 0 } },
                 { roomRequests: { $gt: 0 } },
+                { qrcodeRequests: { $gt: 0 } },
                 { searchBarUsed: true },
                 { homepageScrolled: true }
             ]

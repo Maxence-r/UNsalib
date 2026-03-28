@@ -17,7 +17,7 @@ await describe("groups service", async () => {
         conn = await connect("mongodb://localhost:27017/unsalib-test");
     });
 
-    await test("groups extraction", async (t) => {
+    await test("groups sync", async (t) => {
         await t.test("merge", async (t) => {
             await t.test("should return an empty array", () => {
                 assert.deepEqual(groupsService.mergeExtracted([], []), []);

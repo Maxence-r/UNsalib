@@ -7,7 +7,6 @@ import { fetchGroupCourses } from "./courses.js";
 import { appConfig } from "../configs/app.config.js";
 import { logger } from "../utils/logger.js";
 import { publishAvailableRooms } from "./refresh-available.js";
-import { initCampuses } from "./campuses.js";
 import { sectorsService } from "../services/sectors.service.js";
 import { CoursesFetchError } from "./courses.js";
 import { GroupSchemaProperties } from "../models/group.model.js";

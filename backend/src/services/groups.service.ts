@@ -2,26 +2,14 @@ import { Types } from "mongoose";
 import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
 import { dataConfig } from "configs/data.config.js";
-import { getPageRoot } from "utils/misc.js";
-import { sectorsService } from "./sectors.service.js";
 import type { SectorSchemaProperties } from "models/sector.model.js";
 import { logger } from "utils/logger.js";
-
-interface UnivGroup {
-    univId: number;
-    name: string;
-}
-
-interface CelcatGroup {
-    celcatId: number;
-    name: string;
-}
-
-interface GroupsExtractionReport {
-    added: number;
-    updated: number;
-    removed: number;
-}
+import {
+    extractGroupsFromCelcatHtml,
+    extractGroupsFromUnivHtml,
+    type UnivGroup,
+    type CelcatGroup,
+} from "utils/extractors.js";
 
 class GroupsService {
     /**
@@ -110,74 +98,6 @@ class GroupsService {
         campusId: string,
     ): Promise<(GroupSchemaProperties & { _id: Types.ObjectId })[]> {
         return await Group.find({ campusId }).lean();
-    }
-
-    async extractFromCelcat(sector: string): Promise<CelcatGroup[]> {
-        const docRoot = await getPageRoot(
-            `${dataConfig.baseUrlCelcat}/${sector}/gindex.html`,
-        );
-
-        const foundGroups: CelcatGroup[] = [];
-
-        const selectElm = docRoot.querySelector("select");
-        const optionElms = selectElm?.querySelectorAll("option");
-
-        if (optionElms) {
-            for (const elm of optionElms) {
-                const stringId = elm.getAttribute("value")?.match(/[0-9]+/);
-                const groupId = parseInt(stringId ? stringId[0] : "");
-                const groupName = elm.innerText.trim().replaceAll("&amp;", "&");
-
-                if (
-                    !isNaN(groupId) &&
-                    groupName &&
-                    !foundGroups.some((g) => g.name === groupName)
-                ) {
-                    foundGroups.push({
-                        celcatId: groupId,
-                        name: groupName,
-                    });
-                }
-            }
-        }
-
-        return foundGroups;
-    }
-
-    async extractFromUniv(sector: string): Promise<UnivGroup[]> {
-        // Get the timetable HTML page to extract groups checkboxes
-        const docRoot = await getPageRoot(
-            `${dataConfig.baseUrl}/${sector}/educational_groups`,
-        );
-        const groupInputs = docRoot.querySelectorAll(
-            "#desktopGroupForm #educational_groups input",
-        );
-
-        const foundGroups: UnivGroup[] = [];
-
-        for (const input of groupInputs) {
-            // Get the ID and name for each group checkbox
-            const groupId = parseInt(input.getAttribute("value") || "");
-            const labelElement = docRoot.querySelector(
-                `label[for="${input.id}"]`,
-            );
-            const groupName = labelElement?.textContent
-                .trim()
-                .replaceAll("&amp;", "&");
-
-            if (
-                !isNaN(groupId) &&
-                groupName &&
-                !foundGroups.some((g) => g.name === groupName)
-            ) {
-                foundGroups.push({
-                    univId: groupId,
-                    name: groupName,
-                });
-            }
-        }
-
-        return foundGroups;
     }
 
     mergeExtracted(
@@ -302,9 +222,20 @@ class GroupsService {
             try {
                 const dbGroups = await this.getBySectorId(sector._id);
 
-                const extractedUniv = await this.extractFromUniv(sector.univId);
+                const univPageResponse = await fetch(
+                    `${dataConfig.baseUrl}/${sector.univId}/educational_groups`,
+                );
+                const celcatPageResponse = await fetch(
+                    `${dataConfig.baseUrlCelcat}/${sector.celcatId}/gindex.html`,
+                );
+
+                const extractedUniv = extractGroupsFromUnivHtml(
+                    await univPageResponse.text(),
+                );
                 const extractedCelcat = sector.celcatId
-                    ? await this.extractFromCelcat(sector.celcatId)
+                    ? extractGroupsFromCelcatHtml(
+                          await celcatPageResponse.text(),
+                      )
                     : [];
 
                 if (

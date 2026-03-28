@@ -18,27 +18,6 @@ await describe("groups service", async () => {
     });
 
     await test("groups extraction", async (t) => {
-        await t.test("extract", async (t) => {
-            const celcatGroups =
-                await groupsService.extractFromCelcat("sciences");
-            const univGroups = await groupsService.extractFromUniv("sciences");
-
-            await t.test("should extract more than one group", () => {
-                assert.equal(univGroups.length > 0, true);
-            });
-
-            await t.test("should extract more than one group (Celcat)", () => {
-                assert.equal(celcatGroups.length > 0, true);
-            });
-
-            await t.test("should extract the same groups as Celcat", () => {
-                assert.deepEqual(
-                    univGroups.map((g) => g.name).sort(),
-                    celcatGroups.map((g) => g.name).sort(),
-                );
-            });
-        });
-
         await t.test("merge", async (t) => {
             await t.test("should return an empty array", () => {
                 assert.deepEqual(groupsService.mergeExtracted([], []), []);

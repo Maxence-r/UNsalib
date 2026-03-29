@@ -112,4 +112,11 @@ const timetableValidation = [
         }),
 ];
 
-export { availableValidation, timetableValidation };
+const allValidation = [
+    query("campusId")
+        .notEmpty()
+        .withMessage("Missing value")
+        .trim()
+];
+
+export { availableValidation, timetableValidation, allValidation };

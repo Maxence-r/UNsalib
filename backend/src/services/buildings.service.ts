@@ -70,7 +70,7 @@ class BuildingsService {
      */
     async getBuildingsByCampus(
         campusId: string,
-    ): Promise<(BuildingSchemaProperties & { _id: Types.ObjectId })[]> {
+    ): Promise<BuildingSchemaProperties[]> {
         return await Building.find({ campusId }).lean();
     }
 

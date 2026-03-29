@@ -14,8 +14,8 @@ class CampusesService {
     async init(campuses: string[]): Promise<void> {
         for (const campus of campuses) {
             await Campus.findOneAndUpdate(
-                { _id: campus },
-                {},
+                { _id: campus.toLowerCase().replace(" ", "-") },
+                { name: campus },
                 { upsert: true, new: true },
             );
         }

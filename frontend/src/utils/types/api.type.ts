@@ -15,7 +15,7 @@ interface ApiError extends Api {
 interface ApiDataRoom {
     id: string;
     name: string;
-    building: string;
+    buildingName: string;
     features: ("visio" | "badge" | "video" | "ilot")[];
 }
 

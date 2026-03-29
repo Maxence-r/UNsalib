@@ -8,6 +8,7 @@ import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos, getWeeksNumber } from "../utils/date.js";
 import { hexToRgb, isLightColor, rgbToHex, blend } from "../utils/color.js";
+import { RoomSchemaProperties } from "models/room.model.js";
 
 class RoomsController {
     /**
@@ -23,33 +24,36 @@ class RoomsController {
         try {
             // Getting validated queries
             const { campusId } = matchedData<{ campusId: string }>(req);
-
-            const rooms = await roomsService.findAll();
             const buildings =
                 await buildingsService.getBuildingsByCampus(campusId);
 
-            // Formatting the response
-            const formattedResponse = rooms.map((room) => {
-                const building = buildings.find(
-                    (building) => building._id === room.building,
+            const rooms: {
+                id: string;
+                name: string;
+                buildingName: string;
+                features: string[];
+                locked: boolean;
+            }[] = [];
+            for (const building of buildings) {
+                const buildingRooms = await roomsService.getRoomsByBuilding(
+                    building._id,
                 );
 
-                return {
-                    id: room._id,
-                    name: room.alias ? room.alias : room.univName, // replace name with alias if present
-                    buildingName: building
-                        ? building.alias
-                            ? building.alias
-                            : building.univName
-                        : "Unknown building",
-                    features: room.features,
-                    locked: room.locked,
-                };
-            });
+                for (const room of buildingRooms) {
+                    rooms.push({
+                        id: room._id,
+                        // replace name with alias if present
+                        name: room.alias ?? room.univName,
+                        buildingName: building.alias ?? building.univName,
+                        features: room.features,
+                        locked: room.locked,
+                    });
+                }
+            }
 
             res.status(200).json({
                 success: true,
-                data: formattedResponse,
+                data: rooms,
             });
         } catch (error) {
             next(error);

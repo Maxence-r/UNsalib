@@ -53,7 +53,7 @@ function Result({
         <div className="result" onClick={handleRoomClick}>
             <p>
                 {room.name.toUpperCase()}
-                <span className="building">{room.building}</span>
+                <span className="building">{room.buildingName}</span>
             </p>
             <Features
                 features={room.features}

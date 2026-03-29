@@ -13,11 +13,9 @@ const CIE_CLOSING_DATES = {
 
 class RoomsService {
     /**
-     * Find all rooms
+     * Find all reviewed rooms
      */
-    async findAll(): Promise<
-        (RoomSchemaProperties & { _id: Types.ObjectId })[]
-    > {
+    async findAll(): Promise<RoomSchemaProperties[]> {
         return await Room.find({ reviewed: true }).lean();
     }
 
@@ -201,9 +199,18 @@ class RoomsService {
      * Get room documents by building
      */
     async getRoomDocsByBuilding(
-        buildingId: Types.ObjectId,
+        buildingId: string,
     ): Promise<HydratedDocument<RoomSchemaProperties>[]> {
-        return await Room.find({ building: buildingId });
+        return await Room.find({ buildingId });
+    }
+
+    /**
+     * Get rooms by building
+     */
+    async getRoomsByBuilding(
+        buildingId: string,
+    ): Promise<RoomSchemaProperties[]> {
+        return await Room.find({ buildingId }).lean();
     }
 
     /**

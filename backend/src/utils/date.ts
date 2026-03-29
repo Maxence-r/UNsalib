@@ -127,21 +127,6 @@ function scheduleRun(triggerDate: Date, fn: () => void): void {
     }, 1000);
 }
 
-function getDateFromWeeksMap(
-    map: string,
-    dayIndex: number,
-    mapStartDate: Date,
-): Date {
-    const baseDate = mapStartDate;
-    let i = 0;
-    while (map[i] !== "Y" && i < map.length) {
-        baseDate.setDate(baseDate.getDate() + 7);
-        i++;
-    }
-    baseDate.setDate(baseDate.getDate() + dayIndex - 7);
-    return baseDate;
-}
-
 function setDateTimeFromTimeString(date: Date, timeString: string): Date {
     const splittedTime = timeString.split(":");
     date.setHours(parseInt(splittedTime[0]));
@@ -151,7 +136,7 @@ function setDateTimeFromTimeString(date: Date, timeString: string): Date {
 
 function getDateFromFrenchDateString(dateString: string): Date {
     const splittedDate = dateString.split("/");
-    return new Date(parseInt(splittedDate[2]), parseInt(splittedDate[1]), parseInt(splittedDate[0]));
+    return new Date(parseInt(splittedDate[2]), parseInt(splittedDate[1]) - 1, parseInt(splittedDate[0]));
 }
 
 export {
@@ -163,7 +148,6 @@ export {
     getDatesRange,
     getStringBoundDates,
     scheduleRun,
-    getDateFromWeeksMap,
     setDateTimeFromTimeString,
     getDateFromFrenchDateString
 };

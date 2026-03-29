@@ -3,19 +3,18 @@ import { parse } from "node-html-parser";
 
 import {
     getDateFromFrenchDateString,
-    getDateFromWeeksMap,
     setDateTimeFromTimeString,
 } from "./date.js";
 
 interface NormalizedCourse {
-    celcatId: string;
+    celcatId: number;
     start: Date;
     end: Date;
     category?: string;
     color: string;
     rooms: string[];
     teachers: string[];
-    modules: string[];
+    modules: { code: string; name: string }[];
 }
 
 interface UnivGroup {
@@ -96,7 +95,6 @@ async function extractCoursesFromCelcatXml(
 ): Promise<NormalizedCourse[]> {
     const normalizedCourses: NormalizedCourse[] = [];
     const parsedXml = (await parseStringPromise(xml)) as CelcatCoursesXml;
-    const baseDate = parsedXml.timetable.span[0].$.date;
 
     const parseItemizedList = (l: ItemizedList): string[] =>
         l[0].item.map((i) => {
@@ -106,12 +104,15 @@ async function extractCoursesFromCelcatXml(
             return i.a[0]._;
         });
 
+    if (!parsedXml.timetable.event) return [];
+
     for (const event of parsedXml.timetable.event) {
-        const day = getDateFromWeeksMap(
-            event.rawweeks[0],
-            parseInt(event.day[0]),
-            getDateFromFrenchDateString(baseDate),
-        );
+        const dateRef = parsedXml.timetable.span.find((s) => s.alleventweeks[0] === event.rawweeks[0]);
+        if (!dateRef) continue;
+
+        const day = getDateFromFrenchDateString(dateRef.$.date)
+        day.setDate(day.getDate() + parseInt(event.day[0]));
+
         const start = setDateTimeFromTimeString(
             structuredClone(day),
             event.starttime[0],
@@ -122,15 +123,23 @@ async function extractCoursesFromCelcatXml(
         );
 
         normalizedCourses.push({
-            celcatId: event.$.id,
+            celcatId: parseInt(event.$.id),
             rooms: event.resources[0].room
                 ? parseItemizedList(event.resources[0].room)
                 : [],
             teachers: event.resources[0].staff
-                ? parseItemizedList(event.resources[0].staff)
+                ? parseItemizedList(event.resources[0].staff).map(
+                      (s) => s.replace(",", ""), // unify with univ format which doesn't contain commas
+                  )
                 : [],
             modules: event.resources[0].module
-                ? parseItemizedList(event.resources[0].module)
+                ? parseItemizedList(event.resources[0].module).map((m) => {
+                      const splittedModule = m.split(/ \(([^)]*)\)$/);
+                      return {
+                          code: splittedModule[1],
+                          name: splittedModule[0],
+                      };
+                  })
                 : [],
             color: event.$.colour,
             start: start,
@@ -186,12 +195,18 @@ function extractCoursesFromUnivJson(json: string): NormalizedCourse[] {
 
     for (const course of parsedJson) {
         normalizedCourses.push({
-            celcatId: course.celcat_id,
+            celcatId: parseInt(course.celcat_id),
             start: new Date(course.start_at),
             end: new Date(course.end_at),
             rooms: splitUnivDataBlocks(course.rooms_for_blocks),
             teachers: splitUnivDataBlocks(course.teachers_for_blocks),
-            modules: splitUnivDataBlocks(course.modules_for_blocks),
+            modules: splitUnivDataBlocks(course.modules_for_blocks).map((m) => {
+                const splittedModule = m.split(/^(.*) - /);
+                return {
+                    code: splittedModule[1],
+                    name: splittedModule[2],
+                };
+            }),
             color: course.color,
             ...(course.categories && { category: course.categories }),
         });

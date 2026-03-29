@@ -61,8 +61,8 @@ const appConfig = {
     tasks: {
         syncTimetables: extractBoolean(process.env.SYNC_TIMETABLES, true),
         forceGroupsFetch: extractBoolean(process.env.FORCE_GROUPS_FETCH, false),
-        forceTimetablesFetch: extractBoolean(
-            process.env.FORCE_TIMETABLES_FETCH,
+        forceTimetablesSync: extractBoolean(
+            process.env.FORCE_TIMETABLES_SYNC,
             false,
         ),
         daysToRetrieve: process.env.DAYS_TO_RETRIEVE

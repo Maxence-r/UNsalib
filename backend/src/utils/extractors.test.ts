@@ -6,6 +6,7 @@ import {
     extractCoursesFromUnivJson,
     extractGroupsFromCelcatHtml,
     extractGroupsFromUnivHtml,
+    extractModuleName
 } from "./extractors.js";
 import { dataConfig } from "configs/data.config.js";
 
@@ -22,6 +23,17 @@ await describe("extractors", async () => {
     );
     const univGroups = extractGroupsFromUnivHtml(await univPageResponse.text());
 
+    await test("module name extraction", async (t) => {
+        await t.test("Celcat", () => {
+            assert.equal(extractModuleName("Projet de recherche (XMS2IE040)", true), "Projet de recherche");
+        });
+
+        await t.test("univ", () => {
+            assert.equal(extractModuleName("XMS2IE320 - Conception pilotée par le domaine", false), "Conception pilotée par le domaine");
+            assert.equal(extractModuleName("Anglais - Approfondissement", false), "Anglais - Approfondissement");
+        });
+    });
+
     await test("groups extraction", async (t) => {
         await t.test("should extract more than one group", () => {
             assert.equal(univGroups.length > 0, true);
@@ -33,8 +45,8 @@ await describe("extractors", async () => {
 
         await t.test("should extract the same groups as Celcat", () => {
             assert.deepEqual(
-                univGroups.map((g) => g.name).sort(),
                 celcatGroups.map((g) => g.name).sort(),
+                univGroups.map((g) => g.name).sort(),
             );
         });
     });
@@ -51,8 +63,6 @@ await describe("extractors", async () => {
             startTestDate.getMonth() + 1,
             startTestDate.getDate(),
         );
-
-        console.log(startTestDate, endTestDate);
 
         const univResponse = await fetch(
             `${dataConfig.baseUrl}/events?start=${startTestDate.toISOString().split("T")[0]}&end=${endTestDate.toISOString().split("T")[0]}&timetables%5B%5D=${univGroups.find((g) => g.name === "M1ALMA")?.univId}`,
@@ -77,31 +87,78 @@ await describe("extractors", async () => {
         });
 
         await t.test("should extract courses with more than one room", () => {
-            assert.equal(univCourses.filter((c) => c.rooms.length > 0).length > 0, true);
+            assert.equal(
+                univCourses.filter((c) => c.rooms.length > 0).length > 0,
+                true,
+            );
         });
 
-        await t.test("should extract courses with more than one room (Celcat)", () => {
-            assert.equal(celcatCourses.filter((c) => c.rooms.length > 0).length > 0, true);
-        });
+        await t.test(
+            "should extract courses with more than one room (Celcat)",
+            () => {
+                assert.equal(
+                    celcatCourses.filter((c) => c.rooms.length > 0).length > 0,
+                    true,
+                );
+            },
+        );
 
-        await t.test("should extract courses with more than one teacher", () => {
-            assert.equal(univCourses.filter((c) => c.teachers.length > 0).length > 0, true);
-        });
+        await t.test(
+            "should extract courses with more than one teacher",
+            () => {
+                assert.equal(
+                    univCourses.filter((c) => c.teachers.length > 0).length > 0,
+                    true,
+                );
+            },
+        );
 
-        await t.test("should extract courses with more than one teacher (Celcat)", () => {
-            assert.equal(celcatCourses.filter((c) => c.teachers.length > 0).length > 0, true);
-        });
+        await t.test(
+            "should extract courses with more than one teacher (Celcat)",
+            () => {
+                assert.equal(
+                    celcatCourses.filter((c) => c.teachers.length > 0).length >
+                        0,
+                    true,
+                );
+            },
+        );
 
         await t.test("should extract courses with more than one module", () => {
-            assert.equal(univCourses.filter((c) => c.modules.length > 0).length > 0, true);
+            assert.equal(
+                univCourses.filter((c) => c.modules.length > 0).length > 0,
+                true,
+            );
         });
 
-        await t.test("should extract courses with more than one module (Celcat)", () => {
-            assert.equal(celcatCourses.filter((c) => c.modules.length > 0).length > 0, true);
-        });
+        await t.test(
+            "should extract courses with more than one module (Celcat)",
+            () => {
+                assert.equal(
+                    celcatCourses.filter((c) => c.modules.length > 0).length >
+                        0,
+                    true,
+                );
+            },
+        );
 
         await t.test("should extract the same courses as Celcat", () => {
             assert.deepEqual(
+                celcatCourses
+                    .map((c) => ({
+                        celcatId: c.celcatId,
+                        start: c.start,
+                        end: c.end,
+                        category: c.category,
+                        roomsNumber: c.rooms.length,
+                        teachers: c.teachers.sort(),
+                        modules: c.modules.sort(),
+                    }))
+                    .sort((a, b) => {
+                        if (a.celcatId > b.celcatId) return 1;
+                        if (b.celcatId > a.celcatId) return -1;
+                        return 0;
+                    }),
                 univCourses
                     .map((c) => ({
                         celcatId: c.celcatId,
@@ -113,21 +170,6 @@ await describe("extractors", async () => {
                         modules: c.modules.sort(),
                     }))
                     .filter((c) => c.category !== "Indisponible")
-                    .sort((a, b) => {
-                        if (a.celcatId > b.celcatId) return 1;
-                        if (b.celcatId > a.celcatId) return -1;
-                        return 0;
-                    }),
-                celcatCourses
-                    .map((c) => ({
-                        celcatId: c.celcatId,
-                        start: c.start,
-                        end: c.end,
-                        category: c.category,
-                        roomsNumber: c.rooms.length,
-                        teachers: c.teachers.sort(),
-                        modules: c.modules.sort(),
-                    }))
                     .sort((a, b) => {
                         if (a.celcatId > b.celcatId) return 1;
                         if (b.celcatId > a.celcatId) return -1;

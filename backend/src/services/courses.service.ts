@@ -9,7 +9,6 @@ import {
 } from "../utils/extractors.js";
 import { dataConfig } from "../configs/data.config.js";
 import { getStringBoundDates } from "../utils/date.js";
-import { appConfig } from "../configs/app.config.js";
 import { SectorSchemaProperties } from "../models/sector.model.js";
 import { logger } from "../utils/logger.js";
 import { areArraysEqual, sanitizeJsonString } from "../utils/misc.js";
@@ -117,7 +116,7 @@ class CoursesService {
         celcatId: number,
         start: Date,
         end: Date,
-        rooms: string[],
+        roomIds: string[],
         teachers: string[],
         modules: string[],
         category?: string,
@@ -128,11 +127,11 @@ class CoursesService {
                 start: start,
                 end: end,
                 ...(category && { category: category }),
-                ...(rooms
+                ...(roomIds
                     ? {
-                          rooms: {
-                              $all: rooms, // only check that all the elements of rooms are present
-                              $size: rooms.length, // so we need to also check the array size
+                          roomIds: {
+                              $all: roomIds, // only check that all the elements of rooms are present
+                              $size: roomIds.length, // so we need to also check the array size
                               // If it contains exactly all the rooms then it's the same array
                           },
                       }
@@ -206,7 +205,7 @@ class CoursesService {
         await Course.deleteOne({ _id: id });
     }
 
-    async #processGroupCourses(
+    async processGroupCourses(
         normalizedUnivCourses: NormalizedCourse[],
         dbCourses: HydratedDocument<CourseSchemaProperties>[],
         groupId: string,
@@ -250,24 +249,31 @@ class CoursesService {
 
         // Parsing all the DB courses for this group
         let wantedCourseIndex: number | null;
+        const toBeDeletedFromDb: HydratedDocument<CourseSchemaProperties>[] =
+            [];
         for (const course of dbCourses) {
             // Trying to find the course in the latest University data
             wantedCourseIndex = getCourseIndex(course, normalizedUnivCourses);
 
-            if (wantedCourseIndex) {
-                // If the course is found, remove it from the University and DB courses arrays
+            if (!wantedCourseIndex) {
+                // If the course is not found, flag it for deletion
+                toBeDeletedFromDb.push(course);
+                // normalizedUnivCourses.splice(wantedCourseIndex, 1);
+                // toBeDeletedFromDb.splice(wantedCourseIndex, 1);
+            } else {
                 normalizedUnivCourses.splice(wantedCourseIndex, 1);
-                dbCourses.splice(wantedCourseIndex, 1);
             }
         }
         // Now, normalizedUnivCourses only contains courses that need to be added to our DB
         // and dbCourses contains courses that need to be deleted
 
         // Browse courses that need to be deleted from our DB
-        for (const course of dbCourses) {
+        for (const course of toBeDeletedFromDb) {
             if (course.groupIds.length > 1) {
                 // If there are several groups in the course record, just delete the group
-                course.groupIds.filter((group) => group !== groupId);
+                course.groupIds = course.groupIds.filter(
+                    (group) => group !== groupId,
+                );
                 await course.save();
                 result.updated++;
             } else {
@@ -327,13 +333,14 @@ class CoursesService {
     async syncGroupCourses(
         group: GroupSchemaProperties,
         sector: SectorSchemaProperties,
+        daysToSync: number,
     ): Promise<{
         removed: number;
         updated: number;
         created: number;
     }> {
         // Get dates for the specified amount of time
-        const boundDates = getStringBoundDates(appConfig.tasks.daysToRetrieve);
+        const boundDates = getStringBoundDates(daysToSync);
 
         class NoCelcatError extends Error {}
         let extractedCourses: NormalizedCourse[];
@@ -383,7 +390,7 @@ class CoursesService {
             );
 
         // Process all the courses for this group
-        const result = await this.#processGroupCourses(
+        const result = await this.processGroupCourses(
             extractedCourses,
             dbCourseRecords,
             group._id,
@@ -397,7 +404,10 @@ class CoursesService {
         };
     }
 
-    async syncAll(force = false): Promise<void> {
+    async syncAll(
+        syncInterval: number,
+        daysToSync: number,
+    ): Promise<void> {
         const allGroups: {
             details: GroupSchemaProperties;
             sector: SectorSchemaProperties;
@@ -416,19 +426,14 @@ class CoursesService {
         const stats = {
             timeSum: 0,
             groupsProcessed: 0,
+            failed: 0,
             removed: 0,
             added: 0,
             updated: 0,
         };
 
         // Calculating the interval between each group for a uniform distribution
-        // If force is true, the interval is 0 to fetch immediately
-        const intervalBetweenGroups = force
-            ? 0
-            : (appConfig.tasks.syncInterval / allGroups.length) *
-              60 *
-              60 *
-              1000;
+        const intervalBetweenGroups = (syncInterval / allGroups.length) * 60 * 60 * 1000;
 
         let groupIndex = 0;
 
@@ -444,6 +449,7 @@ class CoursesService {
                         const results = await this.syncGroupCourses(
                             group.details,
                             group.sector,
+                            daysToSync,
                         );
 
                         // Calculate new stats
@@ -457,6 +463,7 @@ class CoursesService {
                             `Cannot sync timetable for the '${group.details._id}' group of the ${group.sector.campusId} campus, sector '${group.sector._id}'`,
                         );
                         logger.error(e);
+                        stats.failed++;
                     } finally {
                         // Recursively call the next iteration
                         groupIndex++;
@@ -478,7 +485,7 @@ class CoursesService {
             } else {
                 // All groups were processed
                 logger.info(
-                    `${stats.groupsProcessed} groups processed | Average processing time: ${parseFloat(`${stats.timeSum / stats.groupsProcessed / 1000}`).toFixed(2)}s`,
+                    `${stats.groupsProcessed} groups processed (${stats.failed} failed) | Average processing time: ${parseFloat(`${stats.timeSum / stats.groupsProcessed / 1000}`).toFixed(2)}s`,
                 );
                 logger.info(
                     `Removed: ${stats.removed} | Updated: ${stats.updated} | Created: ${stats.added}`,

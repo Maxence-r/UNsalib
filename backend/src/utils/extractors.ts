@@ -90,6 +90,21 @@ type UnivJsonCourses = {
     modules_for_item_details: string;
 }[];
 
+function extractModuleName(rawModule: string, isCelcat: boolean): string {
+    if (isCelcat) {
+        // Trying to extract the module name (e.g. remove ' (XMS2IE040)' from
+        // 'Projet de recherche (XMS2IE040)'
+        return rawModule.replace(
+            rawModule.match(/ \(([A-Z0-9]*)\)$/)?.[0] ?? "",
+            "",
+        );
+    }
+
+    // Trying to extract the module name (e.g. remove 'XMS2IE320 - ' from
+    // 'XMS2IE320 - Conception pilotée par le domaine)'
+    return rawModule.replace(rawModule.match(/^([A-Z0-9]*) - /)?.[0] ?? "", "");
+}
+
 async function extractCoursesFromCelcatXml(
     xml: string,
 ): Promise<NormalizedCourse[]> {
@@ -135,14 +150,8 @@ async function extractCoursesFromCelcatXml(
                   )
                 : [],
             modules: event.resources[0].module
-                ? parseItemizedList(event.resources[0].module).map(
-                      // Trying to extract the module name (e.g. remove ' (XMS2IE040)' from
-                      // 'Projet de recherche (XMS2IE040)'
-                      (m) =>
-                          m.replace(
-                              m.match(/ \(([A-Z0-9]*)\)$/)?.[1] ?? "",
-                              "",
-                          ),
+                ? parseItemizedList(event.resources[0].module).map((m) =>
+                      extractModuleName(m, true),
                   )
                 : [],
             color: event.$.colour,
@@ -204,10 +213,8 @@ function extractCoursesFromUnivJson(json: string): NormalizedCourse[] {
             end: new Date(course.end_at),
             rooms: splitUnivDataBlocks(course.rooms_for_blocks),
             teachers: splitUnivDataBlocks(course.teachers_for_blocks),
-            modules: splitUnivDataBlocks(course.modules_for_blocks).map(
-                // Trying to extract the module name (e.g. remove 'XMS2IE320 - ' from
-                // 'XMS2IE320 - Conception pilotée par le domaine)'
-                (m) => m.replace(m.match(/^(.*) - /)?.[1] ?? "", ""),
+            modules: splitUnivDataBlocks(course.modules_for_blocks).map((m) =>
+                extractModuleName(m, false),
             ),
             color: course.color,
             ...(course.categories && { category: course.categories }),
@@ -254,6 +261,7 @@ export {
     extractGroupsFromCelcatHtml,
     extractCoursesFromUnivJson,
     extractGroupsFromUnivHtml,
+    extractModuleName,
     type UnivGroup,
     type CelcatGroup,
     type NormalizedCourse,

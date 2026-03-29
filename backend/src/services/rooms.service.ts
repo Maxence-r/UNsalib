@@ -2,8 +2,8 @@ import type { Types, HydratedDocument } from "mongoose";
 
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
-import { Building } from "../models/building.model.js";
 import { buildingsService } from "./buildings.service.js";
+import { getHexHashFromString } from "../utils/misc.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -126,31 +126,34 @@ class RoomsService {
         // Filter room blocks (e.g: Room A ; Room B)
         if (rawName.includes(" ; ")) throw new Error("Invalid room name");
 
+        const rawNameHash = getHexHashFromString(rawName);
+
         if (/\(.*\)$/.test(rawName)) {
             // Raw name correctly formatted: 'roomName (roomBuilding)'
-            // Correctly handle dulicates building names like 'roomName (roomBuilding) (roomBuilding)'
+            // Correctly handle duplicated building names like 'roomName (roomBuilding) (roomBuilding)'
             const building = /\(([^)]*)\)$/.exec(rawName)?.[1];
             const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() ?? rawName;
 
             // Test if the building exists in the campus and add it if needed
-            if (building) {
-                await buildingsService.addBuildigIfNotExists(
-                    campusId,
-                    building,
-                );
-            }
+            const buildingId = building
+                ? await buildingsService.addBuildigIfNotExists(
+                      campusId,
+                      building,
+                  )
+                : undefined;
+
             // If the building name detection failed, skip the creation step
             // The room will be an orphan but this is allowed by our model
 
             // Test if the room exists in the building and add it if needed
-            await this.addRoomIfNotExists(rawName, room, building);
+            await this.addRoomIfNotExists(rawNameHash, room, buildingId);
         } else {
             // Bad raw name formatting
             // We add the room with its raw name and no building associated
-            await this.addRoomIfNotExists(rawName, rawName);
+            await this.addRoomIfNotExists(rawNameHash, rawName);
         }
 
-        return rawName;
+        return rawNameHash;
     }
 
     /**

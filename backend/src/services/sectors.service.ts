@@ -24,7 +24,7 @@ class SectorsService {
                     {
                         univId: sector.univId,
                         celcatId: sector.celcatId,
-                        campusId: campus.name,
+                        campusId: campus.name.toLowerCase().replace(" ", "-"),
                     },
                     { upsert: true, new: true },
                 );

@@ -5,6 +5,7 @@ import {
     BuildingSchemaProperties,
 } from "../models/building.model.js";
 import { roomsService } from "./rooms.service.js";
+import { getHexHashFromString } from "../utils/misc.js";
 
 class BuildingsService {
     /**
@@ -77,17 +78,21 @@ class BuildingsService {
     async addBuildigIfNotExists(
         campusId: string,
         univName: string,
-    ): Promise<void> {
-        const existingBuilding = await Building.exists({ _id: univName });
+    ): Promise<string> {
+        const nameHash = getHexHashFromString(univName);
+        const existingBuilding = await Building.exists({ _id: nameHash });
+
         if (!existingBuilding) {
             // Add the building if not found
             const newBuilding = new Building({
-                _id: univName,
+                _id: nameHash,
                 univName: univName,
                 campusId: campusId,
             });
             await newBuilding.save();
         }
+
+        return nameHash;
     }
 }
 

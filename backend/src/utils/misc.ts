@@ -26,4 +26,8 @@ async function getPageRoot(url: string): Promise<HTMLElement> {
     return parse(await page.text());
 }
 
-export { areArraysEqual, sanitizeJsonString, getPageRoot };
+function getHexHashFromString(s: string): string {
+    return Buffer.from(s).toString("hex");
+}
+
+export { areArraysEqual, sanitizeJsonString, getPageRoot, getHexHashFromString };

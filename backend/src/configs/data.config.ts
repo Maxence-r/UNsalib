@@ -3,24 +3,24 @@ const dataConfig = {
     baseUrlCelcat: "https://edt.univ-nantes.fr",
     campuses: [
         {
-            name: "Lombarderie",
-            sectors: [
-                {
-                    uuid: "sciences-1773608432787",
-                    univId: "sciences",
-                    celcatId: "sciences",
-                },
-            ],
-        },
-        {
             name: "Tertre",
             sectors: [
                 {
-                    uuid: "droit-1773608432787",
+                    id: "droit",
                     univId: "droit",
                     celcatId: "droit",
                 },
-                { uuid: "fle-1773608432787", univId: "i-fle", celcatId: "fle" },
+                { id: "fle", univId: "i-fle", celcatId: "fle" },
+            ],
+        },
+        {
+            name: "Lombarderie",
+            sectors: [
+                {
+                    id: "sciences",
+                    univId: "sciences",
+                    celcatId: "sciences",
+                },
             ],
         },
     ],

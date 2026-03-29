@@ -58,11 +58,10 @@ class BuildingsService {
      * Return a building associated with the given ID
      */
     async getBuildingById(
-        buildingId: Types.ObjectId,
+        buildingId: string,
     ): Promise<BuildingSchemaProperties> {
         const building = await Building.findById(buildingId).lean();
         if (!building) throw new Error("Building not found");
-
         return building;
     }
 
@@ -73,6 +72,22 @@ class BuildingsService {
         campusId: string,
     ): Promise<(BuildingSchemaProperties & { _id: Types.ObjectId })[]> {
         return await Building.find({ campusId }).lean();
+    }
+
+    async addBuildigIfNotExists(
+        campusId: string,
+        univName: string,
+    ): Promise<void> {
+        const existingBuilding = await Building.exists({ _id: univName });
+        if (!existingBuilding) {
+            // Add the building if not found
+            const newBuilding = new Building({
+                _id: univName,
+                univName: univName,
+                campusId: campusId,
+            });
+            await newBuilding.save();
+        }
     }
 }
 

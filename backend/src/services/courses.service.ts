@@ -1,6 +1,22 @@
 import type { Types, HydratedDocument } from "mongoose";
 
 import { Course, CourseSchemaProperties } from "../models/course.model.js";
+import type { GroupSchemaProperties } from "../models/group.model.js";
+import {
+    extractCoursesFromCelcatXml,
+    extractCoursesFromUnivJson,
+    type NormalizedCourse,
+} from "../utils/extractors.js";
+import { dataConfig } from "../configs/data.config.js";
+import { getStringBoundDates } from "../utils/date.js";
+import { appConfig } from "../configs/app.config.js";
+import { SectorSchemaProperties } from "../models/sector.model.js";
+import { logger } from "../utils/logger.js";
+import { areArraysEqual, sanitizeJsonString } from "../utils/misc.js";
+import { roomsService } from "./rooms.service.js";
+import { closestPaletteColor } from "../utils/color.js";
+import { sectorsService } from "./sectors.service.js";
+import { groupsService } from "./groups.service.js";
 
 class CoursesService {
     /**
@@ -54,16 +70,16 @@ class CoursesService {
     /**
      * Clear group references from courses
      */
-    async clearGroupReferences(groupId: Types.ObjectId): Promise<void> {
+    async clearGroupReferences(groupId: string): Promise<void> {
         const courses = await Course.find({ groups: groupId });
 
         for (const course of courses) {
-            if (course.groups.length === 1) {
+            if (course.groupIds.length === 1) {
                 // If the group is the only one linked to the course, delete the course
                 await course.deleteOne();
             } else {
                 // Otherwise, just remove the group from the course
-                course.groups = course.groups.filter((g) => g !== groupId);
+                course.groupIds = course.groupIds.filter((g) => g !== groupId);
                 await course.save();
             }
         }
@@ -85,7 +101,7 @@ class CoursesService {
     async getCourseDocsByGroupAndRange(
         start: Date,
         end: Date,
-        groupId: Types.ObjectId,
+        groupId: string,
     ): Promise<HydratedDocument<CourseSchemaProperties>[]> {
         return await Course.find({
             start: { $gte: start },
@@ -95,50 +111,50 @@ class CoursesService {
     }
 
     /**
-     * Search a course and return its ID if found, null otherwise
+     * Search a course and return its corresponding document if found, null otherwise
      */
-    async findCourseId(
-        univId: number,
+    async findCourseDoc(
+        celcatId: number,
         start: Date,
         end: Date,
-        rooms: Types.ObjectId[],
+        rooms: string[],
         teachers: string[],
         modules: string[],
         category?: string,
-    ): Promise<null | Types.ObjectId> {
-        const course = await Course.findOne({
-            univId: univId,
-            start: start,
-            end: end,
-            ...(category && { category: category }),
-            ...(rooms
-                ? {
-                      rooms: {
-                          $all: rooms, // only check that all the elements of rooms are present
-                          $size: rooms.length, // so we need to also check the array size
-                          // If it contains exactly all the rooms then it's the same array
-                      },
-                  }
-                : []),
-            ...(teachers
-                ? {
-                      teachers: {
-                          $all: teachers,
-                          $size: teachers.length,
-                      },
-                  }
-                : []),
-            ...(modules
-                ? {
-                      modules: {
-                          $all: modules,
-                          $size: modules.length,
-                      },
-                  }
-                : []),
-        });
-
-        return course ? course._id : null;
+    ): Promise<null | HydratedDocument<CourseSchemaProperties>> {
+        return (
+            (await Course.findOne({
+                celcatId: celcatId,
+                start: start,
+                end: end,
+                ...(category && { category: category }),
+                ...(rooms
+                    ? {
+                          rooms: {
+                              $all: rooms, // only check that all the elements of rooms are present
+                              $size: rooms.length, // so we need to also check the array size
+                              // If it contains exactly all the rooms then it's the same array
+                          },
+                      }
+                    : []),
+                ...(teachers
+                    ? {
+                          teachers: {
+                              $all: teachers,
+                              $size: teachers.length,
+                          },
+                      }
+                    : []),
+                ...(modules
+                    ? {
+                          modules: {
+                              $all: modules,
+                              $size: modules.length,
+                          },
+                      }
+                    : []),
+            })) ?? null
+        );
     }
 
     /**
@@ -160,26 +176,24 @@ class CoursesService {
      * Add a course
      */
     async addCourse(
-        univId: number,
-        celcatId: string,
+        celcatId: number,
         start: Date,
         end: Date,
         color: string,
-        rooms: Types.ObjectId[],
+        rooms: string[],
         teachers: string[],
         modules: string[],
-        groupId: Types.ObjectId,
+        groupId: string,
         category?: string,
     ): Promise<void> {
         await new Course({
-            univId: univId,
             celcatId: celcatId,
             start: start,
             end: end,
             color: color,
-            rooms: rooms,
+            roomIds: rooms,
             teachers: teachers,
-            groups: [groupId],
+            groupIds: [groupId],
             modules: modules,
             ...(category && { category: category }),
         }).save();
@@ -190,6 +204,293 @@ class CoursesService {
      */
     async deleteCourse(id: Types.ObjectId): Promise<void> {
         await Course.deleteOne({ _id: id });
+    }
+
+    async #processGroupCourses(
+        normalizedUnivCourses: NormalizedCourse[],
+        dbCourses: HydratedDocument<CourseSchemaProperties>[],
+        groupId: string,
+        campusId: string,
+    ): Promise<{
+        removed: number;
+        updated: number;
+        created: number;
+    }> {
+        // Creating a variable to store the operations that have been performed in our database
+        const result = { removed: 0, updated: 0, created: 0 };
+
+        // Return a course index if found in an array on normalized courses,
+        // null otherwise
+        const getCourseIndex = (
+            searchedCourse: HydratedDocument<CourseSchemaProperties>,
+            courses: NormalizedCourse[],
+        ): null | number => {
+            // Eliminate each course by testing its characteristics from the most likely to
+            // differ to the least likely
+            for (let i = 0; i < courses.length; i++) {
+                const course = courses[i];
+
+                if (
+                    course.celcatId === searchedCourse.celcatId &&
+                    course.start.getTime() === searchedCourse.start.getTime() &&
+                    course.end.getTime() === searchedCourse.end.getTime() &&
+                    areArraysEqual(course.rooms, searchedCourse.roomIds) &&
+                    areArraysEqual(course.teachers, searchedCourse.teachers) &&
+                    areArraysEqual(course.modules, searchedCourse.modules) &&
+                    course.category === searchedCourse.category
+                ) {
+                    // This course is the same as the searched course
+                    return i;
+                }
+            }
+
+            // Not found
+            return null;
+        };
+
+        // Parsing all the DB courses for this group
+        let wantedCourseIndex: number | null;
+        for (const course of dbCourses) {
+            // Trying to find the course in the latest University data
+            wantedCourseIndex = getCourseIndex(course, normalizedUnivCourses);
+
+            if (wantedCourseIndex) {
+                // If the course is found, remove it from the University and DB courses arrays
+                normalizedUnivCourses.splice(wantedCourseIndex, 1);
+                dbCourses.splice(wantedCourseIndex, 1);
+            }
+        }
+        // Now, normalizedUnivCourses only contains courses that need to be added to our DB
+        // and dbCourses contains courses that need to be deleted
+
+        // Browse courses that need to be deleted from our DB
+        for (const course of dbCourses) {
+            if (course.groupIds.length > 1) {
+                // If there are several groups in the course record, just delete the group
+                course.groupIds.filter((group) => group !== groupId);
+                await course.save();
+                result.updated++;
+            } else {
+                // If there is only the current processed group in the course record, delete it
+                await coursesService.deleteCourse(course._id);
+                result.removed++;
+            }
+        }
+
+        // Browse courses that remain in normalizedUnivCourses (new to our database or need to be updated)
+        for (const course of normalizedUnivCourses) {
+            // Check if data is valid (e.g: exclude holidays with no associated rooms)
+            if (course.rooms.length === 0) continue;
+
+            // Process the course's rooms to save them to our database if needed
+            const cleanRooms = await Promise.all(
+                course.rooms.map(
+                    async (roomName) =>
+                        await roomsService.processRawRoom(roomName, campusId),
+                ),
+            );
+
+            const existingCourse = await coursesService.findCourseDoc(
+                course.celcatId,
+                course.start,
+                course.end,
+                cleanRooms,
+                course.teachers,
+                course.modules,
+                course.category ?? undefined,
+            );
+
+            if (existingCourse) {
+                // If the course already exists, add the current processed group to its record
+                existingCourse.groupIds.push(groupId);
+                result.updated++;
+            } else {
+                // If the course doesn't exists, create it in our DB
+                await coursesService.addCourse(
+                    course.celcatId,
+                    course.start,
+                    course.end,
+                    closestPaletteColor(course.color),
+                    cleanRooms,
+                    course.teachers,
+                    course.modules,
+                    groupId,
+                    course.category ?? undefined,
+                );
+                result.created++;
+            }
+        }
+
+        return result;
+    }
+
+    async syncGroupCourses(
+        group: GroupSchemaProperties,
+        sector: SectorSchemaProperties,
+    ): Promise<{
+        removed: number;
+        updated: number;
+        created: number;
+    }> {
+        // Get dates for the specified amount of time
+        const boundDates = getStringBoundDates(appConfig.tasks.daysToRetrieve);
+
+        class NoCelcatError extends Error {}
+        let extractedCourses: NormalizedCourse[];
+        try {
+            if (!group.celcatId) throw new NoCelcatError();
+
+            const requestUrl = `${dataConfig.baseUrlCelcat}/${sector.celcatId}/g${group.celcatId}.xml`;
+            const celcatResponse = await fetch(requestUrl);
+
+            if (celcatResponse.status !== 200)
+                throw new Error(
+                    `Cannot fetch courses from Celcat, code ${celcatResponse.status} returned for request with URL '${requestUrl}'`,
+                );
+
+            // By default, Celcat give us the whole year, so we need to remove
+            // courses that do not take place in the range to reduce work later
+            extractedCourses = (
+                await extractCoursesFromCelcatXml(await celcatResponse.text())
+            ).filter(
+                (c) =>
+                    c.start.toISOString().split("T")[0] >= boundDates.start &&
+                    c.end.toISOString().split("T")[0] <= boundDates.end,
+            );
+        } catch (e) {
+            if (!(e instanceof NoCelcatError)) {
+                logger.warn(
+                    `Cannot sync timetable with Celcat for the '${group._id}' group of the ${sector.campusId} campus, sector '${sector._id}'`,
+                );
+                logger.warn("Switching to univ API");
+                logger.warn(e);
+            }
+
+            const univResponse = await fetch(
+                `${dataConfig.baseUrl}/events?start=${boundDates.start}&end=${boundDates.end}&timetables%5B%5D=${group.univId}`,
+            );
+            extractedCourses = extractCoursesFromUnivJson(
+                sanitizeJsonString(await univResponse.text()),
+            );
+        }
+
+        // Get some related data from our database
+        const dbCourseRecords =
+            await coursesService.getCourseDocsByGroupAndRange(
+                new Date(boundDates.start),
+                new Date(boundDates.end),
+                group._id,
+            );
+
+        // Process all the courses for this group
+        const result = await this.#processGroupCourses(
+            extractedCourses,
+            dbCourseRecords,
+            group._id,
+            sector.campusId,
+        );
+
+        return {
+            removed: result.removed,
+            updated: result.updated,
+            created: result.created,
+        };
+    }
+
+    async syncAll(force = false): Promise<void> {
+        const allGroups: {
+            details: GroupSchemaProperties;
+            sector: SectorSchemaProperties;
+        }[] = [];
+
+        const sectors = await sectorsService.getAll();
+        for (const sector of sectors) {
+            const groups = await groupsService.getBySectorId(sector._id);
+
+            for (const group of groups) {
+                allGroups.push({ details: group, sector: sector });
+            }
+        }
+
+        // Stats storage
+        const stats = {
+            timeSum: 0,
+            groupsProcessed: 0,
+            removed: 0,
+            added: 0,
+            updated: 0,
+        };
+
+        // Calculating the interval between each group for a uniform distribution
+        // If force is true, the interval is 0 to fetch immediately
+        const intervalBetweenGroups = force
+            ? 0
+            : (appConfig.tasks.syncInterval / allGroups.length) *
+              60 *
+              60 *
+              1000;
+
+        let groupIndex = 0;
+
+        const scheduleNextGroup = (): void => {
+            if (groupIndex < allGroups.length) {
+                const syncGroupTimetable = async (): Promise<void> => {
+                    const group = allGroups[groupIndex];
+
+                    try {
+                        // Save the start time to get the processing time
+                        const startProcessingTime = Date.now();
+
+                        const results = await this.syncGroupCourses(
+                            group.details,
+                            group.sector,
+                        );
+
+                        // Calculate new stats
+                        stats.timeSum += Date.now() - startProcessingTime;
+                        stats.added += results.created;
+                        stats.updated += results.updated;
+                        stats.removed += results.removed;
+                        stats.groupsProcessed++;
+                    } catch (e) {
+                        logger.error(
+                            `Cannot sync timetable for the '${group.details._id}' group of the ${group.sector.campusId} campus, sector '${group.sector._id}'`,
+                        );
+                        logger.error(e);
+                    } finally {
+                        // Recursively call the next iteration
+                        groupIndex++;
+                        scheduleNextGroup();
+                    }
+                };
+
+                if (groupIndex % 10 === 0) {
+                    // Display progress each 10 groups
+                    logger.info(
+                        `Timetables sync progress: ${Math.round((100 * groupIndex) / allGroups.length)}%`,
+                    );
+                }
+
+                setTimeout(
+                    () => void syncGroupTimetable(),
+                    intervalBetweenGroups,
+                );
+            } else {
+                // All groups were processed
+                logger.info(
+                    `${stats.groupsProcessed} groups processed | Average processing time: ${parseFloat(`${stats.timeSum / stats.groupsProcessed / 1000}`).toFixed(2)}s`,
+                );
+                logger.info(
+                    `Removed: ${stats.removed} | Updated: ${stats.updated} | Created: ${stats.added}`,
+                );
+            }
+        };
+
+        // Starting to update the first group
+        logger.info(
+            `${allGroups.length} groups will be processed each ${intervalBetweenGroups}ms`,
+        );
+        scheduleNextGroup();
     }
 }
 

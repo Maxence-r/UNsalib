@@ -4,17 +4,12 @@ type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 
 const CourseSchema = new Schema(
     {
-        univId: {
-            type: Number,
-            required: true,
-        },
         celcatId: {
-            type: String,
+            type: Number,
             required: true,
         },
         category: {
             type: String,
-            required: false,
         },
         start: {
             type: Date,
@@ -29,8 +24,8 @@ const CourseSchema = new Schema(
             required: true,
             default: "#ff7675",
         },
-        rooms: {
-            type: [Schema.Types.ObjectId],
+        roomIds: {
+            type: [String],
             ref: "Room",
             required: true,
             default: [],
@@ -40,8 +35,8 @@ const CourseSchema = new Schema(
             required: true,
             default: [],
         },
-        groups: {
-            type: [Schema.Types.ObjectId],
+        groupIds: {
+            type: [String],
             ref: "Group",
             required: true,
             default: [],

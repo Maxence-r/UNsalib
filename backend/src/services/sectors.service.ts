@@ -14,17 +14,17 @@ class SectorsService {
     async init(
         campuses: {
             name: string;
-            sectors: { uuid: string; univId: string; celcatId?: string }[];
+            sectors: { id: string; univId: string; celcatId?: string }[];
         }[],
     ): Promise<void> {
         for (const campus of campuses) {
             for (const sector of campus.sectors) {
                 await Sector.findOneAndUpdate(
-                    { _id: sector.uuid },
+                    { _id: sector.id },
                     {
                         univId: sector.univId,
                         celcatId: sector.celcatId,
-                        campusName: campus.name,
+                        campusId: campus.name,
                     },
                     { upsert: true, new: true },
                 );

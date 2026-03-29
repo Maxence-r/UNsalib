@@ -16,8 +16,9 @@ const SectorSchema = new Schema(
             type: String,
             // some sectors don't have a Celcat timetable
         },
-        campusName: {
+        campusId: {
             type: String,
+            ref: "Campus",
             required: true,
         },
     },

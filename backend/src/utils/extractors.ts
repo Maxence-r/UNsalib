@@ -14,7 +14,7 @@ interface NormalizedCourse {
     color: string;
     rooms: string[];
     teachers: string[];
-    modules: { code: string; name: string }[];
+    modules: string[];
 }
 
 interface UnivGroup {
@@ -107,10 +107,12 @@ async function extractCoursesFromCelcatXml(
     if (!parsedXml.timetable.event) return [];
 
     for (const event of parsedXml.timetable.event) {
-        const dateRef = parsedXml.timetable.span.find((s) => s.alleventweeks[0] === event.rawweeks[0]);
+        const dateRef = parsedXml.timetable.span.find(
+            (s) => s.alleventweeks[0] === event.rawweeks[0],
+        );
         if (!dateRef) continue;
 
-        const day = getDateFromFrenchDateString(dateRef.$.date)
+        const day = getDateFromFrenchDateString(dateRef.$.date);
         day.setDate(day.getDate() + parseInt(event.day[0]));
 
         const start = setDateTimeFromTimeString(
@@ -133,13 +135,15 @@ async function extractCoursesFromCelcatXml(
                   )
                 : [],
             modules: event.resources[0].module
-                ? parseItemizedList(event.resources[0].module).map((m) => {
-                      const splittedModule = m.split(/ \(([^)]*)\)$/);
-                      return {
-                          code: splittedModule[1],
-                          name: splittedModule[0],
-                      };
-                  })
+                ? parseItemizedList(event.resources[0].module).map(
+                      // Trying to extract the module name (e.g. remove ' (XMS2IE040)' from
+                      // 'Projet de recherche (XMS2IE040)'
+                      (m) =>
+                          m.replace(
+                              m.match(/ \(([A-Z0-9]*)\)$/)?.[1] ?? "",
+                              "",
+                          ),
+                  )
                 : [],
             color: event.$.colour,
             start: start,
@@ -200,13 +204,11 @@ function extractCoursesFromUnivJson(json: string): NormalizedCourse[] {
             end: new Date(course.end_at),
             rooms: splitUnivDataBlocks(course.rooms_for_blocks),
             teachers: splitUnivDataBlocks(course.teachers_for_blocks),
-            modules: splitUnivDataBlocks(course.modules_for_blocks).map((m) => {
-                const splittedModule = m.split(/^(.*) - /);
-                return {
-                    code: splittedModule[1],
-                    name: splittedModule[2],
-                };
-            }),
+            modules: splitUnivDataBlocks(course.modules_for_blocks).map(
+                // Trying to extract the module name (e.g. remove 'XMS2IE320 - ' from
+                // 'XMS2IE320 - Conception pilotée par le domaine)'
+                (m) => m.replace(m.match(/^(.*) - /)?.[1] ?? "", ""),
+            ),
             color: course.color,
             ...(course.categories && { category: course.categories }),
         });

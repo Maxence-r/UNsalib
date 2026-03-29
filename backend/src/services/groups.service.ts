@@ -84,9 +84,6 @@ class GroupsService {
         await Group.deleteOne({ _id: groupId });
     }
 
-    /**
-     * Get all groups
-     */
     async getBySectorId(sectorId: string): Promise<GroupSchemaProperties[]> {
         return await Group.find({ sectorId }).lean();
     }
@@ -251,7 +248,7 @@ class GroupsService {
                         // Only one is empty
                         if (sector.celcatId) {
                             logger.warn(
-                                `Cannot retrieve ${extractedUniv.length > extractedCelcat.length ? "Celcat" : "univ"} groups of the ${sector.campusName} campus, sector '${sector._id}'`,
+                                `Cannot retrieve ${extractedUniv.length > extractedCelcat.length ? "Celcat" : "univ"} groups of the ${sector.campusId} campus, sector '${sector._id}'`,
                             );
                         }
                     }
@@ -273,7 +270,7 @@ class GroupsService {
                 });
             } catch (e) {
                 logger.error(
-                    `Cannot process groups of the ${sector.campusName} campus, sector '${sector._id}'`,
+                    `Cannot process groups of the ${sector.campusId} campus, sector '${sector._id}'`,
                 );
                 logger.error(e);
             }
@@ -292,6 +289,10 @@ class GroupsService {
         logger.info(
             `Groups sync finished: ${addedGroups} added, ${updatedGroups} updated and ${remainingGroups.length} removed (${Date.now() - start} ms)`,
         );
+    }
+
+    async getAll(): Promise<GroupSchemaProperties[]> {
+        return await Group.find().lean();
     }
 }
 

@@ -3,6 +3,7 @@ import type { Types, HydratedDocument } from "mongoose";
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
 import { Building } from "../models/building.model.js";
+import { buildingsService } from "./buildings.service.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -103,72 +104,55 @@ class RoomsService {
     // END TODO
     // **********************************************************
 
-    /**
-     * Add a room if it does not exist and return the resulting document ID
-     */
     async addRoomIfNotExists(
-        rawName: string,
-        campusId: Types.ObjectId,
-    ): Promise<Types.ObjectId> {
+        id: string,
+        univName: string,
+        buildingId?: string,
+    ): Promise<void> {
+        const existingRoom = await Room.exists({
+            _id: id,
+            buildingId: buildingId,
+        });
+        if (!existingRoom) {
+            // Add the room if not found
+            const newRoom = new Room({
+                _id: id,
+                univName: univName,
+                buildingId: buildingId,
+            });
+            await newRoom.save();
+        }
+    }
+
+    async processRawRoom(rawName: string, campusId: string): Promise<string> {
         // Filter room blocks (e.g: Room A ; Room B)
-        if (rawName.includes(";")) throw new Error("Invalid room name");
+        if (rawName.includes(" ; ")) throw new Error("Invalid room name");
 
         if (/\(.*\)$/.test(rawName)) {
             // Raw name correctly formatted: 'roomName (roomBuilding)'
-            const building = /\(([^)]*)\)$/.exec(rawName)?.[1] || "";
-            const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() || rawName;
+            // Correctly handle dulicates building names like 'roomName (roomBuilding) (roomBuilding)'
+            const building = /\(([^)]*)\)$/.exec(rawName)?.[1];
+            const room = /^[^(]*(?<! )/.exec(rawName)?.[0].trim() ?? rawName;
 
-            // Test if the building exists in the campus
-            const existingBuilding = await Building.exists({
-                univName: building,
-                campus: campusId,
-            });
-
-            let buildingId = existingBuilding?._id;
-            if (!buildingId) {
-                // Add the building if not found
-                const newBuilding = new Building({
-                    univName: building,
-                    campus: campusId,
-                });
-                await newBuilding.save();
-                buildingId = newBuilding._id;
+            // Test if the building exists in the campus and add it if needed
+            if (building) {
+                await buildingsService.addBuildigIfNotExists(
+                    campusId,
+                    building,
+                );
             }
+            // If the building name detection failed, skip the creation step
+            // The room will be an orphan but this is allowed by our model
 
-            // Test if the room exists
-            const existingRoom = await Room.findOne({
-                univName: room,
-                building: buildingId,
-            });
-
-            let roomId = existingRoom?._id;
-            if (!roomId) {
-                // Add the room if not found
-                const newRoom = new Room({
-                    univName: room,
-                    building: buildingId,
-                    univId: rawName,
-                });
-                await newRoom.save();
-                roomId = newRoom._id;
-            }
-
-            return roomId;
+            // Test if the room exists in the building and add it if needed
+            await this.addRoomIfNotExists(rawName, room, building);
         } else {
             // Bad raw name formatting
-            const existingRoom = await Room.findOne({ univId: rawName });
-
-            if (!existingRoom) {
-                const newRoom = new Room({
-                    univName: rawName,
-                    univId: rawName,
-                });
-                await newRoom.save();
-                return newRoom._id;
-            }
-
-            return existingRoom._id;
+            // We add the room with its raw name and no building associated
+            await this.addRoomIfNotExists(rawName, rawName);
         }
+
+        return rawName;
     }
 
     /**
@@ -225,10 +209,9 @@ class RoomsService {
     /**
      * Return a room associated with the given ID
      */
-    async getRoomById(roomId: Types.ObjectId): Promise<RoomSchemaProperties> {
+    async getRoomById(roomId: string): Promise<RoomSchemaProperties> {
         const room = await Room.findById(roomId).lean();
         if (!room) throw new Error("Room not found");
-
         return room;
     }
 }

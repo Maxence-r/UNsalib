@@ -15,6 +15,7 @@ import {
 import NavigationManager from "@/_utils/navigation-manager";
 import { redirect, RedirectType } from 'next/navigation';
 import { initializeVisitTracking } from "@/_utils/feedback-tracker";
+import AprilFishOverlay from "./_components/panel/aprilFishOverlay";
 import { showInstallPromptModal } from "./_components/panel/installPromptModal";
 import { isRunningStandalone, usePwaInstallPromptSetup, usePwaInstallPromptStore } from "./_utils/pwa-install";
 import { useInstallationStore } from "./_utils/store";
@@ -86,6 +87,7 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
     return (
         <NavigationManager>
             <main tabIndex={-1} className="main">
+                <AprilFishOverlay />
                 <section className="no-compatible">
                     <p>Votre écran est orienté dans le mauvais sens ou trop petit.</p>
                 </section>

@@ -1,0 +1,114 @@
+.aprilFishOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.aprilFishOverlay__fish {
+    position: absolute;
+    width: var(--size);
+    opacity: 0;
+    filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.18));
+    animation: aprilFishDrift 4.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--delay);
+    will-change: transform, opacity;
+}
+
+.aprilFishOverlay__image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.aprilFishOverlay__fish--topLeft {
+    top: clamp(12px, 3vw, 28px);
+    left: clamp(10px, 2.5vw, 24px);
+    --from-x: -84px;
+    --from-y: -70px;
+    --drift-x: 16px;
+    --drift-y: 12px;
+    --to-x: -58px;
+    --to-y: -42px;
+    --rotation: -14deg;
+    --flip: -1;
+}
+
+.aprilFishOverlay__fish--topRight {
+    top: clamp(18px, 4vw, 34px);
+    right: clamp(8px, 2vw, 22px);
+    --from-x: 90px;
+    --from-y: -72px;
+    --drift-x: -18px;
+    --drift-y: 10px;
+    --to-x: 54px;
+    --to-y: -36px;
+    --rotation: 10deg;
+    --flip: 1;
+}
+
+.aprilFishOverlay__fish--bottomLeft {
+    bottom: clamp(16px, 4vw, 34px);
+    left: clamp(6px, 1.8vw, 20px);
+    --from-x: -92px;
+    --from-y: 78px;
+    --drift-x: 14px;
+    --drift-y: -12px;
+    --to-x: -50px;
+    --to-y: 44px;
+    --rotation: 16deg;
+    --flip: -1;
+}
+
+.aprilFishOverlay__fish--bottomRight {
+    right: clamp(12px, 3vw, 28px);
+    bottom: clamp(10px, 2.5vw, 22px);
+    --from-x: 84px;
+    --from-y: 74px;
+    --drift-x: -12px;
+    --drift-y: -14px;
+    --to-x: 46px;
+    --to-y: 38px;
+    --rotation: -12deg;
+    --flip: 1;
+}
+
+@keyframes aprilFishDrift {
+    0% {
+        opacity: 0;
+        transform: translate3d(var(--from-x), var(--from-y), 0) rotate(var(--rotation)) scaleX(var(--flip)) scale(0.82);
+    }
+
+    16% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(var(--rotation)) scaleX(var(--flip)) scale(1);
+    }
+
+    72% {
+        opacity: 1;
+        transform: translate3d(var(--drift-x), var(--drift-y), 0) rotate(calc(var(--rotation) + 4deg)) scaleX(var(--flip)) scale(1.03);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--to-x), var(--to-y), 0) rotate(calc(var(--rotation) + 8deg)) scaleX(var(--flip)) scale(0.9);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .aprilFishOverlay__fish {
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.16));
+    }
+
+    .aprilFishOverlay__fish--topRight,
+    .aprilFishOverlay__fish--bottomLeft {
+        width: clamp(82px, 24vw, 130px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aprilFishOverlay {
+        display: none;
+    }
+}

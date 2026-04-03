@@ -6,6 +6,7 @@ type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 const CourseSchema = new Schema(
     {
         celcatId: {
+            // We found that the celcatId is not unique
             type: Number,
             required: true,
         },

@@ -90,21 +90,25 @@ function getDatesRange(start: Date, end: Date): string[] {
     return range;
 }
 
-// Return the start and end dates from now to now + increment,
-// formatted as a yyyy-MM-dd string
-function getStringBoundDates(increment: number): {
-    start: string;
-    end: string;
+// Return the start and end dates from now to now + increment
+function getBoundDates(increment: number): {
+    start: Date;
+    end: Date;
 } {
     const startDate = new Date();
-    const endDate = startDate;
+    const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + increment);
-    startDate.setDate(startDate.getDate());
+    endDate.setHours(23);
+    endDate.setMinutes(59);
 
     return {
-        start: startDate.toISOString().split("T")[0],
-        end: endDate.toISOString().split("T")[0],
+        start: startDate,
+        end: endDate,
     };
+}
+
+function getISODate(d: Date) {
+    return d.toISOString().split("T")[0]
 }
 
 function scheduleRun(triggerDate: Date, fn: () => void): void {
@@ -140,7 +144,8 @@ export {
     getMinutesOverflow,
     isSameDay,
     getDatesRange,
-    getStringBoundDates,
+    getBoundDates,
+    getISODate,
     scheduleRun,
     setDateTimeFromTimeString,
     getDateFromFrenchDateString,

@@ -8,7 +8,7 @@ import {
     type NormalizedCourse,
 } from "../utils/extractors.js";
 import { dataConfig } from "../configs/data.config.js";
-import { getStringBoundDates } from "../utils/date.js";
+import { getBoundDates, getISODate } from "../utils/date.js";
 import { SectorSchemaProperties } from "../models/sector.model.js";
 import { logger } from "../utils/logger.js";
 import {
@@ -108,7 +108,7 @@ class CoursesService {
         return await Course.find({
             start: { $gte: start },
             end: { $lte: end },
-            groups: groupId,
+            groupIds: groupId,
         });
     }
 
@@ -266,8 +266,6 @@ class CoursesService {
             if (!wantedCourseIndex) {
                 // If the course is not found, flag it for deletion
                 toBeDeletedFromDb.push(course);
-                // univCourses.splice(wantedCourseIndex, 1);
-                // toBeDeletedFromDb.splice(wantedCourseIndex, 1);
             } else {
                 univCourses.splice(wantedCourseIndex, 1);
             }
@@ -284,7 +282,7 @@ class CoursesService {
                 result.updated++;
             } else {
                 // If there is only the current processed group in the course record, delete it
-                await coursesService.deleteCourse(course._id);
+                await this.deleteCourse(course._id);
                 result.removed++;
             }
         }
@@ -302,7 +300,7 @@ class CoursesService {
                 ),
             );
 
-            const existingCourse = await coursesService.findCourseDoc(
+            const existingCourse = await this.findCourseDoc(
                 course.celcatId,
                 course.start,
                 course.end,
@@ -318,7 +316,7 @@ class CoursesService {
                 result.updated++;
             } else {
                 // If the course doesn't exists, create it in our DB
-                await coursesService.addCourse(
+                await this.addCourse(
                     course.celcatId,
                     course.start,
                     course.end,
@@ -346,7 +344,7 @@ class CoursesService {
         created: number;
     }> {
         // Get dates for the specified amount of time
-        const boundDates = getStringBoundDates(daysToSync);
+        const boundDates = getBoundDates(daysToSync);
 
         class NoCelcatError extends Error {}
         let extractedCourses: NormalizedCourse[];
@@ -367,8 +365,8 @@ class CoursesService {
                 await extractCoursesFromCelcatXml(await celcatResponse.text())
             ).filter(
                 (c) =>
-                    c.start.toISOString().split("T")[0] >= boundDates.start &&
-                    c.end.toISOString().split("T")[0] <= boundDates.end,
+                    c.start >= boundDates.start &&
+                    c.end <= boundDates.end,
             );
         } catch (e) {
             if (!(e instanceof NoCelcatError)) {
@@ -380,7 +378,7 @@ class CoursesService {
             }
 
             const univResponse = await fetch(
-                `${dataConfig.baseUrl}/events?start=${boundDates.start}&end=${boundDates.end}&timetables%5B%5D=${group.univId}`,
+                `${dataConfig.baseUrl}/events?start=${getISODate(boundDates.start)}&end=${getISODate(boundDates.end)}&timetables%5B%5D=${group.univId}`,
             );
             extractedCourses = extractCoursesFromUnivJson(
                 sanitizeJsonString(await univResponse.text()),
@@ -388,12 +386,11 @@ class CoursesService {
         }
 
         // Get some related data from our database
-        const dbCourseRecords =
-            await coursesService.getCourseDocsByGroupAndRange(
-                new Date(boundDates.start),
-                new Date(boundDates.end),
-                group._id,
-            );
+        const dbCourseRecords = await this.getCourseDocsByGroupAndRange(
+            boundDates.start,
+            boundDates.end,
+            group._id,
+        );
 
         // Process all the courses for this group
         const result = await this.processGroupCourses(

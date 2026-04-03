@@ -1,4 +1,10 @@
 .main.dashboard-feedback {
+    --primary-color: var(--accent-color);
+    --on-primary-color: var(--on-accent-color);
+    --primary-rgb: 52, 82, 255;
+    --surface-variant-color: var(--neutral-color-light);
+    --on-surface-variant-color: var(--neutral-color-dark);
+    --outline-color: var(--border-color);
     background-color: var(--background-color);
     display: flex;
     justify-content: center;
@@ -49,7 +55,7 @@
     gap: 24px;
 }
 
-.view-content .section-content>div {
+.view-content .section-content > div {
     flex-grow: 1;
 }
 
@@ -243,16 +249,50 @@
     gap: 12px;
 }
 
-.comment-item {
+.feedback-card {
+    width: 100%;
+}
+
+.feedback-card-body {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+}
+
+.feedback-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 12px;
 }
 
-.comment-header {
+.feedback-card-meta {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.feedback-status {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.feedback-status--idle {
+    background-color: var(--surface-variant-color);
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-status--pending {
+    background-color: rgba(var(--primary-rgb), 0.12);
+    color: var(--primary-color);
+}
+
+.feedback-status--seen {
+    background-color: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
 }
 
 .comment-rating {
@@ -265,18 +305,204 @@
     color: var(--on-surface-variant-color);
 }
 
-.comment-text {
+.feedback-device {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--neutral-color-light);
+    border-radius: 12px;
+    background-color: var(--surface-variant-color);
+}
+
+.feedback-device-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.feedback-device-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--on-surface-variant-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.feedback-device-id {
+    font-size: 13px;
+    color: var(--on-surface-color);
+    word-break: break-all;
+}
+
+.feedback-device-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--neutral-color-light);
+    border-radius: 999px;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    padding: 8px 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.feedback-device-copy:hover {
+    background-color: var(--background-color);
+}
+
+.feedback-device-copy span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.feedback-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feedback-reply-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background-color: var(--surface-variant-color);
+    border: 1px solid var(--neutral-color-light);
+}
+
+.feedback-reply-indicator-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.feedback-reply-indicator-badge--pending {
+    background-color: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+.feedback-reply-indicator-badge--seen {
+    background-color: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+}
+
+.feedback-reply-indicator-text {
+    font-size: 12px;
+    color: var(--on-surface-variant-color);
+    text-align: right;
+}
+
+.feedback-bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: 14px;
+}
+
+.feedback-bubble--user {
+    background-color: var(--surface-variant-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.feedback-bubble--admin {
+    background-color: rgba(var(--primary-rgb), 0.08);
+    border-left: 3px solid var(--accent-color);
+}
+
+.feedback-bubble-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-bubble-meta {
+    margin: 0;
+    font-size: 12px;
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-bubble-text {
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
     color: var(--on-surface-color);
-    padding: 12px;
-    background-color: var(--surface-variant-color);
-    border-radius: 8px;
-    border-left: 3px solid var(--primary-color);
+    white-space: pre-wrap;
 }
 
-/* Responsive adjustments */
+.feedback-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-editor label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--on-surface-color);
+}
+
+.feedback-editor textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--neutral-color-light);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 112px;
+}
+
+.feedback-editor textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.12);
+}
+
+.feedback-editor-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.feedback-editor-hint {
+    flex: 1 1 320px;
+    min-width: 0;
+    max-width: 520px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-editor-footer .button {
+    width: auto;
+    min-width: 180px;
+    flex: 0 0 auto;
+}
+
+.feedback-editor-footer .button.button--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 @media screen and (max-width: 768px) {
     .distribution-chart {
         grid-template-columns: 1fr;
@@ -293,6 +519,26 @@
 
     .view-title {
         display: none;
+    }
+
+    .feedback-card-header,
+    .feedback-device,
+    .feedback-reply-indicator,
+    .feedback-editor-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .feedback-status {
+        width: fit-content;
+    }
+
+    .feedback-device-copy {
+        justify-content: center;
+    }
+
+    .feedback-editor-footer .button {
+        width: 100%;
     }
 
     .view-content .section-content .column {

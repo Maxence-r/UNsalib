@@ -126,6 +126,40 @@ export interface ApiAdminStatsOverview {
     };
 }
 
+export interface ApiFeedbackStats {
+    totalFeedbacks: number;
+    averageRating: number;
+    distribution: { [key: number]: number };
+    trends: {
+        [date: string]: {
+            count: number;
+            totalRating: number;
+            average: string;
+        };
+    };
+    platforms: {
+        [platform: string]: {
+            count: number;
+            totalRating: number;
+            average: string;
+        };
+    };
+}
+
+export interface ApiFeedback {
+    id: string;
+    rating: number;
+    comment: string;
+    userId: string;
+    userAgent: string;
+    adminReply: string;
+    adminRepliedAt: string | null;
+    replySeenAt: string | null;
+    hasAdminReply: boolean;
+    hasUnreadReply: boolean;
+    createdAt: string;
+}
+
 // API error
 
 export interface ApiError {

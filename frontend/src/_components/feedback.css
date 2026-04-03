@@ -3,8 +3,18 @@
     flex-direction: column;
     gap: 24px;
     padding-inline: 20px;
-    width: calc(100%- 40px);
+    width: calc(100% - 40px);
     animation: fade-in 0.3s ease-in-out;
+}
+
+.feedback-drawer--state {
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+}
+
+.feedback-drawer--conversation {
+    gap: 20px;
 }
 
 @keyframes fade-in {
@@ -32,7 +42,8 @@
     margin: 0;
 }
 
-.feedback-header p {
+.feedback-header p,
+.feedback-state-text {
     font-size: 13px;
     color: var(--on-surface-variant-color);
     margin: 0;
@@ -145,6 +156,90 @@
     text-align: right;
 }
 
+.feedback-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feedback-thread-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-thread-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.feedback-thread-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-thread-date {
+    font-size: 12px;
+    color: var(--on-surface-variant-color);
+}
+
+.feedback-thread-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #FFB800;
+}
+
+.feedback-thread-rating span {
+    color: var(--on-surface-color);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.feedback-thread-bubble {
+    border-radius: 14px;
+    background-color: var(--surface-variant-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.feedback-thread-bubble--admin {
+    background-color: rgba(var(--primary-rgb), 0.08);
+    border-left-color: var(--accent-color);
+}
+
+.feedback-thread-bubble p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--on-surface-color);
+    white-space: pre-wrap;
+}
+
+.feedback-email-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 14px;
+    background-color: rgba(var(--primary-rgb), 0.08);
+    color: var(--on-surface-color);
+}
+
+.feedback-email-note p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.feedback-email-note a {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
 .feedback-actions {
     display: flex;
     gap: 12px;
@@ -152,7 +247,6 @@
 }
 
 .feedback-actions .button {
-
     flex: 1;
     display: flex;
     align-items: center;
@@ -164,24 +258,32 @@
     transition: all 0.2s ease-in-out;
 }
 
-.feedback-actions .button.secondary {
-    background-color: var(--surface-variant-color);
-    color: var(--on-surface-color);
-    border: 1px solid var(--outline-color);
-}
-
-.feedback-actions .button.secondary:hover {
-    background-color: var(--surface-color);
-}
-
-.feedback-actions .button.primary {
-    background-color: var(--primary-color);
-    color: var(--on-primary-color);
+.feedback-actions .button.feedback-button--primary {
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
     border: none;
 }
 
-.feedback-actions .button.primary:hover {
-    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+.feedback-actions .button.feedback-button--primary span {
+    color: var(--on-accent-color);
+}
+
+.feedback-actions .button.feedback-button--primary:hover {
+    background-color: var(--accent-color-dark);
+}
+
+.feedback-actions .button.feedback-button--secondary {
+    background-color: var(--neutral-color-light);
+    color: var(--on-surface-color);
+    border: 1px solid var(--border-color);
+}
+
+.feedback-actions .button.feedback-button--secondary span {
+    color: var(--on-surface-color);
+}
+
+.feedback-actions .button.feedback-button--secondary:hover {
+    background-color: var(--surface-color);
 }
 
 .feedback-actions .button.button--loading {
@@ -189,7 +291,11 @@
     cursor: not-allowed;
 }
 
-/* Mobile adjustments */
+.feedback-actions .button.button--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 @media screen and (max-width: 480px) {
     .feedback-header h2 {
         font-size: 20px;
@@ -200,7 +306,9 @@
         height: 32px;
     }
 
+    .feedback-thread-heading,
     .feedback-actions {
         flex-direction: column;
+        align-items: stretch;
     }
 }

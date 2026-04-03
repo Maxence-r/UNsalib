@@ -21,6 +21,21 @@ const FeedbackSchema = Schema({
         required: true,
         default: ''
     },
+    adminReply: {
+        type: String,
+        required: false,
+        default: ''
+    },
+    adminRepliedAt: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    replySeenAt: {
+        type: Date,
+        required: false,
+        default: null
+    },
     createdAt: {
         type: Date,
         required: true,

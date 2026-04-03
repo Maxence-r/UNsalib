@@ -1,5 +1,7 @@
 import {
     ApiAdminStatsOverview,
+    ApiFeedback,
+    ApiFeedbackStats,
     ApiPlatforms,
     ApiUniqueVisitors,
     ApiUniqueHumanVisitors,
@@ -117,43 +119,43 @@ export async function getStatsOverview(
     return await response.json();
 }
 
-interface FeedbackStats {
-    totalFeedbacks: number;
-    averageRating: number;
-    distribution: { [key: number]: number };
-    trends: {
-        [date: string]: {
-            count: number;
-            totalRating: number;
-            average: string;
-        };
-    };
-    platforms: {
-        [platform: string]: {
-            count: number;
-            totalRating: number;
-            average: string;
-        };
-    };
-}
-
-interface Feedback {
-    id: string;
-    rating: number;
-    comment: string;
-    userId: string;
-    userAgent: string;
-    createdAt: string;
-}
-
-export async function getFeedbackStats(): Promise<FeedbackStats> {
+export async function getFeedbackStats(): Promise<ApiFeedbackStats> {
     const response = await get("/feedback/stats");
     return await response.json();
 }
 
-export async function getAllFeedbacks(): Promise<Feedback[]> {
+export async function getAllFeedbacks(): Promise<ApiFeedback[]> {
     const response = await get("/feedback/all");
     return await response.json();
+}
+
+export async function submitFeedbackReply(
+    userId: string,
+    reply: string,
+): Promise<{ success: boolean; error?: string; feedback?: ApiFeedback }> {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/feedback/reply`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    userId,
+                    reply,
+                }),
+            },
+        );
+        const jsonResponse = await response.json();
+        if (response.ok && jsonResponse.success) {
+            return { success: true, feedback: jsonResponse.feedback };
+        }
+        return { success: false, error: jsonResponse.error || "Unknown error" };
+    } catch (error) {
+        return { success: false, error: (error as Error).toString() };
+    }
 }
 
 import { ApiRoom, ApiRoomDetails, ApiRoomUpdate } from "./types";

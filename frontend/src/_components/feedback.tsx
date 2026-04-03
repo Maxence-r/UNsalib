@@ -1,21 +1,202 @@
 "use client";
 
-import { useState } from "react";
-import { Star, MessageSquare, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Mail, MessageSquare, Send, Star } from "lucide-react";
+
 import Button from "@/_components/button";
 import { closeDrawer } from "@/_components/drawer";
+import { ApiFeedback } from "@/_utils/api-types";
+import {
+    fetchCurrentFeedback,
+    hasUnreadFeedbackReply,
+    markFeedbackReplyAsSeen,
+    submitFeedback,
+} from "@/_utils/feedback";
 import { showToast, setToastMessage } from "@/_components/toast";
 import "./feedback.css";
 
-export default function FeedbackDrawerContent() {
+function renderStars(rating: number, size: number) {
+    return Array.from({ length: 5 }, (_, index) => (
+        <Star
+            key={index}
+            size={size}
+            fill={index < rating ? "currentColor" : "none"}
+        />
+    ));
+}
+
+function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+}
+
+function FeedbackConversation({
+    feedback,
+}: {
+    feedback: ApiFeedback;
+}) {
+    const hasAdminReply = feedback.adminReply.trim().length > 0;
+    const userMessage = feedback.comment.trim().length > 0
+        ? feedback.comment
+        : `Vous nous avez attribué la note de ${feedback.rating}/5.`;
+
+    return (
+        <div className="feedback-drawer feedback-drawer--conversation">
+            <div className="feedback-header">
+                <h2>
+                    {hasAdminReply ? "Nous vous avons répondu" : "Votre retour a bien été reçu"}
+                </h2>
+                <p>
+                    {hasAdminReply
+                        ? "Voici votre message et la réponse de notre équipe."
+                        : "Merci pour votre retour. Nous l'avons bien enregistré."}
+                </p>
+            </div>
+
+            <div className="feedback-thread">
+                <div className="feedback-thread-item">
+                    <div className="feedback-thread-heading">
+                        <span className="feedback-thread-label">Votre retour</span>
+                        <span className="feedback-thread-date">{formatDate(feedback.createdAt)}</span>
+                    </div>
+                    <div className="feedback-thread-rating">
+                        {renderStars(feedback.rating, 18)}
+                        <span>{feedback.rating}/5</span>
+                    </div>
+                    <div className="feedback-thread-bubble">
+                        <p>{userMessage}</p>
+                    </div>
+                </div>
+
+                {hasAdminReply && (
+                    <div className="feedback-thread-item">
+                        <div className="feedback-thread-heading">
+                            <span className="feedback-thread-label">Notre réponse</span>
+                            {feedback.adminRepliedAt && (
+                                <span className="feedback-thread-date">
+                                    {formatDate(feedback.adminRepliedAt)}
+                                </span>
+                            )}
+                        </div>
+                        <div className="feedback-thread-bubble feedback-thread-bubble--admin">
+                            <p>{feedback.adminReply}</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {hasAdminReply && (
+                <div className="feedback-email-note">
+                    <Mail size={18} />
+                    <p>
+                        Si vous souhaitez continuer la conversation, envoyez-nous un e-mail à{" "}
+                        <a href="mailto:contact@unsalib.info">contact@unsalib.info</a>.
+                    </p>
+                </div>
+            )}
+
+            <div className="feedback-actions">
+                <Button className="feedback-button feedback-button--primary" onClick={closeDrawer}>
+                    Fermer
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+export default function FeedbackDrawerContent({
+    initialFeedback,
+    markReplyAsSeenOnMount = false,
+}: {
+    initialFeedback?: ApiFeedback | null;
+    markReplyAsSeenOnMount?: boolean;
+}) {
     const [rating, setRating] = useState<number>(0);
     const [hoveredRating, setHoveredRating] = useState<number>(0);
     const [comment, setComment] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [isLoadingFeedback, setIsLoadingFeedback] = useState(initialFeedback === undefined);
+    const [currentFeedback, setCurrentFeedback] = useState<ApiFeedback | null | undefined>(initialFeedback);
+
+    useEffect(() => {
+        setCurrentFeedback(initialFeedback);
+        setIsLoadingFeedback(initialFeedback === undefined);
+    }, [initialFeedback]);
+
+    useEffect(() => {
+        if (initialFeedback !== undefined) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const loadFeedback = async () => {
+            try {
+                const feedback = await fetchCurrentFeedback();
+                if (!cancelled) {
+                    setCurrentFeedback(feedback);
+                }
+            } catch (error) {
+                console.error("Error loading feedback conversation:", error);
+                if (!cancelled) {
+                    setCurrentFeedback(null);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsLoadingFeedback(false);
+                }
+            }
+        };
+
+        void loadFeedback();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [initialFeedback]);
+
+    useEffect(() => {
+        if (!markReplyAsSeenOnMount || !currentFeedback || !hasUnreadFeedbackReply(currentFeedback)) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const acknowledgeReply = async () => {
+            try {
+                await markFeedbackReplyAsSeen();
+                if (!cancelled) {
+                    setCurrentFeedback((previousFeedback) =>
+                        previousFeedback
+                            ? {
+                                ...previousFeedback,
+                                hasUnreadReply: false,
+                                replySeenAt: new Date().toISOString(),
+                            }
+                            : previousFeedback,
+                    );
+                }
+            } catch (error) {
+                console.error("Error acknowledging feedback reply:", error);
+            }
+        };
+
+        void acknowledgeReply();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [currentFeedback, markReplyAsSeenOnMount]);
 
     const handleSubmit = async () => {
         if (rating === 0) {
-            setToastMessage("Veuillez sélectionner une note", true);
+            setToastMessage("Veuillez sélectionner une note.", true);
             showToast();
             return;
         }
@@ -23,36 +204,29 @@ export default function FeedbackDrawerContent() {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/feedback/submit`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    rating,
-                    comment: comment.trim(),
-                }),
+            const result = await submitFeedback({
+                rating,
+                comment: comment.trim(),
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                // Mark feedback as submitted in localStorage
-                localStorage.setItem("unsalib_feedback_submitted", "true");
-                
+            if (result.success) {
+                setCurrentFeedback(result.feedback ?? null);
                 setToastMessage("Merci pour votre retour !", false);
                 showToast();
                 closeDrawer();
-            } else {
-                if (data.error === "ALREADY_SUBMITTED") {
-                    setToastMessage("Vous avez déjà soumis un retour", true);
-                    localStorage.setItem("unsalib_feedback_submitted", "true");
-                } else {
-                    setToastMessage("Erreur lors de l'envoi. Réessayez plus tard.", true);
-                }
-                showToast();
+                return;
             }
+
+            if (result.error === "ALREADY_SUBMITTED") {
+                const existingFeedback = await fetchCurrentFeedback().catch(() => null);
+                if (existingFeedback) {
+                    setCurrentFeedback(existingFeedback);
+                }
+                setToastMessage("Vous avez déjà soumis un retour.", true);
+            } else {
+                setToastMessage("Erreur lors de l'envoi. Réessayez plus tard.", true);
+            }
+            showToast();
         } catch (error) {
             console.error("Error submitting feedback:", error);
             setToastMessage("Erreur de connexion. Réessayez plus tard.", true);
@@ -62,11 +236,23 @@ export default function FeedbackDrawerContent() {
         }
     };
 
+    if (isLoadingFeedback) {
+        return (
+            <div className="feedback-drawer feedback-drawer--state">
+                <p className="feedback-state-text">Chargement de la conversation...</p>
+            </div>
+        );
+    }
+
+    if (currentFeedback) {
+        return <FeedbackConversation feedback={currentFeedback} />;
+    }
+
     return (
         <div className="feedback-drawer">
             <div className="feedback-header">
                 <h2>Comment trouvez-vous UNsalib ?</h2>
-                <p>Votre avis nous aide à améliorer l&apos;application</p>
+                <p>Votre avis nous aide à améliorer l&apos;application.</p>
             </div>
 
             <div className="feedback-rating">
@@ -113,7 +299,7 @@ export default function FeedbackDrawerContent() {
                     id="feedback-comment-input"
                     placeholder="Partagez vos idées avec nous..."
                     value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    onChange={(event) => setComment(event.target.value)}
                     maxLength={500}
                     rows={4}
                 />
@@ -124,17 +310,23 @@ export default function FeedbackDrawerContent() {
 
             <div className="feedback-actions">
                 <Button
-                    className={isSubmitting ? "button--loading" : ""}
+                    className={`feedback-button feedback-button--secondary${isSubmitting ? " button--disabled" : ""}`}
                     onClick={isSubmitting ? () => {} : closeDrawer}
                 >
                     Plus tard
                 </Button>
                 <Button
-                    className={isSubmitting || rating === 0 ? "button--loading" : ""}
+                    className={`feedback-button feedback-button--primary${
+                        isSubmitting
+                            ? " button--loading"
+                            : rating === 0
+                                ? " button--disabled"
+                                : ""
+                    }`}
                     onClick={rating === 0 || isSubmitting ? () => {} : handleSubmit}
                     withIcon={true}
                     icon={<Send size={18} />}
-                >
+                    >
                     Envoyer
                 </Button>
             </div>

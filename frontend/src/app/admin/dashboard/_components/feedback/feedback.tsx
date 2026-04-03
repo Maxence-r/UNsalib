@@ -5,44 +5,17 @@ import { Star, MessageSquare, TrendingUp, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/_components/card";
 import { PieChart } from "@/_components/chart";
+import { ApiFeedback, ApiFeedbackStats } from "@/_utils/api-types";
 import "./feedback.css";
 import {
     getFeedbackStats,
     getAllFeedbacks,
 } from "../../_utils/client-actions";
-
-interface FeedbackStats {
-    totalFeedbacks: number;
-    averageRating: number;
-    distribution: { [key: number]: number };
-    trends: {
-        [date: string]: {
-            count: number;
-            totalRating: number;
-            average: string;
-        };
-    };
-    platforms: {
-        [platform: string]: {
-            count: number;
-            totalRating: number;
-            average: string;
-        };
-    };
-}
-
-interface Feedback {
-    id: string;
-    rating: number;
-    comment: string;
-    userId: string;
-    userAgent: string;
-    createdAt: string;
-}
+import FeedbackItem from "./feedback-item";
 
 export default function FeedbackPage() {
-    const [stats, setStats] = useState<FeedbackStats | null>(null);
-    const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+    const [stats, setStats] = useState<ApiFeedbackStats | null>(null);
+    const [feedbacks, setFeedbacks] = useState<ApiFeedback[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -55,23 +28,23 @@ export default function FeedbackPage() {
                 ]);
                 setStats(statsData);
                 setFeedbacks(feedbacksData);
-            } catch (e) {
-                console.error("Error fetching feedback data:", e);
+            } catch (error) {
+                console.error("Error fetching feedback data:", error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchData();
+        void fetchData();
     }, []);
 
     const renderStars = (rating: number) => {
-        return Array.from({ length: 5 }, (_, i) => (
+        return Array.from({ length: 5 }, (_, index) => (
             <Star
-                key={i}
+                key={index}
                 size={16}
-                fill={i < rating ? "#FFB800" : "none"}
-                color={i < rating ? "#FFB800" : "#ccc"}
+                fill={index < rating ? "#FFB800" : "none"}
+                color={index < rating ? "#FFB800" : "#ccc"}
             />
         ));
     };
@@ -87,12 +60,19 @@ export default function FeedbackPage() {
         });
     };
 
+    const handleFeedbackUpdated = (updatedFeedback: ApiFeedback) => {
+        setFeedbacks((previousFeedbacks) =>
+            previousFeedbacks.map((feedback) =>
+                feedback.id === updatedFeedback.id ? updatedFeedback : feedback,
+            ),
+        );
+    };
+
     return (
         <div className="main dashboard-feedback">
             <div className="view">
                 <h2 className="view-title">Retours utilisateurs</h2>
                 <div className="view-content">
-                    {/* Overview Section */}
                     <div className="section">
                         <h4 className="section-title">Vue d&apos;ensemble</h4>
                         <div className="section-content">
@@ -121,7 +101,6 @@ export default function FeedbackPage() {
                         </div>
                     </div>
 
-                    {/* Distribution Section */}
                     <div className="section">
                         <h4 className="section-title">Distribution des notes</h4>
                         <div className="section-content">
@@ -132,7 +111,7 @@ export default function FeedbackPage() {
                                             <PieChart
                                                 dataset={Object.entries(stats.distribution)
                                                     .map(([rating, count]) => ({
-                                                        legend: `${rating} étoile${parseInt(rating) > 1 ? "s" : ""}`,
+                                                        legend: `${rating} étoile${parseInt(rating, 10) > 1 ? "s" : ""}`,
                                                         value: count,
                                                     }))
                                                     .filter((item) => item.value > 0)}
@@ -166,7 +145,6 @@ export default function FeedbackPage() {
                         </div>
                     </div>
 
-                    {/* Platform Analysis */}
                     <div className="section">
                         <h4 className="section-title">Analyse par plateforme</h4>
                         <div className="section-content">
@@ -201,7 +179,6 @@ export default function FeedbackPage() {
                         </div>
                     </div>
 
-                    {/* Trends Section */}
                     <div className="section">
                         <h4 className="section-title">
                             <TrendingUp size={20} />
@@ -214,7 +191,7 @@ export default function FeedbackPage() {
                                         <div className="trends-chart">
                                             {Object.entries(stats.trends)
                                                 .filter(([, data]) => data.count > 0)
-                                                .slice(-14) // Show last 14 days with data
+                                                .slice(-14)
                                                 .map(([date, data]) => (
                                                     <div key={date} className="trend-item">
                                                         <span className="trend-date">
@@ -243,11 +220,10 @@ export default function FeedbackPage() {
                         </div>
                     </div>
 
-                    {/* Comments Section */}
                     <div className="section">
                         <h4 className="section-title">
                             <MessageSquare size={20} />
-                            Commentaires récents
+                            Conversations utilisateurs
                         </h4>
                         <div className="section-content">
                             <div className="comments-list">
@@ -255,32 +231,20 @@ export default function FeedbackPage() {
                                     <Card isLoading={true}>
                                         <CardContent>Chargement...</CardContent>
                                     </Card>
-                                ) : feedbacks.filter((f) => f.comment).length > 0 ? (
-                                    feedbacks
-                                        .filter((f) => f.comment)
-                                        .map((feedback) => (
-                                            <Card key={feedback.id}>
-                                                <CardContent>
-                                                    <div className="comment-item">
-                                                        <div className="comment-header">
-                                                            <div className="comment-rating">
-                                                                {renderStars(feedback.rating)}
-                                                            </div>
-                                                            <span className="comment-date">
-                                                                {formatDate(feedback.createdAt)}
-                                                            </span>
-                                                        </div>
-                                                        <p className="comment-text">
-                                                            {feedback.comment}
-                                                        </p>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))
+                                ) : feedbacks.length > 0 ? (
+                                    feedbacks.map((feedback) => (
+                                        <FeedbackItem
+                                            key={feedback.id}
+                                            feedback={feedback}
+                                            formatDate={formatDate}
+                                            renderStars={renderStars}
+                                            onFeedbackUpdated={handleFeedbackUpdated}
+                                        />
+                                    ))
                                 ) : (
                                     <Card>
                                         <CardContent>
-                                            <p>Aucun commentaire pour le moment</p>
+                                            <p>Aucun retour pour le moment</p>
                                         </CardContent>
                                     </Card>
                                 )}

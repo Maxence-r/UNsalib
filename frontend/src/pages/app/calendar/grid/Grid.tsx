@@ -463,7 +463,21 @@ function Grid({
                     >
                         {[...Array(VISIBLE_DAYS * DAY_DURATION)].map(
                             (_val, i) => (
-                                <div key={`cell-${i}`} className="cell" />
+                                <div
+                                    key={`cell-${i}`}
+                                    className="cell"
+                                    style={{
+                                        ...(i % VISIBLE_DAYS === 0 && {
+                                            borderLeft: "none",
+                                        }),
+                                        ...(i % VISIBLE_DAYS === VISIBLE_DAYS - 1 && {
+                                            borderRight: "none"
+                                        }),
+                                        ...(i >= VISIBLE_DAYS * (DAY_DURATION - 1) && {
+                                            borderBottom: "none"
+                                        }),
+                                    }}
+                                />
                             ),
                         )}
                     </div>

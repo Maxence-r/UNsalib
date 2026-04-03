@@ -25,7 +25,7 @@
     flex-direction: column;
     min-width: 70px;
     height: 100%;
-    border-right: 1px solid var(--color-neutral);
+    border-right: 2px solid var(--color-neutral);
 }
 
 /* Grid rules */
@@ -92,39 +92,44 @@
     }
 }
 
-.calendar .column.hours>span.placeholder {
+.calendar .column.hours > span.placeholder {
     padding-bottom: 24px;
     flex-shrink: 0;
     flex-grow: 0;
     margin-top: 0;
     border: none;
-    border-right: 1px solid;
-    border-image: linear-gradient(to bottom, transparent 70%, var(--color-neutral) 30%) 1 100%;
+    border-right: 2px solid;
+    border-image: linear-gradient(
+            to bottom,
+            transparent 70%,
+            var(--color-neutral) 30%
+        )
+        1 100%;
 }
 
 @media screen and (max-width: 1024px) {
-    .calendar .column.hours>span.placeholder {
+    .calendar .column.hours > span.placeholder {
         padding-bottom: 20px;
     }
 }
 
-.calendar .column.hours>span {
+.calendar .column.hours > span {
     text-align: right;
     font-size: 14px;
     font-weight: 600;
     color: var(--color-neutral-dark);
     flex-grow: 1;
     margin-top: -9px;
-    border-right: 1px solid var(--color-neutral);
+    border-right: 2px solid var(--color-neutral);
     padding-right: 12px;
 }
 
-.calendar .column.hours>span:first-child:not(.placeholder) {
+.calendar .column.hours > span:first-child:not(.placeholder) {
     visibility: hidden;
 }
 
 .calendar .grid .headers {
-    width: 100%;
+    min-width: fit-content;
     border-bottom: 1px solid var(--color-neutral);
     display: grid;
     grid-column-gap: 0px;
@@ -151,8 +156,21 @@
     padding-bottom: 24px;
     border-left: 1px solid;
     border-right: 1px solid;
-    border-image: linear-gradient(to bottom, transparent 70%, var(--color-neutral) 30%) 1 100%;
+    border-image: linear-gradient(
+            to bottom,
+            transparent 70%,
+            var(--color-neutral) 30%
+        )
+        1 100%;
     min-width: 120px;
+}
+
+.calendar .grid .headers .header:first-child {
+    border-left: none;
+}
+
+.calendar .grid .headers .header:last-child {
+    border-right: none;
 }
 
 @media screen and (max-width: 1024px) {
@@ -161,7 +179,7 @@
     }
 }
 
-.calendar .grid .headers .header>.day-number {
+.calendar .grid .headers .header > .day-number {
     color: var(--color-on-surface);
     margin-left: 4px;
 }

@@ -65,13 +65,25 @@ function Course({ course }: { course: ApiDataCourse }) {
         />,
     );
 
+    const cutStart = new Date(course.start);
+    if (cutStart.getHours() < START_DAY_HOUR) {
+        cutStart.setHours(START_DAY_HOUR);
+        cutStart.setMinutes(0);
+    }
+
+    let percentHeight = getCourseHeightPercent(
+        DAY_DURATION * 60,
+        courseDurationMinutes,
+    );
+    if (percentHeight > 100) percentHeight = 100;
+
     return (
         <div
             style={{
-                top: `${getCourseAbsoluteTopPercent(DAY_DURATION * 60, new Date(course.start), START_DAY_HOUR * 60)}%`,
+                top: `${getCourseAbsoluteTopPercent(DAY_DURATION * 60, cutStart, START_DAY_HOUR * 60)}%`,
                 backgroundColor: course.color,
                 color: course.onColor,
-                height: `${getCourseHeightPercent(DAY_DURATION * 60, courseDurationMinutes)}%`,
+                height: `${percentHeight}%`,
                 // width: `${100 / course.length}%`
                 // width: "100%",
                 // left:

@@ -1,9 +1,3 @@
-interface WeekInfos {
-    start: string;
-    end: string;
-    number: number;
-}
-
 // Checks whether a date is in the format 'yyyy-MM-ddTHH:mm:ss+HH:mm'
 function isValidDate(date: string): boolean {
     const regex =
@@ -12,7 +6,11 @@ function isValidDate(date: string): boolean {
 }
 
 // Returns the start date, end date and number of a week
-function getWeekInfos(weekNumber: number): WeekInfos {
+function getWeekInfos(weekNumber: number): {
+    start: Date;
+    end: Date;
+    number: number;
+} {
     let year = new Date().getFullYear();
     if (weekNumber > 52) {
         weekNumber -= 52;
@@ -29,21 +27,13 @@ function getWeekInfos(weekNumber: number): WeekInfos {
     monday.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
 
     // Calculating the Saturday of the week requested
-    const dimanche = new Date(monday);
-    dimanche.setDate(monday.getDate() + 6);
+    const saturday = new Date(monday);
+    saturday.setDate(monday.getDate() + 6);
+    saturday.setHours(23);
+    saturday.setMinutes(59);
+    saturday.setSeconds(59);
 
-    // Formatting dates in YYYY-MM-DD format to avoid time zone problems
-    const formatDate = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-
-    const mondayISO = formatDate(monday);
-    const saturdayISO = formatDate(dimanche);
-
-    return { start: mondayISO, end: saturdayISO, number: weekNumber };
+    return { start: monday, end: saturday, number: weekNumber };
 }
 
 // Returns the number of the current week
@@ -136,7 +126,11 @@ function setDateTimeFromTimeString(date: Date, timeString: string): Date {
 
 function getDateFromFrenchDateString(dateString: string): Date {
     const splittedDate = dateString.split("/");
-    return new Date(parseInt(splittedDate[2]), parseInt(splittedDate[1]) - 1, parseInt(splittedDate[0]));
+    return new Date(
+        parseInt(splittedDate[2]),
+        parseInt(splittedDate[1]) - 1,
+        parseInt(splittedDate[0]),
+    );
 }
 
 export {
@@ -149,5 +143,5 @@ export {
     getStringBoundDates,
     scheduleRun,
     setDateTimeFromTimeString,
-    getDateFromFrenchDateString
+    getDateFromFrenchDateString,
 };

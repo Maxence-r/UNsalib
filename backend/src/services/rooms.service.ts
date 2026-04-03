@@ -19,6 +19,11 @@ class RoomsService {
         return await Room.find({ reviewed: true }).lean();
     }
 
+    async isReviewed(roomId: string): Promise<boolean> {
+        const room = await Room.findOne({ _id: roomId });
+        return !!(room && room.reviewed); 
+    }
+
     // **********************************************************
     // TODO
     // **********************************************************

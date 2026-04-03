@@ -23,13 +23,12 @@ class CoursesService {
      */
     async getTimetable(
         roomId: string,
-        start: string,
-        end: string,
+        start: Date,
+        end: Date,
     ): Promise<(CourseSchemaProperties & { _id: Types.ObjectId })[]> {
-        // Getting courses based on room id and given period
         return await Course.find({
-            rooms: roomId, // the room is included in the course rooms array
-            $and: [{ start: { $gte: start } }, { end: { $lte: end } }],
+            roomIds: roomId, // the room is included in the course rooms array
+            start: { $gte: start, $lte: end },
         }).lean();
     }
 
@@ -404,10 +403,7 @@ class CoursesService {
         };
     }
 
-    async syncAll(
-        syncInterval: number,
-        daysToSync: number,
-    ): Promise<void> {
+    async syncAll(syncInterval: number, daysToSync: number): Promise<void> {
         const allGroups: {
             details: GroupSchemaProperties;
             sector: SectorSchemaProperties;
@@ -433,7 +429,8 @@ class CoursesService {
         };
 
         // Calculating the interval between each group for a uniform distribution
-        const intervalBetweenGroups = (syncInterval / allGroups.length) * 60 * 60 * 1000;
+        const intervalBetweenGroups =
+            (syncInterval / allGroups.length) * 60 * 60 * 1000;
 
         let groupIndex = 0;
 

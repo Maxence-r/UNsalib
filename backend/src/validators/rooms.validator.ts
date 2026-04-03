@@ -85,38 +85,20 @@ const availableValidation = [
 ];
 
 const timetableValidation = [
-    query("id")
-        .notEmpty()
-        .withMessage("Missing value")
-        .trim()
-        .custom((id: string) => mongoose.Types.ObjectId.isValid(id))
-        .withMessage("Invalid format"),
-    query("increment")
-        .optional()
+    query("roomId").notEmpty().withMessage("Missing value").trim(),
+    query("weekNumber")
         .notEmpty()
         .withMessage("Missing value")
         .trim()
         .isNumeric()
-        .withMessage("Value must be a number")
+        .withMessage("Invalid number")
         .toInt()
-        .customSanitizer((increment: number) => {
-            const weekInfos = getWeekInfos(getWeeksNumber() + increment);
-            if (
-                weekInfos.number < 0 ||
-                weekInfos.number > 52 ||
-                increment > 18
-            ) {
-                throw new Error("Invalid increment");
-            }
-            return weekInfos;
-        }),
+        .custom((value: number) => value >= 0 && value <= 42)
+        .withMessage("Invalid week number"),
 ];
 
 const allValidation = [
-    query("campusId")
-        .notEmpty()
-        .withMessage("Missing value")
-        .trim()
+    query("campusId").notEmpty().withMessage("Missing value").trim(),
 ];
 
 export { availableValidation, timetableValidation, allValidation };

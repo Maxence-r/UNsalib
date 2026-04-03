@@ -14,7 +14,6 @@ import { logger } from "../utils/logger.js";
 import {
     areArraysEqual,
     getHexHashFromString,
-    isValidHexHash,
     sanitizeJsonString,
 } from "../utils/misc.js";
 import { roomsService } from "./rooms.service.js";
@@ -219,8 +218,6 @@ class CoursesService {
         updated: number;
         created: number;
     }> {
-        if (!isValidHexHash(groupId)) throw new Error("Invalid group hash");
-
         const univCourses = structuredClone(normalizedUnivCourses);
 
         // Creating a variable to store the operations that have been performed in our database
@@ -232,8 +229,6 @@ class CoursesService {
             searchedCourse: HydratedDocument<CourseSchemaProperties>,
             courses: NormalizedCourse[],
         ): null | number => {
-            // console.log(searchedCourse)
-            // console.log(courses)
             // Eliminate each course by testing its characteristics from the most likely to
             // differ to the least likely
             for (let i = 0; i < courses.length; i++) {

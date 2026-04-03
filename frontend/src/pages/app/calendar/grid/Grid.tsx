@@ -439,13 +439,17 @@ function Grid({
                     }}
                 >
                     {orderedCourses.length > 0 && weekStart && weekEnd
-                        ? orderedCourses.map((_val, i) => (
-                              <ColumnHeader
-                                  dayDate={weekStart.getDate() + i}
-                                  dayName={DAY_NAMES[i]}
-                                  key={`header-${weekStart.getDate() + i}`}
-                              />
-                          ))
+                        ? orderedCourses.map((_val, i) => {
+                              const dayNumber = structuredClone(weekStart)
+                              dayNumber.setDate(weekStart.getDate() + i);
+                              return (
+                                  <ColumnHeader
+                                      dayDate={dayNumber.getDate()}
+                                      dayName={DAY_NAMES[i]}
+                                      key={`header-${dayNumber.getDate()}`}
+                                  />
+                              );
+                          })
                         : [...Array(VISIBLE_DAYS)].map((_val, i) => (
                               <ColumnHeader key={`header-${i}`} />
                           ))}
@@ -470,11 +474,14 @@ function Grid({
                                         ...(i % VISIBLE_DAYS === 0 && {
                                             borderLeft: "none",
                                         }),
-                                        ...(i % VISIBLE_DAYS === VISIBLE_DAYS - 1 && {
-                                            borderRight: "none"
+                                        ...(i % VISIBLE_DAYS ===
+                                            VISIBLE_DAYS - 1 && {
+                                            borderRight: "none",
                                         }),
-                                        ...(i >= VISIBLE_DAYS * (DAY_DURATION - 1) && {
-                                            borderBottom: "none"
+                                        ...(i >=
+                                            VISIBLE_DAYS *
+                                                (DAY_DURATION - 1) && {
+                                            borderBottom: "none",
                                         }),
                                     }}
                                 />

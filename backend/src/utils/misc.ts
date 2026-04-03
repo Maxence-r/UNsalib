@@ -30,4 +30,14 @@ function getHexHashFromString(s: string): string {
     return Buffer.from(s).toString("hex");
 }
 
-export { areArraysEqual, sanitizeJsonString, getPageRoot, getHexHashFromString };
+function isValidHexHash(h: string): boolean {
+    return /^[abcdef0-9]*$/.test(h);
+}
+
+export {
+    areArraysEqual,
+    sanitizeJsonString,
+    getPageRoot,
+    getHexHashFromString,
+    isValidHexHash,
+};

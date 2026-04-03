@@ -11,9 +11,14 @@ import { dataConfig } from "../configs/data.config.js";
 import { getStringBoundDates } from "../utils/date.js";
 import { SectorSchemaProperties } from "../models/sector.model.js";
 import { logger } from "../utils/logger.js";
-import { areArraysEqual, sanitizeJsonString } from "../utils/misc.js";
+import {
+    areArraysEqual,
+    getHexHashFromString,
+    isValidHexHash,
+    sanitizeJsonString,
+} from "../utils/misc.js";
 import { roomsService } from "./rooms.service.js";
-import { closestPaletteColor } from "../utils/color.js";
+import { findClosestPaletteColorId, palette } from "../utils/color.js";
 import { sectorsService } from "./sectors.service.js";
 import { groupsService } from "./groups.service.js";
 
@@ -177,8 +182,8 @@ class CoursesService {
         celcatId: number,
         start: Date,
         end: Date,
-        color: string,
-        rooms: string[],
+        colorId: keyof typeof palette,
+        roomIds: string[],
         teachers: string[],
         modules: string[],
         groupId: string,
@@ -188,8 +193,8 @@ class CoursesService {
             celcatId: celcatId,
             start: start,
             end: end,
-            color: color,
-            roomIds: rooms,
+            colorId: colorId,
+            roomIds: roomIds,
             teachers: teachers,
             groupIds: [groupId],
             modules: modules,
@@ -214,6 +219,10 @@ class CoursesService {
         updated: number;
         created: number;
     }> {
+        if (!isValidHexHash(groupId)) throw new Error("Invalid group hash");
+
+        const univCourses = structuredClone(normalizedUnivCourses);
+
         // Creating a variable to store the operations that have been performed in our database
         const result = { removed: 0, updated: 0, created: 0 };
 
@@ -223,6 +232,8 @@ class CoursesService {
             searchedCourse: HydratedDocument<CourseSchemaProperties>,
             courses: NormalizedCourse[],
         ): null | number => {
+            // console.log(searchedCourse)
+            // console.log(courses)
             // Eliminate each course by testing its characteristics from the most likely to
             // differ to the least likely
             for (let i = 0; i < courses.length; i++) {
@@ -232,7 +243,10 @@ class CoursesService {
                     course.celcatId === searchedCourse.celcatId &&
                     course.start.getTime() === searchedCourse.start.getTime() &&
                     course.end.getTime() === searchedCourse.end.getTime() &&
-                    areArraysEqual(course.rooms, searchedCourse.roomIds) &&
+                    areArraysEqual(
+                        course.rooms.map((r) => getHexHashFromString(r)),
+                        searchedCourse.roomIds,
+                    ) &&
                     areArraysEqual(course.teachers, searchedCourse.teachers) &&
                     areArraysEqual(course.modules, searchedCourse.modules) &&
                     course.category === searchedCourse.category
@@ -252,27 +266,25 @@ class CoursesService {
             [];
         for (const course of dbCourses) {
             // Trying to find the course in the latest University data
-            wantedCourseIndex = getCourseIndex(course, normalizedUnivCourses);
+            wantedCourseIndex = getCourseIndex(course, univCourses);
 
             if (!wantedCourseIndex) {
                 // If the course is not found, flag it for deletion
                 toBeDeletedFromDb.push(course);
-                // normalizedUnivCourses.splice(wantedCourseIndex, 1);
+                // univCourses.splice(wantedCourseIndex, 1);
                 // toBeDeletedFromDb.splice(wantedCourseIndex, 1);
             } else {
-                normalizedUnivCourses.splice(wantedCourseIndex, 1);
+                univCourses.splice(wantedCourseIndex, 1);
             }
         }
-        // Now, normalizedUnivCourses only contains courses that need to be added to our DB
+        // Now, univCourses only contains courses that need to be added to our DB
         // and dbCourses contains courses that need to be deleted
 
         // Browse courses that need to be deleted from our DB
         for (const course of toBeDeletedFromDb) {
             if (course.groupIds.length > 1) {
                 // If there are several groups in the course record, just delete the group
-                course.groupIds = course.groupIds.filter(
-                    (group) => group !== groupId,
-                );
+                course.groupIds = course.groupIds.filter((g) => g !== groupId);
                 await course.save();
                 result.updated++;
             } else {
@@ -282,8 +294,8 @@ class CoursesService {
             }
         }
 
-        // Browse courses that remain in normalizedUnivCourses (new to our database or need to be updated)
-        for (const course of normalizedUnivCourses) {
+        // Browse courses that remain in univCourses (new to our database or need to be updated)
+        for (const course of univCourses) {
             // Check if data is valid (e.g: exclude holidays with no associated rooms)
             if (course.rooms.length === 0) continue;
 
@@ -315,7 +327,7 @@ class CoursesService {
                     course.celcatId,
                     course.start,
                     course.end,
-                    closestPaletteColor(course.color),
+                    findClosestPaletteColorId(course.color),
                     cleanRooms,
                     course.teachers,
                     course.modules,

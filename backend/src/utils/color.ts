@@ -1,180 +1,62 @@
-interface HslColor {
-    h: number;
-    s: number;
-    l: number;
-}
+import chroma from "chroma-js";
 
-interface RgbColor {
-    r: number;
-    g: number;
-    b: number;
-}
+const palette = {
+    teal1: "#1abc9c",
+    teal2: "#16a085",
+    green1: "#2ecc71",
+    green2: "#27ae60",
+    blue1: "#3498db",
+    blue2: "#2980b9",
+    purple1: "#9b59b6",
+    purple2: "#8e44ad",
+    black1: "#34495e",
+    black2: "2c3e50",
+    yellow1: "#f1c40f",
+    yellow2: "#f39c12",
+    orange1: "#e67e22",
+    orange2: "#d35400",
+    red1: "#e74c3c",
+    red2: "#c0392b",
+    lightgrey1: "#bdc3c7",
+    lightgrey2: "#95a5a6",
+    darkgrey1: "#9c9c9c",
+    darkgrey2: "#7f8c8d",
+};
 
-// CONSTANTS
-const HSL_PALETTE = [
-    { h: 168.8, s: 76.1, l: 50.0 }, // #1abc9c
-    { h: 145.0, s: 63.7, l: 47.1 }, // #2ecc71
-    { h: 204.0, s: 70.6, l: 53.9 }, // #3498db
-    { h: 282.6, s: 38.2, l: 50.2 }, // #9b59b6
-    { h: 210.0, s: 29.0, l: 39.2 }, // #34495e
-    { h: 168.8, s: 76.1, l: 43.9 }, // #16a085
-    { h: 145.0, s: 63.7, l: 39.0 }, // #27ae60
-    { h: 204.0, s: 70.6, l: 44.1 }, // #2980b9
-    { h: 282.6, s: 38.2, l: 39.8 }, // #8e44ad
-    { h: 210.0, s: 29.0, l: 31.4 }, // #2c3e50
-    { h: 48.0, s: 89.4, l: 56.7 }, // #f1c40f
-    { h: 28.6, s: 80.3, l: 51.8 }, // #e67e22
-    { h: 5.7, s: 79.5, l: 56.5 }, // #e74c3c
-    { h: 0.0, s: 0.0, l: 61.0 }, // #ecf0f1
-    { h: 0.0, s: 0.0, l: 60.0 }, // #95a5a6
-    { h: 36.7, s: 85.9, l: 49.4 }, // #f39c12
-    { h: 24.0, s: 84.6, l: 41.4 }, // #d35400
-    { h: 2.6, s: 79.7, l: 41.2 }, // #c0392b
-    { h: 0.0, s: 0.0, l: 74.1 }, // #bdc3c7
-    { h: 0.0, s: 0.0, l: 49.0 }, // #7f8c8d
-];
-
-const HEX_PALETTE = [
-    "#1abc9c",
-    "#2ecc71",
-    "#3498db",
-    "#9b59b6",
-    "#34495e",
-    "#16a085",
-    "#27ae60",
-    "#2980b9",
-    "#8e44ad",
-    "#2c3e50",
-    "#f1c40f",
-    "#e67e22",
-    "#e74c3c",
-    "#9c9c9c",
-    "#95a5a6",
-    "#f39c12",
-    "#d35400",
-    "#c0392b",
-    "#bdc3c7",
-    "#7f8c8d",
-];
-
-// Finds the nearest color in the palette provided
-function closestPaletteColor(hexColor: string): string {
-    const hslColor = rgbToHsl(hexToRgb(hexColor));
-
+function findClosestPaletteColorId(hexColor: string): keyof typeof palette {
+    let closestColorId: keyof typeof palette = "lightgrey2";
     let minDistance = Infinity;
-    let closestIndex = 0;
 
-    for (let i = 0; i < HSL_PALETTE.length; i++) {
-        const distance = colorsDistance(hslColor, HSL_PALETTE[i]);
+    Object.keys(palette).forEach((cId) => {
+        const distance = chroma.deltaE(
+            chroma(hexColor),
+            chroma(palette[cId as keyof typeof palette]),
+        );
+
         if (distance < minDistance) {
             minDistance = distance;
-            closestIndex = i;
+            closestColorId = cId as keyof typeof palette;
         }
-    }
+    });
 
-    return HEX_PALETTE[closestIndex];
+    return closestColorId;
 }
 
-// Calculates the distance between 2 HSL colors
-function colorsDistance(c1: HslColor, c2: HslColor): number {
-    const dh =
-        Math.min(Math.abs(c1.h - c2.h), 360 - Math.abs(c1.h - c2.h)) / 180;
-    const ds = (c1.s - c2.s) / 100;
-    const dl = (c1.l - c2.l) / 100;
-    return Math.sqrt(dh * dh + ds * ds + dl * dl);
-}
-
-// Converts a color in hexadecimal format to RGB
-function hexToRgb(hex: string): RgbColor {
-    hex = hex.replace(/^#/, "");
-    if (hex.length === 3) {
-        hex = hex
-            .split("")
-            .map((c) => c + c)
-            .join("");
-    }
-    const num = parseInt(hex, 16);
-    return {
-        r: (num >> 16) & 255,
-        g: (num >> 8) & 255,
-        b: num & 255,
-    };
-}
-
-// Converts a color in RGB format to HSL
-function rgbToHsl(c: RgbColor): HslColor {
-    c.r /= 255;
-    c.g /= 255;
-    c.b /= 255;
-    const max = Math.max(c.r, c.g, c.b),
-        min = Math.min(c.r, c.g, c.b);
-    let h = 0,
-        s = 0;
-    const l = (max + min) / 2;
-    const d = max - min;
-
-    if (d !== 0) {
-        s = d / (1 - Math.abs(2 * l - 1));
-        switch (max) {
-            case c.r:
-                h = (c.g - c.b) / d + (c.g < c.b ? 6 : 0);
-                break;
-            case c.g:
-                h = (c.b - c.r) / d + 2;
-                break;
-            case c.b:
-                h = (c.r - c.g) / d + 4;
-                break;
-        }
-        h *= 60;
-    }
-
-    return { h, s: s * 100, l: l * 100 };
-}
-
-// Adapted from https://stackoverflow.com/a/9664560
-// Posted by Alex Marchant, modified by community
-function isLightColor({ r, g, b }: RgbColor): boolean {
-    let brightness = r * 299 + g * 587 + b * 114;
-    brightness = brightness / 255000;
+function isLightColor(hexColor: string): boolean {
+    const brightness = chroma(hexColor).luminance();
 
     // Values range from 0 to 1
     // Anything greater than 0.5 should be bright enough for dark text
-    if (brightness >= 0.5) {
-        return true;
-    }
-    return false;
+    return brightness >= 0.5;
 }
 
-// Adapted from https://stackoverflow.com/a/5624139
-// Posted by Tim Down, modified by community.
-function rgbToHex(color: RgbColor): string {
-    const channelToHex = (c: number): string => {
-        const hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    };
-
-    return (
-        "#" +
-        channelToHex(color.r) +
-        channelToHex(color.g) +
-        channelToHex(color.b)
-    );
+function blendColors(hexColor1: string, hexColor2: string, amount: number): string {
+    return chroma(hexColor1).mix(hexColor2, amount).hex();
 }
 
-// Adapted from https://stackoverflow.com/a/32171077
-// Posted by Aaron Harris
-function blend(color1: RgbColor, color2: RgbColor, amount: number): RgbColor {
-    const blendColor: RgbColor = { r: 0, g: 0, b: 0 };
-
-    Object.keys(blendColor).forEach((channel) => {
-        const rgbChannel = channel as "r" | "g" | "b";
-        blendColor[rgbChannel] = Math.round(
-            color1[rgbChannel] * amount + color2[rgbChannel] * (1 - amount),
-        );
-    });
-
-    return blendColor;
-}
-
-export { closestPaletteColor, isLightColor, hexToRgb, blend, rgbToHex };
+export {
+    findClosestPaletteColorId,
+    isLightColor,
+    blendColors,
+    palette,
+};

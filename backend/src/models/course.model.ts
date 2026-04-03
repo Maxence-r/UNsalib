@@ -1,4 +1,5 @@
 import { Schema, model, type InferSchemaType } from "mongoose";
+import { palette } from "utils/color.js";
 
 type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 
@@ -19,10 +20,10 @@ const CourseSchema = new Schema(
             type: Date,
             required: true,
         },
-        colorRef: {
+        colorId: {
             type: String,
+            enum: Object.keys(palette),
             required: true,
-            default: "#ff7675",
         },
         roomIds: {
             type: [String],

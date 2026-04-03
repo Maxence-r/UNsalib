@@ -4,41 +4,55 @@ import { connect } from "mongoose";
 
 import { coursesService } from "./courses.service.js";
 import { Course } from "models/course.model.js";
+import { getHexHashFromString } from "utils/misc.js";
+import { findClosestPaletteColorId } from "utils/color.js";
 
-const processTestData = [
+const testData1__normalized = [
     {
-        celcatId: 1000,
+        celcatId: 1,
         category: "Test Category",
         start: new Date(2026, 0, 1, 8),
         end: new Date(2026, 0, 1, 9),
-        colorRef: "#ff7675",
-        roomIds: ["TestRoom"],
+        color: "#ff0000",
+        rooms: ["TestRoom"],
         teachers: ["Jean Dupont"],
-        groupIds: ["TestGroup"],
+        groups: ["TestGroup"],
         modules: ["TestModule"],
     },
     {
-        celcatId: 2000,
+        celcatId: 2,
         start: new Date(2026, 0, 2, 8),
         end: new Date(2026, 0, 2, 9),
-        colorRef: "#ff7675",
-        roomIds: ["TestRoom"],
+        color: "#ff0000",
+        rooms: ["TestRoom"],
         teachers: [],
-        groupIds: ["TestGroup"],
+        groups: ["TestGroup"],
         modules: [],
     },
     {
-        celcatId: 3000,
+        celcatId: 3,
         category: "Test Category 1",
         start: new Date(2026, 0, 3, 8),
         end: new Date(2026, 0, 3, 9),
-        colorRef: "#ff7675",
-        roomIds: ["TestRoom1", "TestRoom2"],
+        color: "#ff0000",
+        rooms: ["TestRoom1", "TestRoom2"],
         teachers: ["Jean Dupont", "Micheline Durand", "Marcel Dupond"],
-        groupIds: ["TestGroup", "TestGroup2"],
+        groups: ["TestGroup", "TestGroup2"],
         modules: ["TestModule1", "TestModule2", "TestModule3"],
     },
 ];
+
+const testData1__db = testData1__normalized.map((c) => ({
+    celcatId: c.celcatId,
+    ...(c.category && { category: c.category }),
+    start: c.start,
+    end: c.end,
+    teachers: c.teachers,
+    modules: c.modules,
+    roomIds: c.rooms.map((r) => getHexHashFromString(r)),
+    groupIds: c.groups.map((g) => getHexHashFromString(g)),
+    colorId: findClosestPaletteColorId(c.color),
+}));
 
 function getWithoutKeys<T extends { [key: string]: unknown }>(
     obj: T,
@@ -70,7 +84,7 @@ function sortCourses<
 
 async function setupProcess(): Promise<void> {
     await Course.deleteMany();
-    for (const course of processTestData) {
+    for (const course of testData1__db) {
         await new Course(course).save();
     }
 }
@@ -91,7 +105,7 @@ await describe("courses service", async () => {
                     await coursesService.processGroupCourses(
                         [],
                         [],
-                        "Test Group",
+                        getHexHashFromString("Test Group"),
                         "Test Campus",
                     );
                     assert((await Course.find()).length === 0);
@@ -105,7 +119,7 @@ await describe("courses service", async () => {
                     await coursesService.processGroupCourses(
                         [],
                         await Course.find(),
-                        "TestGroup",
+                        getHexHashFromString("TestGroup"),
                         "Test Campus",
                     );
                     const docsAfter = await Course.find().lean();
@@ -118,9 +132,9 @@ await describe("courses service", async () => {
                             "updatedAt",
                         ]),
                         {
-                            ...processTestData[2],
-                            groupIds: processTestData[2].groupIds.filter(
-                                (g) => g !== "TestGroup",
+                            ...testData1__db[2],
+                            groupIds: testData1__db[2].groupIds.filter(
+                                (g) => g !== getHexHashFromString("TestGroup"),
                             ),
                         },
                     );
@@ -130,17 +144,13 @@ await describe("courses service", async () => {
             await t.test("should not update any document", async () => {
                 await setupProcess();
                 await coursesService.processGroupCourses(
-                    processTestData.map((c) => ({
-                        color: c.colorRef,
-                        rooms: c.roomIds,
-                        ...c,
-                    })),
+                    testData1__normalized,
                     await Course.find(),
-                    "TestGroup",
+                    getHexHashFromString("TestGroup"),
                     "Test Campus",
                 );
                 const docsAfter = await Course.find().lean();
-                assert.equal(docsAfter.length, processTestData.length);
+                assert.equal(docsAfter.length, testData1__db.length);
 
                 assert.deepEqual(
                     sortCourses(
@@ -152,27 +162,23 @@ await describe("courses service", async () => {
                             ]),
                         ),
                     ),
-                    sortCourses(processTestData),
+                    sortCourses(testData1__db),
                 );
             });
 
             await t.test("should update a document modules", async () => {
-                const processTestDataWithNewModule = structuredClone(processTestData);
-                (processTestDataWithNewModule[0].modules as string[]).push(
-                    "AddedModule",
-                );
                 await coursesService.processGroupCourses(
-                    processTestDataWithNewModule.map((c) => ({
-                        color: c.colorRef,
-                        rooms: c.roomIds,
-                        ...c,
-                    })),
+                    testData1__normalized.map((v, i) =>
+                        i === 0
+                            ? { ...v, modules: [...v.modules, "AddedModule"] }
+                            : v,
+                    ),
                     await Course.find(),
-                    "TestGroup",
+                    getHexHashFromString("TestGroup"),
                     "Test Campus",
                 );
                 const docsAfter = await Course.find().lean();
-                assert.equal(docsAfter.length, processTestData.length);
+                assert.equal(docsAfter.length, testData1__db.length);
 
                 assert.deepEqual(
                     sortCourses(
@@ -184,27 +190,35 @@ await describe("courses service", async () => {
                             ]),
                         ),
                     ),
-                    sortCourses(processTestDataWithNewModule),
+                    sortCourses(
+                        testData1__db.map((v, i) =>
+                            i === 0
+                                ? {
+                                      ...v,
+                                      modules: [...v.modules, "AddedModule"],
+                                  }
+                                : v,
+                        ),
+                    ),
                 );
             });
 
             await t.test("should update a document teachers", async () => {
-                const processTestDataWithNewTeacher = structuredClone(processTestData);
-                (processTestDataWithNewTeacher[0].teachers as string[]).push(
-                    "AddedTeacher",
-                );
                 await coursesService.processGroupCourses(
-                    processTestDataWithNewTeacher.map((c) => ({
-                        color: c.colorRef,
-                        rooms: c.roomIds,
-                        ...c,
-                    })),
+                    testData1__normalized.map((v, i) =>
+                        i === 0
+                            ? {
+                                  ...v,
+                                  teachers: [...v.teachers, "Beatrice Jean"],
+                              }
+                            : v,
+                    ),
                     await Course.find(),
-                    "TestGroup",
+                    getHexHashFromString("TestGroup"),
                     "Test Campus",
                 );
                 const docsAfter = await Course.find().lean();
-                assert.equal(docsAfter.length, processTestData.length);
+                assert.equal(docsAfter.length, testData1__db.length);
 
                 assert.deepEqual(
                     sortCourses(
@@ -216,25 +230,38 @@ await describe("courses service", async () => {
                             ]),
                         ),
                     ),
-                    sortCourses(processTestDataWithNewTeacher),
+                    sortCourses(
+                        testData1__db.map((v, i) =>
+                            i === 0
+                                ? {
+                                      ...v,
+                                      teachers: [
+                                          ...v.teachers,
+                                          "Beatrice Jean",
+                                      ],
+                                  }
+                                : v,
+                        ),
+                    ),
                 );
             });
 
             await t.test("should update a document rooms", async () => {
-                const processTestDataWithNewRoom = structuredClone(processTestData);
-                processTestDataWithNewRoom[0].roomIds.push("AddedRoom");
                 await coursesService.processGroupCourses(
-                    processTestDataWithNewRoom.map((c) => ({
-                        color: c.colorRef,
-                        rooms: c.roomIds,
-                        ...c,
-                    })),
+                    testData1__normalized.map((v, i) =>
+                        i === 0
+                            ? {
+                                  ...v,
+                                  rooms: [...v.rooms, "Added Room"],
+                              }
+                            : v,
+                    ),
                     await Course.find(),
-                    "TestGroup",
+                    getHexHashFromString("TestGroup"),
                     "Test Campus",
                 );
                 const docsAfter = await Course.find().lean();
-                assert.equal(docsAfter.length, processTestData.length);
+                assert.equal(docsAfter.length, testData1__db.length);
 
                 assert.deepEqual(
                     sortCourses(
@@ -246,7 +273,19 @@ await describe("courses service", async () => {
                             ]),
                         ),
                     ),
-                    sortCourses(processTestDataWithNewRoom),
+                    sortCourses(
+                        testData1__db.map((v, i) =>
+                            i === 0
+                                ? {
+                                      ...v,
+                                      roomIds: [
+                                          ...v.roomIds,
+                                          getHexHashFromString("Added Room"),
+                                      ],
+                                  }
+                                : v,
+                        ),
+                    ),
                 );
             });
         });

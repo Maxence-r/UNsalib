@@ -17,7 +17,7 @@ async function fetchAppState(): Promise<ApiAppState> {
         }
         return await response.json();
     } catch (error) {
-        console.error("Impossible de recuperer le mode de l'application.");
+        console.error("Impossible de récupérer le mode de l'application.");
         console.error(error);
         return { maintenance: false, vacation: false };
     }

@@ -16,7 +16,7 @@ async function shouldShowVacationPage() {
         const state = await response.json();
         return state.vacation === true;
     } catch (error) {
-        console.error("Impossible de recuperer le mode de l'application.");
+        console.error("Impossible de récupérer le mode de l'application.");
         console.error(error);
         return false;
     }
@@ -33,7 +33,7 @@ export default async function VacancesPage() {
                 <Image className="status-logo" src="/logo96.png" alt="UNsalib" width={48} height={48} priority />
                 <span className="vacation-mark">UNsalib</span>
                 <h1>Bonnes vacances</h1>
-                <p>UNsalib revient a la rentree.</p>
+                <p>UNsalib revient à la rentrée.</p>
                 <span>Profitez bien de la pause.</span>
             </section>
         </main>

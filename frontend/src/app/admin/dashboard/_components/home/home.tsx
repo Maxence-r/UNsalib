@@ -41,7 +41,7 @@ export default function HomePage() {
                 setAppState(await getAppState());
             } catch (e) {
                 console.error(e as string);
-                setToastMessage("Impossible de recuperer le mode actuel.", true);
+                setToastMessage("Impossible de récupérer le mode actuel.", true);
                 showToast();
             } finally {
                 setIsAppStateLoading(false);
@@ -102,13 +102,13 @@ export default function HomePage() {
 
         if (!result.success || !result.state) {
             setAppState(previousState);
-            setToastMessage("Le mode n'a pas pu etre modifie.", true);
+            setToastMessage("Le mode n'a pas pu être modifié.", true);
             showToast();
             return;
         }
 
         setAppState(result.state);
-        setToastMessage("Mode mis a jour.");
+        setToastMessage("Mode mis à jour.");
         showToast();
     };
 
@@ -125,7 +125,7 @@ export default function HomePage() {
                                 <CardContent>
                                     <SwitchView
                                         title={appState.maintenance ? "Actif" : "Inactif"}
-                                        description="Affiche la page de maintenance a la place de l'application."
+                                        description="Affiche la page de maintenance à la place de l'application."
                                         checked={appState.maintenance}
                                         disabled={isAppStateLoading || savingMode !== null}
                                         onChange={(checked) => updateMode("maintenance", checked)}
@@ -137,7 +137,7 @@ export default function HomePage() {
                                 <CardContent>
                                     <SwitchView
                                         title={appState.vacation ? "Actif" : "Inactif"}
-                                        description="Affiche le message de vacances jusqu'a la rentree."
+                                        description="Affiche le message de vacances jusqu'à la rentrée."
                                         checked={appState.vacation}
                                         disabled={isAppStateLoading || savingMode !== null}
                                         onChange={(checked) => updateMode("vacation", checked)}

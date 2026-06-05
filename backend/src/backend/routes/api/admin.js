@@ -201,7 +201,7 @@ router.get('/app-state', async (req, res) => {
         res.status(200).json(await getAppState());
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
-        console.error(`Erreur pendant le traitement de la requete a '${req.url}' (${error.message})`);
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 
@@ -242,7 +242,7 @@ router.post('/app-state', async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ error: 'INTERNAL_ERROR' });
-        console.error(`Erreur pendant le traitement de la requete a '${req.url}' (${error.message})`);
+        console.error(`Erreur pendant le traitement de la requête à '${req.url}' (${error.message})`);
     }
 });
 

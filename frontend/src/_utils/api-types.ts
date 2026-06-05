@@ -11,6 +11,13 @@ export interface ApiRoom {
 
 export type ApiRoomsList = ApiRoom[];
 
+// Endpoint: /admin/app-state
+
+export interface ApiAppState {
+    maintenance: boolean,
+    vacation: boolean
+};
+
 // Endpoint: /rooms/timetable
 
 export interface ApiCourse {

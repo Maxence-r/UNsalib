@@ -1,28 +1,68 @@
-.page {
+.status-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    flex-direction: column;
     height: 100%;
     width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
     background-color: var(--background-color);
     color: var(--on-background-color);
     transition: background-color var(--animation-duration);
 }
 
-.infos {
+.status-content {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
+    max-width: 560px;
+    text-align: center;
 }
 
-.icon {
+.status-icon {
     color: var(--accent-color);
 }
 
-h1 {
+.status-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-sharp);
+}
+
+.status-content h1 {
     margin-block: 0;
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.status-content p {
+    margin-block: 0;
+    color: var(--on-background-color);
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.status-content span {
+    color: var(--neutral-color-dark);
+    font-size: 14px;
+}
+
+.vacation-mark {
+    color: var(--accent-color);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+@media screen and (max-width: 520px) {
+    .status-content h1 {
+        font-size: 32px;
+    }
+
+    .status-content p {
+        font-size: 16px;
+    }
 }

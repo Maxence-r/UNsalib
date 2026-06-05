@@ -1,5 +1,6 @@
 import {
     ApiAdminStatsOverview,
+    ApiAppState,
     ApiFeedback,
     ApiFeedbackStats,
     ApiPlatforms,
@@ -127,6 +128,36 @@ export async function getFeedbackStats(): Promise<ApiFeedbackStats> {
 export async function getAllFeedbacks(): Promise<ApiFeedback[]> {
     const response = await get("/feedback/all");
     return await response.json();
+}
+
+export async function getAppState(): Promise<ApiAppState> {
+    const response = await get("/admin/app-state");
+    return await response.json();
+}
+
+export async function updateAppState(
+    data: Partial<ApiAppState>,
+): Promise<{ success: boolean; error?: string; state?: ApiAppState }> {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/app-state`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(data),
+            },
+        );
+        const jsonResponse = await response.json();
+        if (response.ok && jsonResponse.message === "UPDATE_SUCCESSFUL") {
+            return { success: true, state: jsonResponse.state };
+        }
+        return { success: false, error: jsonResponse.error || "Unknown error" };
+    } catch (error) {
+        return { success: false, error: (error as Error).toString() };
+    }
 }
 
 export async function submitFeedbackReply(

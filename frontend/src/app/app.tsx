@@ -13,7 +13,6 @@ import {
     buildClientCookieString
 } from "@/_utils/install-prompt";
 import NavigationManager from "@/_utils/navigation-manager";
-import { redirect, RedirectType } from 'next/navigation';
 import { initializeVisitTracking } from "@/_utils/feedback-tracker";
 import AprilFishOverlay from "./_components/panel/aprilFishOverlay";
 import { showInstallPromptModal } from "./_components/panel/installPromptModal";
@@ -81,9 +80,6 @@ export default function App({ prefetchedRoomsList }: { prefetchedRoomsList: ApiR
         showInstallPromptModal();
     }, [clearInstallPromptTrigger, hasPendingInstallPrompt, isBrowserPwaCapable, isInstalled, isStorageHydrated, markInstallPromptAsShown]);
 
-    if (process.env.MAINTENANCE === "true") {
-        redirect('/maintenance', RedirectType.replace)
-    }
     return (
         <NavigationManager>
             <main tabIndex={-1} className="main">

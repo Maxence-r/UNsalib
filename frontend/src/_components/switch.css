@@ -39,6 +39,11 @@
     background-color: var(--accent-color);
 }
 
+.switch-input:disabled+.switch-slider {
+    cursor: wait;
+    opacity: .6;
+}
+
 .switch:hover .switch-slider::before {
     height: 14px;
     width: 14px;

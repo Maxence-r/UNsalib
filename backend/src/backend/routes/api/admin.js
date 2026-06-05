@@ -3,6 +3,7 @@ import Room from '../../models/room.js';
 import Account from '../../models/account.js';
 import Course from '../../models/course.js';
 import Stat from '../../models/stat.js';
+import Maintenance from '../../models/maintenance.js';
 import mongoose from 'mongoose';
 import pkg from 'jsonwebtoken';
 import { compare } from 'bcrypt';
@@ -20,6 +21,19 @@ import {
 const router = express.Router();
 const { sign } = pkg;
 const MONTH_LABELS = ['Janv.', 'Fevr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Aout', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+
+async function getAppState() {
+    const state = await Maintenance.findOneAndUpdate(
+        { key: 'global' },
+        { $setOnInsert: { key: 'global', maintenance: false, vacation: false } },
+        { new: true, upsert: true }
+    ).lean();
+
+    return {
+        maintenance: state.maintenance === true,
+        vacation: state.vacation === true
+    };
+}
 
 function padUnit(value) {
     return value.toString().padStart(2, '0');
@@ -180,6 +194,56 @@ router.get('/auth/status', async (req, res) => {
         return res.json({ message: 'LOGGED_IN' });
     }
     return res.json({ message: 'NOT_LOGGED_IN' });
+});
+
+router.get('/app-state', async (req, res) => {
+    try {
+        res.status(200).json(await getAppState());
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requete a '${req.url}' (${error.message})`);
+    }
+});
+
+router.post('/app-state', async (req, res) => {
+    if (!req.connected) return res.redirect('/admin/auth');
+
+    const update = {};
+    if (typeof req.body.maintenance === 'boolean') {
+        update.maintenance = req.body.maintenance;
+        if (req.body.maintenance) {
+            update.vacation = false;
+        }
+    }
+    if (typeof req.body.vacation === 'boolean') {
+        update.vacation = req.body.vacation;
+        if (req.body.vacation) {
+            update.maintenance = false;
+        }
+    }
+
+    if (Object.keys(update).length === 0) {
+        return res.status(400).json({ error: 'MISSING_BODY' });
+    }
+
+    try {
+        const state = await Maintenance.findOneAndUpdate(
+            { key: 'global' },
+            { $set: update, $setOnInsert: { key: 'global' } },
+            { new: true, upsert: true }
+        ).lean();
+
+        res.status(200).json({
+            message: 'UPDATE_SUCCESSFUL',
+            state: {
+                maintenance: state.maintenance === true,
+                vacation: state.vacation === true
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        console.error(`Erreur pendant le traitement de la requete a '${req.url}' (${error.message})`);
+    }
 });
 
 router.get('/rooms', async (req, res) => {

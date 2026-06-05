@@ -6,16 +6,26 @@ import Button from "@/_components/button";
 import { Card, CardContent, CardHeader, CardActions } from "@/_components/card";
 import { SwitchView } from "@/_components/switch";
 import { PieChart } from "@/_components/chart";
+import { setToastMessage, showToast } from "@/_components/toast";
+import { ApiAppState } from "@/_utils/api-types";
 import "./home.css";
 import {
+    getAppState,
     getDayPlatforms,
     getDayUniqueVisitors,
     getDayViews,
+    updateAppState,
 } from "../../_utils/client-actions";
 
 export default function HomePage() {
     const [dayUniqueVisitors, setDayUniqueVisitors] = useState<string>("-");
     const [dayViews, setDayViews] = useState<string>("-");
+    const [appState, setAppState] = useState<ApiAppState>({
+        maintenance: false,
+        vacation: false,
+    });
+    const [isAppStateLoading, setIsAppStateLoading] = useState(true);
+    const [savingMode, setSavingMode] = useState<keyof ApiAppState | null>(null);
     const [dayPlatforms, setDayPlatforms] = useState<{
         empty: boolean;
         data: { legend: string; value: number }[];
@@ -26,6 +36,17 @@ export default function HomePage() {
 
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
+        const fetchAppState = async () => {
+            try {
+                setAppState(await getAppState());
+            } catch (e) {
+                console.error(e as string);
+                setToastMessage("Impossible de recuperer le mode actuel.", true);
+                showToast();
+            } finally {
+                setIsAppStateLoading(false);
+            }
+        };
         const fetchDayUniqueVisitors = async () => {
             try {
                 setDayUniqueVisitors((await getDayUniqueVisitors()).toString());
@@ -58,10 +79,38 @@ export default function HomePage() {
             }
         };
 
+        fetchAppState();
         fetchDayUniqueVisitors();
         fetchDayViews();
         fetchDayPlatforms();
     }, []);
+
+    const updateMode = async (mode: keyof ApiAppState, enabled: boolean) => {
+        const previousState = appState;
+        const nextState = {
+            ...appState,
+            [mode]: enabled,
+            ...(enabled && mode === "maintenance" ? { vacation: false } : {}),
+            ...(enabled && mode === "vacation" ? { maintenance: false } : {}),
+        };
+
+        setSavingMode(mode);
+        setAppState(nextState);
+
+        const result = await updateAppState({ [mode]: enabled });
+        setSavingMode(null);
+
+        if (!result.success || !result.state) {
+            setAppState(previousState);
+            setToastMessage("Le mode n'a pas pu etre modifie.", true);
+            showToast();
+            return;
+        }
+
+        setAppState(result.state);
+        setToastMessage("Mode mis a jour.");
+        showToast();
+    };
 
     return (
         <div className="main dashboard-home">
@@ -75,11 +124,23 @@ export default function HomePage() {
                                 <CardHeader>Mode maintenance</CardHeader>
                                 <CardContent>
                                     <SwitchView
-                                        title="Activé"
-                                        onCheck={() => console.log("enabled")}
-                                        onUncheck={() =>
-                                            console.log("disabled")
-                                        }
+                                        title={appState.maintenance ? "Actif" : "Inactif"}
+                                        description="Affiche la page de maintenance a la place de l'application."
+                                        checked={appState.maintenance}
+                                        disabled={isAppStateLoading || savingMode !== null}
+                                        onChange={(checked) => updateMode("maintenance", checked)}
+                                    ></SwitchView>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader>Mode vacances</CardHeader>
+                                <CardContent>
+                                    <SwitchView
+                                        title={appState.vacation ? "Actif" : "Inactif"}
+                                        description="Affiche le message de vacances jusqu'a la rentree."
+                                        checked={appState.vacation}
+                                        disabled={isAppStateLoading || savingMode !== null}
+                                        onChange={(checked) => updateMode("vacation", checked)}
                                     ></SwitchView>
                                 </CardContent>
                             </Card>

@@ -1,39 +1,14 @@
-import { Flame } from "lucide-react";
-import { redirect, RedirectType } from 'next/navigation';
+import { Wrench } from "lucide-react";
 
 export default function App() {
-    if (process.env.MAINTENANCE === "false") {
-        redirect("/", RedirectType.replace);
-    }
-
     return (
-        <div className="page">
-            <Flame className="icon" size={96} />
-            <div
-                className="infos"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    padding: 24,
-                    alignItems: "center",
-                    textAlign: "center",
-                }}
-            >
+        <main tabIndex={-1} className="status-page">
+            <section className="status-content">
+                <Wrench className="status-icon" size={40} strokeWidth={1.8} />
                 <h1>Maintenance</h1>
-                <div>
-                    Nous faisons notre maximum pour rétablir UNsalib au plus
-                    vite.
-                </div>
-                <div
-                    style={{
-                        fontSize: 14,
-                        marginTop: "30%",
-                        color: "var(--neutral-color-dark)",
-                    }}
-                >
-                    Vous pouvez prendre une petite pause en attendant ! 😉
-                </div>
-            </div>
-        </div>
+                <p>UNsalib revient dans quelques instants.</p>
+                <span>Merci pour votre patience.</span>
+            </section>
+        </main>
     );
 }

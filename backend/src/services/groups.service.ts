@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
 import { dataConfig } from "configs/data.config.js";
@@ -66,7 +65,7 @@ class GroupsService {
      */
     async getGroupsForCampus(
         campusId: string,
-    ): Promise<(GroupSchemaProperties & { _id: Types.ObjectId })[]> {
+    ): Promise<(GroupSchemaProperties & { _id: string })[]> {
         return await Group.find({ campusId }).lean();
     }
 
@@ -266,6 +265,13 @@ class GroupsService {
 
     async getAll(): Promise<GroupSchemaProperties[]> {
         return await Group.find().lean();
+    }
+
+    async getByNameAndSectorId(
+        id: string,
+        sectorId: string,
+    ): Promise<GroupSchemaProperties | null> {
+        return await Group.findOne({ _id: id, sectorId }).lean();
     }
 }
 

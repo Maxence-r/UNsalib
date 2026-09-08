@@ -31,6 +31,10 @@ class SectorsService {
             }
         }
     }
+
+    async getById(id: string): Promise<SectorSchemaProperties | null> {
+        return await Sector.findById(id).lean();
+    }
 }
 
 const sectorsService = new SectorsService();

@@ -11,6 +11,13 @@ import { campusesService } from "services/campuses.service.js";
 import { coursesService } from "services/courses.service.js";
 
 async function launchBackgroundTasks(): Promise<void> {
+    // const gp = await groupsService.getByNameAndSectorId("L3INFO", "sciences");
+    // const sector = await sectorsService.getById("sciences");
+    // if (!gp || !sector) throw new Error("Ouch");
+
+    // await coursesService.syncGroupCourses(gp, sector, 14);
+    // return;
+
     await campusesService.init(
         dataConfig.campuses.map((campus) => campus.name),
     );

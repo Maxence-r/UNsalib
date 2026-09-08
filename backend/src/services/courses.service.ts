@@ -293,12 +293,13 @@ class CoursesService {
             if (course.rooms.length === 0) continue;
 
             // Process the course's rooms to save them to our database if needed
-            const cleanRooms = await Promise.all(
-                course.rooms.map(
-                    async (roomName) =>
-                        await roomsService.processRawRoom(roomName, campusId),
-                ),
-            );
+            const cleanRooms: string[] = [];
+
+            for (const roomName of course.rooms) {
+                cleanRooms.push(
+                    await roomsService.processRawRoom(roomName, campusId),
+                );
+            }
 
             const existingCourse = await this.findCourseDoc(
                 course.celcatId,
@@ -364,9 +365,7 @@ class CoursesService {
             extractedCourses = (
                 await extractCoursesFromCelcatXml(await celcatResponse.text())
             ).filter(
-                (c) =>
-                    c.start >= boundDates.start &&
-                    c.end <= boundDates.end,
+                (c) => c.start >= boundDates.start && c.end <= boundDates.end,
             );
         } catch (e) {
             if (!(e instanceof NoCelcatError)) {

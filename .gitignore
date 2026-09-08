@@ -36,3 +36,5 @@ build/
 # Custom
 frontend/src/app/premium
 frontend-old/
+.next
+frontend/next-env.d.ts

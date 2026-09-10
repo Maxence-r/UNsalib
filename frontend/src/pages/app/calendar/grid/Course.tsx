@@ -4,18 +4,6 @@ import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
 import { useModal } from "../../../../components/modal/Modal.js";
 
-function buildModuleNamesString(modules: string[], category: string): string {
-    const moduleNames = modules.map((module) => module.split(" - ")[1]);
-
-    if (moduleNames.length > 0) {
-        return moduleNames.join(" ; ");
-    } else if (category) {
-        return category;
-    } else {
-        return "Non renseigné";
-    }
-}
-
 function getCourseDurationMinutes(start: string, end: string): number {
     return (new Date(end).getTime() - new Date(start).getTime()) / 1000 / 60;
 }
@@ -46,7 +34,6 @@ function getCourseHeightPercent(
 }
 
 function Course({ course }: { course: ApiDataCourse }) {
-    const moduleNames = buildModuleNamesString(course.modules, course.category);
     const courseDurationMinutes = getCourseDurationMinutes(
         course.start,
         course.end,
@@ -59,7 +46,6 @@ function Course({ course }: { course: ApiDataCourse }) {
             endDate={course.end}
             color={course.color}
             groups={course.groups}
-            moduleNamesString={moduleNames}
             modules={course.modules}
             teachers={course.teachers}
         />,
@@ -92,7 +78,7 @@ function Course({ course }: { course: ApiDataCourse }) {
             className="course"
             onClick={openCourseModal}
         >
-            <h2>{moduleNames}</h2>
+            <h2>{course.modules.length > 0 ? course.modules.join(" ; ") : "Non renseigné"}</h2>
             <p>
                 {course.teachers.length > 0 ? course.teachers.join(" ; ") : ""}
             </p>

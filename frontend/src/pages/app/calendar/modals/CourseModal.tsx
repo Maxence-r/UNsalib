@@ -4,7 +4,6 @@ function CourseModal({
     color,
     groups,
     modules,
-    moduleNamesString,
     teachers,
 }: {
     startDate: string;
@@ -12,7 +11,6 @@ function CourseModal({
     color: string;
     groups: string[];
     modules: string[];
-    moduleNamesString: string;
     teachers: string[];
 }) {
     const start: Date = new Date(startDate);
@@ -44,7 +42,7 @@ function CourseModal({
                         backgroundColor: color,
                     }}
                 >
-                    <p>{moduleNamesString}</p>
+                    <p>{modules.length > 0 ? modules.join(" ; ") : "Non renseigné"}</p>
                 </div>
                 <p className="course-end">
                     {end.getHours() +

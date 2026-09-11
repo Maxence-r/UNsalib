@@ -33,12 +33,27 @@ function getCourseHeightPercent(
     return (courseDurationMinutes * 100) / dayDurationMinutes;
 }
 
+function getModulesStringWithFallback(
+    modules: string[],
+    category: string,
+): string {
+    const output: string[] = structuredClone(modules);
+    if (output.length === 0) {
+        output.push(category ?? "Non renseigné");
+    }
+
+    return output.join(" ; ");
+}
+
 function Course({ course }: { course: ApiDataCourse }) {
     const courseDurationMinutes = getCourseDurationMinutes(
         course.start,
         course.end,
     );
-
+    const modulesString = getModulesStringWithFallback(
+        course.modules,
+        course.category,
+    );
     const { open: openCourseModal } = useModal(
         `course-${course.courseId}`,
         <CourseModal
@@ -46,7 +61,7 @@ function Course({ course }: { course: ApiDataCourse }) {
             endDate={course.end}
             color={course.color}
             groups={course.groups}
-            modules={course.modules}
+            modulesString={modulesString}
             teachers={course.teachers}
         />,
     );
@@ -78,7 +93,9 @@ function Course({ course }: { course: ApiDataCourse }) {
             className="course"
             onClick={openCourseModal}
         >
-            <h2>{course.modules.length > 0 ? course.modules.join(" ; ") : "Non renseigné"}</h2>
+            <h2>
+                {modulesString}
+            </h2>
             <p>
                 {course.teachers.length > 0 ? course.teachers.join(" ; ") : ""}
             </p>

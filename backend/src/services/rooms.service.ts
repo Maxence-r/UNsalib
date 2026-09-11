@@ -214,8 +214,9 @@ class RoomsService {
      */
     async getRoomsByBuilding(
         buildingId: string,
+        reviewedOnly: boolean = true,
     ): Promise<RoomSchemaProperties[]> {
-        return await Room.find({ buildingId, reviewed: true }).lean();
+        return await Room.find({ buildingId, reviewed: reviewedOnly }).lean();
     }
 
     /**

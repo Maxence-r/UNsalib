@@ -38,14 +38,15 @@ class RoomsController {
             for (const building of buildings) {
                 const buildingRooms = await roomsService.getRoomsByBuilding(
                     building._id,
+                    false // uncomment to debug
                 );
 
                 for (const room of buildingRooms) {
                     rooms.push({
                         id: room._id,
                         // replace name with alias if present
-                        name: room.alias ?? room.univName,
-                        buildingName: building.alias ?? building.univName,
+                        name: room.alias ?? room.name,
+                        buildingName: building.alias ?? building._id,
                         features: room.features,
                         locked: room.locked,
                     });
@@ -100,7 +101,7 @@ class RoomsController {
                 id: doc._id,
                 name: doc.name,
                 alias: doc.alias,
-                building: doc.building,
+                building: doc.buildingId,
                 available: true,
                 features: doc.features,
             }));
@@ -133,8 +134,9 @@ class RoomsController {
 
             const weekInfos = getWeekInfos(data.weekNumber);
 
-            if (!(await roomsService.isReviewed(data.roomId)))
-                throw new ApiError(400, "Unknown room");
+            // Comment to debug
+            // if (!(await roomsService.isReviewed(data.roomId)))
+            //     throw new ApiError(400, "Unknown room");
 
             const result = await coursesService.getTimetable(
                 data.roomId,

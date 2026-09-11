@@ -19,12 +19,10 @@ function CourseModal({
         end.getHours() - start.getHours() > 0
             ? end.getHours() - start.getHours() + "h"
             : "";
-    let durationMinutes =
+    const durationMinutes =
         end.getMinutes() - start.getMinutes() > 0
             ? end.getMinutes() - start.getMinutes() + "min"
             : "";
-    durationMinutes =
-        durationHours == "" && durationMinutes == "" ? "0min" : durationMinutes;
 
     return (
         <div className="course-details">

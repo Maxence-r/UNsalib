@@ -24,12 +24,23 @@ const palette = {
 };
 
 function findClosestPaletteColorId(hexColor: string): keyof typeof palette {
+    // Default color is lightgrey2
     let closestColorId: keyof typeof palette = "lightgrey2";
     let minDistance = Infinity;
 
+    let color = chroma(hexColor);
+
+    // Saturate color if it is too light (Celcat) to improve
+    // palette detection
+    let it = 0;
+    while (it < 10 && Math.round(color.luminance() * 100) / 100 > 0.4) {
+        color = color.saturate(1);
+        it++;
+    }
+
     Object.keys(palette).forEach((cId) => {
-        const distance = chroma.deltaE(
-            chroma(hexColor),
+        const distance = chroma.distance(
+            color,
             chroma(palette[cId as keyof typeof palette]),
         );
 
@@ -50,13 +61,12 @@ function isLightColor(hexColor: string): boolean {
     return brightness >= 0.5;
 }
 
-function blendColors(hexColor1: string, hexColor2: string, amount: number): string {
+function blendColors(
+    hexColor1: string,
+    hexColor2: string,
+    amount: number,
+): string {
     return chroma(hexColor1).mix(hexColor2, amount).hex();
 }
 
-export {
-    findClosestPaletteColorId,
-    isLightColor,
-    blendColors,
-    palette,
-};
+export { findClosestPaletteColorId, isLightColor, blendColors, palette };

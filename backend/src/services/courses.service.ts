@@ -238,10 +238,7 @@ class CoursesService {
                     course.celcatId === searchedCourse.celcatId &&
                     course.start.getTime() === searchedCourse.start.getTime() &&
                     course.end.getTime() === searchedCourse.end.getTime() &&
-                    areArraysEqual(
-                        course.rooms.map((r) => getHexHashFromString(r)),
-                        searchedCourse.roomIds,
-                    ) &&
+                    areArraysEqual(course.rooms, searchedCourse.roomIds) &&
                     areArraysEqual(course.teachers, searchedCourse.teachers) &&
                     areArraysEqual(course.modules, searchedCourse.modules) &&
                     course.category === searchedCourse.category
@@ -263,7 +260,7 @@ class CoursesService {
             // Trying to find the course in the latest University data
             wantedCourseIndex = getCourseIndex(course, univCourses);
 
-            // DO NOT USE !wantedCourseIndex as wantedCourseIndex could be equal 
+            // DO NOT USE !wantedCourseIndex as wantedCourseIndex could be equal
             // to 0 which is falsy
             if (wantedCourseIndex === null) {
                 // If the course is not found, flag it for deletion
@@ -273,7 +270,7 @@ class CoursesService {
             }
         }
         // Now, univCourses only contains courses that need to be added to our DB
-        // and dbCourses contains courses that need to be deleted
+        // and toBeDeletedFromDb contains courses that need to be deleted
 
         // Browse courses that need to be deleted from our DB
         for (const course of toBeDeletedFromDb) {
@@ -316,6 +313,7 @@ class CoursesService {
             if (existingCourse) {
                 // If the course already exists, add the current processed group to its record
                 existingCourse.groupIds.push(groupId);
+                await existingCourse.save();
                 result.updated++;
             } else {
                 // If the course doesn't exists, create it in our DB

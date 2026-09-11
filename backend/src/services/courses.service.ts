@@ -263,7 +263,9 @@ class CoursesService {
             // Trying to find the course in the latest University data
             wantedCourseIndex = getCourseIndex(course, univCourses);
 
-            if (!wantedCourseIndex) {
+            // DO NOT USE !wantedCourseIndex as wantedCourseIndex could be equal 
+            // to 0 which is falsy
+            if (wantedCourseIndex === null) {
                 // If the course is not found, flag it for deletion
                 toBeDeletedFromDb.push(course);
             } else {

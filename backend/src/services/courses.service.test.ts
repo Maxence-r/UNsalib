@@ -108,7 +108,9 @@ function sortCourses<
     return courses;
 }
 
-async function setupDb(data: Omit<CourseSchemaProperties, "createdAt" | "updatedAt">[]): Promise<void> {
+async function setupDb(
+    data: Omit<CourseSchemaProperties, "createdAt" | "updatedAt">[],
+): Promise<void> {
     await Course.deleteMany();
     for (const course of data) {
         await new Course(course).save();

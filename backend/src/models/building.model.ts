@@ -13,10 +13,8 @@ const BuildingSchema = new Schema(
             type: String,
             ref: "Campus",
             required: true,
-        },
-        univName: {
-            type: String,
-            required: true,
+            // The building is assigned to the first campus 
+            // where it appears
         },
         alias: {
             type: String,

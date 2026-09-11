@@ -5,7 +5,6 @@ import {
     BuildingSchemaProperties,
 } from "../models/building.model.js";
 import { roomsService } from "./rooms.service.js";
-import { getHexHashFromString } from "../utils/misc.js";
 
 class BuildingsService {
     /**
@@ -49,9 +48,7 @@ class BuildingsService {
     /**
      * Find all buildings
      */
-    async findAll(): Promise<
-        (BuildingSchemaProperties & { _id: Types.ObjectId })[]
-    > {
+    async findAll(): Promise<BuildingSchemaProperties[]> {
         return await Building.find().lean();
     }
 
@@ -59,9 +56,9 @@ class BuildingsService {
      * Return a building associated with the given ID
      */
     async getBuildingById(
-        buildingId: string,
+        id: string,
     ): Promise<BuildingSchemaProperties> {
-        const building = await Building.findById(buildingId).lean();
+        const building = await Building.findById(id).lean();
         if (!building) throw new Error("Building not found");
         return building;
     }
@@ -77,22 +74,18 @@ class BuildingsService {
 
     async addBuildigIfNotExists(
         campusId: string,
-        univName: string,
-    ): Promise<string> {
-        const nameHash = getHexHashFromString(univName);
-        const existingBuilding = await Building.exists({ _id: nameHash });
+        name: string,
+    ): Promise<void> {
+        const existingBuilding = await Building.exists({ _id: name });
 
         if (!existingBuilding) {
             // Add the building if not found
             const newBuilding = new Building({
-                _id: nameHash,
-                univName: univName,
+                _id: name,
                 campusId: campusId,
             });
             await newBuilding.save();
         }
-
-        return nameHash;
     }
 }
 

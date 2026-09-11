@@ -5,7 +5,7 @@ type RoomSchemaProperties = InferSchemaType<typeof RoomSchema>;
 const RoomSchema = new Schema(
     {
         _id: {
-            // We use the raw room name as an id (which contains 
+            // We use the raw room name as an id (which contains
             // room and building names)
             type: String,
             required: true,
@@ -13,10 +13,10 @@ const RoomSchema = new Schema(
         buildingId: {
             type: String,
             ref: "Building",
-            // Some room might not be part of any building if the 
+            // Some room might not be part of any building if the
             // name detection fails
         },
-        univName: {
+        name: {
             type: String,
             required: true,
         },

@@ -1,0 +1,42 @@
+#dashboard .content#account {
+    & .card {
+        max-width: 500px;
+    }
+
+    & > .general-infos {
+        display: flex;
+        width: 100%;
+        gap: 20px;
+
+        @media screen and (max-width: 425px) {
+            & {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        & > .pp {
+            background-color: var(--color-neutral);
+            height: 100px;
+            width: 100px;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            & > span {
+                margin-block: 0px;
+                font-family: "Cal Sans", sans-serif;
+                font-size: 30px;
+                font-weight: normal;
+            }
+        }
+
+        @media screen and (max-width: 425px) {
+            & > .card {
+                width: 100%;
+            }
+        }
+    }
+}

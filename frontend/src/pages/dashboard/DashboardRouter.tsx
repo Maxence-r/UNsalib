@@ -4,6 +4,7 @@ import { ChartPie, House, Pen } from "lucide-react";
 import { Dashboard } from "./Dashboard";
 import { ProtectedRoute } from "../../utils/ProtectedRoute";
 import { Manage } from "./manage/Manage";
+import { Account } from "./account/Account";
 
 const DASHBOARD_VIEWS = [
     { id: "home", name: "Accueil", icon: <House />, component: <></> },
@@ -23,10 +24,13 @@ const dashboardRouter = {
         },
         {
             element: <Dashboard />,
-            children: DASHBOARD_VIEWS.map((view) => ({
-                path: view.id,
-                element: view.component,
-            })),
+            children: [
+                ...DASHBOARD_VIEWS.map((view) => ({
+                    path: view.id,
+                    element: view.component,
+                })),
+                { path: "account", element: <Account /> },
+            ],
         },
     ],
 };

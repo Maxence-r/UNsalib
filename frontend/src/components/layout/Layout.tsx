@@ -5,12 +5,16 @@ import "./Layout.css";
 function Section({
     title,
     children,
+    className,
+    id,
 }: {
     title?: string;
     children: ReactNode;
+    className?: string;
+    id?: string;
 }): ReactElement {
     return (
-        <div className="section">
+        <div className={`section${className ? " " + className : ""}`} id={id}>
             {title && <h3 className="title">{title}</h3>}
             {children}
         </div>

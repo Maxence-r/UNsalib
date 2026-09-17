@@ -1,6 +1,6 @@
 // import { useState, useEffect } from "react";
-import { useLocation } from "react-router";
-import type { ReactElement } from "react";
+import { Outlet, useLocation } from "react-router";
+import { Children, type ReactElement } from "react";
 
 // import { ApiUserAccount } from "./_utils/types";
 import { Sidebar } from "./sidebar/Sidebar";
@@ -30,7 +30,7 @@ function Dashboard(): ReactElement {
                     currentViewTitle={
                         DASHBOARD_VIEWS.filter(
                             (view) => view.id === currentViewId,
-                        )[0].name
+                        )[0]?.name
                     }
                 />
             ) : (
@@ -47,17 +47,11 @@ function Dashboard(): ReactElement {
                         device !== "mobile"
                             ? DASHBOARD_VIEWS.filter(
                                   (view) => view.id === currentViewId,
-                              )[0].name
+                              )[0]?.name
                             : undefined
                     }
                 >
-                    <div className="content">
-                        {
-                            DASHBOARD_VIEWS.filter(
-                                (view) => view.id === currentViewId,
-                            )[0].component
-                        }
-                    </div>
+                    <Outlet />
                 </Layout>
             </div>
         </main>

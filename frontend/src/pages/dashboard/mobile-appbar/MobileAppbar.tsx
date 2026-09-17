@@ -85,11 +85,11 @@ function MobileAppbar({
                 secondary
             />
             <h2>{currentViewTitle}</h2>
-            <img
-                className="account-icon"
-                // src={`data:image/png;base64,${userAccount.icon}`}
-                alt="Account icon"
-            />
+            <div className="pp">
+                <span>
+                    {`${accountName?.[0]}${accountLastname?.[0]}`.toUpperCase()}
+                </span>
+            </div>
         </div>
     );
 }

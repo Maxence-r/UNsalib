@@ -122,10 +122,25 @@
                         }
                     }
 
-                    & > img {
-                        border-radius: var(--border-radius-full);
+                    & > .pp {
+                        background-color: var(--color-on-accent);
                         height: 20px;
-                        width: auto;
+                        width: 20px;
+                        border-radius: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-shrink: 0;
+                        outline: 5px solid var(--color-on-accent);
+                        outline-offset: -1px;
+
+                        & > span {
+                            margin-block: 0px;
+                            font-family: "Cal Sans", sans-serif;
+                            font-size: 11px;
+                            font-weight: normal;
+                            color: var(--color-neutral-dark);
+                        }
                     }
                 }
             }

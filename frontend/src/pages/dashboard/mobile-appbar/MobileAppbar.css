@@ -14,11 +14,23 @@
             font-weight: 600;
         }
 
-        & > .account-icon {
-            border-radius: var(--border-radius-full);
+        & > .pp {
+            background-color: var(--color-neutral);
             height: 30px;
-            width: auto;
+            width: 30px;
             margin-left: 10px;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            & > span {
+                margin-block: 0px;
+                font-family: "Cal Sans", sans-serif;
+                font-size: 11px;
+                font-weight: normal;
+            }
         }
 
         & > .menu {

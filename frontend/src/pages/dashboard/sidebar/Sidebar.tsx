@@ -72,10 +72,11 @@ function Sidebar({
                     actions={[
                         {
                             icon: (
-                                <img
-                                    // src={`data:image/png;base64,${userAccount.icon}`}
-                                    alt=""
-                                />
+                                <div className="pp">
+                                    <span>
+                                        {`${accountName?.[0]}${accountLastname?.[0]}`.toUpperCase()}
+                                    </span>
+                                </div>
                             ),
                             name:
                                 accountName && accountLastname

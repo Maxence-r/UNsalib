@@ -1,4 +1,5 @@
-import "../../utils/theme.css";
+import type { InputEventHandler, KeyboardEventHandler, ReactElement } from "react";
+
 import "./Input.css";
 
 function Input({
@@ -7,19 +8,19 @@ function Input({
     type = "text",
     placeholder = "",
     value = "",
-    name = null,
-    onInput = () => {},
-    onKeyDown = () => {},
+    name,
+    onInput,
+    onKeyDown,
 }: {
     className?: string;
     id?: string;
     type?: string;
     placeholder?: string;
     value?: string;
-    name?: string | null;
-    onInput?: React.KeyboardEventHandler<HTMLInputElement>;
-    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
-}) {
+    name?: string;
+    onInput?: InputEventHandler<HTMLInputElement>;
+    onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+}): ReactElement {
     return (
         <input
             id={id}

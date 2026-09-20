@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 import "./Badge.css";
 
 function Badge({
@@ -8,7 +10,7 @@ function Badge({
     className?: string;
     id?: string;
     text: string;
-}) {
+}): ReactElement {
     return (
         <span id={id} className={className ? `badge ${className}` : "badge"}>
             {text}

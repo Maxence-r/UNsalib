@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, type ReactElement } from "react";
 import { create } from "zustand";
 import { CircleAlert, CircleCheck } from "lucide-react";
 
@@ -30,7 +30,7 @@ let toastIdCounter = 0;
 const useToastStore = create<ToastStore>()((set, get) => ({
     toasts: [],
 
-    hideOldest: () =>
+    hideOldest: (): void =>
         set((state) => {
             const oldestVisible = state.toasts.find((t) => !t.isHidden);
             if (!oldestVisible) return state;
@@ -49,7 +49,7 @@ const useToastStore = create<ToastStore>()((set, get) => ({
                 ),
             };
         }),
-    add: (message, isError) => {
+    add: (message, isError): void => {
         const id = ++toastIdCounter;
 
         // Hide the toast after a certain amount of time
@@ -79,7 +79,7 @@ const useToastStore = create<ToastStore>()((set, get) => ({
             ],
         }));
     },
-    remove: (id) =>
+    remove: (id): void =>
         set((state) => {
             const toast = state.toasts.find((t) => t.id === id);
             if (toast) {
@@ -104,7 +104,7 @@ function Toast({
     isHidden: boolean;
     isEntering: boolean;
     close: () => void;
-}) {
+}): ReactElement {
     let classes = "toast";
     classes += isError ? " error" : "";
     classes += isHidden ? " hidden" : "";
@@ -122,7 +122,7 @@ function Toast({
     );
 }
 
-function ToastProvider({ zIndex }: { zIndex: number }) {
+function ToastProvider({ zIndex }: { zIndex: number }): ReactElement {
     const toasts = useToastStore((s) => s.toasts);
     const hideOldest = useToastStore((s) => s.hideOldest);
 
@@ -142,7 +142,9 @@ function ToastProvider({ zIndex }: { zIndex: number }) {
     );
 }
 
-function useToast() {
+function useToast(): {
+    open: (message: string, isError?: boolean) => void;
+} {
     const add = useToastStore((s) => s.add);
 
     const open = useCallback(

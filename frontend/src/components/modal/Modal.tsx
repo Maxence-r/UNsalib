@@ -14,7 +14,7 @@ import { create } from "zustand";
 import "./Modal.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
 
-function clamp(val: number, min: number, max: number) {
+function clamp(val: number, min: number, max: number): number {
     return Math.max(min, Math.min(val, max));
 }
 
@@ -27,19 +27,22 @@ const ANIMATION = {
 
 const VELOCITY_THRESHOLD = 80;
 
-function useWindowSize() {
+function useWindowSize(): {
+    windowHeight: number;
+    windowWidth: number;
+} {
     const [height, setHeight] = useState<number>(window.innerHeight);
     const [width, setWidth] = useState<number>(window.innerWidth);
 
     useEffect(() => {
-        const handleResize = () => {
+        const handleResize = (): void => {
             setHeight(window.innerHeight);
             setWidth(window.innerWidth);
         };
 
         window.addEventListener("resize", handleResize);
 
-        return () => {
+        return (): void => {
             window.removeEventListener("resize", handleResize);
         };
     }, []);
@@ -57,15 +60,17 @@ function Modal({
     isOpen: boolean;
     close: () => void;
     depth: number;
-}) {
+}): ReactElement {
     const sheetRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
     const isMobile = useDeviceType() === "mobile";
     const { windowHeight, windowWidth } = useWindowSize();
 
-    const windowHPercent = (percent: number) => windowHeight * (percent / 100);
-    const windowWPercent = (percent: number) => windowWidth * (percent / 100);
+    const windowHPercent = (percent: number): number =>
+        windowHeight * (percent / 100);
+    const windowWPercent = (percent: number): number =>
+        windowWidth * (percent / 100);
 
     const SNAP = {
         MOBILE: {
@@ -168,14 +173,14 @@ function Modal({
 
     useEffect(() => {
         // Handle closing with the escape key
-        const handleKeyDown = (e: KeyboardEvent) => {
+        const handleKeyDown = (e: KeyboardEvent): void => {
             if (e.key === "Escape" && isOpen) {
                 handleClose();
             }
         };
 
         document.addEventListener("keydown", handleKeyDown);
-        return () => {
+        return (): void => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, [isOpen, handleClose]);
@@ -207,7 +212,7 @@ function Modal({
             if (!contentRef.current || contentRef.current.scrollTop !== 0)
                 return;
 
-            const getOpacity = (coord: number, isMobile: boolean) => {
+            const getOpacity = (coord: number, isMobile: boolean): number => {
                 const p1 = {
                     x: isMobile ? SNAP.MOBILE.OPEN : SNAP.DESKTOP.OPEN,
                     y: 1,
@@ -350,7 +355,7 @@ function Modal({
             }
         });
 
-        return () => {
+        return (): void => {
             cancelAnimationFrame(frameId);
         };
     }, [isOpen, snapToState]);
@@ -429,7 +434,7 @@ const useModalStore = create<ModalStore>()((set) => ({
     modals: {},
     openModalsStack: [],
 
-    register: (id, contentRef) =>
+    register: (id, contentRef): void =>
         set((state) => {
             if (Object.keys(state.modals).includes(id))
                 console.warn(`Duplicate modal ids found: ${id}`);
@@ -438,16 +443,16 @@ const useModalStore = create<ModalStore>()((set) => ({
                 modals: { [id]: { contentRef }, ...state.modals },
             };
         }),
-    unregister: (id) =>
+    unregister: (id): void =>
         set((state) => {
             delete state.modals[id];
             return {
                 modals: state.modals,
             };
         }),
-    open: (id) =>
+    open: (id): void =>
         set((state) => ({ openModalsStack: [id, ...state.openModalsStack] })),
-    close: (id) =>
+    close: (id): void =>
         set((state) => ({
             openModalsStack: state.openModalsStack.filter(
                 (modalId) => modalId != id,
@@ -455,7 +460,7 @@ const useModalStore = create<ModalStore>()((set) => ({
         })),
 }));
 
-function ModalProvider({ zIndex }: { zIndex: number }) {
+function ModalProvider({ zIndex }: { zIndex: number }): ReactElement {
     const modals = useModalStore((s) => s.modals);
     const openModalsStack = useModalStore((s) => s.openModalsStack);
     const close = useModalStore((s) => s.close);
@@ -482,7 +487,12 @@ function ModalProvider({ zIndex }: { zIndex: number }) {
     );
 }
 
-function useModal(id: string, content: ReactNode) {
+function useModal(
+    id: string,
+    content: ReactNode,
+): {
+    open: () => void;
+} {
     const register = useModalStore((s) => s.register);
     const unregister = useModalStore((s) => s.unregister);
     const open = useModalStore((s) => s.open);
@@ -493,7 +503,7 @@ function useModal(id: string, content: ReactNode) {
     useEffect(() => {
         register(id, contentRef);
 
-        return () => unregister(id);
+        return (): void => unregister(id);
     }, [id, register, unregister]);
 
     return { open: () => open(id) };

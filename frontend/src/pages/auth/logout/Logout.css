@@ -44,16 +44,6 @@
         border: 4px solid transparent;
         border-top-color: var(--color-accent);
         border-radius: 50%;
-        animation: 1s infinite spinner-loading;
-    }
-}
-
-@keyframes spinner-loading {
-    from {
-        transform: rotate(0turn);
-    }
-
-    to {
-        transform: rotate(1turn);
+        animation: 1s infinite spin;
     }
 }

@@ -1,5 +1,5 @@
 .input {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: "Space Grotesk", sans-serif;
     font-weight: 600;
     font-size: 14px;
     min-height: 50px;
@@ -9,9 +9,9 @@
     border: none;
     outline: none;
     color: var(--color-on-surface);
-}
 
-.input::placeholder {
-    color: var(--color-neutral-dark);
-    font-size: 14px;
+    &::placeholder {
+        color: var(--color-neutral-dark);
+        font-size: 14px;
+    }
 }

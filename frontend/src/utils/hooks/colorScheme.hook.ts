@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function useColorScheme() {
+function useColorScheme(): "light" | "dark" {
     const [colorScheme, setColorScheme] = useState<"light" | "dark">(
         window.matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
@@ -8,7 +8,7 @@ function useColorScheme() {
     );
 
     useEffect(() => {
-        const onChange = (event: MediaQueryListEvent) => {
+        const onChange = (event: MediaQueryListEvent): void => {
             setColorScheme(event.matches ? "dark" : "light");
         };
 
@@ -16,7 +16,7 @@ function useColorScheme() {
             .matchMedia("(prefers-color-scheme: dark)")
             .addEventListener("change", onChange);
 
-        return () => {
+        return (): void => {
             window
                 .matchMedia("(prefers-color-scheme: dark)")
                 .removeEventListener("change", onChange);

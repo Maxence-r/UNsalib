@@ -24,4 +24,5 @@ const authRouter = {
     ],
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { authRouter, AUTH_VIEWS };

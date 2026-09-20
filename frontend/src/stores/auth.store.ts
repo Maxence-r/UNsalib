@@ -9,8 +9,8 @@ interface AuthStore {
 const useAuthStore = create<AuthStore>((set) => ({
     accessToken: null,
 
-    setAccessToken: (token) => set({ accessToken: token }),
-    removeAccessToken: () => set({ accessToken: null }),
+    setAccessToken: (token): void => set({ accessToken: token }),
+    removeAccessToken: (): void => set({ accessToken: null }),
 }));
 
 export { useAuthStore };

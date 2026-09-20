@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { MIN_WIDTH_BREAKPOINTS } from "../constants";
 
-function getDevice() {
+function getDevice(): "desktop" | "tablet" | "mobile" {
     if (
         window.matchMedia(`(min-width: ${MIN_WIDTH_BREAKPOINTS.desktop}px)`)
             .matches
@@ -20,19 +20,19 @@ function getDevice() {
     return "mobile";
 }
 
-function useDeviceType() {
+function useDeviceType(): "desktop" | "tablet" | "mobile" {
     const [deviceType, setDeviceType] = useState<
         "desktop" | "tablet" | "mobile"
     >(getDevice());
 
     useEffect(() => {
-        const onResize = () => {
+        const onResize = (): void => {
             setDeviceType(getDevice());
         };
 
         window.addEventListener("resize", onResize);
 
-        return () => {
+        return (): void => {
             window.removeEventListener("resize", onResize);
         };
     }, []);

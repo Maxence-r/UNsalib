@@ -1,4 +1,9 @@
-import { useEffect, useState, type KeyboardEvent } from "react";
+import {
+    useEffect,
+    useState,
+    type KeyboardEvent,
+    type ReactElement,
+} from "react";
 import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
 
 import { TextButton, IconButton } from "../../../components/button/Button";
@@ -11,7 +16,7 @@ import { ResponseError } from "../../../api/axios";
 import { router } from "../../Router";
 import { useAuth } from "../../../utils/hooks/auth.hook";
 
-function Login() {
+function Login(): ReactElement {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [username, setUsername] = useState("");
@@ -20,7 +25,7 @@ function Login() {
     const setAccessToken = useAuthStore((s) => s.setAccessToken);
     const setAccount = useAccountStore((s) => s.save);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         if (username.length > 0 && password.length > 0) {
             setIsLoading(true);
             try {
@@ -54,17 +59,18 @@ function Login() {
         }
     };
 
-    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>): void => {
         if (event.key === "Enter") handleSubmit();
     };
 
-    const handleShowPasswordButtonClick = () => setShowPassword(!showPassword);
+    const handleShowPasswordButtonClick = (): void =>
+        setShowPassword(!showPassword);
 
     const { isLoading: isLoginCheckLoading, isLoggedIn } = useAuth();
 
     useEffect(() => {
         if (!isLoginCheckLoading) {
-            (async () => {
+            (async (): Promise<void> => {
                 if (isLoggedIn) router.navigate("/dashboard");
             })();
         }

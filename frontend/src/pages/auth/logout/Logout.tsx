@@ -1,18 +1,18 @@
 import { CircleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 
 import "./Logout.css";
 import { logout } from "../../../api/auth.api";
 import { useAuth } from "../../../utils/hooks/auth.hook";
 import { router } from "../../Router";
 
-function Logout() {
+function Logout(): ReactElement {
     const { isLoading, isLoggedIn } = useAuth();
     const [error, setError] = useState<boolean>(false);
 
     useEffect(() => {
         if (!isLoading) {
-            (async () => {
+            (async (): Promise<void> => {
                 if (isLoggedIn) {
                     try {
                         await logout();

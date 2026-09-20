@@ -1,7 +1,9 @@
 import { Outlet } from "react-router";
+import type { ReactElement } from "react";
+
 import "./Auth.css";
 
-function Auth() {
+function Auth(): ReactElement {
     return (
         <main id="auth">
             <div className="panel">

@@ -1,8 +1,9 @@
 import { Outlet, Navigate } from "react-router";
+import type { ReactElement } from "react";
 
 import { useAuth } from "./hooks/auth.hook";
 
-function ProtectedRoute() {
+function ProtectedRoute(): ReactElement {
     const { isLoading, isLoggedIn } = useAuth();
 
     if (isLoading) return <></>;

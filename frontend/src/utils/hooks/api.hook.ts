@@ -18,7 +18,7 @@ function useApi<T>(
     useEffect(() => {
         let cancelled = false;
 
-        async function fetchData() {
+        async function fetchData(): Promise<void> {
             try {
                 setLoading(true);
                 setError(null);
@@ -42,7 +42,7 @@ function useApi<T>(
 
         fetchData();
 
-        return () => {
+        return (): void => {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

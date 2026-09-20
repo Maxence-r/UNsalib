@@ -8,8 +8,8 @@ interface PanelState {
 
 export const usePanelStore = create<PanelState>()((set) => ({
     isOpened: true,
-    open: () => set({ isOpened: true }),
-    close: () => set({ isOpened: false }),
+    open: (): void => set({ isOpened: true }),
+    close: (): void => set({ isOpened: false }),
 }));
 
 interface CurrentRoomStore {
@@ -19,7 +19,7 @@ interface CurrentRoomStore {
 
 const useCurrentRoomStore = create<CurrentRoomStore>()((set) => ({
     room: null,
-    setRoom: (id: string, name: string) =>
+    setRoom: (id: string, name: string): void =>
         set({ room: { id: id, name: name } }),
 }));
 

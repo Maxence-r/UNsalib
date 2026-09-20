@@ -5,13 +5,16 @@ import { refreshToken } from "../../api/auth.api";
 
 let isRefreshing = false;
 
-function useAuth() {
+function useAuth(): {
+    isLoading: boolean;
+    isLoggedIn: boolean;
+} {
     const accessToken = useAuthStore<string | null>((s) => s.accessToken);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        (async () => {
+        (async (): Promise<void> => {
             if (!accessToken) {
                 if (!isRefreshing) {
                     setIsLoading(true);

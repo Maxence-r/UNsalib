@@ -19,8 +19,8 @@ const useAccountStore = create<AccountStore>()(
         (set) => ({
             account: null,
 
-            save: (account: Account) => set({ account: account }),
-            remove: () => set({ account: null }),
+            save: (account: Account): unknown => set({ account: account }),
+            remove: (): unknown => set({ account: null }),
         }),
         {
             name: "unsalib-account",

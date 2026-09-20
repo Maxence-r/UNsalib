@@ -24,12 +24,16 @@ function Section({
 function Layout({
     title,
     children,
+    className,
+    id,
 }: {
     title?: string;
     children: ReactNode;
+    className?: string;
+    id?: string;
 }): ReactElement {
     return (
-        <div className="layout">
+        <div className={`layout${className ? " " + className : ""}`} id={id}>
             {title && <h3 className="title">{title}</h3>}
             {children}
         </div>

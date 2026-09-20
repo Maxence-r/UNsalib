@@ -1,0 +1,20 @@
+#dashboard .content#manage {
+    & > .new-rooms > .rooms-list {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        width: 100%;
+        gap: 4px;
+
+        @media screen and (max-width: 425px) {
+            & {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        & .header > h3 {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+}

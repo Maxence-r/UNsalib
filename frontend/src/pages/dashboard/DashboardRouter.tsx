@@ -5,9 +5,10 @@ import { Dashboard } from "./Dashboard";
 import { ProtectedRoute } from "../../utils/ProtectedRoute";
 import { Manage } from "./manage/Manage";
 import { Account } from "./account/Account";
+import { Home } from "./home/Home";
 
 const DASHBOARD_VIEWS = [
-    { id: "home", name: "Accueil", icon: <House />, component: <></> },
+    { id: "home", name: "Accueil", icon: <House />, component: <Home /> },
     { id: "manage", name: "Gestion", icon: <Pen />, component: <Manage /> },
     { id: "stats", name: "Statistiques", icon: <ChartPie />, component: <></> },
 ];

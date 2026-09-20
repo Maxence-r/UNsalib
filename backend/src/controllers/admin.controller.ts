@@ -10,29 +10,34 @@ import { roomsService } from "../services/rooms.service.js";
 
 class AdminController {
     /**
-     * @route   GET /new-buildings
-     * @desc    Find new buildings
+     * @route   GET /rooms/not-reviewed
+     * @desc    Find rooms that need to be completed
      * @access  Private
      **/
-    async findNewBuildings(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async findRoomsToComplete(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
+            const roomsNotReviewed = await roomsService.findNotReviewed();
+
             res.json({
                 success: true,
-                data: await Building.find({ isNew: true }),
+                data: roomsNotReviewed.map((r) => ({
+                    id: r._id,
+                    buildingId: r.buildingId,
+                    name: r.name,
+                    alias: r.alias,
+                    seats: r.seats,
+                    type: r.type,
+                    whiteBoards: r.whiteBoards,
+                    blackBoards: r.blackBoards,
+                    displays: r.displays,
+                    locked: r.locked,
+                    features: r.features,
+                })),
             });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    /**
-     * @route   GET /rooms-to-complete
-     * @desc    Find rooms to complete (rooms without building)
-     * @access  Private
-     **/
-    async findRoomsToComplete(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            res.json({ success: true, data: await Room.find({ type: "" }) });
         } catch (error) {
             next(error);
         }
@@ -43,7 +48,11 @@ class AdminController {
      * @desc   Return building by id
      * @access Private
      **/
-    async getBuildingById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getBuildingById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const buildingId = matchedData(req).buildingId;
             const building = await Building.findById(buildingId);
@@ -83,7 +92,11 @@ class AdminController {
      * @desc   Return campus by id
      * @access Private
      **/
-    async getCampusById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getCampusById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const campusId = matchedData(req).campusId;
             const campus = await Campus.findById(campusId);
@@ -101,7 +114,11 @@ class AdminController {
      * @desc   Return all campuses
      * @access Private
      **/
-    async getAllCampuses(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getAllCampuses(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const campuses = await Campus.find();
             res.json({ success: true, data: campuses });
@@ -115,7 +132,11 @@ class AdminController {
      * @desc   Return room by id
      * @access Private
      **/
-    async getRoomById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getRoomById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const roomId = matchedData(req).roomId;
             const room = await Room.findById(roomId);
@@ -152,7 +173,11 @@ class AdminController {
      * @desc   Move building to another campus
      * @access Private
      **/
-    async moveBuilding(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async moveBuilding(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const { buildingId, newCampusId } = matchedData(req);
             const building = await Building.findById(buildingId);
@@ -174,7 +199,11 @@ class AdminController {
      * @desc   Move room to another building
      * @access Private
      **/
-    async moveRoom(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async moveRoom(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const { roomId, newBuildingId } = matchedData(req);
             await roomsService.moveRoom(
@@ -210,13 +239,17 @@ class AdminController {
             next(error);
         }
     }
-    
+
     /**
      * @route  PATCH /room/:id
      * @desc   Update room details
      * @access Private
      */
-    async updateRoomDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async updateRoomDetails(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const { roomId, details } = matchedData(req);
             const room = await Room.findById(roomId);
@@ -236,7 +269,11 @@ class AdminController {
      * @desc   Merge two buildings
      * @access Private
      **/
-    async mergeBuildings(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async mergeBuildings(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const { sourceBuildingId, targetBuildingId } = matchedData(req);
             await buildingsService.mergeBuildings(
@@ -254,7 +291,11 @@ class AdminController {
      * @desc   Merge two rooms
      * @access Private
      **/
-    async mergeRooms(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async mergeRooms(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
         try {
             const { sourceRoomId, targetRoomId } = matchedData(req);
             await roomsService.mergeRooms(

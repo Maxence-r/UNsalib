@@ -19,9 +19,92 @@ class RoomsService {
         return await Room.find({ reviewed: true }).lean();
     }
 
+    async findNotReviewed(): Promise<RoomSchemaProperties[]> {
+        return await Room.find({ reviewed: false }).lean();
+    }
+
     async isReviewed(roomId: string): Promise<boolean> {
         const room = await Room.findOne({ _id: roomId });
         return !!(room && room.reviewed);
+    }
+
+    async addRoomIfNotExists(
+        rawName: string,
+        cleanName: string,
+        buildingId?: string,
+    ): Promise<void> {
+        const existingRoom = await Room.exists({
+            _id: rawName,
+        });
+        if (!existingRoom) {
+            // Add the room if not found
+            const newRoom = new Room({
+                _id: rawName,
+                name: cleanName,
+                buildingId,
+            });
+            await newRoom.save();
+        }
+    }
+
+    async processRawRoom(rawName: string, campusId: string): Promise<string> {
+        // Filter room blocks (e.g: Room A ; Room B)
+        if (rawName.includes(" ; ")) throw new Error("Invalid room name");
+
+        if (/\(.*\)$/.test(rawName)) {
+            // Raw name correctly formatted: 'roomName (roomBuilding)'
+            // Correctly handle duplicated building names like 'roomName (roomBuilding) (roomBuilding)'
+            const buildingName = /\(([^)]*)\)$/.exec(rawName)?.[1];
+            const roomName =
+                /^[^(]*(?<! )/.exec(rawName)?.[0].trim() ?? rawName;
+
+            // Test if the building exists in the campus and add it if needed
+            // If the building name detection failed, we skip this creation step:
+            // the room will be an orphan but this is allowed by our model
+            if (buildingName) {
+                await buildingsService.addBuildigIfNotExists(
+                    campusId,
+                    buildingName,
+                );
+            }
+
+            // Test if the room exists in the building and add it if needed
+            await this.addRoomIfNotExists(rawName, roomName, buildingName);
+        } else {
+            // Bad raw name formatting
+            // We add the room with its raw name and no building associated
+            await this.addRoomIfNotExists(rawName, rawName);
+        }
+
+        return rawName;
+    }
+
+    /**
+     * Get room documents by building
+     */
+    async getRoomDocsByBuilding(
+        buildingId: string,
+    ): Promise<HydratedDocument<RoomSchemaProperties>[]> {
+        return await Room.find({ buildingId });
+    }
+
+    /**
+     * Get rooms by building
+     */
+    async getRoomsByBuilding(
+        buildingId: string,
+        reviewedOnly: boolean = true,
+    ): Promise<RoomSchemaProperties[]> {
+        return await Room.find({ buildingId, reviewed: reviewedOnly }).lean();
+    }
+
+    /**
+     * Return a room associated with the given ID
+     */
+    async getRoomById(roomId: string): Promise<RoomSchemaProperties> {
+        const room = await Room.findById(roomId).lean();
+        if (!room) throw new Error("Room not found");
+        return room;
     }
 
     // **********************************************************
@@ -103,61 +186,6 @@ class RoomsService {
         return availableRoomsFiltered;
     }
 
-    // **********************************************************
-    // END TODO
-    // **********************************************************
-
-    async addRoomIfNotExists(
-        rawName: string,
-        cleanName: string,
-        buildingId?: string,
-    ): Promise<void> {
-        const existingRoom = await Room.exists({
-            _id: rawName,
-        });
-        if (!existingRoom) {
-            // Add the room if not found
-            const newRoom = new Room({
-                _id: rawName,
-                name: cleanName,
-                buildingId,
-            });
-            await newRoom.save();
-        }
-    }
-
-    async processRawRoom(rawName: string, campusId: string): Promise<string> {
-        // Filter room blocks (e.g: Room A ; Room B)
-        if (rawName.includes(" ; ")) throw new Error("Invalid room name");
-
-        if (/\(.*\)$/.test(rawName)) {
-            // Raw name correctly formatted: 'roomName (roomBuilding)'
-            // Correctly handle duplicated building names like 'roomName (roomBuilding) (roomBuilding)'
-            const buildingName = /\(([^)]*)\)$/.exec(rawName)?.[1];
-            const roomName =
-                /^[^(]*(?<! )/.exec(rawName)?.[0].trim() ?? rawName;
-
-            // Test if the building exists in the campus and add it if needed
-            // If the building name detection failed, we skip this creation step:
-            // the room will be an orphan but this is allowed by our model
-            if (buildingName) {
-                await buildingsService.addBuildigIfNotExists(
-                    campusId,
-                    buildingName,
-                );
-            }
-
-            // Test if the room exists in the building and add it if needed
-            await this.addRoomIfNotExists(rawName, roomName, buildingName);
-        } else {
-            // Bad raw name formatting
-            // We add the room with its raw name and no building associated
-            await this.addRoomIfNotExists(rawName, rawName);
-        }
-
-        return rawName;
-    }
-
     /**
      * Move a room to another building
      */
@@ -200,33 +228,9 @@ class RoomsService {
         await sourceRoom.deleteOne();
     }
 
-    /**
-     * Get room documents by building
-     */
-    async getRoomDocsByBuilding(
-        buildingId: string,
-    ): Promise<HydratedDocument<RoomSchemaProperties>[]> {
-        return await Room.find({ buildingId });
-    }
-
-    /**
-     * Get rooms by building
-     */
-    async getRoomsByBuilding(
-        buildingId: string,
-        reviewedOnly: boolean = true,
-    ): Promise<RoomSchemaProperties[]> {
-        return await Room.find({ buildingId, reviewed: reviewedOnly }).lean();
-    }
-
-    /**
-     * Return a room associated with the given ID
-     */
-    async getRoomById(roomId: string): Promise<RoomSchemaProperties> {
-        const room = await Room.findById(roomId).lean();
-        if (!room) throw new Error("Room not found");
-        return room;
-    }
+    // **********************************************************
+    // END TODO
+    // **********************************************************
 }
 
 const roomsService = new RoomsService();

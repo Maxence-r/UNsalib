@@ -56,6 +56,21 @@ interface ApiDataRefreshToken {
     accessToken: string;
 }
 
+// Endpoint: /admin/rooms/not-reviewed
+interface ApiDataAdminRoomsNotReviewed {
+    id: string;
+    buildingId?: string;
+    name: string;
+    alias?: string;
+    seats?: number;
+    type?: "amphi" | "tp" | "td" | "info";
+    whiteBoards?: number;
+    blackBoards?: number;
+    displays?: number;
+    locked: boolean;
+    features: ("visio" | "ilot")[];
+}
+
 // Endpoint: /admin/stats/unique-visitors
 
 export interface ApiUniqueVisitors {
@@ -91,4 +106,5 @@ export type {
     ApiDataCourse,
     ApiDataLogin,
     ApiDataRefreshToken,
+    ApiDataAdminRoomsNotReviewed
 };

@@ -1,0 +1,20 @@
+#dashboard .content#home {
+    @media screen and (min-width: 425px) {
+        & .card {
+            max-width: 300px;
+        }
+    }
+
+    & > .general-infos {
+        display: flex;
+        width: 100%;
+        gap: 20px;
+
+        @media screen and (max-width: 425px) {
+            & {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    }
+}

@@ -445,33 +445,25 @@ import {
 import { ChipsContainer } from "../../../../../components/chip/Chip.js";
 import { Switch } from "../../../../../components/switch/Switch";
 import { Slider } from "../../../../../components/slider/Slider.js";
-import { DatePicker } from "../../../../../components/date-time-picker/DateTimePicker.js";
-import { Input } from "../../../../../components/input/Input.js";
+import {
+    DatePicker,
+    TimePicker,
+} from "../../../../../components/date-time-picker/DateTimePicker.js";
 import { isExists } from "date-fns";
-
-function DateTimeInput(): ReactElement {
-    const [value, setValue] = useState<string>("");
-
-    const handleInput = (e: InputEvent<HTMLInputElement>): void => {
-        let date = e.currentTarget.value;
-
-        if (date.length === 2) {
-            date += "/";
-        }
-
-        // if (!parseInt(date))
-
-        setValue(date);
-    };
-
-    return <input value={value} onInput={handleInput} className="day-input" />;
-}
 
 function SearchModal({ close }: { close?: () => void }): ReactElement {
     const [seats, setSeats] = useState(6);
     const [blackBoards, setBlackBoards] = useState(0);
     const [whiteBoards, setWhiteBoards] = useState(0);
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
+    const [selectedDay, setSelectedDay] = useState<Date>(new Date());
+    const [selectedStartTime, setSelectedStartTime] = useState<Date>(
+        new Date(),
+    );
+    const [selectedEndTime, setSelectedEndTime] = useState<Date>(
+        // Now + 1h
+        new Date(new Date().getTime() + 3600 * 1000),
+    );
 
     const handleSeatsChange = (s: number): void => {
         setSeats(s);
@@ -487,27 +479,39 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
         <div className="search">
             <div className="options">
                 <div className="schedules-layout">
-                    <Card>
-                        <CardHeader text="Horaires"></CardHeader>
+                    <DatePicker
+                        selectedDate={selectedDay}
+                        setSelectedDate={setSelectedDay}
+                    />
+                    <Card className="selector">
                         <CardContent>
-                            Le
-                            <DateTimeInput />
+                            <div className="section">
+                                <span className="section-title">
+                                    À partir de :
+                                </span>
+                                <TimePicker
+                                    selectedTime={selectedStartTime}
+                                    setSelectedTime={setSelectedStartTime}
+                                />
+                            </div>
+                            <div className="section">
+                                <span className="section-title">Jusqu'à :</span>
+                                <TimePicker
+                                    selectedTime={selectedEndTime}
+                                    setSelectedTime={setSelectedEndTime}
+                                />
+                            </div>
                         </CardContent>
                     </Card>
-                    {/* <Card className="selector">
-                        <CardHeader text="Sélectionner"></CardHeader>
-                        <CardContent>
-                            <TimePicker />
-                        </CardContent>
-                    </Card> */}
-                    <DatePicker />
                 </div>
                 <Card>
                     <CardHeader text="Caractéristiques"></CardHeader>
                     <CardContent>
                         <div className="features">
                             <div className="section">
-                                <span>Places assises</span>
+                                <span className="section-title">
+                                    Places assises
+                                </span>
                                 <div className="slider-container">
                                     <span className="legend">
                                         <span className="value">
@@ -523,7 +527,7 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
                                 </div>
                             </div>
                             <div className="section">
-                                <span>Tableaux</span>
+                                <span className="section-title">Tableaux</span>
                                 <div className="slider-container">
                                     <span className="legend">
                                         Noirs :{" "}
@@ -558,7 +562,9 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
                                 </div>
                             </div>
                             <div className="section">
-                                <span>Autres équipements</span>
+                                <span className="section-title">
+                                    Autres équipements
+                                </span>
                                 <ChipsContainer
                                     multiSelect
                                     options={["Îlots", "Visioconférence"]}

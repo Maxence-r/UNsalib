@@ -251,7 +251,7 @@ export default function FeedbackDrawerContent({
     return (
         <div className="feedback-drawer">
             <div className="feedback-header">
-                <h2>Comment trouvez-vous UNsalib ?</h2>
+                <h2>Que pensez-vous d&apos;UNsalib ?</h2>
                 <p>Votre avis nous aide à améliorer l&apos;application.</p>
             </div>
 
@@ -293,11 +293,14 @@ export default function FeedbackDrawerContent({
             <div className="feedback-comment">
                 <label htmlFor="feedback-comment-input">
                     <MessageSquare size={20} />
-                    <span>Des suggestions ou améliorations ? (optionnel)</span>
+                    <div>
+                        <span>Des suggestions ? Envie de nous écrire un petit retour ?</span>
+                        <span className="helper">Optionnel, mais ça fait plaisir :)</span>
+                    </div>
                 </label>
                 <textarea
                     id="feedback-comment-input"
-                    placeholder="Partagez vos idées avec nous..."
+                    placeholder="J'utilise UNsalib tous les jours et je l'adore ! J'ai pensé que vous pourriez peut-être ajouter..."
                     value={comment}
                     onChange={(event) => setComment(event.target.value)}
                     maxLength={500}

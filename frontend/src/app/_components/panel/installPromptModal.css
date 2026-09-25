@@ -27,10 +27,10 @@
     padding: 0;
     border: none;
     background: transparent;
-    color: #0f1115;
+    color: var(--on-background-color);
     font-family: "Space Grotesk", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 14px;
+    margin-top: 20px;
     line-height: 1;
     cursor: pointer;
 }
@@ -54,7 +54,7 @@
 
 .installPromptSheet__helper {
     margin: -12px 0 0;
-    color: #5b6172;
+    color: var(--neutral-color-dark);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.45;
@@ -73,8 +73,8 @@
     height: auto;
     padding: 0;
     overflow: visible;
-    background-color: #ffffff;
-    color: #0f1115;
+    background-color: var(--background-color);
+    color: var(--on-background-color);
 }
 
 .modal.active>.modal-content.modal-content--installPrompt {

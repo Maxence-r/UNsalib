@@ -9,7 +9,7 @@ import wsManager from "../../../server.js";
 // Groups update interval in milliseconds
 const CYCLE_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
 // Number of days to fetch for each timetable
-const DAYS_TO_RETRIEVE = 120;
+const DAYS_TO_RETRIEVE = 60;
 // Storage of the average processing time for each group
 let averageProcessingTime = { timeSum: 0, measuresNumber: 0 };
 
@@ -321,7 +321,11 @@ async function fetchCourses(group) {
 
     try {
         // Getting data from the Nantes Université timetable API
-        const response = await fetch(requestUrl);
+        const response = await fetch(requestUrl, {
+            headers: {
+                "User-Agent": "UNsalib engine",
+            },
+        });
         if (!response.ok) {
             const responseContent = await response.text();
             console.error(

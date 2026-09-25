@@ -43,6 +43,17 @@ export default function App() {
                 <div className="content-container">
                     <h2 className="page-title">Journal des mises à jour</h2>
                     <ReleaseSection
+                        versionNumber="2.4"
+                        versionName="Barbara"
+                        date="09/2026"
+                        features={[
+                            { icon: "💬", description: "Ajout d'un système de commentaires" },
+                            { icon: "🛡️", description: "Améliorations diverses du tableau de bord administrateur" },
+                            { icon: "🔧", description: "Ajout des modes vacances et maintenance" },
+                            { icon: "🛠️", description: "Correction de bugs" }
+                        ]}
+                    />
+                    <ReleaseSection
                         versionNumber="2.3"
                         versionName="Barbara"
                         date="11/2025"

@@ -120,10 +120,27 @@
 .feedback-comment label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 20px;
     font-size: 14px;
     font-weight: 500;
     color: var(--on-surface-color);
+    margin-bottom: 8px;
+    margin-top: 20px;
+}
+
+.feedback-comment label > svg {
+    flex-shrink: 0;
+}
+
+.feedback-comment label > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feedback-comment label > div > .helper {
+    font-weight: 300;
+    font-size: 13px;
 }
 
 .feedback-comment textarea {
@@ -147,7 +164,7 @@
 }
 
 .feedback-comment textarea::placeholder {
-    color: var(--on-surface-variant-color);
+    color: var(--neutral-color-dark);
 }
 
 .character-count {

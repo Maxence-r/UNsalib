@@ -26,7 +26,7 @@ class SectorsService {
                         celcatId: sector.celcatId,
                         campusId: campus.name.toLowerCase().replace(" ", "-"),
                     },
-                    { upsert: true, new: true },
+                    { upsert: true, returnDocument: "after" },
                 );
             }
         }

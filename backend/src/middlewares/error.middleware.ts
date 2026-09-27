@@ -1,5 +1,7 @@
-import { logger } from "../utils/logger.js";
 import { Request, Response, NextFunction } from "express";
+
+import { logger } from "../utils/logger.js";
+import { appConfig } from "configs/app.config.js";
 
 /**
  * Custom error class for API errors
@@ -49,7 +51,7 @@ function errorHandler(
                     .map((obj) => `${obj.message} for '${obj.field}' field`)
                     .join(", ");
         }
-    } else if (process.env.NODE_ENV !== "development") {
+    } else if (!appConfig.isDevMode) {
         // Do not leak unexpected error messages in production
         message = "";
     }
@@ -67,7 +69,7 @@ function errorHandler(
     res.status(statusCode).json({
         success: false,
         message: message || "Internal server error",
-        ...(process.env.NODE_ENV === "development" && {
+        ...(appConfig.isDevMode && {
             stack: stack,
         }),
     });

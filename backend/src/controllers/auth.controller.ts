@@ -29,7 +29,7 @@ class AuthController {
             // Set refresh token in HttpOnly cookie
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
+                secure: !appConfig.isDevMode,
                 sameSite: "strict",
                 maxAge: appConfig.jwt.refreshExpire * 1000,
             });
@@ -69,7 +69,7 @@ class AuthController {
             // Set new rotated refresh token
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
+                secure: !appConfig.isDevMode,
                 sameSite: "strict",
                 maxAge: appConfig.jwt.refreshExpire * 1000,
             });
@@ -104,7 +104,7 @@ class AuthController {
 
                 res.clearCookie("refreshToken", {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
+                    secure: !appConfig.isDevMode,
                     sameSite: "strict",
                 });
             }

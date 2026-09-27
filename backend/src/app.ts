@@ -38,7 +38,7 @@ app.use(cookieParser());
 app.use(compression());
 
 // HTTP request logger
-if (process.env.NODE_ENV === "development") {
+if (appConfig.isDevMode) {
     app.use(morgan("dev"));
 } else {
     app.use(

@@ -197,30 +197,13 @@ input[type=number] {
         & > .schedules-layout {
             display: flex;
             gap: 12px;
-            transition: gap 0.3s;
+            width: 100%;
 
-            & > .selector {
-                width: 200px;
-                transition:
-                    width 0.3s,
-                    padding 0.3s,
-                    border 0.3s;
-            }
-
-            &.hide-selector {
-                gap: 0;
-
-                & > .selector {
-                    width: 0;
-                    padding-left: 0;
-                    padding-right: 0;
-                    border-left-width: 0;
-                    border-right-width: 0;
-                }
-            }
-
-            & > :not(.selector) {
-                flex-grow: 1;
+            & .content {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                height: 100%;
             }
         }
 
@@ -228,43 +211,42 @@ input[type=number] {
             display: flex;
             flex-direction: column;
             gap: 16px;
+        }
 
-            & > .section {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
+        & .section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
 
-                & > span {
-                    font-weight: 600;
-                }
-
-                & > .slider-container {
-                    display: flex;
-                    gap: 8px;
-                    align-items: center;
-
-                    & > .legend {
-                        width: 100px;
-                        font-size: 14px;
-                        color: var(--color-neutral-dark);
-                        font-weight: 500;
-
-                        & > .value {
-                            color: var(--color-on-surface);
-                        }
-                    }
-
-                    & > input {
-                        flex-grow: 1;
-                    }
-                }
-            }
-
-            & > .switch-container {
-                display: flex;
-                justify-content: space-between;
+            & > .section-title {
                 font-weight: 600;
             }
+
+            & > .slider-container {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+
+                & > .legend {
+                    width: 100px;
+                    font-size: 14px;
+                    color: var(--color-neutral-dark);
+                    font-weight: 500;
+
+                    & > .value {
+                        color: var(--color-on-surface);
+                    }
+                }
+
+                & > input {
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        & .switch-container {
+            display: flex;
+            justify-content: space-between;
         }
     }
 }

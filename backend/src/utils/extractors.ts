@@ -2,8 +2,8 @@ import { parseStringPromise } from "xml2js";
 import { parse } from "node-html-parser";
 
 import {
-    getDateFromFrenchDateString,
-    setDateTimeFromTimeString,
+    getDateFromFrenchDatestring,
+    setDateTimeFromTimestring,
 } from "./date.js";
 
 interface NormalizedCourse {
@@ -127,14 +127,14 @@ async function extractCoursesFromCelcatXml(
         );
         if (!dateRef) continue;
 
-        const day = getDateFromFrenchDateString(dateRef.$.date);
+        const day = getDateFromFrenchDatestring(dateRef.$.date);
         day.setDate(day.getDate() + parseInt(event.day[0]));
 
-        const start = setDateTimeFromTimeString(
+        const start = setDateTimeFromTimestring(
             structuredClone(day),
             event.starttime[0],
         );
-        const end = setDateTimeFromTimeString(
+        const end = setDateTimeFromTimestring(
             structuredClone(day),
             event.endtime[0],
         );

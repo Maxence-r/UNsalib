@@ -8,7 +8,7 @@ import {
     type NormalizedCourse,
 } from "../utils/extractors.js";
 import { dataConfig } from "../configs/data.config.js";
-import { getBoundDates, getISODate } from "../utils/date.js";
+import { getBoundDates, getISODateString } from "../utils/date.js";
 import { SectorSchemaProperties } from "../models/sector.model.js";
 import { logger } from "../utils/logger.js";
 import {
@@ -377,7 +377,7 @@ class CoursesService {
             }
 
             const univResponse = await fetch(
-                `${dataConfig.baseUrl}/events?start=${getISODate(boundDates.start)}&end=${getISODate(boundDates.end)}&timetables%5B%5D=${group.univId}`,
+                `${dataConfig.baseUrl}/events?start=${getISODateString(boundDates.start)}&end=${getISODateString(boundDates.end)}&timetables%5B%5D=${group.univId}`,
             );
             extractedCourses = extractCoursesFromUnivJson(
                 sanitizeJsonString(await univResponse.text()),

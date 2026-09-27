@@ -1,51 +1,163 @@
-// Checks whether a date is in the format 'yyyy-MM-ddTHH:mm:ss+HH:mm'
-function isValidDate(date: string): boolean {
-    const regex =
-        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}):(\d{2})$/;
-    return regex.test(date);
+import {
+    addDays,
+    addWeeks,
+    format,
+    getISOWeeksInYear,
+    isValid,
+    parse,
+    startOfISOWeekYear,
+    set,
+} from "date-fns";
+
+class InvalidDateError extends Error {
+    constructor(date: string | Date | number) {
+        super(`'${String(date)}' is not a valid existing date.`);
+    }
 }
 
-// Returns the start date, end date and number of a week
-function getWeekInfos(weekNumber: number): {
-    start: Date;
-    end: Date;
-    number: number;
-} {
-    let year = new Date().getFullYear();
-    if (weekNumber > 52) {
-        weekNumber -= 52;
-        year++;
+class TimestringFormatError extends Error {
+    constructor(timestring: string) {
+        super(`'${timestring}' is not in the HH:mm format.`);
+    }
+}
+
+class TimestringError extends Error {
+    constructor(timestring: string) {
+        super(`'${timestring}' does not represent a valid time.`);
+    }
+}
+
+class FrenchDatestringFormatError extends Error {
+    constructor(datestring: string) {
+        super(`'${datestring}' is not in the dd/MM/yyyy format.`);
+    }
+}
+
+class TimestampFormatError extends Error {
+    constructor(ts: string) {
+        super(`'${ts}' is not a valid milliseconds timestamp format.`);
+    }
+}
+
+// function getDatesRange(start: Date, end: Date): string[] {
+//     const range = [];
+//     const current = start;
+//     while (current < end) {
+//         range.push(current.toISOString().split("T")[0]);
+//         current.setDate(current.getDate() + 1);
+//     }
+//     range.push(current.toISOString().split("T")[0]);
+//     return range;
+// }
+
+function getDateFromTimestampString(ts: string): Date {
+    if (!/^[0-9]{13}$/.test(ts)) {
+        throw new TimestampFormatError(ts);
     }
 
-    const fourJanuaryDate = new Date(year, 0, 4);
-    const weekDay = fourJanuaryDate.getDay() || 7; // day of the week (1-7)
-    const firstMonday = new Date(fourJanuaryDate);
-    firstMonday.setDate(fourJanuaryDate.getDate() - (weekDay - 1));
+    const intTs = parseInt(ts);
+    if (!isValid(intTs)) throw new InvalidDateError(ts);
 
-    // Calculating the Monday of the week requested
-    const monday = new Date(firstMonday);
-    monday.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
-
-    // Calculating the Saturday of the week requested
-    const saturday = new Date(monday);
-    saturday.setDate(monday.getDate() + 6);
-    saturday.setHours(23);
-    saturday.setMinutes(59);
-    saturday.setSeconds(59);
-
-    return { start: monday, end: saturday, number: weekNumber };
+    return new Date(intTs);
 }
 
-// Returns the number of the current week
-function getWeeksNumber(): number {
-    const currentDate = new Date(); // current date
-    const startDate = new Date(currentDate.getFullYear(), 0, 1); // start date of the year (1st January)
-    const currentDay = currentDate.getDay(); // current day (0 for Sunday, ... , 6 for Saturday)
+function getDateFromFrenchDatestring(datestring: string): Date {
+    if (!/^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/.test(datestring)) {
+        throw new FrenchDatestringFormatError(datestring);
+    }
 
-    // Algorithm from https://perso.univ-lemans.fr/~hainry/articles/semaine.html
+    const parsed = parse(datestring, "dd/MM/yyyy", new Date());
+    if (!isValid(parsed)) throw new InvalidDateError(datestring);
+
+    return parsed;
+}
+
+function setDateTimeFromTimestring(date: Date, timestring: string): Date {
+    if (!isValid(date)) {
+        throw new InvalidDateError(date);
+    }
+    if (!/^[0-9]{2}:[0-9]{2}$/.test(timestring)) {
+        throw new TimestringFormatError(timestring);
+    }
+    if (!/^[0-9][0-3]:[0-5][0-9]$/.test(timestring)) {
+        throw new TimestringError(timestring);
+    }
+
+    return parse(timestring, "HH:mm", date);
+}
+
+function scheduleRun(triggerDate: Date, fn: () => void): void {
+    setTimeout(() => {
+        if (new Date() >= triggerDate) {
+            fn();
+        } else {
+            scheduleRun(triggerDate, fn);
+        }
+    }, 1000);
+}
+
+/**
+ * Return the start and end dates from now to now + increment
+ */
+function getBoundDates(increment: number): {
+    start: Date;
+    end: Date;
+} {
+    const startDate = set(new Date(), {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    });
+    const endDate = set(new Date(startDate), {
+        date: startDate.getDate() + increment,
+        hours: 23,
+        minutes: 59,
+        seconds: 59,
+    });
+
+    return {
+        start: startDate,
+        end: endDate,
+    };
+}
+
+function getISODateString(date: Date): string {
+    if (!isValid(date)) {
+        throw new InvalidDateError(date);
+    }
+
+    return format(date, "yyyy-MM-dd");
+}
+
+/**
+ * Return the index of a week (current by default), or the next week
+ * if the current day is part of the weekend
+ *
+ * Note: We cannot use date-fns getWeek() function because it returns
+ * false values (see https://github.com/date-fns/date-fns/issues/3485).
+ * Instead, our function works very well and is based on the algorithm presented by
+ * Gilles HAINRY at https://perso.univ-lemans.fr/~hainry/articles/semaine.html.
+ */
+function getWeekIndex(
+    date: Date = new Date(),
+    skipWeekend: boolean = true,
+): number {
+    if (skipWeekend) {
+        if (date.getDay() === 6) {
+            // Change Saturday to the next Monday
+            date.setDate(date.getDate() + 2);
+        } else if (date.getDay() === 0) {
+            // Change Sunday to the next Monday
+            date.setDate(date.getDate() + 1);
+        }
+    }
+
+    // 1st January of the year
+    const startDate = new Date(date.getFullYear(), 0, 1);
+
     const J = startDate.getDay();
     const N = Math.round(
-        (currentDate.getTime() - startDate.getTime()) / 1000 / 24 / 60 / 60,
+        (date.getTime() - startDate.getTime()) / 1000 / 24 / 60 / 60,
     );
 
     let weekNumber;
@@ -55,98 +167,48 @@ function getWeeksNumber(): number {
         weekNumber = Math.floor((J + N + 5) / 6);
     }
 
-    // If it's Saturday (6) or Sunday (0), incrementing the week number (weekend not displayed in the UI)
-    if (currentDay === 6 || currentDay === 0) {
-        weekNumber += 1;
-    }
-
     return weekNumber;
 }
 
-// Calculates the overflow in percentage of the course for display on the client
-function getMinutesOverflow(date: Date): number {
-    const minutes = date.getMinutes();
-    const overflowPercentage = (minutes / 60) * 100;
-    return overflowPercentage;
-}
-
-// Checks if two dates are equal
-function isSameDay(d1: Date, d2: Date): boolean {
-    return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-    );
-}
-
-function getDatesRange(start: Date, end: Date): string[] {
-    const range = [];
-    const current = start;
-    while (current < end) {
-        range.push(current.toISOString().split("T")[0]);
-        current.setDate(current.getDate() + 1);
-    }
-    range.push(current.toISOString().split("T")[0]);
-    return range;
-}
-
-// Return the start and end dates from now to now + increment
-function getBoundDates(increment: number): {
+/**
+ * Return the start and end date of a week based on its index in the specified year
+ */
+function getWeekInfos(
+    weekIndex: number,
+    year = new Date().getFullYear(),
+): {
     start: Date;
     end: Date;
+    number: number;
 } {
-    const startDate = new Date();
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + increment);
-    endDate.setHours(23);
-    endDate.setMinutes(59);
+    // Increasing the specified year if weekIndex > max weeks of this year
+    // ISO years can contain either 52 or 53 weeks, so we determine each year
+    // dynamically instead of assuming that every year has 52 weeks
+    while (weekIndex > getISOWeeksInYear(new Date(year, 0, 20))) {
+        weekIndex -= getISOWeeksInYear(new Date(year, 0, 20));
+        year++;
+    }
 
-    return {
-        start: startDate,
-        end: endDate,
-    };
-}
+    // We use January 20 as we are sure it is always in the requested ISO year
+    const firstMonday = startOfISOWeekYear(new Date(year, 0, 20));
+    const monday = addWeeks(firstMonday, weekIndex - 1);
+    const sunday = set(addDays(monday, 6), {
+        hours: 23,
+        minutes: 59,
+        seconds: 59,
+    });
 
-function getISODate(d: Date) {
-    return d.toISOString().split("T")[0]
-}
-
-function scheduleRun(triggerDate: Date, fn: () => void): void {
-    setTimeout(function () {
-        if (new Date() >= triggerDate) {
-            fn();
-        } else {
-            scheduleRun(triggerDate, fn);
-        }
-    }, 1000);
-}
-
-function setDateTimeFromTimeString(date: Date, timeString: string): Date {
-    const splittedTime = timeString.split(":");
-    date.setHours(parseInt(splittedTime[0]));
-    date.setMinutes(parseInt(splittedTime[1]));
-    return date;
-}
-
-function getDateFromFrenchDateString(dateString: string): Date {
-    const splittedDate = dateString.split("/");
-    return new Date(
-        parseInt(splittedDate[2]),
-        parseInt(splittedDate[1]) - 1,
-        parseInt(splittedDate[0]),
-    );
+    return { start: monday, end: sunday, number: weekIndex };
 }
 
 export {
-    isValidDate,
     getWeekInfos,
-    getWeeksNumber,
-    getMinutesOverflow,
-    isSameDay,
-    getDatesRange,
+    getWeekIndex,
+    // getDatesRange,
     getBoundDates,
-    getISODate,
+    getISODateString,
     scheduleRun,
-    setDateTimeFromTimeString,
-    getDateFromFrenchDateString,
+    setDateTimeFromTimestring,
+    getDateFromFrenchDatestring,
+    getDateFromTimestampString,
 };

@@ -10,6 +10,7 @@ import { getWeekInfos } from "../utils/date.js";
 import { isLightColor, blendColors, palette } from "../utils/color.js";
 import { RoomSchemaProperties } from "models/room.model.js";
 import { ApiError } from "middlewares/error.middleware.js";
+import { appConfig } from "configs/app.config.js";
 
 class RoomsController {
     /**
@@ -38,7 +39,7 @@ class RoomsController {
             for (const building of buildings) {
                 const buildingRooms = await roomsService.getRoomsByBuilding(
                     building._id,
-                    false // uncomment to debug
+                    !appConfig.isDevMode,
                 );
 
                 for (const room of buildingRooms) {
@@ -75,14 +76,15 @@ class RoomsController {
         try {
             // Getting validated queries
             const data: {
-                start: string;
-                end: string;
+                start: Date;
+                end: Date;
                 seats?: number;
                 whiteboards?: number;
                 blackboards?: number;
-                nobadge?: boolean;
-                type?: "info" | "tp" | "td" | "amphi" | null;
-                features?: ("visio" | "ilot")[];
+                includebadge?: boolean;
+                type?: "info" | "tp" | "td" | "amphi";
+                visio?: boolean;
+                ilot?: boolean;
             } = matchedData(req);
 
             const result = await roomsService.findAvailable(
@@ -91,24 +93,15 @@ class RoomsController {
                 data.seats ?? 0,
                 data.whiteboards ?? 0,
                 data.blackboards ?? 0,
-                data.nobadge ?? false,
+                data.includebadge ?? false,
                 data.type ?? null,
-                data.features ?? [],
+                data.visio ?? null,
+                data.ilot ?? null,
             );
-
-            // Formatting the response
-            const formattedResponse = result.map((doc) => ({
-                id: doc._id,
-                name: doc.name,
-                alias: doc.alias,
-                building: doc.buildingId,
-                available: true,
-                features: doc.features,
-            }));
 
             res.status(200).json({
                 success: true,
-                data: formattedResponse,
+                data: result.map((doc) => doc._id),
             });
         } catch (error) {
             next(error);
@@ -134,9 +127,12 @@ class RoomsController {
 
             const weekInfos = getWeekInfos(data.weekNumber);
 
-            // Comment to debug
-            // if (!(await roomsService.isReviewed(data.roomId)))
-            //     throw new ApiError(400, "Unknown room");
+            if (
+                !appConfig.isDevMode &&
+                !(await roomsService.isReviewed(data.roomId))
+            ) {
+                throw new ApiError(400, "Unknown room");
+            }
 
             const result = await coursesService.getTimetable(
                 data.roomId,

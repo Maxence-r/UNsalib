@@ -1,21 +1,25 @@
 import { query } from "express-validator";
-import mongoose from "mongoose";
 
-import { isValidDate, getWeekInfos, getWeeksNumber } from "../utils/date.js";
+import {
+    getDateFromTimestampString,
+    ignoreSecondsAndLower,
+} from "../utils/date.js";
 
 const availableValidation = [
     query("start")
         .notEmpty()
         .withMessage("Missing value")
         .trim()
-        .custom((value: string) => isValidDate(value))
-        .withMessage("Invalid date format"),
+        .customSanitizer((val: string) =>
+            ignoreSecondsAndLower(getDateFromTimestampString(val)),
+        ),
     query("end")
         .notEmpty()
         .withMessage("Missing value")
         .trim()
-        .custom((value: string) => isValidDate(value))
-        .withMessage("Invalid date format"),
+        .customSanitizer((val: string) =>
+            ignoreSecondsAndLower(getDateFromTimestampString(val)),
+        ),
     query("seats")
         .optional()
         .notEmpty()
@@ -46,7 +50,25 @@ const availableValidation = [
         .toInt()
         .custom((value: number) => value >= 0)
         .withMessage("Only positive numbers are allowed"),
-    query("nobadge")
+    query("includebadge")
+        .optional()
+        .notEmpty()
+        .withMessage("Missing value")
+        .trim()
+        .toLowerCase()
+        .isBoolean()
+        .withMessage("Invalid boolean")
+        .toBoolean(),
+    query("visio")
+        .optional()
+        .notEmpty()
+        .withMessage("Missing value")
+        .trim()
+        .toLowerCase()
+        .isBoolean()
+        .withMessage("Invalid boolean")
+        .toBoolean(),
+    query("ilot")
         .optional()
         .notEmpty()
         .withMessage("Missing value")
@@ -61,29 +83,13 @@ const availableValidation = [
         .withMessage("Missing value")
         .trim()
         .toLowerCase()
-        .custom((value: string) => {
-            return ["info", "tp", "td", "amphi"].includes(value);
-        })
+        .custom((value: string) =>
+            ["info", "tp", "td", "amphi"].includes(value),
+        )
         .withMessage("Invalid type"),
-    query("features")
-        .optional()
-        .notEmpty()
-        .withMessage("Missing value")
-        .trim()
-        .toLowerCase()
-        .custom((value: string) => {
-            const featuresArray = value.split("-");
-            for (const feature of featuresArray) {
-                if (!["visio", "ilot"].includes(feature.trim().toLowerCase())) {
-                    return false;
-                }
-            }
-            return true;
-        })
-        .withMessage("Invalid features found")
-        .customSanitizer((value: string) => value.split("-")),
 ];
 
+// TODO: need review
 const timetableValidation = [
     query("roomId").notEmpty().withMessage("Missing value").trim(),
     query("weekNumber")

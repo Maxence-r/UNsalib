@@ -40,9 +40,9 @@ class CoursesService {
      * Find overlapping courses for a specific time range
      */
     async getOverlappingCourses(
-        start: string,
-        end: string,
-    ): Promise<(CourseSchemaProperties & { _id: Types.ObjectId })[]> {
+        start: Date,
+        end: Date,
+    ): Promise<CourseSchemaProperties[]> {
         // Recherche de tous les cours qui débordent sur la période demandée selon 4 cas :
         //
         // CAS 1 : Le cours englobe complètement la période

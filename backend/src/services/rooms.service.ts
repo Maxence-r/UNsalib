@@ -3,6 +3,7 @@ import type { Types, HydratedDocument } from "mongoose";
 import { Room, RoomSchemaProperties } from "../models/room.model.js";
 import { coursesService } from "./courses.service.js";
 import { buildingsService } from "./buildings.service.js";
+import { appConfig } from "configs/app.config.js";
 import { getHexHashFromString } from "../utils/misc.js";
 
 const CIE_CLOSING_DATES = {
@@ -107,84 +108,83 @@ class RoomsService {
         return room;
     }
 
-    // **********************************************************
-    // TODO
-    // **********************************************************
-
     /**
      * Find available rooms
      */
     async findAvailable(
-        start: string,
-        end: string,
+        start: Date,
+        end: Date,
         seats: number,
         whiteBoards: number,
         blackBoards: number,
-        noBadge: boolean,
+        includeBadge: boolean,
         type: "info" | "tp" | "td" | "amphi" | null,
-        features: ("visio" | "ilot")[],
-    ): Promise<
-        (RoomSchemaProperties & { _id: Types.ObjectId; __v: number })[]
-    > {
+        visio: boolean | null,
+        ilot: boolean | null,
+    ): Promise<RoomSchemaProperties[]> {
         const overlappingCourses = await coursesService.getOverlappingCourses(
             start,
             end,
         );
 
-        // Getting all busy rooms ids from the courses array
+        // Getting all busy rooms ids from the overlappingCourses array
         const busyRoomsIds: string[] = [];
         overlappingCourses.forEach((course) => {
-            course.rooms.forEach((room) => {
-                if (!busyRoomsIds.includes(room.toString()))
-                    busyRoomsIds.push(room.toString());
+            course.roomIds.forEach((roomId) => {
+                if (!busyRoomsIds.includes(roomId)) busyRoomsIds.push(roomId);
             });
         });
 
+        // TODO: handle missing attributes in records (include / exclude from search?)
         // Getting available rooms according to the attributes requested by the user
         const availableRooms = await Room.find({
             _id: { $nin: busyRoomsIds }, // free rooms are those not being used for classes
-            banned: { $ne: true },
-            seats: { $gte: seats },
-            "boards.white": { $gte: whiteBoards },
-            "boards.black": { $gte: blackBoards },
-            ...(type && { type: type.toUpperCase() }),
-            ...(noBadge && { features: { $ne: "badge" } }),
-            ...features.map((feature) => {
-                return { features: feature };
-            }),
+            reviewed: !appConfig.isDevMode,
+            // seats: { $gte: seats },
+            // whiteBoards: { $gte: whiteBoards },
+            // blackBoards: { $gte: blackBoards },
+            // ...(type && { type: type }),
+            // ...(!includeBadge && { locked: false }),
+            // ...(visio !== null && { features: ["visio"] }),
+            // ...(ilot !== null && { features: ["ilot"] }),
         }).lean();
 
+        // TODO: handle exclusion intervals
         // Exclude IT rooms during closing hours of CIE buildings
-        const startTs = new Date(start).getTime();
-        const endTs = new Date(end).getTime();
+        // const startTs = new Date(start).getTime();
+        // const endTs = new Date(end).getTime();
 
-        const availableRoomsFiltered = availableRooms.filter((room) => {
-            if (
-                room.building.includes("C I E") &&
-                new Date(start).getDay() === CIE_CLOSING_DATES.dayNumber
-            ) {
-                // Build closing interval for the requested day
-                const closingStart = new Date(start);
-                const [sh, sm] = CIE_CLOSING_DATES.startTime.split(":");
-                closingStart.setHours(Number(sh), Number(sm), 0, 0);
+        // const availableRoomsFiltered = availableRooms.filter((room) => {
+        //     if (
+        //         room.building.includes("C I E") &&
+        //         new Date(start).getDay() === CIE_CLOSING_DATES.dayNumber
+        //     ) {
+        //         // Build closing interval for the requested day
+        //         const closingStart = new Date(start);
+        //         const [sh, sm] = CIE_CLOSING_DATES.startTime.split(":");
+        //         closingStart.setHours(Number(sh), Number(sm), 0, 0);
 
-                const closingEnd = new Date(start);
-                const [eh, em] = CIE_CLOSING_DATES.endTime.split(":");
-                closingEnd.setHours(Number(eh), Number(em), 0, 0);
+        //         const closingEnd = new Date(start);
+        //         const [eh, em] = CIE_CLOSING_DATES.endTime.split(":");
+        //         closingEnd.setHours(Number(eh), Number(em), 0, 0);
 
-                const closingStartTs = closingStart.getTime();
-                const closingEndTs = closingEnd.getTime();
+        //         const closingStartTs = closingStart.getTime();
+        //         const closingEndTs = closingEnd.getTime();
 
-                // Exclude if requested interval overlaps closing hours
-                if (startTs < closingEndTs && endTs > closingStartTs)
-                    return false;
-            }
+        //         // Exclude if requested interval overlaps closing hours
+        //         if (startTs < closingEndTs && endTs > closingStartTs)
+        //             return false;
+        //     }
 
-            return true;
-        });
+        //     return true;
+        // });
 
-        return availableRoomsFiltered;
+        return availableRooms;
     }
+
+    // **********************************************************
+    // TODO
+    // **********************************************************
 
     /**
      * Move a room to another building

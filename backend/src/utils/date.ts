@@ -201,6 +201,20 @@ function getWeekInfos(
     return { start: monday, end: sunday, number: weekIndex };
 }
 
+function ignoreSecondsAndLower(date: Date): Date {
+    if (!isValid(date)) {
+        throw new InvalidDateError(date);
+    }
+
+    return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+    );
+}
+
 export {
     getWeekInfos,
     getWeekIndex,
@@ -211,4 +225,5 @@ export {
     setDateTimeFromTimestring,
     getDateFromFrenchDatestring,
     getDateFromTimestampString,
+    ignoreSecondsAndLower,
 };

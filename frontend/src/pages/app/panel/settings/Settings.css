@@ -1,11 +1,11 @@
 #app > .panel > .settings {
     view-transition-name: panel-settings;
     width: 100%;
-    padding: 24px;
     height: 100%;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    padding: 24px 0 24px 24px;
 
     & > .header {
         display: flex;
@@ -56,12 +56,16 @@
     }
 }
 
+::view-transition-group(panel-settings) {
+	z-index: 100;
+}
+
 ::view-transition-old(panel-settings) {
-    animation: slide-to-right var(--animation-duration) forwards;
+    animation: slide-to-right .3s forwards ease-out;
     background-color: var(--color-background);
 }
 
 ::view-transition-new(panel-settings) {
-    animation: slide-to-right var(--animation-duration) reverse forwards ease-in;
+    animation: slide-to-right .3s reverse forwards ease-in;
     background-color: var(--color-background);
 }

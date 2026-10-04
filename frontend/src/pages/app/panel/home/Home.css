@@ -7,7 +7,7 @@
         height: 100%;
         gap: 20px;
         view-transition-name: panel-home;
-        padding: 24px;
+        padding: 24px 0 24px 24px;
 
         /* Bottom area rules */
         & > .actions-container {
@@ -47,15 +47,20 @@
 }
 
 @keyframes slide-to-left {
+    from {
+        opacity: 1;
+    }
+
     to {
+        opacity: 0;
         transform: translateX(-50%);
     }
 }
 
 ::view-transition-old(panel-home) {
-    animation: slide-to-left var(--animation-duration) forwards;
+    animation: slide-to-left .4s forwards ease-out;
 }
 
 ::view-transition-new(panel-home) {
-    animation: slide-to-left var(--animation-duration) reverse forwards ease-in;
+    animation: slide-to-left .4s reverse forwards ease-in;
 }

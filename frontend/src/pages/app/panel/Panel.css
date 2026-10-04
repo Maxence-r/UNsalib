@@ -12,6 +12,7 @@
         transition: background-color var(--animation-duration);
         view-transition-name: panel;
         view-transition-group: contain;
+        margin-right: 24px;
 
         @media screen and (max-width: 1024px) {
             /* Mobile responsive */
@@ -35,6 +36,6 @@
     }
 }
 
-::view-transition-group-children(panel) {
+::view-transition-group(panel) {
     overflow: hidden;
 }

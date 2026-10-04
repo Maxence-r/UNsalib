@@ -19,6 +19,24 @@
         outline-offset: 4px;
     }
 
+    &.clickable {
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--color-neutral);
+            border: 2px solid var(--color-neutral);
+        }
+
+        &.secondary:hover {
+            background-color: var(--color-neutral-light);
+            border: 2px solid var(--color-neutral-light);
+        }
+
+        &:active {
+            clip-path: inset(1px round calc(var(--border-radius) - 1px));
+        }
+    }
+
     & > .header {
         display: flex;
         justify-content: space-between;

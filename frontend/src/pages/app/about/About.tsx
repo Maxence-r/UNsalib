@@ -39,7 +39,10 @@ function About(): ReactElement {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="changelog">
+                <Card
+                    className="changelog"
+                    onClick={() => console.log("changelog")}
+                >
                     <CardHeader
                         text="Journal des modifications"
                         icon={<History />}
@@ -63,15 +66,22 @@ function About(): ReactElement {
                         <CardHeader text="Ethann" />
                         <img src={Ethann} />
                     </Card>
-                    <Card className="mael">
-                        <CardHeader text="Maël" />
-                        <img src={Mael} />
-                    </Card>
                     <Card className="maxence">
                         <CardHeader text="Maxence" />
                         <img src={Maxence} />
                     </Card>
-                    <Card className="contact">
+                    <Card className="mael">
+                        <CardHeader text="Maël" />
+                        <img src={Mael} />
+                    </Card>
+                    <Card
+                        className="contact"
+                        onClick={() =>
+                            window
+                                .open("mailto:contact@unsalib.info", "_blank")
+                                ?.focus()
+                        }
+                    >
                         <CardHeader text="Contact" icon={<Mail />} />
                         <CardContent>
                             Envoyez-nous un mail à contact@unsalib.info.
@@ -86,7 +96,19 @@ function About(): ReactElement {
                     <br />
                     L'application est un projet open-source disponible sous
                     licence GNU General Public License v3.0.
-                    <TextButton text="Github" secondary icon={<Code />} />
+                    <TextButton
+                        text="Github"
+                        secondary
+                        icon={<Code />}
+                        onClick={() =>
+                            window
+                                .open(
+                                    "https://github.com/Maxence-r/UNsalib",
+                                    "_blank",
+                                )
+                                ?.focus()
+                        }
+                    />
                 </CardContent>
             </Card>
         </div>

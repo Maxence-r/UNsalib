@@ -32,6 +32,7 @@ function Card({
     highlighted = false,
     secondary = false,
     isLoading = false,
+    onClick,
 }: {
     className?: string;
     id?: string;
@@ -39,14 +40,16 @@ function Card({
     highlighted?: boolean;
     secondary?: boolean;
     isLoading?: boolean;
+    onClick?: React.MouseEventHandler<HTMLDivElement>;
 }): React.JSX.Element {
     let classes = "card";
     classes += secondary ? " secondary" : "";
     classes += highlighted ? " highlighted" : "";
+    classes += onClick ? " clickable" : "";
     classes += className ? ` ${className}` : "";
 
     return (
-        <div className={classes} id={id}>
+        <div className={classes} id={id} onClick={onClick}>
             {children}
             {isLoading && <div className="loader" />}
         </div>

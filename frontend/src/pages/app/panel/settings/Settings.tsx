@@ -1,15 +1,9 @@
 import { useState, type ReactElement } from "react";
-import { Link } from "react-router";
+import { ArrowLeft, MessageSquare } from "lucide-react";
 
 import "./Settings.css";
 import { IconButton, TextButton } from "../../../../components/button/Button";
 import { router } from "../../../Router";
-import { ArrowLeft, MessageSquare } from "lucide-react";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-} from "../../../../components/card/Card";
 import { Switch } from "../../../../components/switch/Switch";
 
 function Settings(): ReactElement {

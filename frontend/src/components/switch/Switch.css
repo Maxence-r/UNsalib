@@ -3,6 +3,7 @@
     display: block;
     width: 44px;
     height: 22px;
+    flex-shrink: 0;
 
     &:hover {
         & > .switch-slider::before {

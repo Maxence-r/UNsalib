@@ -1,9 +1,52 @@
-#app > .panel {
-    /* Global settings view rules */
-    & > .settings {
-        view-transition-name: panel-settings;
-        width: 100%;
-        padding: 24px;
+#app > .panel > .settings {
+    view-transition-name: panel-settings;
+    width: 100%;
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    & > .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        & > h1 {
+            font-size: 20px;
+            font-family: "Cal Sans";
+            font-weight: normal;
+            margin-block: 0;
+        }
+    }
+
+    & > .options {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 12px;
+
+        & .switch-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            align-items: center;
+
+            & > .desc {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--color-neutral-dark);
+
+                & > h4 {
+                    margin-block: 0;
+                    font-size: 16px;
+                    color: var(--color-on-surface);
+                }
+            }
+        }
     }
 }
 
@@ -15,8 +58,10 @@
 
 ::view-transition-old(panel-settings) {
     animation: slide-to-right var(--animation-duration) forwards;
+    background-color: var(--color-background);
 }
 
 ::view-transition-new(panel-settings) {
     animation: slide-to-right var(--animation-duration) reverse forwards ease-in;
+    background-color: var(--color-background);
 }

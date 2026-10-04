@@ -13,7 +13,7 @@
         position: relative;
         overflow: hidden;
         gap: 20px;
-        margin: 24px 0 24px 0;
+        margin: 24px 0;
         flex-grow: 1;
 
         @media screen and (max-width: 1024px) {

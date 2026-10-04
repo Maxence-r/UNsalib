@@ -1,5 +1,5 @@
 /* Global header rules */
-#app .panel .header {
+#app .panel .home .header {
     display: flex;
     flex-direction: column;
     gap: 20px;

@@ -36,4 +36,5 @@ const dashboardRouter = {
     ],
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { dashboardRouter, DASHBOARD_VIEWS };

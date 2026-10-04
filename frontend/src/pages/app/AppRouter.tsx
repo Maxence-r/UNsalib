@@ -1,21 +1,18 @@
-import { Navigate } from "react-router";
-
 import { App } from "./App";
-import { Panel } from "./panel/Panel";
-import { Settings } from "./panel/settings/Settings";
-import { Home } from "./panel/home/Home";
+import { Calendar } from "./calendar/calendar";
+import { About } from "./about/About";
 
 const appRouter = {
-    path: "/",
+    path: "/app",
     element: <App />,
     children: [
         {
             index: true,
-            element: <Home />,
+            element: <Calendar />,
         },
         {
-            path: "settings",
-            element: <Settings />,
+            path: "/app/settings",
+            element: <About />,
         },
     ],
 };

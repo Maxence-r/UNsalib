@@ -1,4 +1,4 @@
-import { Info, Settings } from "lucide-react";
+import { Info, Settings, EllipsisVertical } from "lucide-react";
 import type { ReactElement } from "react";
 
 import "./Header.css";
@@ -22,17 +22,17 @@ function Header(): ReactElement {
                 <div className="actions">
                     <InstallButton />
                     <IconButton
-                        onClick={() =>
-                            router.navigate("/settings", {
-                                viewTransition: true,
-                            })
-                        }
-                        icon={<Settings />}
+                        onClick={openAboutModal}
+                        icon={<Info />}
                         secondary
                     />
                     <IconButton
-                        onClick={openAboutModal}
-                        icon={<Info />}
+                        onClick={() =>
+                            router.navigate("/app/settings", {
+                                viewTransition: true,
+                            })
+                        }
+                        icon={<EllipsisVertical />}
                         secondary
                     />
                 </div>

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, type ReactElement } from "react";
-import { Info, FunnelX, Search } from "lucide-react";
+import { FunnelX, Search, CircleQuestionMark } from "lucide-react";
 
 import { IconButton, TextButton } from "../../../../components/button/Button.js";
 import { Input } from "../../../../components/input/Input.js";
@@ -88,7 +88,7 @@ function ActionsContainer(): ReactElement {
                 <div className="actions">
                     <IconButton icon={<FunnelX />} secondary />
                     <IconButton
-                        icon={<Info />}
+                        icon={<CircleQuestionMark />}
                         onClick={openAboutPictosModal}
                         secondary
                     />

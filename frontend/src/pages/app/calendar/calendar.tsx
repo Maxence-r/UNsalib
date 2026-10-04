@@ -146,7 +146,7 @@ function Calendar() {
     }, [error, openToast]);
 
     return (
-        <div className="main">
+        <>
             {isLoading && currentRoom && (
                 <div className="loader-indicator">
                     <span className="spin"></span>
@@ -181,7 +181,7 @@ function Calendar() {
                     text="Menu"
                 />
             </div>
-        </div>
+        </>
     );
 }
 

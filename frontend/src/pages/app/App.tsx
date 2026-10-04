@@ -19,7 +19,9 @@ function App() {
                 </p>
             </section>
             <Panel />
-            <Calendar />
+            <div className="main">
+                <Outlet />
+            </div>
             {/* </NavigationManager> */}
         </main>
     );

@@ -62,7 +62,7 @@
             color: var(--color-neutral-dark);
         }
 
-        &:hover {
+        &:not(:disabled):hover {
             background-color: var(--color-accent-dark);
         }
 
@@ -81,7 +81,7 @@
             background-color: transparent;
         }
 
-        &:hover {
+        &:not(:disabled):hover {
             background-color: var(--color-neutral);
         }
 

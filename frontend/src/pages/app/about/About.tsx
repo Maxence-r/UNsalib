@@ -11,6 +11,7 @@ import { TextButton } from "../../../components/button/Button.js";
 import Mael from "../../../assets/imgs/mael.png";
 import Ethann from "../../../assets/imgs/ethann.png";
 import Maxence from "../../../assets/imgs/maxence.png";
+import { VERSION_NAME, VERSION_NUMBER } from "../../../utils/constants.js";
 
 function About(): ReactElement {
     return (
@@ -22,7 +23,7 @@ function About(): ReactElement {
                             <img src="/logo96.png" alt="UNsalib logo" />
                             <div>
                                 <h1>UNsalib</h1>
-                                <span>v3.0 "Louisa"</span>
+                                <span>{`v${VERSION_NUMBER} "${VERSION_NAME}"`}</span>
                             </div>
                         </div>
                         <h3>Vous cherchez une salle ?</h3>

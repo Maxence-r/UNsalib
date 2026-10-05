@@ -1,0 +1,58 @@
+.modal .campuses {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    & > .header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        & > .title,
+        & > .subtitle {
+            margin-block: 0;
+        }
+
+        & > .title {
+            font-size: 20px;
+            font-family: "Cal Sans";
+            font-weight: normal;
+        }
+
+        & > .subtitle {
+            font-size: 14px;
+            color: var(--color-neutral-dark);
+        }
+    }
+
+    & > .campus {
+        padding: 0;
+        gap: 0;
+        border: none;
+
+        &:hover {
+            & > .banner {
+                transform: scale(1.1);
+            }
+        }
+
+        & > .banner {
+            height: 180px;
+            background-position: center;
+            background-size: cover;
+            transition: transform var(--animation-duration);
+        }
+
+        & > .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: inherit;
+            z-index: 2;
+        }
+    }
+}

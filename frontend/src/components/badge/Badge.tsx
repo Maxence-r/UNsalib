@@ -6,13 +6,18 @@ function Badge({
     className,
     id,
     text,
+    accent,
 }: {
     className?: string;
     id?: string;
     text: string;
+    accent?: boolean;
 }): ReactElement {
     return (
-        <span id={id} className={className ? `badge ${className}` : "badge"}>
+        <span
+            id={id}
+            className={`badge${accent ? " accent" : ""}${className ? ` ${className}` : ""}`}
+        >
             {text}
         </span>
     );

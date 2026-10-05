@@ -1,18 +1,16 @@
-import { Info, EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, MapPin } from "lucide-react";
 import type { ReactElement } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import "./Header.css";
 import { IconButton } from "../../../../../components/button/Button.js";
-import CampusBannerUrl from "../../../../../assets/imgs/campus/sciences-et-techniques.jpg";
-import { AboutModal } from "../modals/AboutModal.js";
+import CampusBannerUrl from "../../../../../assets/imgs/campuses/lombarderie.jpg";
 import { InstallButton } from "./InstallButton.js";
 import { useModal } from "../../../../../components/modal/Modal.js";
-import { router } from "../../../../Router.js";
+import { CampusModal } from "../modals/CampusModal.js";
 
 function Header(): ReactElement {
-    const { open: openAboutModal } = useModal("about", <AboutModal />);
-    const location = useLocation();
+    const { open: openCampusModal } = useModal("campus", <CampusModal />);
     const navigate = useNavigate();
 
     return (
@@ -25,8 +23,8 @@ function Header(): ReactElement {
                 <div className="actions">
                     <InstallButton />
                     <IconButton
-                        onClick={openAboutModal}
-                        icon={<Info />}
+                        onClick={openCampusModal}
+                        icon={<MapPin />}
                         secondary
                     />
                     <IconButton

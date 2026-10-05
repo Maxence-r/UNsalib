@@ -1,19 +1,19 @@
 import type { ReactElement } from "react";
-import { Outlet, useLocation } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
 import "./Panel.css";
-import { usePanelStore } from "../../../stores/app.store.js";
 import { Home } from "./home/Home.js";
 import { Settings } from "./settings/Settings.js";
 
 function Panel(): ReactElement {
-    const isPanelOpened = usePanelStore((state) => state.isOpened);
+    const [searchParams] = useSearchParams();
     const location = useLocation().pathname;
-    const isIndex = location === "/app" || location === "/app/";
+    const isPanelHidden = searchParams.get("panel") === "hidden";
+    const isSettings = location.startsWith("/app/settings");
 
     return (
-        <div tabIndex={-1} className={`panel ${isPanelOpened ? "" : "hidden"}`}>
-            {isIndex ? <Home /> : <Settings />}
+        <div tabIndex={-1} className={`panel${isPanelHidden ? " hidden" : ""}`}>
+            {isSettings ? <Settings /> : <Home />}
         </div>
     );
 }

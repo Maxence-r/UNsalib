@@ -3,6 +3,8 @@ import { cloneElement, type ReactElement } from "react";
 
 import type { ApiDataRoom } from "../../../../../utils/types/api.type.js";
 import "./RoomsList.css";
+import { router } from "../../../../Router.js";
+import { useDeviceType } from "../../../../../utils/hooks/device.hook.js";
 
 // function Ping({ error }: { error: boolean }) {
 //     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
@@ -45,8 +47,13 @@ function Result({
     room: ApiDataRoom | null;
     onRoomClick: (room: ApiDataRoom) => void;
 }): ReactElement {
+    const isMobile = useDeviceType() === "mobile";
+
     const handleRoomClick = (): void => {
-        if (room) onRoomClick(room);
+        // if (room) onRoomClick(room);
+        router.navigate(
+            `/app/timetable/${room?.id}${isMobile ? "?panel=hidden" : ""}`,
+        );
     };
 
     return room ? (

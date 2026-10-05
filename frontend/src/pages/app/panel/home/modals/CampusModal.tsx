@@ -3,15 +3,12 @@ import type { ReactElement } from "react";
 import "./CampusModal.css";
 import { Card, CardContent } from "../../../../../components/card/Card.js";
 import { Badge } from "../../../../../components/badge/Badge.js";
-import lombarderieBannerUrl from "../../../../../assets/imgs/campuses/lombarderie.jpg";
-import tertreBannerUrl from "../../../../../assets/imgs/campuses/tertre.jpg";
+import { useSettingsStore } from "../../../../../stores/settings.store.js";
+import { CAMPUSES } from "../../../../../utils/constants.js";
 
-const CAMPUSES: { name: string; bannerUrl: string; beta?: boolean }[] = [
-    { name: "Lombarderie", bannerUrl: lombarderieBannerUrl },
-    { name: "Tertre", bannerUrl: tertreBannerUrl, beta: true },
-];
+function CampusModal({ close }: { close?: () => void }): ReactElement {
+    const setDefaultCampus = useSettingsStore((s) => s.setDefaultCampus);
 
-function CampusModal(): ReactElement {
     return (
         <div className="campuses">
             <div className="header">
@@ -21,7 +18,10 @@ function CampusModal(): ReactElement {
             {CAMPUSES.map((campus) => (
                 <Card
                     className="campus"
-                    onClick={() => console.log(campus.name, "selected")}
+                    onClick={() => {
+                        setDefaultCampus(campus.id);
+                        close?.();
+                    }}
                     key={campus.name}
                 >
                     <div

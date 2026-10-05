@@ -19,7 +19,7 @@ const useAccountStore = create<AccountStore>()(
         (set) => ({
             account: null,
 
-            save: (account: Account): unknown => set({ account: account }),
+            save: (account: Account): unknown => set({ account }),
             remove: (): unknown => set({ account: null }),
         }),
         {

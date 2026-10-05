@@ -1,3 +1,7 @@
+import type { Campuses } from "../stores/settings.store";
+import lombarderieBannerUrl from "../assets/imgs/campuses/lombarderie.jpg";
+import tertreBannerUrl from "../assets/imgs/campuses/tertre.jpg";
+
 const START_DAY_HOUR = 8;
 const END_DAY_HOUR = 19;
 const DAY_DURATION = END_DAY_HOUR - START_DAY_HOUR;
@@ -51,6 +55,16 @@ const THEME: {
     },
 };
 
+const CAMPUSES: {
+    id: Campuses;
+    name: string;
+    bannerUrl: string;
+    beta?: boolean;
+}[] = [
+    { id: "lombarderie", name: "Lombarderie", bannerUrl: lombarderieBannerUrl },
+    { id: "tertre", name: "Tertre", bannerUrl: tertreBannerUrl, beta: true },
+];
+
 export {
     START_DAY_HOUR,
     END_DAY_HOUR,
@@ -61,4 +75,5 @@ export {
     PALETTE_HEX,
     MIN_WIDTH_BREAKPOINTS,
     THEME,
+    CAMPUSES
 };

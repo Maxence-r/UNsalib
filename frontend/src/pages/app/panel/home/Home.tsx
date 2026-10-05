@@ -1,7 +1,10 @@
 import { useState, useMemo, useEffect, type ReactElement } from "react";
 import { FunnelX, Search, CircleQuestionMark } from "lucide-react";
 
-import { IconButton, TextButton } from "../../../../components/button/Button.js";
+import {
+    IconButton,
+    TextButton,
+} from "../../../../components/button/Button.js";
 import { Input } from "../../../../components/input/Input.js";
 import type { ApiDataRoom } from "../../../../utils/types/api.type.js";
 import {
@@ -19,13 +22,19 @@ import { useToast } from "../../../../components/toast/Toast.js";
 import { Link } from "react-router";
 import "./Home.css";
 import { Header } from "./header/Header.js";
+import { useSettingsStore } from "../../../../stores/settings.store.js";
 
 function ActionsContainer(): ReactElement {
     const closePanel = usePanelStore((state) => state.close);
     // const openPanel = usePanelStore((state) => state.open);
     const setCurrentRoom = useCurrentRoomStore((state) => state.setRoom);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
-    const { data: roomsList, isLoading, error } = useApi(getRoomsList, []);
+    const defaultCampus = useSettingsStore((s) => s.defaultCampus);
+    const {
+        data: roomsList,
+        isLoading,
+        error,
+    } = useApi(() => getRoomsList(defaultCampus), [defaultCampus]);
     const { open: openAboutPictosModal } = useModal(
         "about-pictos",
         <AboutPictosModal />,

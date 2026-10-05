@@ -1,23 +1,32 @@
 import { useState, type ReactElement } from "react";
 import { ArrowLeft, MessageSquare } from "lucide-react";
+import { useLocation, useNavigate } from "react-router";
 
 import "./Settings.css";
 import { IconButton, TextButton } from "../../../../components/button/Button";
-import { router } from "../../../Router";
 import { Switch } from "../../../../components/switch/Switch";
 
 function Settings(): ReactElement {
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleBackButton = (): void => {
+        const state = location.state;
+
+        if (state?.fromInsideApp) {
+            navigate(-1);
+            return;
+        }
+
+        navigate("/app", { viewTransition: true });
+    };
 
     return (
         <div className="settings">
             <div className="header">
                 <IconButton
-                    onClick={() =>
-                        router.navigate("/app", {
-                            viewTransition: true,
-                        })
-                    }
+                    onClick={handleBackButton}
                     icon={<ArrowLeft />}
                     secondary
                 />

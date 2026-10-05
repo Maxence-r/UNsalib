@@ -2,9 +2,8 @@
     /* Panel rules */
     & > .panel {
         position: relative;
-        width: 22%;
         height: 100%;
-        min-width: 400px;
+        min-width: 380px;
         overflow: hidden;
         background-color: var(--color-background);
         color: var(--color-on-surface);

@@ -1,5 +1,6 @@
-import { Info, Settings, EllipsisVertical } from "lucide-react";
+import { Info, EllipsisVertical } from "lucide-react";
 import type { ReactElement } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 import "./Header.css";
 import { IconButton } from "../../../../../components/button/Button.js";
@@ -11,6 +12,8 @@ import { router } from "../../../../Router.js";
 
 function Header(): ReactElement {
     const { open: openAboutModal } = useModal("about", <AboutModal />);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     return (
         <header className="header">
@@ -28,8 +31,9 @@ function Header(): ReactElement {
                     />
                     <IconButton
                         onClick={() =>
-                            router.navigate("/app/settings", {
+                            navigate("/app/settings", {
                                 viewTransition: true,
+                                state: { fromInsideApp: true },
                             })
                         }
                         icon={<EllipsisVertical />}

@@ -1,5 +1,6 @@
 import { Lock, Users, Monitor, Eye } from "lucide-react";
 import { cloneElement, type ReactElement } from "react";
+import { useNavigate } from "react-router";
 
 import type { ApiDataRoom } from "../../../../../utils/types/api.type.js";
 import "./RoomsList.css";
@@ -48,10 +49,10 @@ function Result({
     onRoomClick: (room: ApiDataRoom) => void;
 }): ReactElement {
     const isMobile = useDeviceType() === "mobile";
+    const navigate = useNavigate();
 
     const handleRoomClick = (): void => {
-        // if (room) onRoomClick(room);
-        router.navigate(
+        navigate(
             `/app/timetable/${room?.id}${isMobile ? "?panel=hidden" : ""}`,
         );
     };

@@ -30,9 +30,9 @@ class ApiGet<T> {
 
 class ApiPost<T> {
     url: string;
-    data: { [key: string]: unknown };
+    data?: { [key: string]: unknown };
 
-    constructor(url: string, data: { [key: string]: unknown }) {
+    constructor(url: string, data?: { [key: string]: unknown }) {
         this.url = url;
         this.data = data;
     }

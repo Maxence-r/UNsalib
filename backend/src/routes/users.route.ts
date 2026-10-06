@@ -12,5 +12,11 @@ router.post(
     (req: Request, res: Response, next: NextFunction) =>
         usersController.notABot(req, res, next),
 );
+router.post(
+    "/from-qrcode",
+    statHandler,
+    (req: Request, res: Response, next: NextFunction) =>
+        usersController.setFromQrCode(req, res, next),
+);
 
 export { router };

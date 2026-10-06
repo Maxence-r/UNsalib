@@ -18,6 +18,9 @@ const UserSchema = new Schema(
             required: true,
             default: true,
         },
+        fromQrCode: {
+            type: Boolean,
+        },
     },
     { versionKey: false },
 );

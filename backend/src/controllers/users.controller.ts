@@ -36,6 +36,28 @@ class UsersController {
             next(error);
         }
     }
+
+    /**
+     * @route   POST /from-qrcode
+     * @desc    Mark the user as coming from advertising poster QR codes
+     * @access  Public
+     */
+    async setFromQrCode(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<void> {
+        try {
+            await usersService.setFromQrCode(req.userId);
+
+            res.status(200).json({
+                success: true,
+                data: null,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 const usersController = new UsersController();

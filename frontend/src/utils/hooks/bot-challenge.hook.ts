@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useBotChallengeStore } from "../../stores/bot-challenge.store";
-import { sendNotABot } from "../../api/users.api";
+import { SendNotABot } from "../../api/users.api";
 
 function useBotChallenge(): void {
     const humanCriteria = useBotChallengeStore((s) => s.humanCriteria);
@@ -31,7 +31,7 @@ function useBotChallenge(): void {
         );
         void (async (): Promise<void> => {
             try {
-                await sendNotABot();
+                await new SendNotABot().do();
                 setNotABotSent();
             } catch {
                 console.error("Cannot set this user as human, will try later");

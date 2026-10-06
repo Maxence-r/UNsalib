@@ -1,7 +1,15 @@
-import { api } from "./axios";
+import { ApiPost } from "./axios";
 
-async function sendNotABot(): Promise<void> {
-    await api.post("/users/not-a-bot");
+class SendNotABot extends ApiPost<null> {
+    constructor() {
+        super("/users/not-a-bot");
+    }
 }
 
-export { sendNotABot };
+class SendFromQrCode extends ApiPost<null> {
+    constructor() {
+        super("/users/from-qrcode");
+    }
+}
+
+export { SendNotABot, SendFromQrCode };

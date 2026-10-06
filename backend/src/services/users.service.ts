@@ -34,6 +34,10 @@ class UsersService {
     async setNotABot(userId: string): Promise<void> {
         await User.findOneAndUpdate({ _id: userId }, { isBot: false }, {});
     }
+
+    async setFromQrCode(userId: string): Promise<void> {
+        await User.findOneAndUpdate({ _id: userId }, { fromQrCode: true }, {});
+    }
 }
 
 const usersService = new UsersService();

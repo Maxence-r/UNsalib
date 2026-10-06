@@ -450,6 +450,8 @@ import {
     TimePicker,
 } from "../../../../../components/date-time-picker/DateTimePicker.js";
 import { isExists } from "date-fns";
+import { GetAvailableRooms } from "../../../../../api/rooms.api.js";
+import { useRoomsStore } from "../../../../../stores/rooms.store.js";
 
 function SearchModal({ close }: { close?: () => void }): ReactElement {
     const [seats, setSeats] = useState(6);
@@ -464,6 +466,8 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
         // Now + 1h
         new Date(new Date().getTime() + 3600 * 1000),
     );
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const setDisplayedRooms = useRoomsStore((s) => s.setDisplayedRooms);
 
     const handleSeatsChange = (s: number): void => {
         setSeats(s);
@@ -473,6 +477,20 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
     };
     const handleWhiteBoardsChange = (s: number): void => {
         setWhiteBoards(s);
+    };
+    const handleSearchButtonClick = async (): Promise<void> => {
+        try {
+            setIsLoading(true);
+            const roomsIds = await new GetAvailableRooms(
+                "tertre",
+                selectedStartTime,
+                selectedEndTime,
+            ).do();
+            setDisplayedRooms(roomsIds);
+            close?.();
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -597,7 +615,11 @@ function SearchModal({ close }: { close?: () => void }): ReactElement {
                     </CardContent>
                 </Card>
             </div>
-            <TextButton text="Rechercher" />
+            <TextButton
+                text="Rechercher"
+                isLoading={isLoading}
+                onClick={handleSearchButtonClick}
+            />
         </div>
     );
 }

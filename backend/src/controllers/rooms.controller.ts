@@ -80,7 +80,7 @@ class RoomsController {
         try {
             // Getting validated queries
             const data = matchedData<{
-                campusId: string;
+                campusid: string;
                 start: Date;
                 end: Date;
                 seats?: number;
@@ -93,7 +93,7 @@ class RoomsController {
             }>(req);
 
             const result = await roomsService.findAvailable(
-                data.campusId,
+                data.campusid,
                 data.start,
                 data.end,
                 data.seats ?? 0,
@@ -109,7 +109,7 @@ class RoomsController {
             void statsService.addNew(
                 req.userId,
                 "search",
-                data.campusId,
+                data.campusid,
                 new Date(),
             );
 

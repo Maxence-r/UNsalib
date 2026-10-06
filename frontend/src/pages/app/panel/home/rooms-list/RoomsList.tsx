@@ -7,6 +7,7 @@ import "./RoomsList.css";
 import { router } from "../../../../Router.js";
 import { useDeviceType } from "../../../../../utils/hooks/device.hook.js";
 import { useBotChallengeStore } from "../../../../../stores/bot-challenge.store.js";
+import type { Room } from "../../../../../stores/rooms.store.js";
 
 // function Ping({ error }: { error: boolean }) {
 //     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
@@ -85,11 +86,13 @@ function RoomsList({
     isLoading,
 }: {
     onRoomClick: (room: ApiDataRoom) => void;
-    rooms: ApiDataRoom[];
+    rooms: Room[];
     filter: string[];
     isLoading: boolean;
 }): ReactElement {
-    const filteredRoomsList = rooms.filter((room) => filter.includes(room.id));
+    const filteredRoomsList = rooms.filter(
+        (room) => filter.includes(room.id) && room.displayed,
+    );
     const setHumanCriteriaIfNull = useBotChallengeStore(
         (s) => s.setHumanCriteriaIfNull,
     );

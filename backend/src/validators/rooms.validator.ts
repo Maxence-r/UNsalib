@@ -6,7 +6,7 @@ import {
 } from "../utils/date.js";
 
 const availableValidation = [
-    query("campusId").notEmpty().withMessage("Missing value").trim(),
+    query("campusid").notEmpty().withMessage("Missing value").trim(),
     query("start")
         .notEmpty()
         .withMessage("Missing value")

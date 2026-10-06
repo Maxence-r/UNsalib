@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 
 import { appRouter } from "./app/AppRouter.js";

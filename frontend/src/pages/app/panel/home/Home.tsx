@@ -30,6 +30,7 @@ import "./Home.css";
 import { Header } from "./header/Header.js";
 import { useSettingsStore } from "../../../../stores/settings.store.js";
 import { useBotChallengeStore } from "../../../../stores/bot-challenge.store.js";
+import { useRoomsStore } from "../../../../stores/rooms.store.js";
 
 function ActionsContainer(): ReactElement {
     const closePanel = usePanelStore((state) => state.close);
@@ -37,11 +38,21 @@ function ActionsContainer(): ReactElement {
     const setCurrentRoom = useCurrentRoomStore((state) => state.setRoom);
     const [roomsSearch, setRoomsSearch] = useState<string>("");
     const defaultCampus = useSettingsStore((s) => s.defaultCampus);
-    const {
-        data: roomsList,
-        isLoading,
-        error,
-    } = useApi(new GetRoomsList(defaultCampus), [defaultCampus]);
+    const roomsList = useRoomsStore((s) => s.rooms);
+    const isRoomsListFiltered = useRoomsStore((s) => s.filtered);
+    const setRoomsList = useRoomsStore((s) => s.setRooms);
+    const resetDisplayedRooms = useRoomsStore((s) => s.resetDisplayedRooms);
+
+    const { data, isLoading, error } = useApi(new GetRoomsList(defaultCampus), [
+        defaultCampus,
+    ]);
+
+    useEffect(() => {
+        if (data === null) return;
+
+        setRoomsList(data);
+    }, [data, setRoomsList]);
+
     const { open: openAboutPictosModal } = useModal(
         "about-pictos",
         <AboutPictosModal />,
@@ -104,10 +115,18 @@ function ActionsContainer(): ReactElement {
                 value={roomsSearch}
             />
             <div className="head">
-                <p>Salles du campus</p>
-                <Badge text="Filtrées" />
+                <p>
+                    Salles du campus
+                </p>
+                <Badge text={isRoomsListFiltered ? "Filtrées" : "Toutes"} />
                 <div className="actions">
-                    <IconButton icon={<FunnelX />} secondary />
+                    {isRoomsListFiltered && (
+                        <IconButton
+                            icon={<FunnelX />}
+                            secondary
+                            onClick={resetDisplayedRooms}
+                        />
+                    )}
                     <IconButton
                         icon={<CircleQuestionMark />}
                         onClick={openAboutPictosModal}

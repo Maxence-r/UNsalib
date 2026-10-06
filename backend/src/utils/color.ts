@@ -69,4 +69,17 @@ function blendColors(
     return chroma(hexColor1).mix(hexColor2, amount).hex();
 }
 
-export { findClosestPaletteColorId, isLightColor, blendColors, palette };
+function getAccessibleForegroundColor(backgroundColor: string): string {
+    const blackContrast = chroma.contrast(backgroundColor, "#000000");
+    const whiteContrast = chroma.contrast(backgroundColor, "#ffffff");
+
+    return blackContrast >= whiteContrast ? "#000000" : "#ffffff";
+}
+
+export {
+    findClosestPaletteColorId,
+    isLightColor,
+    blendColors,
+    getAccessibleForegroundColor,
+    palette,
+};

@@ -3,6 +3,7 @@ import { CourseModal } from "../modals/CourseModal.js";
 import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
 import { useModal } from "../../../../components/modal/Modal.js";
+import { useSettingsStore } from "../../../../stores/settings.store.js";
 
 function getCourseDurationMinutes(start: string, end: string): number {
     return (new Date(end).getTime() - new Date(start).getTime()) / 1000 / 60;
@@ -46,6 +47,8 @@ function getModulesStringWithFallback(
 }
 
 function Course({ course }: { course: ApiDataCourse }) {
+    const useAccessibleColors = useSettingsStore((s) => s.useAccessibleColors);
+
     const courseDurationMinutes = getCourseDurationMinutes(
         course.start,
         course.end,
@@ -83,7 +86,9 @@ function Course({ course }: { course: ApiDataCourse }) {
             style={{
                 top: `${getCourseAbsoluteTopPercent(DAY_DURATION * 60, cutStart, START_DAY_HOUR * 60)}%`,
                 backgroundColor: course.color,
-                color: course.onColor,
+                color: useAccessibleColors
+                    ? course.accessibleOnColor
+                    : course.onColor,
                 height: `${percentHeight}%`,
                 // width: `${100 / course.length}%`
                 // width: "100%",
@@ -93,9 +98,7 @@ function Course({ course }: { course: ApiDataCourse }) {
             className="course"
             onClick={openCourseModal}
         >
-            <h2>
-                {modulesString}
-            </h2>
+            <h2>{modulesString}</h2>
             <p>
                 {course.teachers.length > 0 ? course.teachers.join(" ; ") : ""}
             </p>

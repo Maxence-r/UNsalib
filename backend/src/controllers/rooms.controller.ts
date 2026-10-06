@@ -7,7 +7,7 @@ import { buildingsService } from "../services/buildings.service.js";
 import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos } from "../utils/date.js";
-import { isLightColor, blendColors, palette } from "../utils/color.js";
+import { getAccessibleForegroundColor, palette } from "../utils/color.js";
 import { RoomSchemaProperties } from "models/room.model.js";
 import { ApiError } from "middlewares/error.middleware.js";
 import { appConfig } from "configs/app.config.js";
@@ -157,9 +157,7 @@ class RoomsController {
             // Formatting the response
             const formattedResponse = result.map((c) => {
                 const color = palette[c.colorId as keyof typeof palette];
-                const accessibleOnColor = isLightColor(color)
-                    ? blendColors(color, "#000000", 0.1)
-                    : blendColors(color, "#ffffff", 0.1);
+                const accessibleOnColor = getAccessibleForegroundColor(color);
 
                 return {
                     courseId: c._id,
@@ -213,7 +211,7 @@ class RoomsController {
             void statsService.addNew(
                 req.userId,
                 "timetable",
-                await roomsService.getCampusId(data.roomId) ?? "unknown",
+                (await roomsService.getCampusId(data.roomId)) ?? "unknown",
                 new Date(),
             );
 

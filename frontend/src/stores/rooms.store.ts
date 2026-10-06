@@ -31,6 +31,7 @@ const useRoomsStore = create<RoomsStore>()((set) => ({
                 available: false,
                 displayed: true,
             })),
+            filtered: false,
         }),
     setAvailableRooms: (availableRoomIds): void =>
         set((s) => ({

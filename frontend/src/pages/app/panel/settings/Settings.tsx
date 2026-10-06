@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { ArrowLeft, Info, MessageSquare } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
@@ -6,13 +6,17 @@ import "./Settings.css";
 import { IconButton, TextButton } from "../../../../components/button/Button";
 import { Switch } from "../../../../components/switch/Switch";
 import { useDeviceType } from "../../../../utils/hooks/device.hook";
+import { useSettingsStore } from "../../../../stores/settings.store";
 
 function Settings(): ReactElement {
-    const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [_searchParams, setSearchParams] = useSearchParams();
     const location = useLocation();
     const isMobile = useDeviceType() === "mobile";
+    const useAccessibleColors = useSettingsStore((s) => s.useAccessibleColors);
+    const setUseAccessibleColors = useSettingsStore(
+        (s) => s.setUseAccessibleColors,
+    );
 
     const handleBackButton = (): void => {
         const state = location.state;
@@ -47,13 +51,13 @@ function Settings(): ReactElement {
                     <div className="desc">
                         <h4>Contrastes élevés</h4>
                         <span>
-                            Utiliser des couleurs plus contrastées pour
-                            l'affichage des cours dans le calendrier.
+                            Utiliser le maximum de contraste pour l'affichage
+                            des cours dans le calendrier.
                         </span>
                     </div>
                     <Switch
-                        isChecked={isSwitchChecked}
-                        setIsChecked={setIsSwitchChecked}
+                        isChecked={useAccessibleColors}
+                        setIsChecked={setUseAccessibleColors}
                     />
                 </div>
             </div>

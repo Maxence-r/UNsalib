@@ -7,6 +7,12 @@
     gap: 24px;
     padding: 24px 0 24px 24px;
 
+    @media screen and (max-width: 1024px) {
+        & {
+            padding: 20px;
+        }
+    }
+
     & > .header {
         display: flex;
         align-items: center;
@@ -17,6 +23,7 @@
             font-family: "Cal Sans";
             font-weight: normal;
             margin-block: 0;
+            flex-grow: 1;
         }
     }
 
@@ -57,15 +64,15 @@
 }
 
 ::view-transition-group(panel-settings) {
-	z-index: 100;
+    z-index: 100;
 }
 
 ::view-transition-old(panel-settings) {
-    animation: slide-to-right .3s forwards ease-out;
+    animation: slide-to-right 0.3s forwards ease-out;
     background-color: var(--color-background);
 }
 
 ::view-transition-new(panel-settings) {
-    animation: slide-to-right .3s reverse forwards ease-in;
+    animation: slide-to-right 0.3s reverse forwards ease-in;
     background-color: var(--color-background);
 }

@@ -1,15 +1,18 @@
 import { useState, type ReactElement } from "react";
-import { ArrowLeft, MessageSquare } from "lucide-react";
-import { useLocation, useNavigate } from "react-router";
+import { ArrowLeft, Info, MessageSquare } from "lucide-react";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 
 import "./Settings.css";
 import { IconButton, TextButton } from "../../../../components/button/Button";
 import { Switch } from "../../../../components/switch/Switch";
+import { useDeviceType } from "../../../../utils/hooks/device.hook";
 
 function Settings(): ReactElement {
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams()
     const location = useLocation();
+    const isMobile = useDeviceType() === "mobile";
 
     const handleBackButton = (): void => {
         const state = location.state;
@@ -31,6 +34,13 @@ function Settings(): ReactElement {
                     secondary
                 />
                 <h1>Paramètres</h1>
+                {isMobile && (
+                    <IconButton
+                        onClick={() => setSearchParams("?panel=hidden")}
+                        icon={<Info />}
+                        secondary
+                    />
+                )}
             </div>
             <div className="options">
                 <div className="switch-container">

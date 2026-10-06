@@ -8,6 +8,15 @@
     height: 100%;
     overflow-y: auto;
 
+    @media screen and (max-width: 1024px) {
+        & {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
     & .card > .content {
         font-size: 14px;
         font-weight: 500;
@@ -40,7 +49,7 @@
                     gap: 24px;
                     align-items: center;
                     justify-content: center;
-                    margin: 48px;
+                    margin: 24px;
                     flex-grow: 1;
                     color: var(--color-on-surface);
 
@@ -92,11 +101,25 @@
                     min-width: 160px;
                     flex-grow: 1;
 
+                    @media screen and (max-width: 1024px) {
+                        & {
+                            min-width: 120px;
+                            min-height: 130px;
+                            max-height: 130px;
+                        }
+                    }
+
                     & img {
                         position: absolute;
                         bottom: 0;
                         right: -10px;
                         height: 110%;
+
+                        @media screen and (max-width: 1024px) {
+                            & {
+                                height: 100%;
+                            }
+                        }
                     }
                 }
 
@@ -122,6 +145,13 @@
             flex-direction: row;
             gap: 20px;
             align-items: center;
+
+            @media screen and (max-width: 1024px) {
+                & {
+                    flex-direction: column;
+                    align-items: unset;
+                }
+            }
         }
     }
 }

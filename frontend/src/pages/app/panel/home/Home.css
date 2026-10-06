@@ -9,6 +9,12 @@
         view-transition-name: panel-home;
         padding: 24px 0 24px 24px;
 
+        @media screen and (max-width: 1024px) {
+            & {
+                padding: 20px;
+            }
+        }
+
         /* Bottom area rules */
         & > .actions-container {
             display: flex;

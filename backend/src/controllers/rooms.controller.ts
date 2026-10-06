@@ -8,9 +8,9 @@ import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos } from "../utils/date.js";
 import { getAccessibleForegroundColor, palette } from "../utils/color.js";
-import { RoomSchemaProperties } from "models/room.model.js";
-import { ApiError } from "middlewares/error.middleware.js";
-import { appConfig } from "configs/app.config.js";
+import { RoomSchemaProperties } from "../models/room.model.js";
+import { ApiError } from "../middlewares/error.middleware.js";
+import { appConfig } from "../configs/app.config.js";
 import { statsService } from "../services/stats.service.js";
 
 class RoomsController {

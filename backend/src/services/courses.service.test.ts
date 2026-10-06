@@ -3,9 +3,9 @@ import { describe, test, before, after } from "node:test";
 import { connect } from "mongoose";
 
 import { coursesService } from "./courses.service.js";
-import { Course, CourseSchemaProperties } from "models/course.model.js";
-import { getHexHashFromString } from "utils/misc.js";
-import { findClosestPaletteColorId } from "utils/color.js";
+import { Course, CourseSchemaProperties } from "../models/course.model.js";
+import { getHexHashFromString } from "../utils/misc.js";
+import { findClosestPaletteColorId } from "../utils/color.js";
 
 const testData1__normalized = [
     {

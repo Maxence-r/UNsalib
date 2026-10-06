@@ -1,5 +1,5 @@
 import { Schema, model, type InferSchemaType } from "mongoose";
-import { palette } from "utils/color.js";
+import { palette } from "../utils/color.js";
 
 type CourseSchemaProperties = InferSchemaType<typeof CourseSchema>;
 

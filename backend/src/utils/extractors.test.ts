@@ -8,7 +8,7 @@ import {
     extractGroupsFromUnivHtml,
     extractModuleName
 } from "./extractors.js";
-import { dataConfig } from "configs/data.config.js";
+import { dataConfig } from "../configs/data.config.js";
 
 await describe("extractors", async () => {
     const univPageResponse = await fetch(

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { usersService } from "services/users.service.js";
+import { usersService } from "../services/users.service.js";
 
 class UsersController {
     /**

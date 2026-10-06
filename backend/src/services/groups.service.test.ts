@@ -7,7 +7,7 @@ import { connect } from "mongoose";
 //     processExtractedGroups,
 // } from "./groups.js";
 // import { Campus } from "models/campus.model.js";
-import { Group } from "models/group.model.js";
+import { Group } from "../models/group.model.js";
 import { groupsService } from "./groups.service.js";
 
 await describe("groups service", async () => {

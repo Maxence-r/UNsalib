@@ -1,14 +1,14 @@
 import { Group, GroupSchemaProperties } from "../models/group.model.js";
 
-import { dataConfig } from "configs/data.config.js";
-import type { SectorSchemaProperties } from "models/sector.model.js";
-import { logger } from "utils/logger.js";
+import { dataConfig } from "../configs/data.config.js";
+import type { SectorSchemaProperties } from "../models/sector.model.js";
+import { logger } from "../utils/logger.js";
 import {
     extractGroupsFromCelcatHtml,
     extractGroupsFromUnivHtml,
     type UnivGroup,
     type CelcatGroup,
-} from "utils/extractors.js";
+} from "../utils/extractors.js";
 
 class GroupsService {
     /**

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 
-import { usersController } from "controllers/users.controller.js";
+import { usersController } from "../controllers/users.controller.js";
 import { statHandler } from "../middlewares/stats.middleware.js";
 
 const router = express.Router();

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import { logger } from "../utils/logger.js";
-import { appConfig } from "configs/app.config.js";
+import { appConfig } from "../configs/app.config.js";
 
 /**
  * Custom error class for API errors

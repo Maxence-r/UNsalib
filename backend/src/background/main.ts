@@ -6,9 +6,9 @@ import { logger } from "../utils/logger.js";
 // import { publishAvailableRooms } from "./refresh-available.js";
 import { sectorsService } from "../services/sectors.service.js";
 import { groupsService } from "../services/groups.service.js";
-import { dataConfig } from "configs/data.config.js";
-import { campusesService } from "services/campuses.service.js";
-import { coursesService } from "services/courses.service.js";
+import { dataConfig } from "../configs/data.config.js";
+import { campusesService } from "../services/campuses.service.js";
+import { coursesService } from "../services/courses.service.js";
 
 async function launchBackgroundTasks(): Promise<void> {
     // const gp = await groupsService.getByNameAndSectorId("L3INFO", "sciences");

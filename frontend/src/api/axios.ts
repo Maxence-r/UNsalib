@@ -11,6 +11,43 @@ class ResponseError extends Error {
     }
 }
 
+class ApiGet<T> {
+    url: string;
+
+    constructor(url: string) {
+        this.url = url;
+    }
+
+    async do(abortSignal?: AbortSignal): Promise<T> {
+        const res = await api.get(
+            this.url,
+            abortSignal ? { signal: abortSignal } : undefined,
+        );
+
+        return res.data as T;
+    }
+}
+
+class ApiPost<T> {
+    url: string;
+    data: { [key: string]: unknown };
+
+    constructor(url: string, data: { [key: string]: unknown }) {
+        this.url = url;
+        this.data = data;
+    }
+
+    async do(abortSignal?: AbortSignal): Promise<T> {
+        const res = await api.post(
+            this.url,
+            this.data,
+            abortSignal ? { signal: abortSignal } : undefined,
+        );
+
+        return res.data as T;
+    }
+}
+
 const api = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     withCredentials: true,
@@ -22,7 +59,7 @@ let failedQueue: {
     reject: (err: unknown) => void;
 }[] = [];
 
-function processQueue(error: unknown, token: string | null) {
+function processQueue(error: unknown, token: string | null): void {
     failedQueue.forEach((p) => {
         if (token) p.resolve(token);
         else p.reject(error);
@@ -107,4 +144,4 @@ api.interceptors.response.use(
     },
 );
 
-export { api, ResponseError };
+export { api, ResponseError, ApiGet, ApiPost };

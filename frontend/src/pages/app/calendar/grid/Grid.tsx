@@ -9,7 +9,7 @@ import type {
 } from "../../../../utils/types/api.type";
 import { Column, ColumnHeader } from "./Column";
 import { useApi } from "../../../../utils/hooks/api.hook";
-import { getRoomTimetable } from "../../../../api/timetables.api";
+import { GetRoomTimetable } from "../../../../api/timetables.api";
 
 const DAY_NAMES = [
     "Lundi",
@@ -88,9 +88,9 @@ function Grid(): ReactElement {
     // TODO: check that weekNumber is legal
     const weekNumber = parseInt(params.weekNumber!);
 
-    const { isLoading, data, error } = useApi<ApiDataTimetable | null>(
-        () => getRoomTimetable(roomId, weekNumber),
-        [params.roomId, params.weekNumber],
+    const { isLoading, data, error } = useApi<ApiDataTimetable>(
+        new GetRoomTimetable(roomId, weekNumber),
+        [roomId, weekNumber],
     );
 
     const weekStart = data ? new Date(data.weekInfos.start) : undefined;

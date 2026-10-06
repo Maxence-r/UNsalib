@@ -5,7 +5,7 @@ import { TextButton } from "../../../components/button/Button.js";
 import "./calendar.css";
 import { ActionBar } from "./action-bar/ActionBar.js";
 import { useApi } from "../../../utils/hooks/api.hook.js";
-import { getRoomTimetable } from "../../../api/timetables.api.js";
+import { GetRoomTimetable } from "../../../api/timetables.api.js";
 import { useToast } from "../../../components/toast/Toast.js";
 import type { ApiDataTimetable } from "../../../utils/types/api.type.js";
 import { getCurrentWeekNumber } from "../../../utils/date.js";
@@ -111,10 +111,8 @@ function Calendar({ showDefault = false }: { showDefault?: boolean }) {
         isLoading,
         data: courses,
         error,
-    } = useApi<ApiDataTimetable | null>(
-        currentRoom
-            ? () => getRoomTimetable(currentRoom, weekNumber.value)
-            : () => null,
+    } = useApi<ApiDataTimetable>(
+        currentRoom ? new GetRoomTimetable(currentRoom, weekNumber.value) : null,
         [currentRoom, weekNumber.value],
     );
 

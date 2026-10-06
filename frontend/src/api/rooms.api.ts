@@ -1,11 +1,11 @@
-import { api } from "./axios";
+import { ApiGet } from "./axios";
 import type { ApiDataRoom } from "../utils/types/api.type";
 import type { Campuses } from "../stores/settings.store";
 
-async function getRoomsList(campusId: Campuses): Promise<ApiDataRoom[]> {
-    const res = await api.get(`/rooms?campusId=${campusId}`);
-    console.log(res)
-    return res.data as ApiDataRoom[];
+class GetRoomsList extends ApiGet<ApiDataRoom[]> {
+    constructor(campusId: Campuses) {
+        super(`/rooms?campusId=${campusId}`);
+    }
 }
 
-export { getRoomsList };
+export { GetRoomsList };

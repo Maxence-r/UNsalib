@@ -22,7 +22,7 @@ import { AboutPictosModal } from "./modals/AboutPictosModal.js";
 import { SearchModal } from "./modals/SearchModal.js";
 import { Badge } from "../../../../components/badge/Badge.js";
 import { useApi } from "../../../../utils/hooks/api.hook.js";
-import { getRoomsList } from "../../../../api/rooms.api.js";
+import { GetRoomsList } from "../../../../api/rooms.api.js";
 import { useModal } from "../../../../components/modal/Modal.js";
 import { useToast } from "../../../../components/toast/Toast.js";
 import { Link } from "react-router";
@@ -41,7 +41,7 @@ function ActionsContainer(): ReactElement {
         data: roomsList,
         isLoading,
         error,
-    } = useApi(() => getRoomsList(defaultCampus), [defaultCampus]);
+    } = useApi(new GetRoomsList(defaultCampus), [defaultCampus]);
     const { open: openAboutPictosModal } = useModal(
         "about-pictos",
         <AboutPictosModal />,

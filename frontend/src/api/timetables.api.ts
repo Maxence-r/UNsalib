@@ -1,14 +1,10 @@
-import { api } from "./axios";
+import { ApiGet } from "./axios";
 import type { ApiDataTimetable } from "../utils/types/api.type";
 
-async function getRoomTimetable(
-    roomId: string,
-    weekNumber: number,
-): Promise<ApiDataTimetable> {
-    const res = await api.get(
-        `/rooms/timetable?roomId=${roomId}&weekNumber=${weekNumber}`,
-    );
-    return res.data as ApiDataTimetable;
+class GetRoomTimetable extends ApiGet<ApiDataTimetable> {
+    constructor(roomId: string, weekNumber: number) {
+        super(`/rooms/timetable?roomId=${roomId}&weekNumber=${weekNumber}`);
+    }
 }
 
-export { getRoomTimetable };
+export { GetRoomTimetable };

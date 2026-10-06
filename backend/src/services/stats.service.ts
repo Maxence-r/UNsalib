@@ -4,11 +4,17 @@ class StatsService {
     /**
      * Save a new stat
      */
-    async addNew(userId: string, path: string, date: Date): Promise<void> {
+    async addNew(
+        userId: string,
+        type: "search" | "timetable" | "list",
+        campusId: string,
+        date: Date,
+    ): Promise<void> {
         await Stat.create({
-            date: date,
-            userId: userId,
-            path: path,
+            date,
+            userId,
+            type,
+            campusId
         });
     }
 }

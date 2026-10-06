@@ -5,37 +5,40 @@ import { appConfig } from "../configs/app.config.js";
 
 type AccountSchemaProperties = InferSchemaType<typeof AccountSchema>;
 
-const AccountSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-        minLength: 2,
-        maxLength: 30,
+const AccountSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            minLength: 2,
+            maxLength: 30,
+        },
+        lastname: {
+            type: String,
+            required: true,
+            minLength: 2,
+            maxLength: 30,
+        },
+        username: {
+            type: String,
+            required: true,
+            minLength: 2,
+            maxLength: 25,
+            unique: true,
+        },
+        password: {
+            type: String,
+            required: true,
+            minLength: 6,
+            select: false, // Don't return password by default
+        },
+        icon: {
+            type: String,
+            default: "",
+        },
     },
-    lastname: {
-        type: String,
-        required: true,
-        minLength: 2,
-        maxLength: 30,
-    },
-    username: {
-        type: String,
-        required: true,
-        minLength: 2,
-        maxLength: 25,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-        minLength: 6,
-        select: false, // Don't return password by default
-    },
-    icon: {
-        type: String,
-        default: "",
-    },
-});
+    { versionKey: false },
+);
 
 // Generate access token
 AccountSchema.methods.generateAccessToken = function (

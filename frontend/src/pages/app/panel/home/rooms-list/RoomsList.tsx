@@ -1,11 +1,12 @@
 import { Lock, Users, Monitor, Eye } from "lucide-react";
-import { cloneElement, type ReactElement } from "react";
+import { cloneElement, type ReactElement, type UIEvent } from "react";
 import { useNavigate } from "react-router";
 
 import type { ApiDataRoom } from "../../../../../utils/types/api.type.js";
 import "./RoomsList.css";
 import { router } from "../../../../Router.js";
 import { useDeviceType } from "../../../../../utils/hooks/device.hook.js";
+import { useBotChallengeStore } from "../../../../../stores/bot-challenge.store.js";
 
 // function Ping({ error }: { error: boolean }) {
 //     return <div className={`ping ${error ? "red" : "blue"}`}></div>;
@@ -89,9 +90,28 @@ function RoomsList({
     isLoading: boolean;
 }): ReactElement {
     const filteredRoomsList = rooms.filter((room) => filter.includes(room.id));
+    const setHumanCriteriaIfNull = useBotChallengeStore(
+        (s) => s.setHumanCriteriaIfNull,
+    );
+    const antiBotScrollCriteriaDone =
+        useBotChallengeStore((s) => s.humanCriteria).scroll !== null;
+
+    const handleHomepageScroll = (e: UIEvent<HTMLDivElement>): void => {
+        const container = e.currentTarget;
+        if (container.scrollTop <= 0 && container.scrollLeft <= 0) {
+            return;
+        }
+
+        setHumanCriteriaIfNull("scroll", true);
+    };
 
     return (
-        <div className="results">
+        <div
+            className="results"
+            onScroll={
+                !antiBotScrollCriteriaDone ? handleHomepageScroll : undefined
+            }
+        >
             {isLoading ? (
                 [...Array(100)].map((_val, i) => (
                     <Result key={i} onRoomClick={onRoomClick} room={null} />

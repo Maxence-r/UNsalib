@@ -4,11 +4,13 @@ const router = express.Router();
 import { router as roomsRoute } from "./rooms.route.js";
 import { router as authRoute } from "./auth.route.js";
 import { router as adminRoute } from "./admin.route.js";
+import { router as usersRoute } from "./users.route.js";
 
 // Mount routes
 router.use("/rooms", roomsRoute);
 router.use("/auth", authRoute);
 router.use("/admin", adminRoute);
+router.use("/users", usersRoute);
 
 // Health check endpoint
 router.get("/health", (req, res) => {

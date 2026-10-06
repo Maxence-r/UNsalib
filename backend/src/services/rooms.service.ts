@@ -5,6 +5,7 @@ import { coursesService } from "./courses.service.js";
 import { buildingsService } from "./buildings.service.js";
 import { appConfig } from "configs/app.config.js";
 import { getHexHashFromString } from "../utils/misc.js";
+import { Building } from "models/building.model.js";
 
 const CIE_CLOSING_DATES = {
     dayNumber: 1,
@@ -24,9 +25,9 @@ class RoomsService {
         return await Room.find({ reviewed: false }).lean();
     }
 
-    async isReviewed(roomId: string): Promise<boolean> {
+    async existsAndIsReviewed(roomId: string): Promise<boolean> {
         const room = await Room.findOne({ _id: roomId });
-        return !!(room && room.reviewed);
+        return !!room && room.reviewed;
     }
 
     async addRoomIfNotExists(
@@ -112,6 +113,7 @@ class RoomsService {
      * Find available rooms
      */
     async findAvailable(
+        campusId: string,
         start: Date,
         end: Date,
         seats: number,
@@ -180,6 +182,12 @@ class RoomsService {
         // });
 
         return availableRooms;
+    }
+
+    async getCampusId(roomId: string): Promise<string | undefined> {
+        const room = await Room.findById(roomId);
+        const roomBuilding = await Building.findById(room?.buildingId);
+        return roomBuilding ? roomBuilding.campusId : undefined;
     }
 
     // **********************************************************

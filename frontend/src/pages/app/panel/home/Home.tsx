@@ -1,4 +1,10 @@
-import { useState, useMemo, useEffect, type ReactElement } from "react";
+import {
+    useState,
+    useMemo,
+    useEffect,
+    type ReactElement,
+    type InputEvent,
+} from "react";
 import { FunnelX, Search, CircleQuestionMark } from "lucide-react";
 
 import {
@@ -23,6 +29,7 @@ import { Link } from "react-router";
 import "./Home.css";
 import { Header } from "./header/Header.js";
 import { useSettingsStore } from "../../../../stores/settings.store.js";
+import { useBotChallengeStore } from "../../../../stores/bot-challenge.store.js";
 
 function ActionsContainer(): ReactElement {
     const closePanel = usePanelStore((state) => state.close);
@@ -40,6 +47,9 @@ function ActionsContainer(): ReactElement {
         <AboutPictosModal />,
     );
     const { open: openToast } = useToast();
+    const setHumanCriteriaIfNull = useBotChallengeStore(
+        (s) => s.setHumanCriteriaIfNull,
+    );
 
     const loadTimetable = (room: ApiDataRoom) => {
         // pushToHistory("panel", openPanel);
@@ -62,7 +72,7 @@ function ActionsContainer(): ReactElement {
                         normalizeString(room.name).includes(
                             normalizeString(roomsSearch),
                         ) ||
-                        normalizeString(room.building).includes(
+                        normalizeString(room.buildingName).includes(
                             normalizeString(roomsSearch),
                         )
                     ) {
@@ -75,6 +85,12 @@ function ActionsContainer(): ReactElement {
         return [];
     }, [roomsSearch, roomsList, error, isLoading]);
 
+    const handleSearchInput = (e: InputEvent<HTMLInputElement>): void => {
+        setRoomsSearch((e.target as HTMLInputElement).value.toString());
+
+        setHumanCriteriaIfNull("input", true);
+    };
+
     useEffect(() => {
         if (error) openToast("Impossible de récupérer la liste des salles.");
     }, [error, openToast]);
@@ -84,11 +100,7 @@ function ActionsContainer(): ReactElement {
             <Input
                 type="text"
                 placeholder="Rechercher une salle, un bâtiment..."
-                onInput={(event) =>
-                    setRoomsSearch(
-                        (event.target as HTMLInputElement).value.toString(),
-                    )
-                }
+                onInput={handleSearchInput}
                 value={roomsSearch}
             />
             <div className="head">

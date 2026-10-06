@@ -11,6 +11,7 @@ import { isLightColor, blendColors, palette } from "../utils/color.js";
 import { RoomSchemaProperties } from "models/room.model.js";
 import { ApiError } from "middlewares/error.middleware.js";
 import { appConfig } from "configs/app.config.js";
+import { statsService } from "../services/stats.service.js";
 
 class RoomsController {
     /**
@@ -54,6 +55,9 @@ class RoomsController {
                 }
             }
 
+            // Add stat asynchronously to not slow down the request processing
+            void statsService.addNew(req.userId, "list", campusId, new Date());
+
             res.status(200).json({
                 success: true,
                 data: rooms,
@@ -75,7 +79,8 @@ class RoomsController {
     ): Promise<void> {
         try {
             // Getting validated queries
-            const data: {
+            const data = matchedData<{
+                campusId: string;
                 start: Date;
                 end: Date;
                 seats?: number;
@@ -85,9 +90,10 @@ class RoomsController {
                 type?: "info" | "tp" | "td" | "amphi";
                 visio?: boolean;
                 ilot?: boolean;
-            } = matchedData(req);
+            }>(req);
 
             const result = await roomsService.findAvailable(
+                data.campusId,
                 data.start,
                 data.end,
                 data.seats ?? 0,
@@ -97,6 +103,14 @@ class RoomsController {
                 data.type ?? null,
                 data.visio ?? null,
                 data.ilot ?? null,
+            );
+
+            // Add stat asynchronously to not slow down the request processing
+            void statsService.addNew(
+                req.userId,
+                "search",
+                data.campusId,
+                new Date(),
             );
 
             res.status(200).json({
@@ -120,16 +134,16 @@ class RoomsController {
     ): Promise<void> {
         try {
             // Getting validated queries
-            const data: {
+            const data = matchedData<{
                 roomId: string;
                 weekNumber: number;
-            } = matchedData(req);
+            }>(req);
 
             const weekInfos = getWeekInfos(data.weekNumber);
 
             if (
                 !appConfig.isDevMode &&
-                !(await roomsService.isReviewed(data.roomId))
+                !(await roomsService.existsAndIsReviewed(data.roomId))
             ) {
                 throw new ApiError(400, "Unknown room");
             }
@@ -194,6 +208,14 @@ class RoomsController {
             //         weekInfos: requestedWeek,
             //     });
             // }
+
+            // Add stat asynchronously to not slow down the request processing
+            void statsService.addNew(
+                req.userId,
+                "timetable",
+                await roomsService.getCampusId(data.roomId) ?? "unknown",
+                new Date(),
+            );
 
             res.status(200).json({
                 success: true,

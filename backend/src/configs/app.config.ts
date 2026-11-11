@@ -1,5 +1,3 @@
-import { logger } from "../utils/logger.js";
-
 function extractBoolean(
     value: string | undefined,
     defaultValue: boolean,
@@ -16,7 +14,7 @@ function extractBoolean(
 }
 
 if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
-    logger.error(
+    console.error(
         "JWT secrets are missing from the environment file. Please set 'JWT_ACCESS_SECRET' and 'JWT_REFRESH_SECRET' to use UNsalib securely.",
     );
     process.exit(1);
@@ -26,7 +24,7 @@ if (
     process.env.SYNC_INTERVAL_HOURS &&
     24 % parseInt(process.env.SYNC_INTERVAL_HOURS)
 ) {
-    logger.error("Only divisors of 24 are allowed for 'SYNC_INTERVAL_HOURS'.");
+    console.error("Only divisors of 24 are allowed for 'SYNC_INTERVAL_HOURS'.");
     process.exit(1);
 }
 
@@ -76,7 +74,10 @@ const appConfig = {
             true,
         ),
     },
-    isDevMode: process.env.NODE_ENV === "development"
+    log: {
+        level: process.env.LOG_LEVEL ?? "info",
+    },
+    isDevMode: process.env.NODE_ENV === "development",
 };
 
 export { appConfig };

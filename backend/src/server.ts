@@ -37,11 +37,17 @@ async function connectToDb(): Promise<void> {
 async function startServer(): Promise<Socket> {
     try {
         // Connect to database
-        void (await connectToDb());
+        await connectToDb();
 
         // Start server
         const server = app.listen(appConfig.server.port, () => {
             logger.info(`Server running on port ${appConfig.server.port}`);
+        });
+
+        // Handle uncaught exceptions
+        process.on("uncaughtException", (err) => {
+            logger.error("Uncaught Exception:", err);
+            process.exit(1);
         });
 
         // Handle unhandled promise rejections
@@ -55,9 +61,7 @@ async function startServer(): Promise<Socket> {
         // Handle SIGTERM
         process.on("SIGTERM", () => {
             logger.info("SIGTERM received. Closing server gracefully...");
-            server.close(() => {
-                logger.info("Process terminated");
-            });
+            server.close();
         });
 
         // Initialize a new Socket.IO server
@@ -75,12 +79,6 @@ async function startServer(): Promise<Socket> {
         process.exit(1);
     }
 }
-
-// Handle uncaught exceptions
-process.on("uncaughtException", (err) => {
-    logger.error("Uncaught Exception:", err);
-    process.exit(1);
-});
 
 // Start the server and store the built socket
 const socket = await startServer();

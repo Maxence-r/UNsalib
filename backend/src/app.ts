@@ -1,4 +1,5 @@
 import "dotenv/config";
+import type { Request, Response } from "express";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -8,7 +9,7 @@ import cookieParser from "cookie-parser";
 // import rateLimit from "express-rate-limit";
 
 import { appConfig } from "./configs/app.config.js";
-import { logger } from "./utils/logger.js";
+import { accessLogger } from "./utils/logger.js";
 import { router as routes } from "./routes/index.route.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -38,15 +39,22 @@ app.use(cookieParser());
 app.use(compression());
 
 // HTTP request logger
-if (appConfig.isDevMode) {
-    app.use(morgan("dev"));
-} else {
-    app.use(
-        morgan("combined", {
-            stream: { write: (message) => logger.info(message.trim()) },
-        }),
-    );
-}
+const shortMorganFormat = morgan.compile<Request, Response>(
+    ":remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
+);
+app.use(
+    morgan((tokens, req, res) => {
+        const message = shortMorganFormat(tokens, req, res);
+        if (message) {
+            if (res.statusCode >= 400 && res.statusCode <= 599) {
+                accessLogger.error(message.trim());
+            } else {
+                accessLogger.info(message.trim());
+            }
+        }
+        return undefined;
+    }),
+);
 
 // Rate limiting
 // app.use(

@@ -1,6 +1,8 @@
 import winston from "winston";
 import path from "path";
 
+import { appConfig } from "../configs/app.config.js";
+
 // Define log format
 const logFormat = winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
@@ -22,39 +24,56 @@ const consoleFormat = winston.format.combine(
     }),
 );
 
+const infoOnlyFormat = winston.format((info) =>
+    info.level === "info" ? info : false,
+);
+
 // Create logger instance
 const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || "info",
+    level: appConfig.log.level,
     format: logFormat,
     transports: [
-        // Write all logs to console
-        new winston.transports.Console({
-            format: consoleFormat,
-        }),
-        // Write all logs to all.log
+        // Write informational logs only to infos.log
         new winston.transports.File({
-            filename: path.join("logs", "all.log"),
+            filename: path.join("logs", "infos.log"),
+            format: winston.format.combine(logFormat, infoOnlyFormat()),
             maxsize: 5242880, // 5MB
             maxFiles: 5,
         }),
-        // Write errors to errors.log
+        // Write warnings and errors to errors.log
         new winston.transports.File({
             filename: path.join("logs", "errors.log"),
-            level: "error",
+            level: "warn",
             maxsize: 5242880, // 5MB
             maxFiles: 5,
-        }),
-    ],
-    exceptionHandlers: [
-        new winston.transports.File({
-            filename: path.join("logs", "exceptions.log"),
-        }),
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({
-            filename: path.join("logs", "rejections.log"),
         }),
     ],
 });
 
-export { logger };
+const accessLogger = winston.createLogger({
+    level: "info",
+    format: logFormat,
+    transports: [
+        new winston.transports.File({
+            filename: path.join("logs", "access.log"),
+            maxsize: 5242880, // 5MB
+            maxFiles: 5,
+        }),
+    ],
+});
+
+if (appConfig.isDevMode) {
+    // Write all logs to console in development mode
+    logger.add(
+        new winston.transports.Console({
+            format: consoleFormat,
+        }),
+    );
+    accessLogger.add(
+        new winston.transports.Console({
+            format: consoleFormat,
+        }),
+    );
+}
+
+export { logger, accessLogger };

@@ -38,6 +38,10 @@
         font-weight: 500;
     }
 
+    & > svg {
+        flex-shrink: 0;
+    }
+
     &.error {
         background-color: var(--color-error);
         color: var(--color-on-error);

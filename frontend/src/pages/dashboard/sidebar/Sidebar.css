@@ -67,13 +67,14 @@
             justify-content: space-between;
             gap: 24px;
 
-            & > .links-list {
+            & .links-list {
                 display: flex;
                 width: 100%;
                 flex-direction: column;
                 gap: 8px;
 
-                & > .link {
+                & > .link,
+                & > .group-link > button {
                     border-radius: var(--border-radius);
                     background-color: var(--color-background);
                     cursor: pointer;
@@ -96,16 +97,11 @@
                     }
 
                     &:hover {
-                        background-color: var(--color-neutral);
+                        background-color: var(--color-neutral-light);
                     }
 
                     &.active {
                         background-color: var(--color-accent);
-                        color: var(--color-on-accent);
-                    }
-
-                    &.active:hover {
-                        background-color: var(--color-accent-dark);
                         color: var(--color-on-accent);
                     }
 
@@ -114,6 +110,8 @@
                         font-weight: bold;
                         text-transform: uppercase;
                         font-family: "Space Grotesk", sans-serif;
+                        text-align: left;
+                        flex-grow: 1;
 
                         @media screen and (max-width: 1024px) {
                             .sidebar.shrinkable & {
@@ -141,6 +139,29 @@
                             font-weight: normal;
                             color: var(--color-neutral-dark);
                         }
+                    }
+                }
+
+                & > .group-link {
+                    display: flex;
+                    flex-direction: column;
+
+                    @media screen and (max-width: 1024px) {
+                        .sidebar.shrinkable & {
+                            & > button {
+                                display: none;
+                            }
+
+                            & > .links-list {
+                                margin-top: 0;
+                                padding-left: 0;
+                            }
+                        }
+                    }
+
+                    & > .links-list {
+                        margin-top: 8px;
+                        padding-left: 48px;
                     }
                 }
             }

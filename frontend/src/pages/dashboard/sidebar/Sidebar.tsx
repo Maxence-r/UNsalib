@@ -1,13 +1,20 @@
-import { cloneElement, type ReactElement } from "react";
-import { LogOut } from "lucide-react";
-import { NavLink } from "react-router";
+import { cloneElement, useState, type ReactElement } from "react";
+import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
+import { NavLink, useLocation } from "react-router";
 
 import "./Sidebar.css";
+import type { GroupView, View } from "../DashboardRouter";
+import { useDeviceType } from "../../../utils/hooks/device.hook";
 
 interface Link {
     name: string;
-    icon: ReactElement<{ size: number }>;
     path: string;
+    icon?: ReactElement<{ size: number }>;
+}
+
+interface GroupLink extends Omit<Link, "path"> {
+    sublinks: Link[];
+    icon: ReactElement<{ size: number }>;
 }
 
 function Link({ name, icon, path }: Link): ReactElement {
@@ -16,17 +23,67 @@ function Link({ name, icon, path }: Link): ReactElement {
             to={path}
             className={({ isActive }) => `link${isActive ? " active" : ""}`}
         >
-            {cloneElement(icon, { size: 20 })}
+            {icon && cloneElement(icon, { size: 20 })}
             <span>{name}</span>
         </NavLink>
     );
 }
 
-function LinksList({ actions }: { actions: Link[] }): ReactElement {
+function GroupLink({ name, icon, sublinks }: GroupLink): ReactElement {
+    const location = useLocation().pathname;
+    const [isManuallyExpanded, setIsManuallyExpanded] = useState<
+        boolean | null
+    >(null);
+    const hasActiveSublink = sublinks.some((sublink) =>
+        location.startsWith(sublink.path),
+    );
+    const isTablet = useDeviceType() === "tablet";
+    const isExpanded = isTablet || (isManuallyExpanded ?? hasActiveSublink);
+
+    const handleClick = (): void => {
+        setIsManuallyExpanded((expanded) => !(expanded ?? hasActiveSublink));
+    };
+
+    return (
+        <div className="group-link">
+            <button onClick={handleClick}>
+                {cloneElement(icon, { size: 20 })}
+                <span>{name}</span>
+                {isExpanded ? (
+                    <ChevronUp size={20} />
+                ) : (
+                    <ChevronDown size={20} />
+                )}
+            </button>
+            {isExpanded && (
+                <LinksList
+                    actions={
+                        isTablet
+                            ? sublinks.map((sublink) => ({ ...sublink, icon }))
+                            : sublinks
+                    }
+                />
+            )}
+        </div>
+    );
+}
+
+function LinksList({
+    actions,
+}: {
+    actions: (Link | GroupLink)[];
+}): ReactElement {
     return (
         <div className="links-list">
             {actions.map((action) => {
-                return (
+                return "sublinks" in action ? (
+                    <GroupLink
+                        name={action.name}
+                        icon={action.icon}
+                        key={`action ${action.name}`}
+                        sublinks={action.sublinks}
+                    />
+                ) : (
                     <Link
                         name={action.name}
                         icon={action.icon}
@@ -48,11 +105,7 @@ function Sidebar({
     accountName?: string;
     accountLastname?: string;
     embedded: boolean;
-    viewsList: {
-        id: string;
-        name: string;
-        icon: ReactElement<{ size: number }>;
-    }[];
+    viewsList: (View | GroupView)[];
 }): ReactElement {
     return (
         <div className={`sidebar${embedded ? "" : " shrinkable"}`}>
@@ -62,10 +115,16 @@ function Sidebar({
             </div>
             <div className="nav">
                 <LinksList
-                    actions={viewsList.map((tab) => ({
-                        icon: tab.icon,
-                        name: tab.name,
-                        path: `/dashboard/${tab.id}`,
+                    actions={viewsList.map((view) => ({
+                        icon: view.icon,
+                        name: view.name,
+                        path: `/dashboard/${view.id}`,
+                        ...("subviews" in view && {
+                            sublinks: view.subviews.map((subview) => ({
+                                name: subview.name,
+                                path: `/dashboard/${view.id}/${subview.id}`,
+                            })),
+                        }),
                     }))}
                 />
                 <LinksList

@@ -1,6 +1,6 @@
 // import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
-import { Children, type ReactElement } from "react";
+import type { ReactElement } from "react";
 
 // import { ApiUserAccount } from "./_utils/types";
 import { Sidebar } from "./sidebar/Sidebar";
@@ -16,22 +16,39 @@ import { Layout } from "../../components/layout/Layout";
 
 function Dashboard(): ReactElement {
     const location = useLocation().pathname;
-    const currentViewId = location.split("/")[2];
-    const device = useDeviceType();
+    const currentViewTitle = ((): string | undefined => {
+        const splittedLocation = location
+            .split("/")
+            .filter((part) => part !== "");
+        if (splittedLocation.length < 2) return;
+        const currentView = DASHBOARD_VIEWS.find(
+            (view) => view.id === splittedLocation[1],
+        );
+
+        if (currentView) {
+            if (splittedLocation.length === 3 && "subviews" in currentView) {
+                return (
+                    currentView.name +
+                    " : " +
+                    currentView.subviews.find(
+                        (subview) => subview.id === splittedLocation[2],
+                    )?.name
+                );
+            }
+            return currentView.name;
+        }
+    })();
+    const isMobile = useDeviceType() === "mobile";
     const account = useAccountStore<Account | null>((s) => s.account);
 
     return (
         <main id="dashboard">
-            {device === "mobile" ? (
+            {isMobile ? (
                 <MobileAppbar
                     accountName={account?.name}
                     accountLastname={account?.lastname}
                     viewsList={DASHBOARD_VIEWS}
-                    currentViewTitle={
-                        DASHBOARD_VIEWS.filter(
-                            (view) => view.id === currentViewId,
-                        )[0]?.name
-                    }
+                    currentViewTitle={currentViewTitle ?? ""}
                 />
             ) : (
                 <Sidebar
@@ -42,15 +59,7 @@ function Dashboard(): ReactElement {
                 />
             )}
             <div className="main">
-                <Layout
-                    title={
-                        device !== "mobile"
-                            ? DASHBOARD_VIEWS.filter(
-                                  (view) => view.id === currentViewId,
-                              )[0]?.name
-                            : undefined
-                    }
-                >
+                <Layout title={isMobile ? undefined : currentViewTitle}>
                     <Outlet />
                 </Layout>
             </div>

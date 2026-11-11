@@ -1,22 +1,12 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 
 import { usersController } from "../controllers/users.controller.js";
 import { statHandler } from "../middlewares/stats.middleware.js";
 
 const router = express.Router();
 
-// Public routes
-router.post(
-    "/not-a-bot",
-    statHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        usersController.notABot(req, res, next),
-);
-router.post(
-    "/from-qrcode",
-    statHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        usersController.setFromQrCode(req, res, next),
-);
+router.post("/not-a-bot", statHandler, usersController.notABot);
+
+router.post("/from-qrcode", statHandler, usersController.setFromQrCode);
 
 export { router };

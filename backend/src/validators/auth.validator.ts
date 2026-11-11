@@ -1,8 +1,10 @@
-import { body } from "express-validator";
+import { z } from "zod";
 
-const loginValidation = [
-    body("username").notEmpty().withMessage("Missing value").trim(),
-    body("password").notEmpty().withMessage("Missing value"),
-];
+import { nonEmptyString } from "./common.validator.js";
 
-export { loginValidation };
+const loginValidator = z.object({
+    username: nonEmptyString,
+    password: nonEmptyString,
+});
+
+export { loginValidator };

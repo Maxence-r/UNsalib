@@ -13,16 +13,16 @@ const dataConfig = {
                 { id: "fle", univId: "i-fle", celcatId: "fle" },
             ],
         },
-        {
-            name: "Lombarderie",
-            sectors: [
-                {
-                    id: "sciences",
-                    univId: "sciences",
-                    celcatId: "sciences",
-                },
-            ],
-        },
+        // {
+        //     name: "Lombarderie",
+        //     sectors: [
+        //         {
+        //             id: "sciences",
+        //             univId: "sciences",
+        //             celcatId: "sciences",
+        //         },
+        //     ],
+        // },
     ],
 };
 

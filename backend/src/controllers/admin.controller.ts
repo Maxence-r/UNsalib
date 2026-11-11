@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { matchedData } from "express-validator";
+// import { matchedData } from "express-validator";
 import { Types } from "mongoose";
 
 import { Campus } from "../models/campus.model.js";

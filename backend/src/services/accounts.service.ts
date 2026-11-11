@@ -4,7 +4,7 @@ import { compare } from "bcrypt";
 import { Account } from "../models/account.model.js";
 import { appConfig } from "../configs/app.config.js";
 import { Token } from "../models/token.model.js";
-import { ApiError } from "../middlewares/error.middleware.js";
+import { ApiError } from "../utils/errors.js";
 
 class AccountsService {
     /**

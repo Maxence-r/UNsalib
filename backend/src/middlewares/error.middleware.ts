@@ -1,30 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import { logger } from "../utils/logger.js";
+import { ServiceError, ApiError } from "../utils/errors.js";
 import { appConfig } from "../configs/app.config.js";
-
-/**
- * Custom error class for API errors
- */
-class ApiError extends Error {
-    statusCode: number;
-    validationStack?: { field: string; message: string }[];
-
-    constructor(
-        statusCode: number,
-        message: string,
-        validationStack?: { field: string; message: string }[],
-    ) {
-        super(message);
-        this.statusCode = statusCode;
-
-        if (validationStack) {
-            this.validationStack = validationStack;
-        } else {
-            Error.captureStackTrace(this, this.constructor);
-        }
-    }
-}
 
 /**
  * Global error handler middleware
@@ -43,14 +21,8 @@ function errorHandler(
 
     if (err instanceof ApiError) {
         statusCode = err.statusCode;
-        if (err.validationStack) {
-            // Handle validation errors
-            message +=
-                ": " +
-                err.validationStack
-                    .map((obj) => `${obj.message} for '${obj.field}' field`)
-                    .join(", ");
-        }
+    } else if (err instanceof ServiceError) {
+        statusCode = 400;
     } else if (!appConfig.isDevMode) {
         // Do not leak unexpected error messages in production
         message = "";
@@ -67,12 +39,11 @@ function errorHandler(
 
     // Send error response
     res.status(statusCode).json({
-        success: false,
-        message: message || "Internal server error",
+        error: message || "Internal server error",
         ...(appConfig.isDevMode && {
             stack: stack,
         }),
     });
 }
 
-export { errorHandler, ApiError };
+export { errorHandler };

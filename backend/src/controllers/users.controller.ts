@@ -1,12 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import { usersService } from "../services/users.service.js";
 
 class UsersController {
+    constructor() {
+        this.notABot = this.notABot.bind(this);
+        this.setFromQrCode = this.setFromQrCode.bind(this);
+    }
+
     /**
-     * @route   POST /not-a-bot
-     * @desc    Mark the user as human
-     * @access  Public
+     * Mark the user as human
      */
     async notABot(
         req: Request,
@@ -26,9 +29,7 @@ class UsersController {
     }
 
     /**
-     * @route   POST /from-qrcode
-     * @desc    Mark the user as coming from advertising poster QR codes
-     * @access  Public
+     * Mark the user as coming from advertising poster QR codes
      */
     async setFromQrCode(
         req: Request,

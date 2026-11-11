@@ -1,40 +1,36 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 
 import {
-    availableValidation,
-    timetableValidation,
-    allValidation,
+    availableValidator,
+    timetableValidator,
+    roomIdValidator,
+    allValidator,
 } from "../validators/rooms.validator.js";
 import { statHandler } from "../middlewares/stats.middleware.js";
-import { validationHandler } from "../middlewares/validation.middleware.js";
+import { withValidated } from "../middlewares/validation.middleware.js";
 import { roomsController } from "../controllers/rooms.controller.js";
 
 const router = express.Router();
 
-// Public routes
 router.get(
     "/",
-    allValidation,
-    validationHandler,
     statHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        roomsController.getAll(req, res, next),
+    withValidated(roomsController.getAll, { query: allValidator }),
 );
+
 router.get(
     "/available",
-    availableValidation,
-    validationHandler,
     statHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        roomsController.getAvailable(req, res, next),
+    withValidated(roomsController.getAvailable, { query: availableValidator }),
 );
+
 router.get(
-    "/timetable",
-    timetableValidation,
-    validationHandler,
+    "/:roomId/timetable",
     statHandler,
-    (req: Request, res: Response, next: NextFunction) =>
-        roomsController.getTimetable(req, res, next),
+    withValidated(roomsController.getTimetable, {
+        params: roomIdValidator,
+        query: timetableValidator,
+    }),
 );
 
 export { router };

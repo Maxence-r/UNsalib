@@ -1,34 +1,41 @@
-import { Request, Response, NextFunction } from "express";
-import { matchedData } from "express-validator";
-import { Types } from "mongoose";
+import type { Response, NextFunction } from "express";
 
 import { roomsService } from "../services/rooms.service.js";
 import { buildingsService } from "../services/buildings.service.js";
-import { groupsService } from "../services/groups.service.js";
 import { coursesService } from "../services/courses.service.js";
 import { getWeekInfos } from "../utils/date.js";
 import { getAccessibleForegroundColor, palette } from "../utils/color.js";
-import { RoomSchemaProperties } from "../models/room.model.js";
-import { ApiError } from "../middlewares/error.middleware.js";
 import { appConfig } from "../configs/app.config.js";
 import { statsService } from "../services/stats.service.js";
+import type { ValidatedRequest } from "../middlewares/validation.middleware.js";
+import type {
+    allValidator,
+    availableValidator,
+    roomIdValidator,
+    timetableValidator,
+} from "../validators/rooms.validator.js";
+import { ApiError } from "../utils/errors.js";
 
 class RoomsController {
+    constructor() {
+        this.getAll = this.getAll.bind(this);
+        this.getAvailable = this.getAvailable.bind(this);
+        this.getTimetable = this.getTimetable.bind(this);
+    }
+
     /**
-     * @route   GET /
-     * @desc    Return all rooms
-     * @access  Public
+     * Return all rooms
      */
     async getAll(
-        req: Request,
+        req: ValidatedRequest<typeof allValidator>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
             // Getting validated queries
-            const { campusId } = matchedData<{ campusId: string }>(req);
-            const buildings =
-                await buildingsService.getBuildingsByCampus(campusId);
+            const buildings = await buildingsService.getBuildingsByCampus(
+                req.validated.campusId,
+            );
 
             const rooms: {
                 id: string;
@@ -56,7 +63,12 @@ class RoomsController {
             }
 
             // Add stat asynchronously to not slow down the request processing
-            void statsService.addNew(req.userId, "list", campusId, new Date());
+            void statsService.addNew(
+                req.userId,
+                "list",
+                req.validated.campusId,
+                new Date(),
+            );
 
             res.status(200).json({
                 success: true,
@@ -68,48 +80,32 @@ class RoomsController {
     }
 
     /**
-     * @route   GET /available
-     * @desc    Return available rooms
-     * @access  Public
+     * Return available rooms
      */
     async getAvailable(
-        req: Request,
+        req: ValidatedRequest<typeof availableValidator>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            // Getting validated queries
-            const data = matchedData<{
-                campusid: string;
-                start: Date;
-                end: Date;
-                seats?: number;
-                whiteboards?: number;
-                blackboards?: number;
-                includebadge?: boolean;
-                type?: "info" | "tp" | "td" | "amphi";
-                visio?: boolean;
-                ilot?: boolean;
-            }>(req);
-
             const result = await roomsService.findAvailable(
-                data.campusid,
-                data.start,
-                data.end,
-                data.seats ?? 0,
-                data.whiteboards ?? 0,
-                data.blackboards ?? 0,
-                data.includebadge ?? false,
-                data.type ?? null,
-                data.visio ?? null,
-                data.ilot ?? null,
+                req.validated.campusId,
+                req.validated.start,
+                req.validated.end,
+                req.validated.seats ?? 0,
+                req.validated.whiteBoards ?? 0,
+                req.validated.blackBoards ?? 0,
+                req.validated.includeBadge ?? false,
+                req.validated.type ?? null,
+                req.validated.visio ?? null,
+                req.validated.ilot ?? null,
             );
 
             // Add stat asynchronously to not slow down the request processing
             void statsService.addNew(
                 req.userId,
                 "search",
-                data.campusid,
+                req.validated.campusId,
                 new Date(),
             );
 
@@ -123,33 +119,27 @@ class RoomsController {
     }
 
     /**
-     * @route   GET /timetable
-     * @desc    Return a room's timetable
-     * @access  Public
+     * Return a room's timetable
      */
     async getTimetable(
-        req: Request,
+        req: ValidatedRequest<
+            typeof timetableValidator & typeof roomIdValidator
+        >,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            // Getting validated queries
-            const data = matchedData<{
-                roomId: string;
-                weekNumber: number;
-            }>(req);
-
-            const weekInfos = getWeekInfos(data.weekNumber);
+            const weekInfos = getWeekInfos(req.validated.weekNumber);
 
             if (
                 !appConfig.isDevMode &&
-                !(await roomsService.existsAndIsReviewed(data.roomId))
+                !(await roomsService.existsAndIsReviewed(req.validated.roomId))
             ) {
                 throw new ApiError(400, "Unknown room");
             }
 
             const result = await coursesService.getTimetable(
-                data.roomId,
+                req.validated.roomId,
                 weekInfos.start,
                 weekInfos.end,
             );
@@ -211,7 +201,8 @@ class RoomsController {
             void statsService.addNew(
                 req.userId,
                 "timetable",
-                (await roomsService.getCampusId(data.roomId)) ?? "unknown",
+                (await roomsService.getCampusId(req.validated.roomId)) ??
+                    "unknown",
                 new Date(),
             );
 

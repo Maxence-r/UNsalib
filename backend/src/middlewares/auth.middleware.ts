@@ -1,52 +1,65 @@
-import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken"; // do not change, jsonwebtoken imports are unstable
 
-import { ApiError } from "./error.middleware.js";
+import { ApiError } from "../utils/errors.js";
 import { appConfig } from "../configs/app.config.js";
 
-interface AccessTokenPayload extends JwtPayload {
-    sub: string;
-}
+type AuthenticatedRequest<R extends Request = Request> = R & {
+    accountId: string;
+};
 
-/**
- * Athentication middleware for private routes
- */
-function authHandler(req: Request, res: Response, next: NextFunction): void {
-    try {
-        // Check for token in headers
-        const authHeader = req.headers.authorization;
-        if (!authHeader?.startsWith("Bearer ")) {
-            throw new ApiError(401, "Missing or invalid Authorization header");
-        }
-
-        // Get the token
-        const accessToken = authHeader.split(" ")[1];
-
-        // Check if the token is valid
-        let payload: AccessTokenPayload;
+function withAuthenticated(
+    handler: (
+        req: AuthenticatedRequest,
+        res: Response,
+        next: NextFunction,
+    ) => unknown,
+): (req: Request, res: Response, next: NextFunction) => Promise<unknown> {
+    return async (req, res, next) => {
         try {
-            payload = jwt.verify(
-                accessToken,
-                appConfig.jwt.accessSecret,
-            ) as AccessTokenPayload;
-        } catch (err: unknown) {
-            if ((err as Error).name === "TokenExpiredError") {
-                throw new ApiError(401, "Access token expired");
+            const authHeader = req.headers.authorization;
+
+            if (!authHeader?.startsWith("Bearer ")) {
+                throw new ApiError(401, "Missing authentication token");
             }
-            throw new ApiError(401, "Invalid access token");
-        }
 
-        // Check if the token includes an account id
-        if (!payload.sub) {
-            throw new ApiError(401, "Invalid access token payload");
-        }
+            const token = authHeader.slice("Bearer ".length).trim();
+            if (!token) {
+                throw new ApiError(401, "Missing authentication token");
+            }
 
-        // All checks passed: add an account id for further processing
-        req.accountId = payload.sub;
-        next();
-    } catch (error) {
-        next(error);
-    }
+            let accountId: string;
+            try {
+                const payload = jwt.verify(token, appConfig.jwt.accessSecret);
+
+                if (
+                    typeof payload === "string" ||
+                    typeof payload.sub !== "string"
+                ) {
+                    throw new Error();
+                }
+
+                accountId = payload.sub;
+            } catch (error) {
+                if (error instanceof jwt.TokenExpiredError) {
+                    throw new ApiError(401, "Authentication token expired");
+                }
+
+                throw new ApiError(401, "Invalid authentication token");
+            }
+
+            // TODO: check that account id against the DB
+
+            // All checks passed: add an account id for further processing
+            const authenticatedReq = Object.assign(req, {
+                accountId,
+            });
+
+            await handler(authenticatedReq, res, next);
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
-export { authHandler };
+export { withAuthenticated, type AuthenticatedRequest };

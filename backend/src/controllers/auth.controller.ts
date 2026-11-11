@@ -1,30 +1,32 @@
-import { Request, Response, NextFunction } from "express";
-import { matchedData } from "express-validator";
+import type { Request, Response, NextFunction } from "express";
 
 import { accountsService } from "../services/accounts.service.js";
-import { ApiError } from "../middlewares/error.middleware.js";
 import { appConfig } from "../configs/app.config.js";
+import type { AuthenticatedRequest, ValidatedRequest } from "../utils/types/express.js";
+import type { loginValidator } from "../validators/auth.validator.js";
+import { ApiError } from "../utils/errors.js";
 
 class AuthController {
+    constructor() {
+        this.login = this.login.bind(this);
+        this.refreshTokens = this.refreshTokens.bind(this);
+        this.logout = this.logout.bind(this);
+    }
+
     /**
-     * @route   POST /auth/login
-     * @desc    Login user
-     * @access  Public
+     * Login user
      */
     async login(
-        req: Request,
+        req: ValidatedRequest<typeof loginValidator>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
         try {
-            // Getting validated body
-            const data: {
-                username: string;
-                password: string;
-            } = matchedData(req);
-
             const { account, accessToken, refreshToken } =
-                await accountsService.login(data.username, data.password);
+                await accountsService.login(
+                    req.validated.username,
+                    req.validated.password,
+                );
 
             // Set refresh token in HttpOnly cookie
             res.cookie("refreshToken", refreshToken, {
@@ -47,9 +49,7 @@ class AuthController {
     }
 
     /**
-     * @route   POST /auth/refresh-token
-     * @desc    Refresh access token using refresh token stored in a cookie (with rotation)
-     * @access  Public
+     * Refresh access token using refresh token stored in a cookie (with rotation)
      */
     async refreshTokens(
         req: Request,
@@ -88,12 +88,10 @@ class AuthController {
     }
 
     /**
-     * @route   POST /auth/logout
-     * @desc    Logout user
-     * @access  Private
+     * Logout user
      */
     async logout(
-        req: Request,
+        req: AuthenticatedRequest,
         res: Response,
         next: NextFunction,
     ): Promise<void> {

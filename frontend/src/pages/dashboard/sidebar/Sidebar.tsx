@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 
 import "./Sidebar.css";
-import type { GroupView, View } from "../DashboardRouter";
+import type { GroupView, View } from "../DashboardViews";
 import { useDeviceType } from "../../../utils/hooks/device.hook";
 
 interface Link {
@@ -133,7 +133,9 @@ function Sidebar({
                             icon: (
                                 <div className="pp">
                                     <span>
-                                        {`${accountName?.[0]}${accountLastname?.[0]}`.toUpperCase()}
+                                        {accountName && accountLastname
+                                            ? `${accountName[0]}${accountLastname[0]}`.toUpperCase()
+                                            : "?"}
                                     </span>
                                 </div>
                             ),

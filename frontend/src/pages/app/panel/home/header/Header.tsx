@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import "./Header.css";
 import { IconButton } from "../../../../../components/button/Button.js";
 import { InstallButton } from "./InstallButton.js";
-import { useModal } from "../../../../../components/modal/Modal.js";
+import { useModal } from "../../../../../components/modal/ModalHook.js";
 import { CampusModal } from "../modals/CampusModal.js";
 import { useSettingsStore } from "../../../../../stores/settings.store.js";
 import { CAMPUSES } from "../../../../../utils/constants.js";

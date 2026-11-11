@@ -5,6 +5,7 @@ import {
     type ReactElement,
 } from "react";
 import { Eye, EyeOff, KeyRound, CircleAlert } from "lucide-react";
+import { useNavigate } from "react-router";
 
 import { TextButton, IconButton } from "../../../components/button/Button";
 import { Input } from "../../../components/input/Input";
@@ -13,10 +14,10 @@ import { login } from "../../../api/auth.api";
 import { useAuthStore } from "../../../stores/auth.store";
 import { useAccountStore } from "../../../stores/account.store";
 import { ResponseError } from "../../../api/axios";
-import { router } from "../../Router";
 import { useAuth } from "../../../utils/hooks/auth.hook";
 
 function Login(): ReactElement {
+    const navigate = useNavigate();
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [username, setUsername] = useState("");
@@ -32,7 +33,7 @@ function Login(): ReactElement {
                 const loginInfos = await login(username, password);
                 setAccessToken(loginInfos.accessToken);
                 setAccount(loginInfos.account);
-                router.navigate("/dashboard");
+                navigate("/dashboard");
             } catch (e) {
                 if (e instanceof ResponseError) {
                     switch (e.message) {
@@ -71,10 +72,10 @@ function Login(): ReactElement {
     useEffect(() => {
         if (!isLoginCheckLoading) {
             (async (): Promise<void> => {
-                if (isLoggedIn) router.navigate("/dashboard");
+                if (isLoggedIn) navigate("/dashboard");
             })();
         }
-    }, [isLoggedIn, isLoginCheckLoading]);
+    }, [isLoggedIn, isLoginCheckLoading, navigate]);
 
     return (
         <div id="login">

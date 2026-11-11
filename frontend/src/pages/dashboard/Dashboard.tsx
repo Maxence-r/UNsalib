@@ -7,7 +7,7 @@ import { Sidebar } from "./sidebar/Sidebar";
 // import Navbar from "./_components/navbar/navbar";
 // import HomePage from "./_components/home/home";
 // import StatsPage from "./_components/stats/stats";
-import { DASHBOARD_VIEWS } from "./DashboardRouter";
+import { DASHBOARD_VIEWS } from "./DashboardViews";
 import "./Dashboard.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
 import { useAccountStore, type Account } from "../../stores/account.store";

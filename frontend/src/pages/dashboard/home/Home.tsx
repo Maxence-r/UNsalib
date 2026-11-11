@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { useNavigate } from "react-router";
 
 import "./Home.css";
 import { Card, CardHeader } from "../../../components/card/Card";
@@ -6,10 +7,10 @@ import { Section } from "../../../components/layout/Layout";
 import { useApi } from "../../../utils/hooks/api.hook";
 import { getRoomsToReview } from "../../../api/admin.api";
 import { TextButton } from "../../../components/button/Button";
-import { router } from "../../Router";
 import { CircleAlert } from "lucide-react";
 
 function Home(): ReactElement {
+    const navigate = useNavigate();
     const { data: roomsToComplete } = useApi(getRoomsToReview, []);
 
     return (
@@ -25,7 +26,7 @@ function Home(): ReactElement {
                         complétées.
                         <TextButton
                             text="Corriger"
-                            onClick={() => router.navigate("/dashboard/manage")}
+                            onClick={() => navigate("/dashboard/manage")}
                         />
                     </Card>
                 )}

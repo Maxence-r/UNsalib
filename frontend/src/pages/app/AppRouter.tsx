@@ -1,27 +1,11 @@
-import { Navigate, Outlet, useLocation, useParams } from "react-router";
-import type { ReactElement } from "react";
+import { Navigate } from "react-router";
 
 import { App } from "./App";
 import { Calendar } from "./calendar/calendar";
 import { About } from "./about/About";
-import { getCurrentWeekNumber } from "../../utils/date";
 import { Grid } from "./calendar/grid/Grid";
+import { EnsureWeekNumberPresent } from "../../utils/EnsureWeekNumberPresent";
 
-// eslint-disable-next-line react-refresh/only-export-components
-function EnsureWeekNumberPresent(): ReactElement {
-    const params = useParams<"roomId" | "weekNumber">();
-    const searchParams = useLocation().search;
-    if (!params.roomId) return <Navigate to="/app" replace />;
-
-    return params.weekNumber ? (
-        <Outlet />
-    ) : (
-        <Navigate
-            to={`/app/timetable/${params.roomId}/${getCurrentWeekNumber()}${searchParams}`}
-            replace
-        />
-    );
-}
 
 const appRouter = {
     path: "/app",

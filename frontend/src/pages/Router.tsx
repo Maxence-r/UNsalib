@@ -1,18 +1,9 @@
-import { type ReactElement } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 
 import { appRouter } from "./app/AppRouter.js";
 import { dashboardRouter } from "./dashboard/DashboardRouter.js";
 import { authRouter } from "./auth/AuthRouter.js";
-import { SendFromQrCode } from "../api/users.api.js";
-import { useApi } from "../utils/hooks/api.hook.js";
-
-// eslint-disable-next-line react-refresh/only-export-components
-function SendQrCodeAndRedirect(): ReactElement {
-    const { isLoading, error } = useApi(new SendFromQrCode(), []);
-
-    return !isLoading || error ? <Navigate to="/app" replace /> : <></>;
-}
+import { SendQrCodeAndRedirect } from "../utils/SendQrCodeAndRedirect.js";
 
 const router = createBrowserRouter([
     {

@@ -3,7 +3,7 @@ import { Download } from "lucide-react";
 
 import { IconButton } from "../../../../../components/button/Button.js";
 import { SafariInstallModal } from "../modals/SafariInstallModal.js";
-import { useModal } from "../../../../../components/modal/Modal.js";
+import { useModal } from "../../../../../components/modal/ModalHook.js";
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<{ outcome: "accepted" | "dismissed" }>;

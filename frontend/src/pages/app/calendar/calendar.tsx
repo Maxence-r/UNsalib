@@ -6,11 +6,10 @@ import "./calendar.css";
 import { ActionBar } from "./action-bar/ActionBar.js";
 import { useApi } from "../../../utils/hooks/api.hook.js";
 import { GetRoomTimetable } from "../../../api/timetables.api.js";
-import { useToast } from "../../../components/toast/Toast.js";
+import { useToast } from "../../../components/toast/ToastHook.js";
 import type { ApiDataTimetable } from "../../../utils/types/api.type.js";
 import { getCurrentWeekNumber } from "../../../utils/date.js";
-import { Navigate, Outlet, useParams } from "react-router";
-import { router } from "../../Router.js";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router";
 
 function weekNumberReducer(
     state: { value: number; previous: number },
@@ -21,32 +20,12 @@ function weekNumberReducer(
 } {
     switch (action) {
         case "increase":
-            router.navigate(
-                router.state.location.pathname.slice(
-                    0,
-                    router.state.location.pathname.length - 2,
-                ) +
-                    (state.value + 1),
-                {
-                    replace: true,
-                },
-            );
             return {
                 previous: state.value,
                 value: state.value + 1,
             };
 
         case "decrease":
-            router.navigate(
-                router.state.location.pathname.slice(
-                    0,
-                    router.state.location.pathname.length - 2,
-                ) +
-                    (state.value - 1),
-                {
-                    replace: true,
-                },
-            );
             return {
                 previous: state.value,
                 value: state.value - 1,
@@ -73,12 +52,27 @@ function weekNumberReducer(
 }
 
 function Calendar({ showDefault = false }: { showDefault?: boolean }) {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [weekNumber, weekNumberDispatch] = useReducer(weekNumberReducer, {
         value: getCurrentWeekNumber(),
         previous: getCurrentWeekNumber(),
     });
 
     const params = useParams<"roomId" | "weekNumber">();
+
+    useEffect(() => {
+        if (
+            params.weekNumber &&
+            parseInt(params.weekNumber, 10) !== weekNumber.value
+        ) {
+            const basePath = location.pathname.slice(
+                0,
+                location.pathname.length - 2,
+            );
+            navigate(basePath + weekNumber.value, { replace: true });
+        }
+    }, [weekNumber.value, location.pathname, navigate, params.weekNumber]);
     // if (!params.roomId) return <Navigate to="/app" />;
 
     const currentRoom = params.roomId;
@@ -144,7 +138,7 @@ function Calendar({ showDefault = false }: { showDefault?: boolean }) {
                 <TextButton
                     icon={<ChevronUp />}
                     onClick={() => {
-                        router.navigate(-1);
+                        navigate(-1);
                     }}
                     text="Menu"
                 />

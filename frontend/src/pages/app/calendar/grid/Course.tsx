@@ -2,7 +2,7 @@ import type { ApiDataCourse } from "../../../../utils/types/api.type.js";
 import { CourseModal } from "../modals/CourseModal.js";
 import "./Course.css";
 import { DAY_DURATION, START_DAY_HOUR } from "../../../../utils/constants.js";
-import { useModal } from "../../../../components/modal/Modal.js";
+import { useModal } from "../../../../components/modal/ModalHook.js";
 import { useSettingsStore } from "../../../../stores/settings.store.js";
 
 function getCourseDurationMinutes(start: string, end: string): number {

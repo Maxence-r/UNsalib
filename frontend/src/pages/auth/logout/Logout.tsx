@@ -1,12 +1,13 @@
 import { CircleAlert } from "lucide-react";
 import { useEffect, useState, type ReactElement } from "react";
+import { useNavigate } from "react-router";
 
 import "./Logout.css";
 import { logout } from "../../../api/auth.api";
 import { useAuth } from "../../../utils/hooks/auth.hook";
-import { router } from "../../Router";
 
 function Logout(): ReactElement {
+    const navigate = useNavigate();
     const { isLoading, isLoggedIn } = useAuth();
     const [error, setError] = useState<boolean>(false);
 
@@ -16,16 +17,16 @@ function Logout(): ReactElement {
                 if (isLoggedIn) {
                     try {
                         await logout();
-                        router.navigate("/auth/login");
+                        navigate("/auth/login");
                     } catch {
                         setError(true);
                     }
                 } else {
-                    router.navigate("/auth/login");
+                    navigate("/auth/login");
                 }
             })();
         }
-    }, [isLoggedIn, isLoading]);
+    }, [isLoggedIn, isLoading, navigate]);
 
     return (
         <div id="logout">

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 
 import type { ApiDataRoom } from "../../../../../utils/types/api.type.js";
 import "./RoomsList.css";
-import { router } from "../../../../Router.js";
 import { useDeviceType } from "../../../../../utils/hooks/device.hook.js";
 import { useBotChallengeStore } from "../../../../../stores/bot-challenge.store.js";
 import type { Room } from "../../../../../stores/rooms.store.js";

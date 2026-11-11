@@ -9,10 +9,10 @@ import {
     type ReactElement,
     type TouchEvent,
 } from "react";
-import { create } from "zustand";
 
 import "./Modal.css";
 import { useDeviceType } from "../../utils/hooks/device.hook";
+import { useModalStore } from "./ModalHook";
 
 function clamp(val: number, min: number, max: number): number {
     return Math.max(min, Math.min(val, max));
@@ -421,45 +421,6 @@ function Modal({
     );
 }
 
-interface ModalStore {
-    modals: { [id: string]: { contentRef: React.RefObject<ReactNode> } };
-    openModalsStack: string[];
-    register: (id: string, contentRef: React.RefObject<ReactNode>) => void;
-    unregister: (id: string) => void;
-    open: (id: string) => void;
-    close: (id: string) => void;
-}
-
-const useModalStore = create<ModalStore>()((set) => ({
-    modals: {},
-    openModalsStack: [],
-
-    register: (id, contentRef): void =>
-        set((state) => {
-            if (Object.keys(state.modals).includes(id))
-                console.warn(`Duplicate modal ids found: ${id}`);
-
-            return {
-                modals: { [id]: { contentRef }, ...state.modals },
-            };
-        }),
-    unregister: (id): void =>
-        set((state) => {
-            delete state.modals[id];
-            return {
-                modals: state.modals,
-            };
-        }),
-    open: (id): void =>
-        set((state) => ({ openModalsStack: [id, ...state.openModalsStack] })),
-    close: (id): void =>
-        set((state) => ({
-            openModalsStack: state.openModalsStack.filter(
-                (modalId) => modalId != id,
-            ),
-        })),
-}));
-
 function ModalProvider({ zIndex }: { zIndex: number }): ReactElement {
     const modals = useModalStore((s) => s.modals);
     const openModalsStack = useModalStore((s) => s.openModalsStack);
@@ -487,27 +448,4 @@ function ModalProvider({ zIndex }: { zIndex: number }): ReactElement {
     );
 }
 
-function useModal(
-    id: string,
-    content: ReactNode,
-): {
-    open: () => void;
-} {
-    const register = useModalStore((s) => s.register);
-    const unregister = useModalStore((s) => s.unregister);
-    const open = useModalStore((s) => s.open);
-
-    // Avoid loop re-renders when content use useModal
-    const contentRef = useRef<ReactNode>(content);
-
-    useEffect(() => {
-        register(id, contentRef);
-
-        return (): void => unregister(id);
-    }, [id, register, unregister]);
-
-    return { open: () => open(id) };
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { ModalProvider, useModal };
+export { ModalProvider };

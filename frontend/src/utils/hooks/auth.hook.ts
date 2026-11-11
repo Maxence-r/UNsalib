@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useAuthStore } from "../../stores/auth.store";
-import { refreshToken } from "../../api/auth.api";
+import { refreshToken } from "../../api/axios";
 
 let isRefreshing = false;
 

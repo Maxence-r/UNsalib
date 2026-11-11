@@ -1,13 +1,7 @@
 import { Navigate } from "react-router";
 
-import { Login } from "./login/Login";
-import { Logout } from "./logout/Logout";
 import { Auth } from "./Auth";
-
-const AUTH_VIEWS = [
-    { id: "login", component: <Login /> },
-    { id: "logout", component: <Logout /> },
-];
+import { AUTH_VIEWS } from "./AuthViews";
 
 const authRouter = {
     path: "/auth",
@@ -19,10 +13,9 @@ const authRouter = {
         },
         ...AUTH_VIEWS.map((view) => ({
             path: view.id,
-            element: view.component,
+            Component: view.Component,
         })),
     ],
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { authRouter, AUTH_VIEWS };
+export { authRouter };

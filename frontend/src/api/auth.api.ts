@@ -1,12 +1,14 @@
 import { api } from "./axios";
 import type {
     ApiDataLogin,
-    ApiDataRefreshToken,
 } from "../utils/types/api.type";
 import { useAuthStore } from "../stores/auth.store";
 import { useAccountStore } from "../stores/account.store";
 
-async function login(username: string, password: string) {
+async function login(
+    username: string,
+    password: string,
+): Promise<ApiDataLogin> {
     const res = await api.post("/auth/login", {
         username: username,
         password: password,
@@ -14,7 +16,7 @@ async function login(username: string, password: string) {
     return res.data as ApiDataLogin;
 }
 
-async function logout() {
+async function logout(): Promise<void> {
     await api.post("/auth/logout");
 
     const authStore = useAuthStore.getState();
@@ -23,22 +25,4 @@ async function logout() {
     accountStore.remove();
 }
 
-async function refreshToken() {
-    const authStore = useAuthStore.getState();
-    const accountStore = useAccountStore.getState();
-
-    let newAccessToken: string | null = null;
-    try {
-        newAccessToken = (
-            (await api.get("/auth/refresh-token")).data as ApiDataRefreshToken
-        ).accessToken;
-        authStore.setAccessToken(newAccessToken);
-    } catch {
-        authStore.removeAccessToken();
-        accountStore.remove();
-    }
-
-    return newAccessToken;
-}
-
-export { login, logout, refreshToken };
+export { login, logout };

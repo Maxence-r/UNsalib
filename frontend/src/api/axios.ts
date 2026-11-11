@@ -1,9 +1,8 @@
 import axios, { AxiosError } from "axios";
 
 import { useAuthStore } from "../stores/auth.store";
-import type { Api, ApiError, ApiSuccess } from "../utils/types/api.type";
-import { refreshToken } from "./auth.api";
-import { router } from "../pages/Router";
+import { useAccountStore } from "../stores/account.store";
+import type { Api, ApiError, ApiSuccess, ApiDataRefreshToken } from "../utils/types/api.type";
 
 class ResponseError extends Error {
     constructor(message: string) {
@@ -77,6 +76,24 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+async function refreshToken(): Promise<string | null> {
+    const authStore = useAuthStore.getState();
+    const accountStore = useAccountStore.getState();
+
+    let newAccessToken: string | null = null;
+    try {
+        newAccessToken = (
+            (await api.get("/auth/refresh-token")).data as ApiDataRefreshToken
+        ).accessToken;
+        authStore.setAccessToken(newAccessToken);
+    } catch {
+        authStore.removeAccessToken();
+        accountStore.remove();
+    }
+
+    return newAccessToken;
+}
+
 api.interceptors.response.use(
     (response) => {
         const responseData = response.data as Api;
@@ -133,7 +150,7 @@ api.interceptors.response.use(
             const responseError = new ResponseError((error as Error).message);
             processQueue(responseError, null);
             isRefreshing = false;
-            router.navigate("/auth/login");
+            window.location.href = "/auth/login";
             return Promise.reject(responseError);
         }
 
@@ -144,4 +161,4 @@ api.interceptors.response.use(
     },
 );
 
-export { api, ResponseError, ApiGet, ApiPost };
+export { api, ResponseError, ApiGet, ApiPost, refreshToken };

@@ -6,6 +6,7 @@ import type { AuthenticatedFields } from "../middlewares/auth.middleware.js";
 import type { ValidatedFields } from "../middlewares/validation.middleware.js";
 import type { loginValidator } from "../validators/auth.validator.js";
 import { ApiError } from "../utils/errors.js";
+import { sendSuccessResponse } from "../utils/express/controller.js";
 
 class AuthController {
     constructor() {
@@ -35,12 +36,9 @@ class AuthController {
             maxAge: appConfig.jwt.refreshExpire * 1000,
         });
 
-        res.status(200).json({
-            success: true,
-            data: {
-                account: account,
-                accessToken: accessToken,
-            },
+        sendSuccessResponse(res, 200, {
+            account,
+            accessToken,
         });
     }
 
@@ -69,11 +67,8 @@ class AuthController {
                 maxAge: appConfig.jwt.refreshExpire * 1000,
             });
 
-            res.status(200).json({
-                success: true,
-                data: {
-                    accessToken: accessToken,
-                },
+            sendSuccessResponse(res, 200, {
+                accessToken,
             });
         } catch (error) {
             // If rotation fails, token is invalid or reused so we invalidate session
@@ -100,12 +95,7 @@ class AuthController {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                message: "Logout successful",
-            },
-        });
+        sendSuccessResponse(res, 200);
     }
 }
 

@@ -4,7 +4,7 @@ import { loginValidator } from "../validators/auth.validator.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { validateBody } from "../middlewares/validation.middleware.js";
 import { authController } from "../controllers/auth.controller.js";
-import { route } from "../utils/middlewares.js";
+import { route } from "../utils/express/middleware.js";
 
 const router = express.Router();
 

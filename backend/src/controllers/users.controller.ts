@@ -1,6 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 
 import { usersService } from "../services/users.service.js";
+import { sendSuccessResponse } from "../utils/express/controller.js";
 
 class UsersController {
     constructor() {
@@ -11,41 +12,19 @@ class UsersController {
     /**
      * Mark the user as human
      */
-    async notABot(
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ): Promise<void> {
-        try {
-            await usersService.setNotABot(req.userId);
+    async notABot(req: Request, res: Response): Promise<void> {
+        await usersService.setNotABot(req.userId);
 
-            res.status(200).json({
-                success: true,
-                data: null,
-            });
-        } catch (error) {
-            next(error);
-        }
+        sendSuccessResponse(res, 200);
     }
 
     /**
      * Mark the user as coming from advertising poster QR codes
      */
-    async setFromQrCode(
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ): Promise<void> {
-        try {
-            await usersService.setFromQrCode(req.userId);
+    async setFromQrCode(req: Request, res: Response): Promise<void> {
+        await usersService.setFromQrCode(req.userId);
 
-            res.status(200).json({
-                success: true,
-                data: null,
-            });
-        } catch (error) {
-            next(error);
-        }
+        sendSuccessResponse(res, 200);
     }
 }
 

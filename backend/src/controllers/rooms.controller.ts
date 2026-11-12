@@ -15,6 +15,7 @@ import type {
     timetableValidator,
 } from "../validators/rooms.validator.js";
 import { ApiError } from "../utils/errors.js";
+import { sendSuccessResponse } from "../utils/express/controller.js";
 
 class RoomsController {
     constructor() {
@@ -68,10 +69,7 @@ class RoomsController {
             new Date(),
         );
 
-        res.status(200).json({
-            success: true,
-            data: rooms,
-        });
+        sendSuccessResponse(res, 200, rooms);
     }
 
     /**
@@ -102,10 +100,11 @@ class RoomsController {
             new Date(),
         );
 
-        res.status(200).json({
-            success: true,
-            data: result.map((doc) => doc._id),
-        });
+        sendSuccessResponse(
+            res,
+            200,
+            result.map((doc) => doc._id),
+        );
     }
 
     /**
@@ -192,9 +191,9 @@ class RoomsController {
             new Date(),
         );
 
-        res.status(200).json({
-            success: true,
-            data: { courses: formattedResponse, weekInfos: weekInfos },
+        sendSuccessResponse(res, 200, {
+            courses: formattedResponse,
+            weekInfos: weekInfos,
         });
     }
 }

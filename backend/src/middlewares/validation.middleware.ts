@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { middleware, type Middleware } from "../utils/middlewares.js";
+import { middleware, type Middleware } from "../utils/express/middleware.js";
 
 interface ValidatedFields<S extends z.ZodType> {
     validated: z.output<S>;

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"; // do not change, jsonwebtoken imports are unsta
 
 import { ApiError } from "../utils/errors.js";
 import { appConfig } from "../configs/app.config.js";
-import { middleware, type Middleware } from "../utils/middlewares.js";
+import { middleware, type Middleware } from "../utils/express/middleware.js";
 
 interface AuthenticatedFields {
     accountId: string;

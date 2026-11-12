@@ -12,7 +12,7 @@ import {
     validateParams,
 } from "../middlewares/validation.middleware.js";
 import { roomsController } from "../controllers/rooms.controller.js";
-import { route } from "../utils/middlewares.js";
+import { route } from "../utils/express/middleware.js";
 
 const router = express.Router();
 

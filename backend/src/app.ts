@@ -12,6 +12,7 @@ import { appConfig } from "./configs/app.config.js";
 import { accessLogger } from "./utils/logger.js";
 import { router as routes } from "./routes/index.route.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { sendErrorResponse } from "./utils/express/controller.js";
 
 // Initialize Express app
 const app = express();
@@ -72,12 +73,7 @@ app.use(
 app.use("/", routes);
 
 // 404 handler - must come before error handler
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found",
-    });
-});
+app.use((req, res) => sendErrorResponse(res, 404, "Route not found"));
 
 // Error handling middleware (must be last)
 app.use(errorHandler);

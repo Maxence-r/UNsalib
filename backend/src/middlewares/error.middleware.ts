@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { logger } from "../utils/logger.js";
 import { ServiceError, ApiError } from "../utils/errors.js";
 import { appConfig } from "../configs/app.config.js";
+import { sendErrorResponse } from "../utils/express/controller.js";
 
 /**
  * Global error handler middleware
@@ -38,12 +39,12 @@ function errorHandler(
     });
 
     // Send error response
-    res.status(statusCode).json({
-        error: message || "Internal server error",
-        ...(appConfig.isDevMode && {
-            stack: stack,
-        }),
-    });
+    sendErrorResponse(
+        res,
+        statusCode,
+        message || "Internal server error",
+        appConfig.isDevMode ? stack : undefined,
+    );
 }
 
 export { errorHandler };

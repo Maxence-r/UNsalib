@@ -7,30 +7,36 @@ import {
     allValidator,
 } from "../validators/rooms.validator.js";
 import { statHandler } from "../middlewares/stats.middleware.js";
-import { withValidated } from "../middlewares/validation.middleware.js";
+import {
+    validateQuery,
+    validateParams,
+} from "../middlewares/validation.middleware.js";
 import { roomsController } from "../controllers/rooms.controller.js";
+import { route } from "../utils/middlewares.js";
 
 const router = express.Router();
 
 router.get(
     "/",
     statHandler,
-    withValidated(roomsController.getAll, { query: allValidator }),
+    route().use(validateQuery, allValidator).handle(roomsController.getAll),
 );
 
 router.get(
     "/available",
     statHandler,
-    withValidated(roomsController.getAvailable, { query: availableValidator }),
+    route()
+        .use(validateQuery, availableValidator)
+        .handle(roomsController.getAvailable),
 );
 
 router.get(
     "/:roomId/timetable",
     statHandler,
-    withValidated(roomsController.getTimetable, {
-        params: roomIdValidator,
-        query: timetableValidator,
-    }),
+    route()
+        .use(validateParams, roomIdValidator)
+        .use(validateQuery, timetableValidator)
+        .handle(roomsController.getTimetable),
 );
 
 export { router };

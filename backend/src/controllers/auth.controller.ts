@@ -1,8 +1,9 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 
 import { accountsService } from "../services/accounts.service.js";
 import { appConfig } from "../configs/app.config.js";
-import type { AuthenticatedRequest, ValidatedRequest } from "../utils/types/express.js";
+import type { AuthenticatedFields } from "../middlewares/auth.middleware.js";
+import type { ValidatedFields } from "../middlewares/validation.middleware.js";
 import type { loginValidator } from "../validators/auth.validator.js";
 import { ApiError } from "../utils/errors.js";
 
@@ -17,50 +18,44 @@ class AuthController {
      * Login user
      */
     async login(
-        req: ValidatedRequest<typeof loginValidator>,
+        req: Request & ValidatedFields<typeof loginValidator>,
         res: Response,
-        next: NextFunction,
     ): Promise<void> {
-        try {
-            const { account, accessToken, refreshToken } =
-                await accountsService.login(
-                    req.validated.username,
-                    req.validated.password,
-                );
+        const { account, accessToken, refreshToken } =
+            await accountsService.login(
+                req.validated.username,
+                req.validated.password,
+            );
 
-            // Set refresh token in HttpOnly cookie
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                secure: !appConfig.isDevMode,
-                sameSite: "strict",
-                maxAge: appConfig.jwt.refreshExpire * 1000,
-            });
+        // Set refresh token in HttpOnly cookie
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: !appConfig.isDevMode,
+            sameSite: "strict",
+            maxAge: appConfig.jwt.refreshExpire * 1000,
+        });
 
-            res.status(200).json({
-                success: true,
-                data: {
-                    account: account,
-                    accessToken: accessToken,
-                },
-            });
-        } catch (error) {
-            next(error);
-        }
+        res.status(200).json({
+            success: true,
+            data: {
+                account: account,
+                accessToken: accessToken,
+            },
+        });
     }
 
     /**
      * Refresh access token using refresh token stored in a cookie (with rotation)
      */
-    async refreshTokens(
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ): Promise<void> {
+    async refreshTokens(req: Request, res: Response): Promise<void> {
         try {
-            if (!req.cookies.refreshToken) {
+            if (
+                !req.cookies.refreshToken ||
+                typeof req.cookies.refreshToken !== "string"
+            ) {
                 throw new ApiError(401, "Missing refresh token");
             }
-            const oldRefreshToken = req.cookies.refreshToken as string;
+            const oldRefreshToken = req.cookies.refreshToken;
 
             // Rotate refresh token and get a new access token
             const { accessToken, refreshToken } =
@@ -83,7 +78,7 @@ class AuthController {
         } catch (error) {
             // If rotation fails, token is invalid or reused so we invalidate session
             res.clearCookie("refreshToken");
-            return next(error);
+            throw error;
         }
     }
 
@@ -91,31 +86,26 @@ class AuthController {
      * Logout user
      */
     async logout(
-        req: AuthenticatedRequest,
+        req: Request & AuthenticatedFields,
         res: Response,
-        next: NextFunction,
     ): Promise<void> {
-        try {
-            if (req.cookies.refreshToken) {
-                const refreshToken = req.cookies.refreshToken as string;
-                await accountsService.logout(refreshToken);
+        if (req.cookies.refreshToken) {
+            const refreshToken = req.cookies.refreshToken as string;
+            await accountsService.logout(refreshToken);
 
-                res.clearCookie("refreshToken", {
-                    httpOnly: true,
-                    secure: !appConfig.isDevMode,
-                    sameSite: "strict",
-                });
-            }
-
-            res.status(200).json({
-                success: true,
-                data: {
-                    message: "Logout successful",
-                },
+            res.clearCookie("refreshToken", {
+                httpOnly: true,
+                secure: !appConfig.isDevMode,
+                sameSite: "strict",
             });
-        } catch (error) {
-            next(error);
         }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                message: "Logout successful",
+            },
+        });
     }
 }
 

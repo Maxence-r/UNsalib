@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 
 import { roomsService } from "../services/rooms.service.js";
 import { buildingsService } from "../services/buildings.service.js";
@@ -7,7 +7,7 @@ import { getWeekInfos } from "../utils/date.js";
 import { getAccessibleForegroundColor, palette } from "../utils/color.js";
 import { appConfig } from "../configs/app.config.js";
 import { statsService } from "../services/stats.service.js";
-import type { ValidatedRequest } from "../middlewares/validation.middleware.js";
+import type { ValidatedFields } from "../middlewares/validation.middleware.js";
 import type {
     allValidator,
     availableValidator,
@@ -27,192 +27,175 @@ class RoomsController {
      * Return all rooms
      */
     async getAll(
-        req: ValidatedRequest<typeof allValidator>,
+        req: Request & ValidatedFields<typeof allValidator>,
         res: Response,
-        next: NextFunction,
     ): Promise<void> {
-        try {
-            // Getting validated queries
-            const buildings = await buildingsService.getBuildingsByCampus(
-                req.validated.campusId,
+        // Getting validated queries
+        const buildings = await buildingsService.getBuildingsByCampus(
+            req.validated.campusId,
+        );
+
+        const rooms: {
+            id: string;
+            name: string;
+            buildingName: string;
+            features: string[];
+            locked: boolean;
+        }[] = [];
+        for (const building of buildings) {
+            const buildingRooms = await roomsService.getRoomsByBuilding(
+                building._id,
+                !appConfig.isDevMode,
             );
 
-            const rooms: {
-                id: string;
-                name: string;
-                buildingName: string;
-                features: string[];
-                locked: boolean;
-            }[] = [];
-            for (const building of buildings) {
-                const buildingRooms = await roomsService.getRoomsByBuilding(
-                    building._id,
-                    !appConfig.isDevMode,
-                );
-
-                for (const room of buildingRooms) {
-                    rooms.push({
-                        id: room._id,
-                        // replace name with alias if present
-                        name: room.alias ?? room.name,
-                        buildingName: building.alias ?? building._id,
-                        features: room.features,
-                        locked: room.locked,
-                    });
-                }
+            for (const room of buildingRooms) {
+                rooms.push({
+                    id: room._id,
+                    // replace name with alias if present
+                    name: room.alias ?? room.name,
+                    buildingName: building.alias ?? building._id,
+                    features: room.features,
+                    locked: room.locked,
+                });
             }
-
-            // Add stat asynchronously to not slow down the request processing
-            void statsService.addNew(
-                req.userId,
-                "list",
-                req.validated.campusId,
-                new Date(),
-            );
-
-            res.status(200).json({
-                success: true,
-                data: rooms,
-            });
-        } catch (error) {
-            next(error);
         }
+
+        // Add stat asynchronously to not slow down the request processing
+        void statsService.addNew(
+            req.userId,
+            "list",
+            req.validated.campusId,
+            new Date(),
+        );
+
+        res.status(200).json({
+            success: true,
+            data: rooms,
+        });
     }
 
     /**
      * Return available rooms
      */
     async getAvailable(
-        req: ValidatedRequest<typeof availableValidator>,
+        req: Request & ValidatedFields<typeof availableValidator>,
         res: Response,
-        next: NextFunction,
     ): Promise<void> {
-        try {
-            const result = await roomsService.findAvailable(
-                req.validated.campusId,
-                req.validated.start,
-                req.validated.end,
-                req.validated.seats ?? 0,
-                req.validated.whiteBoards ?? 0,
-                req.validated.blackBoards ?? 0,
-                req.validated.includeBadge ?? false,
-                req.validated.type ?? null,
-                req.validated.visio ?? null,
-                req.validated.ilot ?? null,
-            );
+        const result = await roomsService.findAvailable(
+            req.validated.campusId,
+            req.validated.start,
+            req.validated.end,
+            req.validated.seats ?? 0,
+            req.validated.whiteBoards ?? 0,
+            req.validated.blackBoards ?? 0,
+            req.validated.includeBadge ?? false,
+            req.validated.type ?? null,
+            req.validated.visio ?? null,
+            req.validated.ilot ?? null,
+        );
 
-            // Add stat asynchronously to not slow down the request processing
-            void statsService.addNew(
-                req.userId,
-                "search",
-                req.validated.campusId,
-                new Date(),
-            );
+        // Add stat asynchronously to not slow down the request processing
+        void statsService.addNew(
+            req.userId,
+            "search",
+            req.validated.campusId,
+            new Date(),
+        );
 
-            res.status(200).json({
-                success: true,
-                data: result.map((doc) => doc._id),
-            });
-        } catch (error) {
-            next(error);
-        }
+        res.status(200).json({
+            success: true,
+            data: result.map((doc) => doc._id),
+        });
     }
 
     /**
      * Return a room's timetable
      */
     async getTimetable(
-        req: ValidatedRequest<
-            typeof timetableValidator & typeof roomIdValidator
-        >,
+        req: Request &
+            ValidatedFields<typeof timetableValidator & typeof roomIdValidator>,
         res: Response,
-        next: NextFunction,
     ): Promise<void> {
-        try {
-            const weekInfos = getWeekInfos(req.validated.weekNumber);
+        const weekInfos = getWeekInfos(req.validated.weekNumber);
 
-            if (
-                !appConfig.isDevMode &&
-                !(await roomsService.existsAndIsReviewed(req.validated.roomId))
-            ) {
-                throw new ApiError(400, "Unknown room");
-            }
-
-            const result = await coursesService.getTimetable(
-                req.validated.roomId,
-                weekInfos.start,
-                weekInfos.end,
-            );
-
-            // Formatting the response
-            const formattedResponse = result.map((c) => {
-                const color = palette[c.colorId as keyof typeof palette];
-                const accessibleOnColor = getAccessibleForegroundColor(color);
-
-                return {
-                    courseId: c._id,
-                    start: c.start,
-                    end: c.end,
-                    category: c.category,
-                    teachers: c.teachers,
-                    modules: c.modules,
-                    groups: c.groupIds,
-                    color,
-                    onColor: "#ffffff",
-                    accessibleOnColor,
-                };
-            });
-
-            // TODO: Vacations
-            // if (VACATIONS.includes(requestedWeek.number)) {
-            //     const vacationCourses = [];
-            //     const startDate = new Date(requestedWeek.start);
-
-            //     for (let i = 0; i < 5; i++) {
-            //         const start = new Date(startDate);
-            //         start.setDate(start.getDate() + i);
-            //         start.setHours(8, 0, 0, 0);
-            //         const end = new Date(start);
-            //         end.setHours(17, 0, 0, 0);
-
-            //         vacationCourses.push({
-            //             courseId: `vacances-${i}`,
-            //             start: start.toISOString(),
-            //             end: end.toISOString(),
-            //             notes: "",
-            //             category: "",
-            //             duration: 900,
-            //             overflow: 0,
-            //             roomId: id,
-            //             teachers: ["Monsieur Chill"],
-            //             modules: ["Détente - Vacances"],
-            //             groups: ["Tout le monde"],
-            //             color: "#FF7675",
-            //         });
-            //     }
-
-            //     return res.send({
-            //         courses: vacationCourses,
-            //         weekInfos: requestedWeek,
-            //     });
-            // }
-
-            // Add stat asynchronously to not slow down the request processing
-            void statsService.addNew(
-                req.userId,
-                "timetable",
-                (await roomsService.getCampusId(req.validated.roomId)) ??
-                    "unknown",
-                new Date(),
-            );
-
-            res.status(200).json({
-                success: true,
-                data: { courses: formattedResponse, weekInfos: weekInfos },
-            });
-        } catch (error) {
-            next(error);
+        if (
+            !appConfig.isDevMode &&
+            !(await roomsService.existsAndIsReviewed(req.validated.roomId))
+        ) {
+            throw new ApiError(400, "Unknown room");
         }
+
+        const result = await coursesService.getTimetable(
+            req.validated.roomId,
+            weekInfos.start,
+            weekInfos.end,
+        );
+
+        // Formatting the response
+        const formattedResponse = result.map((c) => {
+            const color = palette[c.colorId as keyof typeof palette];
+            const accessibleOnColor = getAccessibleForegroundColor(color);
+
+            return {
+                courseId: c._id,
+                start: c.start,
+                end: c.end,
+                category: c.category,
+                teachers: c.teachers,
+                modules: c.modules,
+                groups: c.groupIds,
+                color,
+                onColor: "#ffffff",
+                accessibleOnColor,
+            };
+        });
+
+        // TODO: Vacations
+        // if (VACATIONS.includes(requestedWeek.number)) {
+        //     const vacationCourses = [];
+        //     const startDate = new Date(requestedWeek.start);
+
+        //     for (let i = 0; i < 5; i++) {
+        //         const start = new Date(startDate);
+        //         start.setDate(start.getDate() + i);
+        //         start.setHours(8, 0, 0, 0);
+        //         const end = new Date(start);
+        //         end.setHours(17, 0, 0, 0);
+
+        //         vacationCourses.push({
+        //             courseId: `vacances-${i}`,
+        //             start: start.toISOString(),
+        //             end: end.toISOString(),
+        //             notes: "",
+        //             category: "",
+        //             duration: 900,
+        //             overflow: 0,
+        //             roomId: id,
+        //             teachers: ["Monsieur Chill"],
+        //             modules: ["Détente - Vacances"],
+        //             groups: ["Tout le monde"],
+        //             color: "#FF7675",
+        //         });
+        //     }
+
+        //     return res.send({
+        //         courses: vacationCourses,
+        //         weekInfos: requestedWeek,
+        //     });
+        // }
+
+        // Add stat asynchronously to not slow down the request processing
+        void statsService.addNew(
+            req.userId,
+            "timetable",
+            (await roomsService.getCampusId(req.validated.roomId)) ?? "unknown",
+            new Date(),
+        );
+
+        res.status(200).json({
+            success: true,
+            data: { courses: formattedResponse, weekInfos: weekInfos },
+        });
     }
 }
 

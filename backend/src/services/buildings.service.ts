@@ -1,66 +1,33 @@
-import { Types } from "mongoose";
-
-import {
-    Building,
-    BuildingSchemaProperties,
-} from "../models/building.model.js";
+import type { BuildingSchemaProperties } from "../models/building.model.js";
+import { Building } from "../models/building.model.js";
 import { roomsService } from "./rooms.service.js";
+import { ensureNotNullAsync } from "../utils/errors.js";
 
 class BuildingsService {
     /**
      * Move building to another campus
      */
-    async moveBuilding(buildingId: string, newCampusId: string): Promise<void> {
-        const building = await Building.findById(buildingId);
-        if (!building) {
-            throw new Error("Building not found");
-        }
-
-        building.campusId = newCampusId;
+    async moveBuilding(id: string, targetCampusId: string): Promise<void> {
+        const building = await ensureNotNullAsync(
+            "Building not found",
+            (buildingId: string) => Building.findById(buildingId),
+            id,
+        );
+        building.campusId = targetCampusId;
         await building.save();
     }
 
     /**
-     * Merge two buildings
+     * Update building details
      */
-    async mergeBuildings(
-        sourceBuildingId: Types.ObjectId,
-        targetBuildingId: Types.ObjectId,
-    ): Promise<void> {
-        const sourceBuilding = await Building.findById(sourceBuildingId);
-        const targetBuilding = await Building.findById(targetBuildingId);
-        if (!sourceBuilding || !targetBuilding) {
-            throw new Error("Building not found");
-        }
-
-        // Move all rooms from source building to target building
-        const rooms =
-            await roomsService.getRoomDocsByBuilding(sourceBuildingId);
-        for (const room of rooms) {
-            room.building = targetBuildingId;
-            await room.save();
-        }
-
-        // Delete the source building
-        await sourceBuilding.deleteOne();
-    }
-
-    /**
-     * Find all buildings
-     */
-    async findAll(): Promise<BuildingSchemaProperties[]> {
-        return await Building.find().lean();
-    }
-
-    /**
-     * Return a building associated with the given ID
-     */
-    async getBuildingById(
-        id: string,
-    ): Promise<BuildingSchemaProperties> {
-        const building = await Building.findById(id).lean();
-        if (!building) throw new Error("Building not found");
-        return building;
+    async updateBuilding(id: string, alias: string): Promise<void> {
+        const building = await ensureNotNullAsync(
+            "Building not found",
+            (buildingId: string) => Building.findById(buildingId),
+            id,
+        );
+        building.alias = alias;
+        await building.save();
     }
 
     /**
@@ -72,21 +39,60 @@ class BuildingsService {
         return await Building.find({ campusId }).lean();
     }
 
-    async addBuildigIfNotExists(
-        campusId: string,
-        name: string,
-    ): Promise<void> {
-        const existingBuilding = await Building.exists({ _id: name });
+    /**
+     * Merge two buildings
+     */
+    async mergeBuildings(sourceId: string, targetId: string): Promise<void> {
+        const sourceBuilding = await ensureNotNullAsync(
+            "Source building not found",
+            (buildingId: string) => Building.findById(buildingId),
+            sourceId,
+        );
+        await ensureNotNullAsync(
+            "Target building not found",
+            (buildingId: string) => Building.findById(buildingId),
+            targetId,
+        );
 
-        if (!existingBuilding) {
-            // Add the building if not found
-            const newBuilding = new Building({
-                _id: name,
-                campusId: campusId,
-            });
-            await newBuilding.save();
+        // Move all rooms from source building to target building
+        const rooms = await roomsService.getRoomDocsByBuilding(sourceId);
+        for (const room of rooms) {
+            room.buildingId = targetId;
+            await room.save();
         }
+
+        // Delete the source building
+        await sourceBuilding.deleteOne();
     }
+
+    // /**
+    //  * Find all buildings
+    //  */
+    // async findAll(): Promise<BuildingSchemaProperties[]> {
+    //     return await Building.find().lean();
+    // }
+
+    // /**
+    //  * Return a building associated with the given ID
+    //  */
+    // async getBuildingById(id: string): Promise<BuildingSchemaProperties> {
+    //     const building = await Building.findById(id).lean();
+    //     if (!building) throw new Error("Building not found");
+    //     return building;
+    // }
+
+    // async addBuildigIfNotExists(campusId: string, name: string): Promise<void> {
+    //     const existingBuilding = await Building.exists({ _id: name });
+
+    //     if (!existingBuilding) {
+    //         // Add the building if not found
+    //         const newBuilding = new Building({
+    //             _id: name,
+    //             campusId: campusId,
+    //         });
+    //         await newBuilding.save();
+    //     }
+    // }
 }
 
 const buildingsService = new BuildingsService();

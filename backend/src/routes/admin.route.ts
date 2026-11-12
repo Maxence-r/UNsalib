@@ -1,19 +1,21 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 
 import { adminController } from "../controllers/admin.controller.js";
-import {
-    getBuildingByIdValidation,
-    getBuildingsByCampusIdValidation,
-    getRoomByIdValidation,
-    getRoomsByBuildingIdValidation,
-    getCampusByIdValidation,
-    moveBuildingValidation,
-    moveRoomValidation,
-    updateBuildingValidation,
-    updateRoomValidation,
-    mergeBuildingsValidation,
-    mergeRoomsValidation,
-} from "../validators/admin.validator.js";
+import { route } from "../utils/express/middleware.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
+// import {
+//     getBuildingByIdValidation,
+//     getBuildingsByCampusIdValidation,
+//     getRoomByIdValidation,
+//     getRoomsByBuildingIdValidation,
+//     getCampusByIdValidation,
+//     moveBuildingValidation,
+//     moveRoomValidation,
+//     updateBuildingValidation,
+//     updateRoomValidation,
+//     mergeBuildingsValidation,
+//     mergeRoomsValidation,
+// } from "../validators/admin.validator.js";
 
 const router = express.Router();
 
@@ -22,8 +24,7 @@ const router = express.Router();
 // GET /rooms/not-reviewed
 router.get(
     "/rooms/not-reviewed",
-    (req: Request, res: Response, next: NextFunction) =>
-        adminController.findRoomsToComplete(req, res, next),
+    route().use(authenticate).handle(adminController.findRoomsToComplete),
 );
 
 // // GET /building/:id
@@ -68,13 +69,6 @@ router.get(
 //         adminController.getRoomsByBuildingId(req, res, next),
 // );
 
-// // PATCH /building/move
-// router.patch(
-//     "/building/move",
-//     moveBuildingValidation,
-//     (req: Request, res: Response, next: NextFunction) =>
-//         adminController.moveBuilding(req, res, next),
-// );
 // // PATCH /room/move
 // router.patch(
 //     "/room/move",
@@ -83,13 +77,6 @@ router.get(
 //         adminController.moveRoom(req, res, next),
 // );
 
-// // PATCH /building/:id
-// router.patch(
-//     "/building/:buildingId",
-//     updateBuildingValidation,
-//     (req: Request, res: Response, next: NextFunction) =>
-//         adminController.updateBuildingDetails(req, res, next),
-// );
 // // PATCH /room/:id
 // router.patch(
 //     "/room/:roomId",
@@ -98,13 +85,6 @@ router.get(
 //         adminController.updateRoomDetails(req, res, next),
 // );
 
-// // POST /building/merge
-// router.post(
-//     "/building/merge",
-//     mergeBuildingsValidation,
-//     (req: Request, res: Response, next: NextFunction) =>
-//         adminController.mergeBuildings(req, res, next),
-// );
 // // POST /room/merge
 // router.post(
 //     "/room/merge",

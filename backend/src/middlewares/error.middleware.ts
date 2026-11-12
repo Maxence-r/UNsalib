@@ -2,48 +2,51 @@ import type { Request, Response, NextFunction } from "express";
 
 import { logger } from "../utils/logger.js";
 import { ServiceError, ApiError } from "../utils/errors.js";
-import { appConfig } from "../configs/app.config.js";
 import { sendErrorResponse } from "../utils/express/controller.js";
 
 /**
  * Global error handler middleware
  */
 function errorHandler(
-    err: Error | ApiError,
+    err: Error | ApiError | ServiceError,
     req: Request,
     res: Response,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: NextFunction,
 ): void {
-    // Set default status code
-    let statusCode = 500;
-    const stack = err.stack ?? "";
-    let message = err.message;
-
-    if (err instanceof ApiError) {
-        statusCode = err.statusCode;
-    } else if (err instanceof ServiceError) {
-        statusCode = 400;
-    } else if (!appConfig.isDevMode) {
-        // Do not leak unexpected error messages in production
-        message = "";
-    }
-
     // Log error
     logger.error({
-        message: message,
-        stack: stack,
+        message: err.message,
+        ...(err instanceof ApiError &&
+            err.details !== undefined &&
+            err.details !== null && { details: err.details }),
+        ...(err.stack && { stack: err.stack }),
         url: req.originalUrl,
         method: req.method,
         ip: req.ip,
     });
+
+    // Set default status code
+    let statusCode = 500;
+    // Do not leak generic errors by default
+    let message: string | undefined = undefined;
+    let details: unknown = undefined;
+
+    if (err instanceof ApiError) {
+        statusCode = err.statusCode;
+        message = err.message;
+        details = err.details;
+    } else if (err instanceof ServiceError) {
+        statusCode = 400;
+        message = err.message;
+    }
 
     // Send error response
     sendErrorResponse(
         res,
         statusCode,
         message || "Internal server error",
-        appConfig.isDevMode ? stack : undefined,
+        details,
     );
 }
 

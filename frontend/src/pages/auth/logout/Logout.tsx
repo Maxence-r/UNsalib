@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactElement } from "react";
 import { useNavigate } from "react-router";
 
 import "./Logout.css";
-import { logout } from "../../../api/auth.api";
+import { Logout as LogoutRequest } from "../../../api/auth.api";
 import { useAuth } from "../../../utils/hooks/auth.hook";
 
 function Logout(): ReactElement {
@@ -16,13 +16,14 @@ function Logout(): ReactElement {
             (async (): Promise<void> => {
                 if (isLoggedIn) {
                     try {
-                        await logout();
+                        await new LogoutRequest().do();
                         navigate("/auth/login");
-                    } catch {
+                    } catch (e) {
+                        console.error(e);
                         setError(true);
                     }
                 } else {
-                    navigate("/auth/login");
+                    navigate("/auth/login", { replace: true });
                 }
             })();
         }

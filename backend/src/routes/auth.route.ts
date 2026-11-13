@@ -10,10 +10,7 @@ const router = express.Router();
 
 router.post(
     "/login",
-    route()
-        .use(authenticate)
-        .use(validateBody, loginValidator)
-        .handle(authController.login),
+    route().use(validateBody, loginValidator).handle(authController.login),
 );
 
 router.get("/refresh-token", authController.refreshTokens);

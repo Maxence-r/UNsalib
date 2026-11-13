@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useAuthStore } from "../../stores/auth.store";
 import { refreshToken } from "../../api/axios";
+import { useAccountStore, type Account } from "../../stores/account.store";
 
 let isRefreshing = false;
 
@@ -10,13 +11,19 @@ function useAuth(): {
     isLoggedIn: boolean;
 } {
     const accessToken = useAuthStore<string | null>((s) => s.accessToken);
+    const account = useAccountStore<Account | null>((s) => s.account);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         (async (): Promise<void> => {
-            if (!accessToken) {
-                if (!isRefreshing) {
+            if (account) {
+                if (accessToken) {
+                    setIsLoading(false);
+                    setIsLoggedIn(true);
+                } else {
+                    if (isRefreshing) return;
+
                     setIsLoading(true);
                     isRefreshing = true;
                     const newToken = await refreshToken();
@@ -26,10 +33,9 @@ function useAuth(): {
                 }
             } else {
                 setIsLoading(false);
-                setIsLoggedIn(true);
             }
         })();
-    }, [accessToken]);
+    }, [accessToken, account]);
 
     return { isLoading, isLoggedIn };
 }

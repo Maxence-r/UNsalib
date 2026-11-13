@@ -1,28 +1,29 @@
-import { api } from "./axios";
-import type {
-    ApiDataLogin,
-} from "../utils/types/api.type";
+import { ApiPost } from "./axios";
+import type { ApiDataLogin } from "../utils/types/api.type";
 import { useAuthStore } from "../stores/auth.store";
 import { useAccountStore } from "../stores/account.store";
 
-async function login(
-    username: string,
-    password: string,
-): Promise<ApiDataLogin> {
-    const res = await api.post("/auth/login", {
-        username: username,
-        password: password,
-    });
-    return res.data as ApiDataLogin;
+class Login extends ApiPost<ApiDataLogin> {
+    constructor(username: string, password: string) {
+        super("/auth/login", {
+            username,
+            password,
+        });
+    }
 }
 
-async function logout(): Promise<void> {
-    await api.post("/auth/logout");
+class Logout extends ApiPost<void> {
+    constructor() {
+        super("/auth/logout");
+        this.setAfterHook(this.refreshStores);
+    }
 
-    const authStore = useAuthStore.getState();
-    const accountStore = useAccountStore.getState();
-    authStore.removeAccessToken();
-    accountStore.remove();
+    private refreshStores(): void {
+        const authStore = useAuthStore.getState();
+        const accountStore = useAccountStore.getState();
+        authStore.removeAccessToken();
+        accountStore.remove();
+    }
 }
 
-export { login, logout };
+export { Login, Logout };

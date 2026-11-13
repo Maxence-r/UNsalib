@@ -2,7 +2,12 @@ import axios, { AxiosError } from "axios";
 
 import { useAuthStore } from "../stores/auth.store";
 import { useAccountStore } from "../stores/account.store";
-import type { Api, ApiError, ApiSuccess, ApiDataRefreshToken } from "../utils/types/api.type";
+import type {
+    Api,
+    ApiError,
+    ApiSuccess,
+    ApiDataRefreshToken,
+} from "../utils/types/api.type";
 
 class ResponseError extends Error {
     constructor(message: string) {
@@ -11,7 +16,7 @@ class ResponseError extends Error {
 }
 
 class ApiGet<T> {
-    url: string;
+    private url: string;
 
     constructor(url: string) {
         this.url = url;
@@ -28,20 +33,34 @@ class ApiGet<T> {
 }
 
 class ApiPost<T> {
-    url: string;
-    data?: { [key: string]: unknown };
+    private url: string;
+    private data?: { [key: string]: unknown };
+    private beforeHook?: () => void | Promise<void>;
+    private afterHook?: () => void | Promise<void>;
 
     constructor(url: string, data?: { [key: string]: unknown }) {
         this.url = url;
         this.data = data;
     }
 
+    protected setBeforeHook(fn?: () => void | Promise<void>): void {
+        this.beforeHook = fn;
+    }
+
+    protected setAfterHook(fn?: () => void | Promise<void>): void {
+        this.beforeHook = fn;
+    }
+
     async do(abortSignal?: AbortSignal): Promise<T> {
+        await this.beforeHook?.();
+
         const res = await api.post(
             this.url,
             this.data,
             abortSignal ? { signal: abortSignal } : undefined,
         );
+
+        await this.afterHook?.();
 
         return res.data as T;
     }
@@ -117,7 +136,6 @@ api.interceptors.response.use(
             error.response?.status !== 401 ||
             error._retry ||
             originalRequest.url?.includes("login") ||
-            originalRequest.url?.includes("logout") ||
             originalRequest.url?.includes("refresh-token")
         ) {
             return Promise.reject(

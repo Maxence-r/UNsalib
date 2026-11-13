@@ -45,6 +45,9 @@
             }
 
             & h1 {
+                font-family: "Cal Sans";
+                font-weight: normal;
+                font-size: 34px;
                 margin-block: 0px;
             }
         }

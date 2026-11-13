@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 import { TextButton, IconButton } from "../../../components/button/Button";
 import { Input } from "../../../components/input/Input";
 import "./Login.css";
-import { login } from "../../../api/auth.api";
+import { Login as LoginRequest } from "../../../api/auth.api";
 import { useAuthStore } from "../../../stores/auth.store";
 import { useAccountStore } from "../../../stores/account.store";
 import { ResponseError } from "../../../api/axios";
@@ -30,10 +30,13 @@ function Login(): ReactElement {
         if (username.length > 0 && password.length > 0) {
             setIsLoading(true);
             try {
-                const loginInfos = await login(username, password);
+                const loginInfos = await new LoginRequest(
+                    username,
+                    password,
+                ).do();
                 setAccessToken(loginInfos.accessToken);
                 setAccount(loginInfos.account);
-                navigate("/dashboard");
+                navigate("/dashboard", { replace: true });
             } catch (e) {
                 if (e instanceof ResponseError) {
                     switch (e.message) {
@@ -70,10 +73,8 @@ function Login(): ReactElement {
     const { isLoading: isLoginCheckLoading, isLoggedIn } = useAuth();
 
     useEffect(() => {
-        if (!isLoginCheckLoading) {
-            (async (): Promise<void> => {
-                if (isLoggedIn) navigate("/dashboard");
-            })();
+        if (!isLoginCheckLoading && isLoggedIn) {
+            navigate("/dashboard", { replace: true });
         }
     }, [isLoggedIn, isLoginCheckLoading, navigate]);
 

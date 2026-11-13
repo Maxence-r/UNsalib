@@ -23,7 +23,7 @@ class GetAvailableRooms extends ApiGet<string[]> {
     ) {
         const baseUrl = "/rooms/available?";
         const params = {
-            campusid: campusId,
+            campusId: campusId,
             start: start.getTime(),
             end: end.getTime(),
             ...(seats && { seats }),

@@ -15,33 +15,9 @@ class ResponseError extends Error {
     }
 }
 
-class ApiGet<T> {
-    private url: string;
-
-    constructor(url: string) {
-        this.url = url;
-    }
-
-    async do(abortSignal?: AbortSignal): Promise<T> {
-        const res = await api.get(
-            this.url,
-            abortSignal ? { signal: abortSignal } : undefined,
-        );
-
-        return res.data as T;
-    }
-}
-
-class ApiPost<T> {
-    private url: string;
-    private data?: { [key: string]: unknown };
-    private beforeHook?: () => void | Promise<void>;
-    private afterHook?: () => void | Promise<void>;
-
-    constructor(url: string, data?: { [key: string]: unknown }) {
-        this.url = url;
-        this.data = data;
-    }
+class ApiMethod<T> {
+    protected beforeHook?: () => void | Promise<void>;
+    protected afterHook?: () => void | Promise<void>;
 
     protected setBeforeHook(fn?: () => void | Promise<void>): void {
         this.beforeHook = fn;
@@ -51,10 +27,74 @@ class ApiPost<T> {
         this.beforeHook = fn;
     }
 
+    async do(): Promise<T> {
+        throw new Error("Method 'do' must be implemented.");
+    }
+}
+
+class ApiGet<T> extends ApiMethod<T> {
+    private url: string;
+
+    constructor(url: string) {
+        super();
+        this.url = url;
+    }
+
+    async do(abortSignal?: AbortSignal): Promise<T> {
+        await this.beforeHook?.();
+
+        const res = await api.get(
+            this.url,
+            abortSignal ? { signal: abortSignal } : undefined,
+        );
+
+        await this.afterHook?.();
+
+        return res.data as T;
+    }
+}
+
+class ApiPost<T> extends ApiMethod<T> {
+    private url: string;
+    private data?: { [key: string]: unknown };
+
+    constructor(url: string, data?: { [key: string]: unknown }) {
+        super();
+        this.url = url;
+        this.data = data;
+    }
+
     async do(abortSignal?: AbortSignal): Promise<T> {
         await this.beforeHook?.();
 
         const res = await api.post(
+            this.url,
+            this.data,
+            abortSignal ? { signal: abortSignal } : undefined,
+        );
+
+        await this.afterHook?.();
+
+        return res.data as T;
+    }
+}
+
+class ApiPatch<T> extends ApiMethod<T> {
+    private url: string;
+    private data?: { [key: string]: unknown };
+
+    constructor(url: string, data?: { [key: string]: unknown }) {
+        super();
+        this.url = url;
+        this.data = data;
+    }
+
+    async do(abortSignal?: AbortSignal): Promise<T> {
+        await this.beforeHook?.();
+
+        console.log(this.data)
+
+        const res = await api.patch(
             this.url,
             this.data,
             abortSignal ? { signal: abortSignal } : undefined,
@@ -179,4 +219,4 @@ api.interceptors.response.use(
     },
 );
 
-export { api, ResponseError, ApiGet, ApiPost, refreshToken };
+export { api, ResponseError, ApiGet, ApiPost, ApiPatch, refreshToken };

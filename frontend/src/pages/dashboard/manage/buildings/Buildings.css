@@ -1,0 +1,48 @@
+#dashboard .content#manage-buildings {
+    display: flex;
+    gap: 40px;
+    overflow: hidden;
+
+    & > .panel {
+        max-width: 400px;
+        min-width: 200px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        overflow-y: hidden;
+        max-height: fit-content;
+
+        @media screen and (max-width: 425px) {
+            & {
+                max-width: unset;
+                border: none;
+                padding: 0;
+                background-color: transparent;
+            }
+        }
+
+        & > .results {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+
+            & > .building {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 16px;
+                height: 50px;
+                flex-shrink: 0;
+                border: 1px solid var(--color-neutral);
+                border-radius: var(--border-radius);
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--color-neutral-light);
+                }
+            }
+        }
+    }
+}

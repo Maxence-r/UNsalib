@@ -1,5 +1,15 @@
 .layout {
     width: 100%;
+    padding: 32px 0 40px 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (max-width: 425px) {
+        & {
+            padding: 24px;
+        }
+    }
 
     & > .title {
         margin-block: 0;
@@ -8,14 +18,28 @@
         margin-block-end: 24px;
     }
 
-    & .section {
-        margin-bottom: 32px;
+    & > div:not(.title) {
+        overflow-y: scroll;
+        padding-right: 40px;
+        flex-grow: 1;
 
-        & > .title {
-            margin-block: 0;
-            font-size: 16px;
-            color: var(--color-neutral-dark);
-            margin-block-end: 12px;
+        @media screen and (max-width: 425px) {
+            & {
+                padding-right: 0;
+            }
         }
+    }
+}
+
+.section {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+
+    & > .title {
+        margin-block: 0;
+        font-size: 16px;
+        color: var(--color-neutral-dark);
+        margin-block-end: 12px;
     }
 }

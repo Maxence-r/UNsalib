@@ -11,7 +11,7 @@ const buildingIdValidator = z.object({
 });
 
 const updateValidator = z.object({
-    alias: nonEmptyString,
+    alias: nonEmptyString.nullable(),
 });
 
 const moveValidator = z.object({

@@ -1,7 +1,7 @@
 import express from "express";
 
 import { buildingIdValidator, getByCampusIdValidator, mergeValidator, moveValidator, updateValidator } from "../validators/buildings.validator.js";
-import { validateQuery } from "../middlewares/validation.middleware.js";
+import { validateBody, validateParams, validateQuery } from "../middlewares/validation.middleware.js";
 import { buildingsController } from "../controllers/buildings.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { route } from "../utils/express/middleware.js";
@@ -20,8 +20,8 @@ router.patch(
     "/:id",
     route()
         .use(authenticate)
-        .use(validateQuery, buildingIdValidator)
-        .use(validateQuery, updateValidator)
+        .use(validateParams, buildingIdValidator)
+        .use(validateBody, updateValidator)
         .handle(buildingsController.update),
 );
 
@@ -29,8 +29,8 @@ router.patch(
     "/:id/move",
     route()
         .use(authenticate)
-        .use(validateQuery, buildingIdValidator)
-        .use(validateQuery, moveValidator)
+        .use(validateParams, buildingIdValidator)
+        .use(validateBody, moveValidator)
         .handle(buildingsController.move),
 );
 
@@ -38,7 +38,7 @@ router.post(
     "/merge",
     route()
         .use(authenticate)
-        .use(validateQuery, mergeValidator)
+        .use(validateBody, mergeValidator)
         .handle(buildingsController.merge),
 );
 

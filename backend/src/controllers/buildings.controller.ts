@@ -54,7 +54,10 @@ class BuildingsController {
             >,
         res: Response,
     ): Promise<void> {
-        buildingsService.updateBuilding(req.validated.id, req.validated.alias);
+        await buildingsService.updateBuilding(
+            req.validated.id,
+            req.validated.alias,
+        );
 
         sendSuccessResponse(res, 200);
     }

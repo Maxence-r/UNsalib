@@ -12,12 +12,27 @@ type Middleware<Fields = {}> = (
     next: NextFunction,
 ) => void | Promise<void>;
 
-function middleware<NewFields>(
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function middleware<NewFields extends object>(
     fn: (req: Request, res: Response) => Promise<NewFields> | NewFields,
 ): Middleware<NewFields> {
     return async (req, res, next) => {
         const result = await fn(req as unknown as Request, res);
-        Object.assign(req, result);
+        const currentFields = req as unknown as Record<string, unknown>;
+        const newFields = result as Record<string, unknown>;
+
+        for (const [field, value] of Object.entries(newFields)) {
+            const currentValue = currentFields[field];
+
+            currentFields[field] =
+                isRecord(currentValue) && isRecord(value)
+                    ? { ...currentValue, ...value }
+                    : value;
+        }
+
         next();
     };
 }

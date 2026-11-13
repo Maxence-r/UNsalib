@@ -3,11 +3,12 @@ interface Api {
 }
 
 interface ApiSuccess extends Api {
-    data: unknown;
+    data?: unknown;
 }
 
 interface ApiError extends Api {
     message: string;
+    details?: unknown;
 }
 
 // Endpoint: /rooms
@@ -41,6 +42,13 @@ interface ApiDataTimetable {
         number: number;
         start: string;
     };
+}
+
+// Endpoint: /buildings
+
+interface ApiDataBuilding {
+    id: string;
+    alias: string;
 }
 
 // Endpoint: /auth/login
@@ -106,5 +114,6 @@ export type {
     ApiDataCourse,
     ApiDataLogin,
     ApiDataRefreshToken,
-    ApiDataAdminRoomsNotReviewed
+    ApiDataAdminRoomsNotReviewed,
+    ApiDataBuilding
 };

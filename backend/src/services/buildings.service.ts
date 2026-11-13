@@ -20,7 +20,7 @@ class BuildingsService {
     /**
      * Update building details
      */
-    async updateBuilding(id: string, alias: string): Promise<void> {
+    async updateBuilding(id: string, alias: string | null): Promise<void> {
         const building = await ensureNotNullAsync(
             "Building not found",
             (buildingId: string) => Building.findById(buildingId),

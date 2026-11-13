@@ -28,7 +28,12 @@ function Chip({
     );
 }
 
-function ChipsContainer({
+function ChipsContainer<
+    O extends {
+        id: string;
+        name: string;
+    }[],
+>({
     name,
     options,
     multiSelect,
@@ -36,20 +41,17 @@ function ChipsContainer({
     setSelected,
 }: {
     name: string;
-    options: {
-        id: string;
-        name: string;
-    }[];
+    options: O;
 } & (
     | {
           multiSelect?: false;
-          selected?: string;
-          setSelected?: (option: string) => void;
+          selected?: O[number]["id"];
+          setSelected?: (option: O[number]["id"]) => void;
       }
     | {
           multiSelect: true;
-          selected?: string[];
-          setSelected?: (options: string[]) => void;
+          selected?: O[number]["id"][];
+          setSelected?: (options: O[number]["id"][]) => void;
       }
 )): ReactElement {
     const selectedOptions = multiSelect

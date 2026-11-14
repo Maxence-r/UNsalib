@@ -31,8 +31,7 @@ class RoomsController {
         req: Request & ValidatedFields<typeof allValidator>,
         res: Response,
     ): Promise<void> {
-        // Getting validated queries
-        const buildings = await buildingsService.getBuildingsByCampus(
+        const buildings = await buildingsService.getAllBuildings(
             req.validated.campusId,
         );
 

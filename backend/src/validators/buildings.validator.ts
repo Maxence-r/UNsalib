@@ -2,8 +2,8 @@ import { z } from "zod";
 
 import { nonEmptyString } from "./common.validator.js";
 
-const getByCampusIdValidator = z.object({
-    campusId: nonEmptyString,
+const getAllValidator = z.object({
+    campusId: nonEmptyString.optional(),
 });
 
 const buildingIdValidator = z.object({
@@ -23,4 +23,4 @@ const mergeValidator = z.object({
     targetId: nonEmptyString,
 });
 
-export { getByCampusIdValidator, buildingIdValidator, updateValidator, moveValidator, mergeValidator };
+export { getAllValidator, buildingIdValidator, updateValidator, moveValidator, mergeValidator };

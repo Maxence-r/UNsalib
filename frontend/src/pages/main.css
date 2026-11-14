@@ -29,6 +29,11 @@ body {
     margin: 0;
 }
 
+select,
+select::picker(select) {
+    appearance: base-select;
+}
+
 /* Shared keyframes */
 
 @keyframes spin {

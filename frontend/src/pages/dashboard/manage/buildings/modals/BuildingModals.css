@@ -1,0 +1,31 @@
+.modal .move-building {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+
+    & > h3 {
+        margin-block: 0px;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 18px;
+        font-weight: normal;
+    }
+
+    & > .form {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 16px;
+
+        & > p,
+        & > ul {
+            margin-block: 0;
+        }
+    }
+
+    & > .actions {
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+    }
+}

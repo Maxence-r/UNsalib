@@ -1,0 +1,57 @@
+.select {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    min-height: 50px;
+    border-radius: var(--border-radius);
+    padding: 0px 16px;
+    background-color: var(--color-neutral-light);
+    border: none;
+    outline: none;
+    color: var(--color-on-surface);
+    cursor: pointer;
+
+    &:open  {
+        cursor: default;
+
+        & > button > svg {
+            rotate: 180deg;
+        }
+    }
+
+    &::picker-icon {
+        display: none;
+    }
+
+    & > button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    & > button > svg {
+        color: var(--color-neutral-dark);
+    }
+
+    &::picker(select) {
+        margin-top: 8px;
+        border-radius: var(--border-radius);
+        padding: 8px;
+        background-color: var(--color-neutral-light);
+        color: var(--color-on-surface);
+        border: none;
+    }
+
+    option::checkmark {
+        content: none;
+    }
+
+    & > option {
+        padding: 10px;
+        border-radius: var(--border-radius-sharp);
+        font-weight: 400;
+        font-size: 13px;
+        cursor: pointer;
+    }
+}

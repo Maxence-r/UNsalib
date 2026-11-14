@@ -1,6 +1,6 @@
 import express from "express";
 
-import { buildingIdValidator, getByCampusIdValidator, mergeValidator, moveValidator, updateValidator } from "../validators/buildings.validator.js";
+import { buildingIdValidator, getAllValidator, mergeValidator, moveValidator, updateValidator } from "../validators/buildings.validator.js";
 import { validateBody, validateParams, validateQuery } from "../middlewares/validation.middleware.js";
 import { buildingsController } from "../controllers/buildings.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
@@ -12,8 +12,8 @@ router.get(
     "/",
     route()
         .use(authenticate)
-        .use(validateQuery, getByCampusIdValidator)
-        .handle(buildingsController.getByCampusId),
+        .use(validateQuery, getAllValidator)
+        .handle(buildingsController.getAll),
 );
 
 router.patch(

@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 
 import type { ValidatedFields } from "../middlewares/validation.middleware.js";
 import type {
-    getByCampusIdValidator,
+    getAllValidator,
     buildingIdValidator,
     updateValidator,
     moveValidator,
@@ -14,7 +14,7 @@ import { sendSuccessResponse } from "../utils/express/controller.js";
 
 class BuildingsController {
     constructor() {
-        this.getByCampusId = this.getByCampusId.bind(this);
+        this.getAll = this.getAll.bind(this);
         this.update = this.update.bind(this);
         this.move = this.move.bind(this);
         this.merge = this.merge.bind(this);
@@ -23,13 +23,13 @@ class BuildingsController {
     /**
      * Return buildings in the given campus
      **/
-    async getByCampusId(
+    async getAll(
         req: Request &
             AuthenticatedFields &
-            ValidatedFields<typeof getByCampusIdValidator>,
+            ValidatedFields<typeof getAllValidator>,
         res: Response,
     ): Promise<void> {
-        const buildings = await buildingsService.getBuildingsByCampus(
+        const buildings = await buildingsService.getAllBuildings(
             req.validated.campusId,
         );
 

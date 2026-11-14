@@ -92,8 +92,6 @@ class ApiPatch<T> extends ApiMethod<T> {
     async do(abortSignal?: AbortSignal): Promise<T> {
         await this.beforeHook?.();
 
-        console.log(this.data)
-
         const res = await api.patch(
             this.url,
             this.data,

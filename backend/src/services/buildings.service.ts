@@ -26,17 +26,17 @@ class BuildingsService {
             (buildingId: string) => Building.findById(buildingId),
             id,
         );
-        building.alias = alias;
+        building.alias = alias ? alias : undefined;
         await building.save();
     }
 
     /**
      * Get buildings by campus
      */
-    async getBuildingsByCampus(
-        campusId: string,
+    async getAllBuildings(
+        campusId?: string,
     ): Promise<BuildingSchemaProperties[]> {
-        return await Building.find({ campusId }).lean();
+        return await Building.find(campusId ? { campusId } : {}).lean();
     }
 
     /**
